@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { BlogPage } from '../../views/BlogPage';
+import { BlogPage } from './../views/BlogPage';
 
 export const metadata: Metadata = {
   title: 'Engineering Guides & Masterclasses',

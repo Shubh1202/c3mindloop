@@ -1,5 +1,5 @@
 import { MetadataRoute } from 'next';
-import { BASE_URL } from '../config/seo.config';
+import { BASE_URL } from './config/seo.config';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const routes = [

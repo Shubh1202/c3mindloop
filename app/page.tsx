@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
-import { HomePage } from '../views/HomePage';
-import { seoConfig } from '../config/seo.config';
+import { HomePage } from './views/HomePage';
+import { seoConfig } from './config/seo.config';
 
 const { home } = seoConfig;
 

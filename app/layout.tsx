@@ -1,8 +1,8 @@
 import type { Metadata, Viewport } from 'next';
 import { Inter, JetBrains_Mono } from 'next/font/google';
 import './globals.css';
-import { AppClientShell } from '../components/layout/AppClientShell';
-import { seoConfig, organizationSchema, websiteSchema } from '../config/seo.config';
+import { AppClientShell } from './components/layout/AppClientShell';
+import { seoConfig, organizationSchema, websiteSchema } from './config/seo.config';
 
 const inter = Inter({
   subsets: ['latin'],
