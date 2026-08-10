@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { AboutPage } from '../../pages/AboutPage';
+import { AboutPage } from '../../views/AboutPage';
 
 export const metadata: Metadata = {
   title: 'About C³ MindLoop — Our Story, Vision & Philosophy',

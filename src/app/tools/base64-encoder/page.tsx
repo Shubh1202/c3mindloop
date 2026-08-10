@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Base64Page } from '../../../pages/Base64Page';
+import { Base64Page } from '../../../views/Base64Page';
 import { seoConfig, base64EncoderSchema } from '../../../config/seo.config';
 
 const { base64Encoder } = seoConfig;

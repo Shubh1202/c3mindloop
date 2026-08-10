@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { LegalPage } from '../../pages/LegalPage';
+import { LegalPage } from '../../views/LegalPage';
 
 export const metadata: Metadata = {
   title: 'Terms of Service — C³ MindLoop',

@@ -46,6 +46,6 @@
     "node_modules",
     "dist",
     ".next",
-    "src/pages"
+    "src/views"
   ]
 }

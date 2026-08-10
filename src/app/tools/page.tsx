@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { ProductsPage } from '../../pages/ProductsPage';
+import { ProductsPage } from '../../views/ProductsPage';
 
 export const metadata: Metadata = {
   title: 'Developer Utilities & VS Code Extension',
