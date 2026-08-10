@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 160" fill="none">
+  <!-- Cube -->
+  <g transform="translate(10, 15) scale(1.1)">
+    <path d="M 50 8 L 88 28 L 50 48 L 12 28 Z" stroke="#0091FF" stroke-width="4" stroke-linejoin="round" fill="rgba(0, 145, 255, 0.08)"/>
+    <path d="M 12 28 L 50 48 L 50 90 L 12 70 Z" stroke="#0091FF" stroke-width="4" stroke-linejoin="round" fill="rgba(0, 145, 255, 0.04)"/>
+    <path d="M 50 48 L 88 28 L 88 70 L 50 90 Z" stroke="#0091FF" stroke-width="4" stroke-linejoin="round" fill="rgba(0, 145, 255, 0.12)"/>
+    <path d="M 38 26 L 43 21 M 57 26 L 62 21 M 52 18 L 48 30" stroke="#00A3FF" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M 24 46 C 21 44, 21 40, 25 39 C 25 36, 31 35, 33 38 C 36 36, 40 38, 38 42 C 41 44, 38 48, 35 48 C 33 51, 27 51, 25 48 Z" stroke="#00A3FF" stroke-width="1.8" fill="none" stroke-linejoin="round"/>
+    <circle cx="31" cy="56" r="3" stroke="#00A3FF" stroke-width="1.5" fill="none"/>
+    <path d="M 28 56 L 25 54 M 34 56 L 37 54 M 28 58 L 25 61 M 34 58 L 37 61 M 31 53 L 31 51" stroke="#00A3FF" stroke-width="1.5" stroke-linecap="round"/>
+    <text x="69" y="65" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="28" fill="#0091FF" text-anchor="middle">3</text>
+  </g>
+
+  <!-- C³ Typography -->
+  <text x="130" y="65" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="52" fill="#FFFFFF" letter-spacing="-1">C</text>
+  <text x="165" y="42" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="32" fill="#FFFFFF">3</text>
+
+  <!-- Verified Badge -->
+  <g transform="translate(198, 25)">
+    <circle cx="10" cy="10" r="9" fill="#0091FF"/>
+    <path d="M 6 10 L 9 13 L 14 7" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <!-- ESTD 2025 -->
+  <text x="460" y="42" font-family="system-ui, -apple-system, sans-serif" font-weight="600" font-size="10" fill="#9CA3AF" text-anchor="end" letter-spacing="1">ESTD 2025</text>
+
+  <!-- MINDLOOP Typography -->
+  <text x="130" y="105" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="36" fill="#0091FF" letter-spacing="1">MINDLOOP</text>
+
+  <!-- Tagline -->
+  <text x="130" y="140" font-family="system-ui, -apple-system, sans-serif" font-weight="700" font-size="20" fill="#FFFFFF" letter-spacing="0.5">Coding. Crashing. Crying.</text>
+</svg>

@@ -1,0 +1,16 @@
+{
+  "name": "C³ MindLoop",
+  "short_name": "MindLoop",
+  "description": "The ecosystem for Developer Education, AI, SaaS Products, Automation & Open Source.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#09090b",
+  "theme_color": "#8B5CF6",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
