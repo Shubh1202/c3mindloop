@@ -1,12 +1,12 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import type { SupportedLocale } from '../types';
+import type { SupportedLocale } from '../app/types';
 
-import en from '../../messages/en.json';
-import es from '../../messages/es.json';
-import de from '../../messages/de.json';
-import ja from '../../messages/ja.json';
+import en from '../app/messages/en.json';
+import es from '../app/messages/es.json';
+import de from '../app/messages/de.json';
+import ja from '../app/messages/ja.json';
 
 const translations: Record<SupportedLocale, Record<string, any>> = {
   en,

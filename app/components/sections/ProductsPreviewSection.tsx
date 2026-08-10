@@ -70,7 +70,7 @@ export const ProductsPreviewSection: React.FC = () => {
                 <Link
                   key={prod.id}
                   to={toolHref ?? '/tools'}
-                  onClick={(e) => {
+                  onClick={(e: React.MouseEvent<HTMLAnchorElement>) => {
                     if (!toolHref) {
                       e.preventDefault();
                       setSelectedProduct(prod);

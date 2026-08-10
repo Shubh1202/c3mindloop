@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { CommunityPage } from '../../views/CommunityPage';
+import { CommunityPage } from './../views/CommunityPage';
 
 export const metadata: Metadata = {
   title: 'Global Developer Community & Open Source Projects',

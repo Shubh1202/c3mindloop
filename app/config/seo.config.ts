@@ -141,7 +141,7 @@ export const seoConfig = {
       images: [defaultOgImage],
     },
   },
-} as const;
+};
 
 // ── JSON-LD Schemas ──────────────────────────────────────────────────────────
 

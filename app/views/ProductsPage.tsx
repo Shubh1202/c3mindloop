@@ -102,17 +102,17 @@ export const ProductsPage: React.FC = () => {
                 const toolHref = toolRoutes[prod.id];
 
                 return (
-                  <Link
-                    key={prod.id}
-                    to={toolHref ?? '/tools'}
-                    onClick={(e) => {
-                      if (!toolHref) {
-                        e.preventDefault();
-                        setSelectedProduct(prod);
-                      }
-                    }}
-                    className="py-8 px-2 sm:px-4 flex flex-col md:flex-row md:items-center justify-between gap-6 hover:bg-surface/50 transition-colors cursor-pointer group"
-                  >
+                    <Link
+                      key={prod.id}
+                      href={toolHref ?? '/tools'}
+                      onClick={(e: React.MouseEvent<HTMLAnchorElement>) => {
+                        if (!toolHref) {
+                          e.preventDefault();
+                          setSelectedProduct(prod);
+                        }
+                      }}
+                      className="py-8 px-2 sm:px-4 flex flex-col md:flex-row md:items-center justify-between gap-6 hover:bg-surface/50 transition-colors cursor-pointer group"
+                    >
                     {/* Left: Index + Icon + Details */}
                     <div className="flex items-start gap-5 max-w-3xl">
                       <span className="text-xs font-mono text-theme-muted pt-1 w-6 shrink-0">

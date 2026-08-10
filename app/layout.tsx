@@ -34,7 +34,7 @@ export const metadata: Metadata = {
     template: cfg.titleTemplate,
   },
   description: cfg.description,
-  keywords: cfg.keywords,
+  keywords: cfg.keywords ? [...cfg.keywords] : undefined, 
   authors: [{ name: 'C³ MindLoop Team' }],
   creator: cfg.siteName,
   publisher: cfg.siteName,
