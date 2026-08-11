@@ -22,7 +22,7 @@ export function AppClientShell({ children }: { children: React.ReactNode }) {
   return (
     <ThemeProvider>
       <I18nProvider>
-        <div className="min-h-screen bg-app text-theme-main font-sans selection:bg-[#1D9BF0]/30 selection:text-theme-main relative transition-colors duration-250">
+        <div className="min-h-screen bg-app text-theme-main font-sans selection:bg-[#1D9BF0]/30 selection:text-theme-main transition-colors duration-250">
           {/* Scroll-Driven Parallax and Rotating Cube Background Layer */}
           <BackgroundWatermark />
 
@@ -43,19 +43,21 @@ export function AppClientShell({ children }: { children: React.ReactNode }) {
           {/* Global Dynamic Grid Background */}
           <GridBackground />
 
-          {/* Navigation Bar */}
+          {/* Navigation Bar — must be direct child with no overflow ancestor */}
           <Navbar
             onOpenCmdPalette={() => setCmdPaletteOpen(true)}
             onReplayIntro={handleReplayIntro}
           />
 
-          {/* Page Content */}
+          {/* Page Content — overflow-x clipped here, below the sticky header */}
+          <div className="overflow-x-hidden">
           <main id="main-content" className="relative z-10">
             {children}
           </main>
 
           {/* Site Footer */}
           <Footer onReplayIntro={handleReplayIntro} />
+          </div>
 
           {/* Global Search Palette (Cmd+K) */}
           <CommandPalette

@@ -2,53 +2,137 @@
 
 import React from 'react';
 import { useLocation } from '../lib/router-compat';
+import { useTranslation } from '../lib/i18n';
 import { SEOHead } from '../components/layout/SEOHead';
+
+const privacySections = [
+  { title: 'section1Title', body: 'section1Body' },
+  { title: 'section2Title', body: 'section2Body' },
+  { title: 'section3Title', body: 'section3Body' },
+  { title: 'section4Title', body: 'section4Body' },
+  { title: 'section5Title', body: 'section5Body' },
+  { title: 'section6Title', body: 'section6Body' },
+  { title: 'section7Title', body: 'section7Body' },
+];
+
+const termsSections = [
+  { title: 'section1Title', body: 'section1Body' },
+  { title: 'section2Title', body: 'section2Body' },
+  { title: 'section3Title', body: 'section3Body' },
+  { title: 'section4Title', body: 'section4Body' },
+  { title: 'section5Title', body: 'section5Body' },
+];
 
 export const LegalPage: React.FC = () => {
   const location = useLocation();
+  const { t } = useTranslation();
   const isTerms = location.pathname.includes('terms');
+
+  if (isTerms) {
+    return (
+      <>
+        <SEOHead
+          title="Terms of Service — C³ MindLoop"
+          description="Terms of service and usage guidelines for C³ MindLoop developer tools and open-source platforms."
+          canonical={location.pathname}
+        />
+        <div className="pt-10 pb-16 bg-app text-theme-main relative z-10">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center space-y-4 mb-10">
+              <span className="text-xs font-mono uppercase tracking-widest text-[#1D9BF0] font-semibold block">
+                Legal
+              </span>
+              <h1 className="text-display text-theme-main">
+                {t('terms.title', 'Terms of Service')}
+              </h1>
+              <p className="text-xs font-mono text-theme-muted">
+                {t('terms.lastUpdated', 'Last updated: August 11, 2026')}
+              </p>
+              <p className="text-body text-theme-muted max-w-2xl mx-auto leading-relaxed">
+                {t('terms.heroSubtitle')}
+              </p>
+            </div>
+            <div className="space-y-8">
+              {termsSections.map(({ title, body }, idx) => (
+                <div
+                  key={idx}
+                  className="p-7 sm:p-9 rounded-xl bg-surface border border-theme-subtle space-y-3"
+                >
+                  <h2 className="text-h3 text-theme-main font-semibold">
+                    {t(`terms.${title}`)}
+                  </h2>
+                  <p className="text-body-small text-theme-muted leading-relaxed">
+                    {t(`terms.${body}`)}
+                  </p>
+                </div>
+              ))}
+            </div>
+            <p className="mt-12 text-center text-xs font-mono text-theme-muted">
+              Questions? Reach us at{' '}
+              <a href="mailto:hello@c3mindloop.dev" className="text-[#1D9BF0] hover:underline">
+                hello@c3mindloop.dev
+              </a>
+              {' '}or inspect our source on GitHub.
+            </p>
+          </div>
+        </div>
+      </>
+    );
+  }
 
   return (
     <>
       <SEOHead
-        title={isTerms ? 'Terms of Service — C³ MindLoop' : 'Privacy Policy — C³ MindLoop'}
-        description="Legal policies and terms of service for C³ MindLoop products, API platform, and community services."
+        title="Privacy Policy — C³ MindLoop | Zero Data Collection, Client-Side Processing"
+        description="C³ MindLoop's privacy policy. 100% client-side processing, zero data collection, offline developer utilities. Your code never leaves your browser."
         canonical={location.pathname}
       />
 
-      <div className="pt-32 pb-24 bg-app text-theme-main relative z-10">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-          <div className="text-center space-y-4">
+      <div className="pt-10 pb-16 bg-app text-theme-main relative z-10">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+
+          <div className="text-center space-y-4 mb-10">
             <span className="text-xs font-mono uppercase tracking-widest text-[#1D9BF0] font-semibold block">
-              Legal Compliance
+              Privacy First
             </span>
             <h1 className="text-display text-theme-main">
-              {isTerms ? 'Terms of Service' : 'Privacy Policy'}
+              {t('privacy.title', 'Privacy Policy')}
             </h1>
-            <p className="text-xs font-mono text-theme-muted">Last updated: August 1, 2026</p>
+            <p className="text-xs font-mono text-theme-muted">
+              {t('privacy.lastUpdated', 'Last updated: August 11, 2026')}
+            </p>
+            <p className="text-body text-theme-muted max-w-2xl mx-auto leading-relaxed">
+              {t('privacy.heroSubtitle')}
+            </p>
           </div>
 
-          <div className="p-8 sm:p-12 rounded-xl bg-surface border border-theme-subtle space-y-6 text-body-small text-theme-muted">
-            {isTerms ? (
-              <>
-                <h2 className="text-h3 text-theme-main">1. Acceptance of Terms</h2>
-                <p>By accessing C³ MindLoop services, APIs, or community platforms, you agree to comply with these terms.</p>
-                <h2 className="text-h3 text-theme-main">2. Developer API Usage</h2>
-                <p>API keys issued by C³ MindLoop must remain confidential. Rate limits apply to standard tier developer accounts.</p>
-                <h2 className="text-h3 text-theme-main">3. Open Source Licenses</h2>
-                <p>Open-source packages published by C³ MindLoop are distributed under Apache 2.0 or MIT licenses unless explicitly noted.</p>
-              </>
-            ) : (
-              <>
-                <h2 className="text-h3 text-theme-main">1. Data Minimization Commitment</h2>
-                <p>C³ MindLoop respects developer privacy. We do NOT sell user code snippets, prompts, or personal data to third parties.</p>
-                <h2 className="text-h3 text-theme-main">2. AI Model Telemetry</h2>
-                <p>Telemetry collected in MindLoop AI tools is aggregated anonymously solely to optimize AST reflection accuracy and model latency.</p>
-                <h2 className="text-h3 text-theme-main">3. Security Safeguards</h2>
-                <p>All communication channels are encrypted with TLS 1.3. API secrets are encrypted at rest with AES-256 GCM.</p>
-              </>
-            )}
+          <div className="space-y-8">
+            {privacySections.map(({ title, body }, idx) => (
+              <div
+                key={idx}
+                className="p-7 sm:p-9 rounded-xl bg-surface border border-theme-subtle space-y-3"
+              >
+                <h2 className="text-h3 text-theme-main font-semibold">
+                  {t(`privacy.${title}`)}
+                </h2>
+                <p className="text-body-small text-theme-muted leading-relaxed">
+                  {t(`privacy.${body}`)}
+                </p>
+              </div>
+            ))}
           </div>
+
+          <p className="mt-12 text-center text-xs font-mono text-theme-muted">
+            Questions? Reach us at{' '}
+            <a
+              href="mailto:hello@c3mindloop.dev"
+              className="text-[#1D9BF0] hover:underline"
+            >
+              hello@c3mindloop.dev
+            </a>
+            {' '}or inspect our source on GitHub.
+          </p>
+
         </div>
       </div>
     </>

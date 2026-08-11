@@ -37,6 +37,7 @@ export const GridBackground: React.FC = () => {
           alt=""
           aria-hidden="true"
           loading="eager"
+          fetchPriority="high"
           className="w-full h-full object-contain filter drop-shadow-[0_0_20px_rgba(29,155,240,0.4)]"
         />
       </motion.div>
@@ -59,6 +60,7 @@ export const GridBackground: React.FC = () => {
           src="/cube.svg"
           alt=""
           aria-hidden="true"
+          loading="lazy"
           className="w-full h-full object-contain filter drop-shadow-[0_0_20px_rgba(29,155,240,0.3)]"
         />
       </motion.div>

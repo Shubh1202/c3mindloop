@@ -40,32 +40,32 @@ export const AboutPage: React.FC = () => {
   return (
     <>
       <SEOHead
-        title="About C³ MindLoop — Coding. Crashing. Crying. The Developer Reality."
+        title="About C³ MindLoop - Coding. Crashing. Crying. The Developer Reality."
         description="C³ stands for Coding, Crashing, Crying. MindLoop is the developer cycle: Think, Build, Learn, Repeat. Free private browser utilities including client-side JSON Formatter, JWT Decoder, and Base64 Encoder. Zero server data logging."
         canonical="/about"
       />
 
-      <div className="pt-20 sm:pt-24 pb-24 bg-app text-theme-main relative z-10 overflow-hidden">
+      <div className="pt-16 pb-20 bg-app text-theme-main relative z-10 overflow-hidden">
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16 relative z-10">
           
           {/* Hero Header */}
-          <div className="max-w-4xl space-y-6">
-            <span className="text-xs font-mono uppercase tracking-widest text-[#1D9BF0] font-normal block">
-              {t('about.kicker', 'Our Story & Vision')}
+          <div className="text-center max-w-4xl mx-auto space-y-4">
+            <span className="text-xs font-mono uppercase tracking-widest text-[#1D9BF0] font-semibold block">
+              {t('about.kicker', 'Story & Philosophy')}
             </span>
-            <h1 className="text-display text-theme-main font-bold leading-tight">
+            <h1 className="text-display text-theme-main">
               {t('about.title', 'Redefining How Engineers Think, Learn, and Build')}
             </h1>
-            <p className="text-body-large text-theme-muted font-normal max-w-2xl">
+            <p className="text-body-large text-theme-muted font-normal max-w-2xl mx-auto">
               {t('about.subtitle', 'C³ MindLoop was born out of frustration with surface-level tutorials and brittle software tooling.')}
             </p>
           </div>
 
           {/* Brand Meaning Breakdown */}
-          <div className="space-y-6 pt-8 border-t border-theme-subtle">
-            <div className="space-y-2">
-              <h2 className="text-h1 text-theme-main font-bold">
+          <div className="space-y-6 pt-2 border-t border-theme-subtle">
+            <div className="space-y-2 mt-8">
+              <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-neutral-100">
                 {t('about.brandSectionTitle', 'Why C³ MindLoop?')}
               </h2>
               <p className="text-body text-theme-muted font-normal max-w-2xl">

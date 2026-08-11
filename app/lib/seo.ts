@@ -9,7 +9,7 @@ export interface SEOProps {
 }
 
 export const defaultSEO = {
-  title: 'C³ MindLoop — The Ecosystem for Developers, AI & SaaS',
+  title: 'C³ MindLoop - The Ecosystem for Developers, AI & SaaS',
   description: 'MindLoop represents the continuous loop of learning, problem-solving, innovation and building. The future ecosystem for Developer Education, AI, SaaS Products, Automation, and Open Source.',
   url: 'https://cmindloop.com',
   ogImage: '/logo.svg',

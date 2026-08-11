@@ -16,7 +16,7 @@ export const HomePage: React.FC = () => {
   return (
     <>
       <SEOHead
-        title="C³ MindLoop — Developer Utility Platform & Engineering Resources"
+        title="C³ MindLoop - Developer Utility Platform & Engineering Resources"
         description="A practical developer-first platform offering fast, privacy-focused browser utilities, developer tools, and real-world engineering resources. Coding. Crashing. Crying."
         canonical="/"
         extraSchema={{
@@ -25,7 +25,7 @@ export const HomePage: React.FC = () => {
         }}
       />
 
-      <main className="relative z-10">
+      <div>
         <Hero />
         <BrandPhilosophySection />
         <FeaturesSection />
@@ -34,7 +34,7 @@ export const HomePage: React.FC = () => {
         <RoadmapSection />
         <FAQSection />
         <CTASection />
-      </main>
+      </div>
     </>
   );
 };

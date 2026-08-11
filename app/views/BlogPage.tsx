@@ -45,7 +45,7 @@ export const BlogPage: React.FC = () => {
         canonical="/blog"
       />
 
-      <div className="pt-36 sm:pt-40 pb-28 relative z-10 bg-app">
+      <div className="pt-16 pb-20 relative z-10 bg-app">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
           
           {/* Header */}

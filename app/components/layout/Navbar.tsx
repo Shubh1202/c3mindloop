@@ -53,7 +53,7 @@ export const Navbar: React.FC<{
   ];
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-[#0e0e0e]/90 backdrop-blur-md border-b border-white/10 text-white shadow-lg transition-all duration-200 relative pointer-events-auto">
+    <header className="sticky top-0 z-50 w-full bg-[#0e0e0e]/90 backdrop-blur-md border-b border-white/10 text-white shadow-lg transition-all duration-200 pointer-events-auto">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16 relative z-50 pointer-events-auto">
         {/* Official Brand Logo */}
         <Link to="/" className="flex items-center group transition-transform duration-200 hover:opacity-90 relative z-50 pointer-events-auto">

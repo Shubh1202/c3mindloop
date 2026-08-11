@@ -53,6 +53,7 @@ export const FeaturesSection: React.FC = () => {
         <img
           src="/cube.svg"
           alt=""
+          loading="lazy"
           className="w-full h-full object-contain animate-[spin_50s_linear_infinite] pointer-events-none select-none"
         />
       </div>

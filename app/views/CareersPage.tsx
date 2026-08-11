@@ -37,7 +37,7 @@ export const CareersPage: React.FC = () => {
         canonical="/careers"
       />
 
-      <div className="pt-36 sm:pt-40 pb-24 bg-app text-theme-main relative z-10">
+      <div className="pt-16 pb-20 bg-app text-theme-main relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
           <div className="text-center max-w-4xl mx-auto space-y-6">
             <span className="text-xs font-semibold uppercase tracking-widest text-[#1D9BF0] block">

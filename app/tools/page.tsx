@@ -2,15 +2,26 @@ import type { Metadata } from 'next';
 import { ProductsPage } from './../views/ProductsPage';
 
 export const metadata: Metadata = {
-  title: 'Developer Utilities & VS Code Extension',
-  description: 'Explore C³ MindLoop Developer Tools: Office Editor VS Code Extension, JSON Formatter, Base64 Encoder, JWT Inspector, Hash Generator, and Regex Tester.',
-  alternates: {
-    canonical: 'https://c3mindloop.dev/tools',
-  },
+  title: 'Free Developer Utilities - JSON Formatter, JWT Decoder, Base64 Encoder',
+  description:
+    'Browse all C³ MindLoop free developer tools: JSON Formatter, Base64 Encoder, JWT Decoder and more. 100% client-side, no login, no data collection.',
+  keywords: [
+    'free developer tools', 'online developer utilities', 'browser developer tools',
+    'json formatter online', 'jwt decoder online', 'base64 encoder online',
+    'client side developer tools', 'developer tools no login', 'private dev tools',
+    'C³ MindLoop tools', 'ccube dev tools', 'c3mindloop utilities',
+  ],
+  alternates: { canonical: 'https://ccube.dev/tools' },
   openGraph: {
-    title: 'Developer Utilities & VS Code Extension | C³ MindLoop',
-    description: 'Explore C³ MindLoop Developer Tools: Office Editor VS Code Extension, JSON Formatter, Base64 Encoder, JWT Inspector, Hash Generator, and Regex Tester.',
-    url: 'https://c3mindloop.dev/tools',
+    title: 'Free Developer Utilities - JSON, JWT, Base64 | C³ MindLoop',
+    description:
+      'Browse all C³ MindLoop free developer tools: JSON Formatter, Base64 Encoder, JWT Decoder and more. 100% client-side, no data collection.',
+    url: 'https://ccube.dev/tools',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Free Developer Utilities | C³ MindLoop',
+    description: 'JSON Formatter, JWT Decoder, Base64 Encoder - all free, 100% client-side.',
   },
 };
 

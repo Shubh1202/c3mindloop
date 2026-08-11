@@ -7,6 +7,8 @@ import { Link } from '../../lib/router-compat';
 import { WatermarkBrandLayer } from '../ui/WatermarkBrandLayer';
 import { useTranslation } from '../../lib/i18n';
 
+const CYCLE_WORDS = ['Repeat.', 'Ship.', 'Debug.', 'Iterate.', 'Deploy.'];
+
 export const Hero: React.FC = () => {
   const { t } = useTranslation();
   const defaultSample = `{\n  "platform": "C3 MindLoop",\n  "tagline": "Coding. Crashing. Crying.",\n  "privacy": "100% Client-Side Processing",\n  "version": "2.4.0",\n  "utilities": ["JSON Formatter", "Base64 Tool", "JWT Inspector", "Regex Tester"]\n}`;
@@ -15,6 +17,29 @@ export const Hero: React.FC = () => {
   const [copied, setCopied] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [statusMsg, setStatusMsg] = useState<string>('Valid JSON • Ready');
+  const [wordIdx, setWordIdx] = useState(0);
+  const [displayWord, setDisplayWord] = useState(CYCLE_WORDS[0]);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [charIdx, setCharIdx] = useState(CYCLE_WORDS[0].length);
+
+  React.useEffect(() => {
+    const full = CYCLE_WORDS[wordIdx];
+    const delay = isDeleting ? 60 : charIdx === full.length ? 1800 : 80;
+    const timer = setTimeout(() => {
+      if (!isDeleting && charIdx === full.length) {
+        setIsDeleting(true);
+      } else if (isDeleting && charIdx === 0) {
+        const next = (wordIdx + 1) % CYCLE_WORDS.length;
+        setWordIdx(next);
+        setIsDeleting(false);
+      } else {
+        const next = isDeleting ? charIdx - 1 : charIdx + 1;
+        setCharIdx(next);
+        setDisplayWord(CYCLE_WORDS[wordIdx].slice(0, next));
+      }
+    }, delay);
+    return () => clearTimeout(timer);
+  }, [charIdx, isDeleting, wordIdx]);
 
   const formatJson = () => {
     try {
@@ -70,13 +95,16 @@ export const Hero: React.FC = () => {
 
   return (
     <section className="relative pt-16 pb-16 sm:pt-20 lg:pt-24 lg:pb-20 bg-transparent border-b border-theme-subtle overflow-hidden">
-      {/* C3 Cube Watermark Background */}
-      <WatermarkBrandLayer
-        position="top-right"
-        size={520}
-        opacityClass="opacity-[0.08] dark:opacity-20"
-        animateSpin={false}
-      />
+      {/* Ambient radial glow blobs */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
+        <div className="absolute -top-32 -left-32 w-[600px] h-[600px] rounded-full bg-gradient-to-tr from-cyan-500/10 via-purple-500/5 to-transparent blur-3xl animate-pulse" />
+        <div className="absolute top-1/2 right-0 w-[400px] h-[400px] rounded-full bg-gradient-to-bl from-sky-500/8 via-indigo-500/5 to-transparent blur-3xl animate-pulse" style={{ animationDelay: '1.5s' }} />
+      </div>
+
+      {/* Floating cube watermark */}
+      <div className="pointer-events-none absolute top-8 right-8 opacity-[0.07] dark:opacity-[0.12] animate-float" aria-hidden>
+        <img src="/cube.svg" alt="" width={220} height={220} />
+      </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
@@ -103,7 +131,11 @@ export const Hero: React.FC = () => {
             >
               <h1 className="text-display text-theme-main font-bold leading-tight">
                 {t('hero.titleLine1', 'Think. Build.')}<br />
-                {t('hero.titleLine2', 'Learn.')} <span className="text-sky-400 font-semibold">{t('hero.titleHighlight', 'Repeat.')}</span>
+                {t('hero.titleLine2', 'Learn.')}{' '}
+                <span className="text-sky-400 font-semibold inline-flex items-baseline gap-[2px]">
+                  {displayWord}
+                  <span className="animate-cursor-blink text-sky-300 font-thin">|</span>
+                </span>
               </h1>
             </motion.div>
 
@@ -121,14 +153,15 @@ export const Hero: React.FC = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0.18 }}
             >
-              {/* Only 'Coding. Crashing. Crying.' in a Stylized Pill */}
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-950/60 border border-sky-800/60 font-mono text-xs text-sky-300 mb-3">
-                <span className="w-1.5 h-1.5 rounded-full bg-sky-400 animate-pulse"></span>
-                <span>{t('hero.pill', 'Coding. Crashing. Crying.')}</span>
+              {/* Terminal prompt — replaces pill badge */}
+              <div className="inline-flex items-center gap-1.5 bg-neutral-900/80 border border-neutral-800 rounded-md px-3 py-1.5 font-mono text-xs mb-3">
+                <span className="text-emerald-400 select-none">$</span>
+                <span className="text-neutral-500">status:</span>
+                <span className="text-neutral-300">{t('hero.pill', 'Coding. Crashing. Crying.')}</span>
               </div>
 
               {/* Plain Text Dev Reality Equation (No Pill, No Slashes) */}
-              <div className="font-mono text-xs text-neutral-400 mb-8 flex items-center gap-1.5">
+              <div className="font-mono text-xs text-neutral-400 mb-8 flex flex-wrap items-center gap-1.5">
                 <span className="text-amber-400 font-medium">{t('hero.equationA', 'Client Demand')}</span>
                 <span className="text-sky-400">+</span>
                 <span className="text-amber-400 font-medium">{t('hero.equationB', 'Boss Pressure')}</span>
@@ -142,11 +175,11 @@ export const Hero: React.FC = () => {
               initial={false}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0.2 }}
-              className="flex items-center gap-8 pt-4 border-t border-theme-subtle"
+              className="flex flex-wrap items-center gap-4 sm:gap-8 pt-4 border-t border-theme-subtle"
             >
               <Link
                 to="/tools"
-                className="inline-flex items-center gap-2 text-sm font-medium text-theme-main hover:text-sky-400 transition-colors group cursor-pointer"
+                className="btn-shimmer inline-flex items-center gap-2 text-sm font-medium text-theme-main hover:text-sky-400 transition-colors group cursor-pointer"
               >
                 <span>{t('hero.ctaPrimary', 'Explore Developer Tools')}</span>
                 <ArrowRight className="w-4 h-4 text-sky-400 group-hover:translate-x-1.5 transition-transform" />
@@ -170,7 +203,7 @@ export const Hero: React.FC = () => {
             className="lg:col-span-5 space-y-4"
           >
             {/* Utility Card Wrapper */}
-            <div className="bg-neutral-900 dark:bg-neutral-950 border border-neutral-800 rounded-lg overflow-hidden shadow-2xl font-mono text-xs">
+            <div className="animate-glow-pulse bg-neutral-900 dark:bg-neutral-950 border border-cyan-500/30 rounded-lg overflow-hidden shadow-2xl font-mono text-xs">
               
               {/* Utility Header */}
               <div className="px-4 py-3 bg-neutral-950 border-b border-neutral-800 flex items-center justify-between">

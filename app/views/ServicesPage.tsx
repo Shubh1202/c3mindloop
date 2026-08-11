@@ -59,7 +59,7 @@ export const ServicesPage: React.FC = () => {
         canonical="/services"
       />
 
-      <div className="pt-36 sm:pt-40 pb-24 bg-app text-theme-main relative z-10">
+      <div className="pt-16 pb-20 bg-app text-theme-main relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-20">
           
           {/* Header */}

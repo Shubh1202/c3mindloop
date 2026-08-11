@@ -4,6 +4,15 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Code2, Brain, Sparkles, X } from 'lucide-react';
 
+const LS_KEY = 'c3_last_intro_date';
+const today = () => new Date().toISOString().slice(0, 10);
+
+// Random initial cube rotation — new values on every page load
+const randRot = () => Math.floor(Math.random() * 360);
+const INIT_RX = randRot();
+const INIT_RY = randRot();
+const INIT_RZ = randRot();
+
 interface BrandIntroProps {
   onComplete?: () => void;
   forceShow?: boolean;
@@ -15,14 +24,19 @@ export const BrandIntro: React.FC<BrandIntroProps> = ({ onComplete, forceShow = 
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
 
   useEffect(() => {
-    // Check for reduced motion preference
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
     setPrefersReducedMotion(mediaQuery.matches);
 
-    // Check session storage
-    const hasSeen = sessionStorage.getItem('c3_intro_seen');
-
     if (forceShow) {
+      // Manual replay (e.g. from footer/navbar button) — always show
+      setIsVisible(true);
+      return;
+    }
+
+    // Daily-once: show only if last played date != today
+    const lastDate = localStorage.getItem(LS_KEY);
+    if (lastDate !== today()) {
+      localStorage.setItem(LS_KEY, today());
       setIsVisible(true);
     } else if (onComplete) {
       onComplete();
@@ -112,11 +126,11 @@ export const BrandIntro: React.FC<BrandIntroProps> = ({ onComplete, forceShow = 
             <motion.div
               animate={
                 prefersReducedMotion
-                  ? { rotateY: 0, rotateX: 0 }
+                  ? { rotateY: INIT_RY, rotateX: INIT_RX }
                   : {
-                      rotateX: [20, 380],
-                      rotateY: [0, 360],
-                      rotateZ: [0, 0],
+                      rotateX: [INIT_RX, INIT_RX + 360],
+                      rotateY: [INIT_RY, INIT_RY + 360],
+                      rotateZ: [INIT_RZ, INIT_RZ],
                     }
               }
               transition={{
