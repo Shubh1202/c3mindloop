@@ -66,7 +66,7 @@ export const CommunityPage: React.FC = () => {
             <span className="text-xs font-semibold uppercase tracking-widest text-[#1D9BF0] block">
               {t('community.kicker', 'Developer Movement')}
             </span>
-            <h1 className="text-display text-theme-main">
+            <h1 className="text-h1 text-theme-main">
               "{t('community.heroQuote', 'Coding. Crashing. Crying.')}"
             </h1>
             <p className="text-xs sm:text-sm text-[#1D9BF0] font-medium">

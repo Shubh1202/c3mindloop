@@ -54,7 +54,7 @@ export const AboutPage: React.FC = () => {
             <span className="text-xs font-mono uppercase tracking-widest text-[#1D9BF0] font-semibold block">
               {t('about.kicker', 'Story & Philosophy')}
             </span>
-            <h1 className="text-display text-theme-main">
+            <h1 className="text-h1 text-theme-main">
               {t('about.title', 'Redefining How Engineers Think, Learn, and Build')}
             </h1>
             <p className="text-body-large text-theme-muted font-normal max-w-2xl mx-auto">

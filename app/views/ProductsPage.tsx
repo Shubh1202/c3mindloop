@@ -52,7 +52,7 @@ export const ProductsPage: React.FC = () => {
             <span className="text-xs font-mono uppercase tracking-widest text-[#1D9BF0] font-semibold block">
               Developer Platform
             </span>
-            <h1 className="text-display text-theme-main">
+            <h1 className="text-h1 text-theme-main">
               Featured Tools & Extension
             </h1>
             <p className="text-body-large text-theme-muted max-w-2xl mx-auto">

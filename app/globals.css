@@ -33,8 +33,11 @@ html.light {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
-    scroll-behavior: smooth;
     transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  body {
+    scroll-behavior: smooth;
   }
 
   code, pre, .font-mono {

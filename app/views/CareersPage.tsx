@@ -43,7 +43,7 @@ export const CareersPage: React.FC = () => {
             <span className="text-xs font-semibold uppercase tracking-widest text-[#1D9BF0] block">
               {t('careers.kicker', 'We Are Hiring')}
             </span>
-            <h1 className="text-display text-theme-main">
+            <h1 className="text-h1 text-theme-main">
               {t('careers.title', 'Shape the Next Generation of Developer Tools')}
             </h1>
             <p className="text-body-large text-theme-muted max-w-2xl mx-auto">

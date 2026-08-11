@@ -42,7 +42,7 @@ export const LegalPage: React.FC = () => {
               <span className="text-xs font-mono uppercase tracking-widest text-[#1D9BF0] font-semibold block">
                 Legal
               </span>
-              <h1 className="text-display text-theme-main">
+              <h1 className="text-h1 text-theme-main">
                 {t('terms.title', 'Terms of Service')}
               </h1>
               <p className="text-xs font-mono text-theme-muted">
@@ -95,7 +95,7 @@ export const LegalPage: React.FC = () => {
             <span className="text-xs font-mono uppercase tracking-widest text-[#1D9BF0] font-semibold block">
               Privacy First
             </span>
-            <h1 className="text-display text-theme-main">
+            <h1 className="text-h1 text-theme-main">
               {t('privacy.title', 'Privacy Policy')}
             </h1>
             <p className="text-xs font-mono text-theme-muted">
