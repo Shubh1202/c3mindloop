@@ -43,6 +43,7 @@ export const WatermarkBrandLayer: React.FC<WatermarkBrandLayerProps> = ({
         fill
         className={`object-contain ${opacityClass} pointer-events-none select-none`}
         priority={false}
+        loading="eager"
         unoptimized
       />
     </div>

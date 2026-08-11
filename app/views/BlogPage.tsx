@@ -49,7 +49,7 @@ export const BlogPage: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
           
           {/* Header */}
-          <div className="text-center max-w-4xl mx-auto space-y-6">
+          <div className="text-center max-w-3xl mx-auto space-y-6">
             <span className="text-xs font-mono uppercase tracking-widest text-[#1D9BF0] font-semibold block">
               {t('blog.kicker', 'Engineering Insights')}
             </span>

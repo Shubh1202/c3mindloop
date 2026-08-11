@@ -40,6 +40,15 @@ const formatted = JSON.stringify(JSON.parse(input), null, 2);`
     techStack: ['Web Crypto API', 'SubtleCrypto', 'Zero Server Logs']
   },
   {
+    id: 'curl-converter',
+    nameKey: 'cURL to Code Converter',
+    descKey: 'Convert cURL commands to JavaScript Fetch, Axios, Node.js, Python requests, Go, and PHP snippets instantly in your browser.',
+    status: 'live',
+    category: 'utilities',
+    icon: 'Terminal',
+    techStack: ['cURL Parser', 'Multi-Language', 'Local Processing']
+  },
+  {
     id: 'regex-tester',
     nameKey: 'Regex Matcher & Syntax Tester',
     descKey: 'Test Regular Expression patterns against input text with live match highlighting and group extraction.',

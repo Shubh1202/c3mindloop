@@ -428,6 +428,28 @@
       "feat3Title": "File to Data URI",
       "feat3Desc": "Upload any file to instantly generate a Base64-encoded Data URI, ready for embedding in HTML, CSS, or API payloads."
     },
+    "curlConverter": {
+      "pageTitle": "cURL to Code Converter",
+      "pageBadge": "100% Client-Side - Local Browser Processing",
+      "breadcrumb": "cURL Converter",
+      "breadcrumbParent": "Developer Tools",
+      "inputLabel": "cURL Command Input",
+      "inputPlaceholder": "Paste your cURL command here (curl -X POST ...)\n",
+      "loadSample": "Load Sample",
+      "clear": "Clear",
+      "outputLabel": "Generated Code",
+      "outputPlaceholder": "Paste a cURL command above to generate code",
+      "copyCode": "Copy Code",
+      "copied": "Copied!",
+      "errorInvalid": "Could not parse cURL command. Ensure it starts with 'curl' and contains a valid URL.",
+      "privacyNote": "Local browser processing - No data sent to any server",
+      "feat1Title": "100% Client-Side Parsing",
+      "feat1Desc": "All cURL parsing and code generation runs entirely in your browser using native JavaScript. No command data is ever transmitted.",
+      "feat2Title": "7 Language Targets",
+      "feat2Desc": "Convert to JS Fetch, Axios, Node.js node-fetch, Python requests, Go net/http, PHP cURL, and PHP Guzzle in one click.",
+      "feat3Title": "Full Flag Support",
+      "feat3Desc": "Handles -X method, -H headers, -d data, --data-raw, --data-binary, and -u basic auth flags with correct output mapping."
+    },
     "jwtInspector": {
       "pageTitle": "JWT Inspector & Token Decoder",
       "pageBadge": "100% Client-Side • Local Browser Processing",

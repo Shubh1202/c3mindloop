@@ -125,6 +125,34 @@ export const seoConfig = {
     },
   },
 
+  curlConverter: {
+    title: 'cURL to Code Converter | Fetch, Axios, Python | C³ MindLoop',
+    description:
+      'Free online cURL to code converter. Convert cURL commands to JavaScript Fetch, Axios, Node.js, Python requests, Go, and PHP - 100% client-side, zero data transmission.',
+    keywords: [
+      'curl to code', 'curl converter', 'curl to javascript', 'curl to python',
+      'curl to fetch', 'curl to axios', 'curl to node', 'curl to go',
+      'curl to php', 'convert curl command', 'curl command converter online',
+      'curl to requests python', 'curl to guzzle', 'curl snippet generator',
+      'curl converter online free', 'curl to code snippet', 'api curl converter',
+      'C³ MindLoop curl converter', 'ccube curl tool',
+    ],
+    canonical: `${BASE_URL}/tools/curl-converter`,
+    openGraph: {
+      title: 'cURL to Code Converter | Fetch, Axios, Python | C³ MindLoop',
+      description:
+        'Convert cURL commands to JavaScript Fetch, Axios, Python, Go, PHP - 100% client-side, zero data transmission.',
+      url: `${BASE_URL}/tools/curl-converter`,
+      images: [{ url: defaultOgImage, width: 1200, height: 630, alt: 'cURL Converter Tool - C³ MindLoop' }],
+    },
+    twitter: {
+      title: 'cURL to Code Converter - Free | C³ MindLoop',
+      description:
+        'Convert cURL to Fetch, Axios, Python, Go, PHP - 100% client-side, no data sent to server.',
+      images: [defaultOgImage],
+    },
+  },
+
   jwtInspector: {
     title: 'JWT Decoder & Inspector - Free Online Tool',
     description:
@@ -251,6 +279,28 @@ export const jwtInspectorSchema = {
     'Token expiration live validation',
     'Issued-at and expiry timestamp display',
     'Zero data transmission - token never leaves browser',
+  ],
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+  publisher: { '@type': 'Organization', name: 'C³ MindLoop', url: BASE_URL },
+};
+
+export const curlConverterSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: 'cURL to Code Converter',
+  url: `${BASE_URL}/tools/curl-converter`,
+  applicationCategory: 'WebApplication',
+  operatingSystem: 'All Web Browsers',
+  description:
+    'Free online cURL to code converter. Convert cURL commands to JavaScript Fetch, Axios, Node.js, Python, Go, and PHP - 100% client-side.',
+  featureList: [
+    'cURL to JavaScript Fetch API',
+    'cURL to Axios',
+    'cURL to Node.js node-fetch',
+    'cURL to Python requests',
+    'cURL to Go net/http',
+    'cURL to PHP cURL and Guzzle',
+    'Zero data transmission - fully private',
   ],
   offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
   publisher: { '@type': 'Organization', name: 'C³ MindLoop', url: BASE_URL },

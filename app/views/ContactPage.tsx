@@ -37,9 +37,6 @@ export const ContactPage: React.FC = () => {
           
           {/* Authentic Header */}
           <div className="text-center max-w-3xl mx-auto space-y-6">
-            <div className="flex justify-center mb-6">
-              <Logo variant="full" showTagline />
-            </div>
             <span className="text-xs font-mono uppercase tracking-widest text-[#1D9BF0] font-semibold block">
               {t('contact.kicker', 'Get In Touch')}
             </span>

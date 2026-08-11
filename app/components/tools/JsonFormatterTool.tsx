@@ -12,7 +12,9 @@ import {
   Maximize2,
   Minimize2,
   Info,
-  AlignLeft
+  AlignLeft,
+  Columns2,
+  Rows2,
 } from 'lucide-react';
 import { JsonTreeView } from './JsonTreeView';
 
@@ -51,6 +53,7 @@ export const JsonFormatterTool: React.FC = () => {
   const [errorLine, setErrorLine] = useState<number | null>(null);
   const [copied, setCopied] = useState(false);
   const [isFullScreen, setIsFullScreen] = useState(false);
+  const [isSideBySide, setIsSideBySide] = useState(true);
   const [isTyping, setIsTyping] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -362,10 +365,28 @@ export const JsonFormatterTool: React.FC = () => {
             <span>{copied ? 'Copied' : 'Copy'}</span>
           </button>
 
+          {/* Layout toggle — desktop only */}
+          <div className="hidden lg:flex items-center bg-neutral-950 p-1 rounded border border-neutral-800">
+            <button
+              onClick={() => setIsSideBySide(true)}
+              title="Side-by-Side View"
+              className={`p-1 rounded transition-colors cursor-pointer ${isSideBySide ? 'bg-[#1D9BF0] text-white' : 'text-neutral-400 hover:text-white'}`}
+            >
+              <Columns2 className="w-3.5 h-3.5" />
+            </button>
+            <button
+              onClick={() => setIsSideBySide(false)}
+              title="Stacked View"
+              className={`p-1 rounded transition-colors cursor-pointer ${!isSideBySide ? 'bg-[#1D9BF0] text-white' : 'text-neutral-400 hover:text-white'}`}
+            >
+              <Rows2 className="w-3.5 h-3.5" />
+            </button>
+          </div>
+
           <button
             onClick={() => setIsFullScreen(!isFullScreen)}
             title={isFullScreen ? 'Exit Full Screen' : 'Full Screen'}
-            className="p-1.5 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-300 flex items-center gap-1 transition-colors"
+            className="p-1.5 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-300 flex items-center gap-1 transition-colors cursor-pointer"
           >
             {isFullScreen ? <Minimize2 className="w-3.5 h-3.5" /> : <Maximize2 className="w-3.5 h-3.5" />}
           </button>
@@ -373,7 +394,11 @@ export const JsonFormatterTool: React.FC = () => {
       </div>
 
       {/* Main Dual Split Pane Area */}
-      <div className={`grid grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-neutral-800 ${isFullScreen ? 'flex-1 overflow-hidden' : 'min-h-[480px]'}`}>
+      <div className={`grid divide-neutral-800 ${
+        isSideBySide
+          ? 'grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x'
+          : 'grid-cols-1 divide-y'
+      } ${isFullScreen ? 'flex-1 overflow-hidden' : 'min-h-[480px]'}`}>
         
         {/* Left Pane: Raw JSON Input */}
         <div className={`flex flex-col bg-neutral-950 p-3 sm:p-4 space-y-2 ${isFullScreen ? 'overflow-y-auto' : ''}`}>

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useCallback, useEffect } from 'react';
-import { Copy, Check, Trash2, ShieldCheck, ShieldAlert, ShieldOff, Clock, Info, AlertCircle, Maximize2, Minimize2 } from 'lucide-react';
+import { Copy, Check, Trash2, ShieldCheck, ShieldAlert, ShieldOff, Clock, Info, AlertCircle, Maximize2, Minimize2, Columns2, Rows2 } from 'lucide-react';
 import { useTranslation } from '../../lib/i18n';
 
 const SAMPLE_JWT =
@@ -77,6 +77,7 @@ export const JwtInspectorTool: React.FC = () => {
   const [copiedHeader, setCopiedHeader] = useState(false);
   const [copiedPayload, setCopiedPayload] = useState(false);
   const [isFullScreen, setIsFullScreen] = useState(false);
+  const [isSideBySide, setIsSideBySide] = useState(true);
 
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => { if (e.key === 'Escape' && isFullScreen) setIsFullScreen(false); };
@@ -144,146 +145,162 @@ export const JwtInspectorTool: React.FC = () => {
   return (
     <div className={`bg-neutral-950 border border-neutral-800 font-sans text-neutral-100 flex flex-col ${isFullScreen ? 'fixed inset-0 z-[9999] overflow-hidden' : 'w-full rounded-lg shadow-2xl'}`}>
 
-      {/* Token Input — toolbar starts here per Single Heading Policy */}
-      <div className={`p-3 sm:p-4 border-b border-neutral-800 space-y-2 ${isFullScreen ? 'sticky top-0 z-[10000] bg-neutral-950' : ''}`}>
-        <div className="flex items-center justify-between text-xs font-mono text-neutral-400">
-          <span className="font-semibold text-neutral-300">{t('tools.jwtInspector.inputLabel')}</span>
-          <div className="flex items-center gap-2">
-            <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded border text-[11px] font-mono font-semibold ${statusBg} ${statusColor}`}>
-              <StatusIcon className="w-3 h-3" />
-              <span>{statusLabel}</span>
-            </div>
+      {/* Toolbar */}
+      <div className={`px-3 py-2.5 bg-neutral-900 border-b border-neutral-800 flex flex-wrap items-center justify-between gap-2 text-xs font-mono ${isFullScreen ? 'sticky top-0 z-[10000]' : ''}`}>
+        <span className="font-semibold text-neutral-300">{t('tools.jwtInspector.inputLabel')}</span>
+        <div className="flex items-center gap-2">
+          <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded border text-[11px] font-mono font-semibold ${statusBg} ${statusColor}`}>
+            <StatusIcon className="w-3 h-3" />
+            <span>{statusLabel}</span>
+          </div>
+          <button onClick={() => handleDecode(SAMPLE_JWT)} className="px-2.5 py-1.5 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-300 transition-colors cursor-pointer">
+            {t('tools.jwtInspector.inputSample')}
+          </button>
+          <button onClick={() => { setToken(''); setDecoded(null); setError(null); }} className="px-2.5 py-1.5 rounded bg-neutral-800 hover:bg-red-950 hover:text-red-300 text-neutral-400 transition-colors flex items-center gap-1 cursor-pointer">
+            <Trash2 className="w-3 h-3" />
+            {t('tools.jwtInspector.inputClear')}
+          </button>
+
+          {/* Layout toggle - desktop only */}
+          <div className="hidden lg:flex items-center bg-neutral-950 p-1 rounded border border-neutral-800">
             <button
-              onClick={() => handleDecode(SAMPLE_JWT)}
-              className="px-2.5 py-1 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-300 transition-colors cursor-pointer"
+              onClick={() => setIsSideBySide(true)}
+              title="Side-by-Side View"
+              className={`p-1 rounded transition-colors cursor-pointer ${isSideBySide ? 'bg-[#1D9BF0] text-white' : 'text-neutral-400 hover:text-white'}`}
             >
-              {t('tools.jwtInspector.inputSample')}
+              <Columns2 className="w-3.5 h-3.5" />
             </button>
             <button
-              onClick={() => { setToken(''); setDecoded(null); setError(null); }}
-              className="px-2.5 py-1 rounded bg-neutral-800 hover:bg-red-950 hover:text-red-300 text-neutral-400 transition-colors flex items-center gap-1 cursor-pointer"
+              onClick={() => setIsSideBySide(false)}
+              title="Stacked View"
+              className={`p-1 rounded transition-colors cursor-pointer ${!isSideBySide ? 'bg-[#1D9BF0] text-white' : 'text-neutral-400 hover:text-white'}`}
             >
-              <Trash2 className="w-3 h-3" />
-              {t('tools.jwtInspector.inputClear')}
-            </button>
-            <button
-              onClick={() => setIsFullScreen(!isFullScreen)}
-              title={isFullScreen ? 'Exit Full Screen' : 'Full Screen'}
-              className="p-1.5 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-300 transition-colors cursor-pointer"
-            >
-              {isFullScreen ? <Minimize2 className="w-3 h-3" /> : <Maximize2 className="w-3 h-3" />}
+              <Rows2 className="w-3.5 h-3.5" />
             </button>
           </div>
+
+          <button
+            onClick={() => setIsFullScreen(!isFullScreen)}
+            title={isFullScreen ? 'Exit Full Screen' : 'Full Screen'}
+            className="p-1.5 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-300 transition-colors cursor-pointer"
+          >
+            {isFullScreen ? <Minimize2 className="w-3 h-3" /> : <Maximize2 className="w-3 h-3" />}
+          </button>
         </div>
-        <textarea
-          value={token}
-          onChange={(e) => handleDecode(e.target.value)}
-          placeholder={t('tools.jwtInspector.inputPlaceholder')}
-          spellCheck={false}
-          className="w-full p-3 font-mono text-xs bg-neutral-900/90 text-neutral-100 border border-neutral-800 rounded focus:border-[#1D9BF0] focus:outline-none resize-y leading-relaxed transition-colors placeholder-neutral-600 min-h-[80px] max-h-[300px]"
-        />
-        {error && (
-          <div className="flex items-start gap-2 p-3 bg-red-950/40 border border-red-900/80 rounded text-xs text-red-300 font-mono">
-            <AlertCircle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
-            <span>{error}</span>
-          </div>
-        )}
       </div>
 
-      {/* 3-Panel Output */}
-      <div className={`grid grid-cols-1 lg:grid-cols-3 divide-y lg:divide-y-0 lg:divide-x divide-neutral-800 ${isFullScreen ? 'flex-1 overflow-hidden' : 'min-h-[320px]'}`}>
+      {/* Main layout: side-by-side or stacked */}
+      <div className={`${
+        isSideBySide
+          ? 'grid grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-neutral-800'
+          : 'flex flex-col'
+      } ${isFullScreen ? 'flex-1 overflow-hidden' : ''}`}>
 
-        {/* Panel 1: Header */}
-        <div className={`flex flex-col p-3 sm:p-4 space-y-2 ${isFullScreen ? 'overflow-y-auto' : ''}`}>
-          <div className="flex items-center justify-between text-xs font-mono pb-1 border-b border-neutral-900">
-            <span className="font-semibold text-[#1D9BF0]">{t('tools.jwtInspector.headerLabel')}</span>
-            {decoded && (
-              <button
-                onClick={() => handleCopy(JSON.stringify(decoded.header, null, 2), 'header')}
-                className="flex items-center gap-1 text-neutral-400 hover:text-neutral-200 transition-colors cursor-pointer"
-              >
-                {copiedHeader ? <Check className="w-3 h-3 text-sky-400" /> : <Copy className="w-3 h-3" />}
-                <span>{copiedHeader ? t('tools.jwtInspector.copied') : t('tools.jwtInspector.copyHeader')}</span>
-              </button>
-            )}
+        {/* Input pane */}
+        <div className={`flex flex-col p-3 sm:p-4 space-y-2 ${
+          isFullScreen && isSideBySide ? 'overflow-y-auto' : ''
+        }`}>
+          <div className="text-xs font-mono text-neutral-400 pb-1 border-b border-neutral-900">
+            <span className="font-semibold text-neutral-300">Encoded JWT Token</span>
           </div>
-          <div className="flex-1 bg-neutral-900/90 border border-neutral-800 rounded overflow-auto min-h-[200px]">
-            {decoded ? (
-              <pre
-                className="font-mono text-xs p-3 leading-relaxed text-neutral-200"
-                dangerouslySetInnerHTML={{ __html: highlightJson(decoded.header) }}
-              />
-            ) : (
-              <div className="p-4 text-xs text-neutral-600 font-mono italic">
-                {token ? '...' : 'Awaiting token input'}
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Panel 2: Payload */}
-        <div className={`flex flex-col p-3 sm:p-4 space-y-2 ${isFullScreen ? 'overflow-y-auto' : ''}`}>
-          <div className="flex items-center justify-between text-xs font-mono pb-1 border-b border-neutral-900">
-            <span className="font-semibold text-[#1D9BF0]">{t('tools.jwtInspector.payloadLabel')}</span>
-            {decoded && (
-              <button
-                onClick={() => handleCopy(JSON.stringify(decoded.payload, null, 2), 'payload')}
-                className="flex items-center gap-1 text-neutral-400 hover:text-neutral-200 transition-colors cursor-pointer"
-              >
-                {copiedPayload ? <Check className="w-3 h-3 text-sky-400" /> : <Copy className="w-3 h-3" />}
-                <span>{copiedPayload ? t('tools.jwtInspector.copied') : t('tools.jwtInspector.copyPayload')}</span>
-              </button>
-            )}
-          </div>
-          <div className="flex-1 bg-neutral-900/90 border border-neutral-800 rounded overflow-auto min-h-[200px]">
-            {decoded ? (
-              <pre
-                className="font-mono text-xs p-3 leading-relaxed text-neutral-200"
-                dangerouslySetInnerHTML={{ __html: highlightJson(decoded.payload) }}
-              />
-            ) : (
-              <div className="p-4 text-xs text-neutral-600 font-mono italic">
-                {token ? '...' : 'Awaiting token input'}
-              </div>
-            )}
-          </div>
-
-          {/* Expiry / Issued timestamps */}
-          {decoded && (decoded.expiresAt || decoded.issuedAt) && (
-            <div className="space-y-1.5 pt-1 text-[11px] font-mono">
-              {decoded.issuedAt && (
-                <div className="flex items-center gap-2 text-neutral-400">
-                  <Clock className="w-3 h-3 shrink-0" />
-                  <span className="text-neutral-500">{t('tools.jwtInspector.issuedAt')}:</span>
-                  <span>{formatDate(decoded.issuedAt)}</span>
-                </div>
-              )}
-              {decoded.expiresAt && (
-                <div className={`flex items-center gap-2 ${decoded.status === 'expired' ? 'text-red-400' : 'text-emerald-400'}`}>
-                  <Clock className="w-3 h-3 shrink-0" />
-                  <span className="text-neutral-500">{t('tools.jwtInspector.expiresAt')}:</span>
-                  <span>{formatDate(decoded.expiresAt)}</span>
-                </div>
-              )}
+          <textarea
+            value={token}
+            onChange={(e) => handleDecode(e.target.value)}
+            placeholder={t('tools.jwtInspector.inputPlaceholder')}
+            spellCheck={false}
+            className={`w-full p-3 font-mono text-xs bg-neutral-900/90 text-neutral-100 border border-neutral-800 rounded focus:border-[#1D9BF0] focus:outline-none resize-y leading-relaxed transition-colors placeholder-neutral-600 ${
+              isSideBySide ? 'min-h-[300px]' : 'min-h-[80px] max-h-[300px]'
+            }`}
+          />
+          {error && (
+            <div className="flex items-start gap-2 p-3 bg-red-950/40 border border-red-900/80 rounded text-xs text-red-300 font-mono">
+              <AlertCircle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
+              <span>{error}</span>
             </div>
           )}
         </div>
 
-        {/* Panel 3: Signature */}
-        <div className={`flex flex-col p-3 sm:p-4 space-y-2 ${isFullScreen ? 'overflow-y-auto' : ''}`}>
-          <div className="text-xs font-mono pb-1 border-b border-neutral-900">
-            <span className="font-semibold text-[#1D9BF0]">{t('tools.jwtInspector.signatureLabel')}</span>
+        {/* Output pane: 3 panels */}
+        <div className={`${
+          isSideBySide
+            ? 'flex flex-col divide-y divide-neutral-800'
+            : 'grid grid-cols-1 lg:grid-cols-3 divide-y lg:divide-y-0 lg:divide-x divide-neutral-800'
+        } ${isFullScreen && isSideBySide ? 'overflow-y-auto' : ''} ${
+          !isSideBySide ? 'min-h-[320px]' : ''
+        }`}>
+
+          {/* Panel 1: Header */}
+          <div className={`flex flex-col p-3 sm:p-4 space-y-2 ${isFullScreen && !isSideBySide ? 'overflow-y-auto' : ''}`}>
+            <div className="flex items-center justify-between text-xs font-mono pb-1 border-b border-neutral-900">
+              <span className="font-semibold text-[#1D9BF0]">{t('tools.jwtInspector.headerLabel')}</span>
+              {decoded && (
+                <button onClick={() => handleCopy(JSON.stringify(decoded.header, null, 2), 'header')} className="flex items-center gap-1 text-neutral-400 hover:text-neutral-200 transition-colors cursor-pointer">
+                  {copiedHeader ? <Check className="w-3 h-3 text-sky-400" /> : <Copy className="w-3 h-3" />}
+                  <span>{copiedHeader ? t('tools.jwtInspector.copied') : t('tools.jwtInspector.copyHeader')}</span>
+                </button>
+              )}
+            </div>
+            <div className="flex-1 bg-neutral-900/90 border border-neutral-800 rounded overflow-auto min-h-[160px]">
+              {decoded ? (
+                <pre className="font-mono text-xs p-3 leading-relaxed text-neutral-200" dangerouslySetInnerHTML={{ __html: highlightJson(decoded.header) }} />
+              ) : (
+                <div className="p-4 text-xs text-neutral-600 font-mono italic">{token ? '...' : 'Awaiting token input'}</div>
+              )}
+            </div>
           </div>
-          <div className="flex-1 bg-neutral-900/90 border border-neutral-800 rounded min-h-[200px] flex flex-col items-center justify-center p-4 text-center space-y-3">
-            <ShieldOff className="w-8 h-8 text-neutral-600" />
-            <p className="text-xs text-neutral-500 font-mono leading-relaxed">
-              {t('tools.jwtInspector.signatureNote')}
-            </p>
-            {decoded && token.split('.')[2] && (
-              <div className="w-full mt-2 p-2 bg-neutral-950 border border-neutral-800 rounded">
-                <p className="text-[10px] font-mono text-neutral-600 break-all">{token.split('.')[2]}</p>
+
+          {/* Panel 2: Payload */}
+          <div className={`flex flex-col p-3 sm:p-4 space-y-2 ${isFullScreen && !isSideBySide ? 'overflow-y-auto' : ''}`}>
+            <div className="flex items-center justify-between text-xs font-mono pb-1 border-b border-neutral-900">
+              <span className="font-semibold text-[#1D9BF0]">{t('tools.jwtInspector.payloadLabel')}</span>
+              {decoded && (
+                <button onClick={() => handleCopy(JSON.stringify(decoded.payload, null, 2), 'payload')} className="flex items-center gap-1 text-neutral-400 hover:text-neutral-200 transition-colors cursor-pointer">
+                  {copiedPayload ? <Check className="w-3 h-3 text-sky-400" /> : <Copy className="w-3 h-3" />}
+                  <span>{copiedPayload ? t('tools.jwtInspector.copied') : t('tools.jwtInspector.copyPayload')}</span>
+                </button>
+              )}
+            </div>
+            <div className="flex-1 bg-neutral-900/90 border border-neutral-800 rounded overflow-auto min-h-[160px]">
+              {decoded ? (
+                <pre className="font-mono text-xs p-3 leading-relaxed text-neutral-200" dangerouslySetInnerHTML={{ __html: highlightJson(decoded.payload) }} />
+              ) : (
+                <div className="p-4 text-xs text-neutral-600 font-mono italic">{token ? '...' : 'Awaiting token input'}</div>
+              )}
+            </div>
+            {decoded && (decoded.expiresAt || decoded.issuedAt) && (
+              <div className="space-y-1.5 pt-1 text-[11px] font-mono">
+                {decoded.issuedAt && (
+                  <div className="flex items-center gap-2 text-neutral-400">
+                    <Clock className="w-3 h-3 shrink-0" />
+                    <span className="text-neutral-500">{t('tools.jwtInspector.issuedAt')}:</span>
+                    <span>{formatDate(decoded.issuedAt)}</span>
+                  </div>
+                )}
+                {decoded.expiresAt && (
+                  <div className={`flex items-center gap-2 ${decoded.status === 'expired' ? 'text-red-400' : 'text-emerald-400'}`}>
+                    <Clock className="w-3 h-3 shrink-0" />
+                    <span className="text-neutral-500">{t('tools.jwtInspector.expiresAt')}:</span>
+                    <span>{formatDate(decoded.expiresAt)}</span>
+                  </div>
+                )}
               </div>
             )}
+          </div>
+
+          {/* Panel 3: Signature */}
+          <div className={`flex flex-col p-3 sm:p-4 space-y-2 ${isFullScreen && !isSideBySide ? 'overflow-y-auto' : ''}`}>
+            <div className="text-xs font-mono pb-1 border-b border-neutral-900">
+              <span className="font-semibold text-[#1D9BF0]">{t('tools.jwtInspector.signatureLabel')}</span>
+            </div>
+            <div className="flex-1 bg-neutral-900/90 border border-neutral-800 rounded min-h-[160px] flex flex-col items-center justify-center p-4 text-center space-y-3">
+              <ShieldOff className="w-8 h-8 text-neutral-600" />
+              <p className="text-xs text-neutral-500 font-mono leading-relaxed">{t('tools.jwtInspector.signatureNote')}</p>
+              {decoded && token.split('.')[2] && (
+                <div className="w-full mt-2 p-2 bg-neutral-950 border border-neutral-800 rounded">
+                  <p className="text-[10px] font-mono text-neutral-600 break-all">{token.split('.')[2]}</p>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
