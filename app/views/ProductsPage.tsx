@@ -100,6 +100,7 @@ export const ProductsPage: React.FC = () => {
                   'jwt-inspector': '/tools/jwt-inspector',
                   'base64-encoder': '/tools/base64-encoder',
                   'curl-converter': '/tools/curl-converter',
+                  'cron-visualizer': '/tools/cron-visualizer',
                 };
                 const toolHref = toolRoutes[prod.id];
 

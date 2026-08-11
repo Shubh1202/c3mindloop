@@ -56,6 +56,15 @@ const formatted = JSON.stringify(JSON.parse(input), null, 2);`
     category: 'utilities',
     icon: 'FileCode',
     techStack: ['RegExp Engine', 'Capture Groups', 'Syntax Highlighting']
+  },
+  {
+    id: 'cron-visualizer',
+    nameKey: 'Cron Expression Visualizer & Generator',
+    descKey: 'Parse 5-part and 6-part Cron expressions, get human-readable descriptions, and calculate the next 5 scheduled execution times in local and UTC.',
+    status: 'live',
+    category: 'utilities',
+    icon: 'Terminal',
+    techStack: ['Cron Parser', 'Date Arithmetic', 'Local Processing']
   }
 ];
 

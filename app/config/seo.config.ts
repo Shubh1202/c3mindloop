@@ -153,6 +153,34 @@ export const seoConfig = {
     },
   },
 
+  cronVisualizer: {
+    title: 'Cron Expression Visualizer & Generator - Free Online Tool',
+    description:
+      'Free online Cron expression visualizer and generator. Parse 5-part and 6-part Cron strings, get human-readable descriptions, calculate next 5 execution times in local and UTC - 100% client-side, zero data transmission.',
+    keywords: [
+      'cron expression visualizer', 'cron generator online', 'cron parser', 'cron expression builder',
+      'cron job scheduler', 'cron syntax checker', 'cron expression tester', 'cron next run calculator',
+      'free cron visualizer', 'cron expression to human readable', 'cron schedule visualizer',
+      'cron expression explainer', 'cron job builder online', 'cron expression validator',
+      'cron expression examples', 'cron schedule generator', 'cron expression decoder',
+      'C³ MindLoop cron tool', 'ccube cron visualizer',
+    ],
+    canonical: `${BASE_URL}/tools/cron-visualizer`,
+    openGraph: {
+      title: 'Cron Expression Visualizer & Generator - Free Online Tool | C³ MindLoop',
+      description:
+        'Parse Cron expressions, get human-readable descriptions, and calculate next 5 execution times. 100% client-side, zero data transmission.',
+      url: `${BASE_URL}/tools/cron-visualizer`,
+      images: [{ url: defaultOgImage, width: 1200, height: 630, alt: 'Cron Visualizer Tool - C³ MindLoop' }],
+    },
+    twitter: {
+      title: 'Cron Expression Visualizer & Generator - Free | C³ MindLoop',
+      description:
+        'Parse Cron strings, visualize schedules, calculate next runs - 100% client-side, no data sent to server.',
+      images: [defaultOgImage],
+    },
+  },
+
   jwtInspector: {
     title: 'JWT Decoder & Inspector - Free Online Tool',
     description:
@@ -300,6 +328,27 @@ export const curlConverterSchema = {
     'cURL to Python requests',
     'cURL to Go net/http',
     'cURL to PHP cURL and Guzzle',
+    'Zero data transmission - fully private',
+  ],
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+  publisher: { '@type': 'Organization', name: 'C³ MindLoop', url: BASE_URL },
+};
+
+export const cronVisualizerSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: 'Cron Expression Visualizer & Generator',
+  url: `${BASE_URL}/tools/cron-visualizer`,
+  applicationCategory: 'WebApplication',
+  operatingSystem: 'All Web Browsers',
+  description:
+    'Free online Cron expression visualizer and generator. Parse 5-part and 6-part Cron strings, get human-readable descriptions, calculate next execution times - 100% client-side.',
+  featureList: [
+    '5-part and 6-part Cron expression parsing',
+    'Human-readable schedule description',
+    'Next 5 execution times in local and UTC',
+    'Interactive visual Cron builder',
+    'Quick preset expressions',
     'Zero data transmission - fully private',
   ],
   offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
