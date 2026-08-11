@@ -1,5 +1,6 @@
 # C³ MindLoop - Agent Rules for New Developer Tools
 
+
 Rules for all AI agents (Amazon Q, Kiro, GitHub Copilot, Claude Code, Cursor, etc.) building new tools in this project.
 Read this file before writing any code. These rules are non-negotiable.
 
