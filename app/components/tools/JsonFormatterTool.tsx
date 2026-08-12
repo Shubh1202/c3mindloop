@@ -35,7 +35,7 @@ const SAMPLE_JSON_DATA = {
     activeUsers: 8500
   },
   author: {
-    name: "Shubham Prajapati",
+    name: "C³ MindLoop Team",
     role: "Core Developer",
     github: "shubhamprajapati1202"
   },

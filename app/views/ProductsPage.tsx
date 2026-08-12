@@ -100,6 +100,7 @@ export const ProductsPage: React.FC = () => {
                   'base64-encoder': '/tools/base64-encoder',
                   'curl-converter': '/tools/curl-converter',
                   'cron-visualizer': '/tools/cron-visualizer',
+                  'regex-tester': '/tools/regex-tester',
                 };
                 const toolHref = toolRoutes[prod.id];
 

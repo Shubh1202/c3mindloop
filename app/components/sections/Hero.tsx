@@ -93,6 +93,68 @@ export const Hero: React.FC = () => {
     setStatusMsg('Cleared');
   };
 
+  // Simple Syntax Highlighter for JSON preview
+  const renderHighlightedJson = (rawJson: string) => {
+    try {
+      const parsed = JSON.parse(rawJson);
+      const formatted = JSON.stringify(parsed, null, 2);
+      
+      // Tokenize JSON for colored rendering
+      const tokenRegex = /("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?|[{}\[\]:,])/g;
+      
+      const parts: React.ReactNode[] = [];
+      let lastIndex = 0;
+      let match: RegExpExecArray | null;
+
+      while ((match = tokenRegex.exec(formatted)) !== null) {
+        const textBefore = formatted.substring(lastIndex, match.index);
+        if (textBefore) parts.push(textBefore);
+
+        const token = match[0];
+        let className = 'text-neutral-300';
+
+        if (/^"/.test(token)) {
+          if (/:$/.test(token)) {
+            // JSON Key
+            className = 'text-sky-400 font-semibold';
+          } else {
+            // String Value
+            className = 'text-emerald-400';
+          }
+        } else if (/true|false/.test(token)) {
+          // Boolean
+          className = 'text-purple-400 font-bold';
+        } else if (/null/.test(token)) {
+          // Null
+          className = 'text-rose-400 font-bold';
+        } else if (/^-?\d+/.test(token)) {
+          // Number
+          className = 'text-amber-400 font-semibold';
+        } else if (/[{}[\]]/.test(token)) {
+          // Structural Brackets
+          className = 'text-zinc-500 font-bold';
+        } else if (/[:,]/.test(token)) {
+          // Colons & Commas
+          className = 'text-zinc-400';
+        }
+
+        parts.push(
+          <span key={match.index} className={className}>
+            {token}
+          </span>
+        );
+        lastIndex = tokenRegex.lastIndex;
+      }
+
+      const rest = formatted.substring(lastIndex);
+      if (rest) parts.push(rest);
+
+      return parts;
+    } catch {
+      return rawJson;
+    }
+  };
+
   return (
     <section className="relative pt-16 pb-16 sm:pt-20 lg:pt-24 lg:pb-20 bg-transparent border-b border-theme-subtle overflow-hidden">
       {/* Ambient radial glow blobs */}
@@ -204,8 +266,8 @@ export const Hero: React.FC = () => {
             transition={{ duration: 0.5, delay: 0.25 }}
             className="lg:col-span-5 space-y-4"
           >
-            {/* Utility Card Wrapper */}
-            <div className="animate-glow-pulse bg-neutral-900 dark:bg-neutral-950 border border-cyan-500/30 rounded-lg overflow-hidden shadow-2xl font-mono text-xs">
+            {/* Utility Card Wrapper with Cyan Glow & VS Code Aesthetics */}
+            <div className="animate-glow-pulse bg-neutral-950 border border-sky-500/30 rounded-lg overflow-hidden shadow-[0_0_25px_rgba(56,189,248,0.15)] font-mono text-xs">
 
               {/* Utility Header */}
               <div className="px-4 py-3 bg-neutral-950 border-b border-neutral-800 flex items-center justify-between">
@@ -262,8 +324,11 @@ export const Hero: React.FC = () => {
                 </button>
               </div>
 
-              {/* Interactive Code / JSON Input Area */}
-              <div className="relative">
+              {/* Syntax Highlighted Interactive Code Display & Editor Area */}
+              <div className="relative group bg-neutral-950">
+                <pre className="w-full h-52 p-3.5 overflow-auto text-neutral-200 font-mono text-[11.5px] leading-relaxed whitespace-pre select-text">
+                  <code>{renderHighlightedJson(jsonInput)}</code>
+                </pre>
                 <textarea
                   value={jsonInput}
                   onChange={(e) => {
@@ -272,7 +337,7 @@ export const Hero: React.FC = () => {
                     setStatusMsg('Editing...');
                   }}
                   placeholder={t('hero.cardPlaceholder', 'Paste or type JSON here...')}
-                  className="w-full h-52 p-3 bg-neutral-900/90 text-neutral-200 font-mono text-[11px] leading-relaxed focus:outline-none resize-none selection:bg-[#1D9BF0]/30"
+                  className="absolute inset-0 w-full h-full p-3.5 bg-transparent text-transparent caret-sky-400 font-mono text-[11.5px] leading-relaxed resize-none focus:outline-none selection:bg-[#1D9BF0]/30"
                   spellCheck={false}
                 />
               </div>
@@ -301,21 +366,21 @@ export const Hero: React.FC = () => {
                 {t('hero.utilitiesLabel', 'Available Browser Utilities')}
               </span>
               <div className="grid grid-cols-2 gap-2">
-                <Link to="/tools/json-formatter" className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-md bg-neutral-900 border border-neutral-800 text-xs font-semibold text-neutral-200 hover:text-white hover:border-[#1D9BF0] hover:bg-neutral-850 transition-all shadow-sm">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#1D9BF0]"></span>
-                  <span>JSON Formatter</span>
-                </Link>
                 <Link to="/tools/base64-encoder" className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-md bg-neutral-900 border border-neutral-800 text-xs font-semibold text-neutral-200 hover:text-white hover:border-emerald-500 hover:bg-neutral-850 transition-all shadow-sm">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
                   <span>Base64 Encoder</span>
+                </Link>
+                <Link to="/tools/json-formatter" className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-md bg-neutral-900 border border-neutral-800 text-xs font-semibold text-neutral-200 hover:text-white hover:border-[#1D9BF0] hover:bg-neutral-850 transition-all shadow-sm">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#1D9BF0]"></span>
+                  <span>JSON Formatter</span>
                 </Link>
                 <Link to="/tools/jwt-inspector" className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-md bg-neutral-900 border border-neutral-800 text-xs font-semibold text-neutral-200 hover:text-white hover:border-purple-500 hover:bg-neutral-850 transition-all shadow-sm">
                   <span className="w-1.5 h-1.5 rounded-full bg-purple-500"></span>
                   <span>JWT Inspector</span>
                 </Link>
-                <Link to="/tools/office-editor" className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-md bg-neutral-900 border border-neutral-800 text-xs font-semibold text-neutral-200 hover:text-white hover:border-amber-500 hover:bg-neutral-850 transition-all shadow-sm">
-                  <span className="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
-                  <span>Office Editor</span>
+                <Link to="/tools/regex-tester" className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-md bg-neutral-900 border border-neutral-800 text-xs font-semibold text-neutral-200 hover:text-white hover:border-rose-500 hover:bg-neutral-850 transition-all shadow-sm">
+                  <span className="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
+                  <span>Regex Tester</span>
                 </Link>
               </div>
             </div>

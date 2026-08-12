@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from '../../lib/router-compat';
 import { motion, AnimatePresence } from 'motion/react';
-import { Menu, X, Command, RotateCcw, Code2, ShieldCheck, Zap } from 'lucide-react';
+import { Menu, X, Command, RotateCcw, Code2, ShieldCheck, Zap, Clock, Terminal, Regex } from 'lucide-react';
 import { useTranslation } from '../../lib/i18n';
 import { LanguageSelector } from '../ui/LanguageSelector';
 import { ThemeToggle } from '../ui/ThemeToggle';
@@ -39,9 +39,12 @@ export const Navbar: React.FC<{
   };
 
   const toolsDropdown = [
+    { name: 'Base64 Encoder', sub: 'Encode & Decode', path: '/tools/base64-encoder', icon: Zap },
+    { name: 'Cron Visualizer', sub: 'Parse & Schedule', path: '/tools/cron-visualizer', icon: Clock },
+    { name: 'cURL Converter', sub: 'Convert to Code', path: '/tools/curl-converter', icon: Terminal },
     { name: 'JSON Formatter', sub: 'Format & Validate', path: '/tools/json-formatter', icon: Code2 },
     { name: 'JWT Inspector', sub: 'Decode & Inspect', path: '/tools/jwt-inspector', icon: ShieldCheck },
-    { name: 'Base64 Encoder', sub: 'Encode & Decode', path: '/tools/base64-encoder', icon: Zap },
+    { name: 'Regex Tester', sub: 'Test & Debug', path: '/tools/regex-tester', icon: Regex },
   ];
 
   const navLinks = [

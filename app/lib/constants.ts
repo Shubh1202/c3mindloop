@@ -122,7 +122,7 @@ export const BLOG_POSTS: BlogPost[] = [
     content: `When handling high-concurrency event loops in Node.js and Express, traditional in-memory queues quickly bottleneck under sudden traffic spikes. At C³ MindLoop, we engineered our core event queue using atomic Lua scripts in Redis combined with type-safe Zod schema validation...`,
     category: 'Engineering',
     author: {
-      name: 'Shubham Prajapati',
+      name: 'C³ MindLoop Team',
       role: 'Founder & Principal Architect',
       avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80'
     },

@@ -229,7 +229,7 @@
     "milestone3Title": "MindLoop AI & SaaS Suite",
     "milestone3Desc": "Released AST-based AI reflection engines, MindLoop Studio, and serverless Cloud Edge platform.",
     "teamTitle": "Leadership Team",
-    "member1Name": "Shubham Prajapati",
+    "member1Name": "C³ MindLoop Team",
     "member1Role": "Founder & Principal Architect",
     "member1Bio": "Passionate software architect building resilient developer infrastructure.",
     "member2Name": "Elena Rostova",
@@ -397,6 +397,42 @@
     "status": "All Systems Operational"
   },
   "tools": {
+    "jsonFormatter": {
+      "pageTitle": "100% Private Client-Side JSON Formatter & Validator",
+      "pageBadge": "100% Client-Side • Local Browser Processing",
+      "breadcrumb": "JSON Formatter",
+      "breadcrumbParent": "Developer Tools",
+      "feat1Title": "100% Client-Side Engine",
+      "feat1Desc": "Your JSON data never leaves your device. All parsing and formatting operations execute in your browser's V8 engine.",
+      "feat2Title": "Interactive Tree Inspection",
+      "feat2Desc": "Toggle seamlessly between formatted code view and a collapsible node tree view to inspect deeply nested JSON objects.",
+      "feat3Title": "Syntax Error Detection",
+      "feat3Desc": "Real-time error location extraction identifies line numbers, missing brackets, or unexpected tokens immediately.",
+      "guide": {
+        "title": "How the JSON Formatter Works",
+        "intro": "Our interactive workspace provides immediate syntax formatting, validation, and tree-mapping capabilities for your JSON (JavaScript Object Notation) data files. Here is the step-by-step technical process of using the tool:",
+        "step1": "Input Paste/Load: Paste your raw, compressed, or unformatted JSON string into the left input panel, or click the sample button to load a standard structured dataset.",
+        "step2": "Lexical Parsing: The V8 JavaScript parser tokenizes the input, confirming characters comply with standard array, object, string, number, and boolean notations.",
+        "step3": "Validation Check: The engine validates structural integrity. If syntactical issues are discovered, the output panel automatically highlights the exact line location and description of the syntax mismatch.",
+        "step4": "Indentation & Tree Rendering: The formatted, pretty-printed result renders immediately on the right panel, with spacing customized to your preference. You can also view the tree visualization for collapsible data node exploration.",
+        "privacyTitle": "The Privacy & Local Processing Advantage",
+        "privacyIntro": "Many developers use common search-engine cloud tools to format their configuration files. However, this poses significant security threats. Standard SaaS validators require transporting your payloads over HTTP networks to be structured on remote servers. In contrast, C³ MindLoop guarantees absolute isolation:",
+        "privacyBullet1": "Zero Network Overhead: Because all JSON beautifying, checking, and minification functions execute inside your local environment, no server calls are initiated. It works seamlessly when completely offline.",
+        "privacyBullet2": "Private Configuration Auditing: Sensitive properties such as database environment credentials, REST API tokens, and secret parameters are kept entirely on your filesystem, eliminating risks of data breaches or logs extraction."
+      },
+      "faq": {
+        "q1": "What is a JSON Formatter and why is it used?",
+        "a1": "A JSON Formatter is a developer utility designed to parse raw, minified JSON text and restructure it with consistent indentation and line breaks, transforming dense strings into highly readable text. This process is commonly referred to as beautifying or pretty-printing. Developers use it to debug complex API payloads, inspect structured config files, locate nesting anomalies, and communicate structural state information clearly to team members. Additionally, our formatter acts as a validator, alerting you to broken JSON structures or mismatched brackets before your application code parses them.",
+        "q2": "Is this JSON Formatter secure for sensitive corporate configs and API keys?",
+        "a2": "Absolutely. The core security advantage of our platform is that all operations run 100% locally inside your browser context using client-side JavaScript. Unlike conventional online formatters that transmit your data to backend servers—exposing sensitive credentials, private keys, or customer records to potential database logging and third-party monitoring—our formatter runs offline. Your JSON payload never traverses the internet, assuring strict compliance with corporate data protection policies, SOC 2 protocols, and general privacy requirements.",
+        "q3": "How does the built-in syntax error detector work?",
+        "a3": "When you enter a JSON string, the tool processes it using your browser's native V8 JavaScript parser. If the structure violates RFC 8259 guidelines (for instance, if there is a trailing comma, a missing quotation mark, or unmatched brackets), the parser throws a syntax error. Our application catches this error, extracts the character position and context, and maps it to a human-readable line and column indicator. This live error feedback helps you troubleshoot and correct structural mistakes instantly without guessing.",
+        "q4": "Can I use this JSON tool without an active internet connection?",
+        "a4": "Yes. Because the formatting, tree rendering, and validation algorithms are implemented purely in client-side code and do not require server-side execution, you can load the page once and run it offline. It is fully functional in low-connectivity environments, inside restricted enterprise intranets, or when working on local dev servers with no external network routes.",
+        "q5": "Why should I choose client-side tools over cloud-based formatters?",
+        "a5": "Cloud-based formatters require sending your payloads over the wire to their servers, where your data could be cached, logged, or intercepted. A local client-side formatter guarantees that your data stays on your machine. This eliminates security risks, reduces bandwidth latency, and guarantees instantaneous performance regardless of your network connection speed. It is the professional engineering standard for working with production database dumps and secure configuration files."
+      }
+    },
     "base64Encoder": {
       "pageTitle": "Base64 Encoder & Decoder",
       "pageBadge": "100% Client-Side • Local Browser Processing",
@@ -426,7 +462,27 @@
       "feat2Title": "URL-Safe Base64 (RFC 4648)",
       "feat2Desc": "Toggle URL-safe mode to replace + with -, / with _, and strip padding. Safe for use in URLs and HTTP headers.",
       "feat3Title": "File to Data URI",
-      "feat3Desc": "Upload any file to instantly generate a Base64-encoded Data URI, ready for embedding in HTML, CSS, or API payloads."
+      "feat3Desc": "Upload any file to instantly generate a Base64-encoded Data URI, ready for embedding in HTML, CSS, or API payloads.",
+      "guide": {
+        "title": "How Base64 Encoding Works",
+        "intro": "Base64 encoding translates binary data into a set of 64 ASCII characters. Here is how the process works in your browser:",
+        "step1": "Input Parsing: Plaintext or uploaded files are read into an ArrayBuffer or UTF-8 byte stream using TextEncoder.",
+        "step2": "Bit Chunking: Data bytes are grouped into 24-bit blocks and divided into four 6-bit index numbers.",
+        "step3": "Character Lookup: Each 6-bit index maps directly to a character in the RFC 4648 Base64 alphabet.",
+        "step4": "Padding & Output: Trailing '=' characters are appended as necessary to align 24-bit boundaries.",
+        "privacyTitle": "Client-Side Base64 Security",
+        "privacyIntro": "Encoding sensitive credentials or certificates with cloud utilities risks data leakage. Local processing ensures full safety:",
+        "privacyBullet1": "Zero Server Transmission: TextEncoder and Web APIs handle all conversions locally on your machine.",
+        "privacyBullet2": "URL-Safe Standard Support: Encode tokens for web headers safely without exposing payload values to remote proxies."
+      },
+      "faq": {
+        "q1": "What is Base64 encoding used for?",
+        "a1": "Base64 is used to transmit binary data over media designed to handle textual data, such as embedding images in HTML/CSS or passing token data in URLs.",
+        "q2": "Is Base64 encryption?",
+        "a2": "No, Base64 is an encoding format, not encryption. It provides no secrecy or data protection on its own.",
+        "q3": "Does this Base64 tool send data to servers?",
+        "a3": "No. All conversion operations run 100% locally inside your web browser."
+      }
     },
     "curlConverter": {
       "pageTitle": "cURL to Code Converter",
@@ -448,7 +504,25 @@
       "feat2Title": "7 Language Targets",
       "feat2Desc": "Convert to JS Fetch, Axios, Node.js node-fetch, Python requests, Go net/http, PHP cURL, and PHP Guzzle in one click.",
       "feat3Title": "Full Flag Support",
-      "feat3Desc": "Handles -X method, -H headers, -d data, --data-raw, --data-binary, and -u basic auth flags with correct output mapping."
+      "feat3Desc": "Handles -X method, -H headers, -d data, --data-raw, --data-binary, and -u basic auth flags with correct output mapping.",
+      "guide": {
+        "title": "cURL Command Code Generation",
+        "intro": "Easily convert cURL requests copied from DevTools or documentation into production code across multiple languages:",
+        "step1": "Command Tokenization: Arguments like -X, -H, and --data are parsed into structured HTTP request schemas.",
+        "step2": "Header & Body Extraction: Headers and payload bodies are isolated and formatted into native language data structures.",
+        "step3": "Target Generation: Selected language templates (Fetch, Axios, Python, Go, PHP) format the final snippet.",
+        "step4": "Instant Copying: Copy clean, ready-to-run code directly into your application codebase.",
+        "privacyTitle": "Local cURL Security",
+        "privacyIntro": "cURL commands often contain sensitive Bearer tokens and cookies. Converting locally guarantees privacy:",
+        "privacyBullet1": "Zero Proxying: Requests and command strings are parsed in memory in your browser context.",
+        "privacyBullet2": "Safe API Debugging: Convert browser-copied network calls without leaking internal authentication headers."
+      },
+      "faq": {
+        "q1": "Which languages are supported for cURL conversion?",
+        "a1": "JavaScript (Fetch, Axios), Node.js, Python (requests), Go (net/http), and PHP (cURL, Guzzle).",
+        "q2": "Are API tokens in cURL commands safe?",
+        "a2": "Yes. Code conversion is performed 100% client-side with zero network calls."
+      }
     },
     "cronVisualizer": {
       "pageTitle": "Cron Expression Visualizer & Generator",
@@ -480,7 +554,25 @@
       "feat2Title": "Next Execution Calculator",
       "feat2Desc": "Calculates the next 5 scheduled run times from the current moment, displayed in both your local browser timezone and UTC.",
       "feat3Title": "Interactive Visual Builder",
-      "feat3Desc": "Use the visual builder to select Minute, Hour, Day of Month, Month, and Day of Week fields and generate a valid Cron expression instantly."
+      "feat3Desc": "Use the visual builder to select Minute, Hour, Day of Month, Month, and Day of Week fields and generate a valid Cron expression instantly.",
+      "guide": {
+        "title": "Cron Schedule Parsing & Generation",
+        "intro": "Understand and build complex cron expressions with human-readable breakdowns and run projections:",
+        "step1": "Expression Validation: Standard 5-part and 6-part cron syntax patterns are validated against timing rules.",
+        "step2": "Human Translation: Field rules (minute, hour, day, month, weekday) are translated to natural language.",
+        "step3": "Execution Projection: Future execution timestamps are computed relative to current local and UTC times.",
+        "step4": "Visual Building: Clickable field selector matrix lets you build valid expressions effortlessly.",
+        "privacyTitle": "Local Cron Execution Calculation",
+        "privacyIntro": "Validate job schedules and internal backend timing rules completely offline:",
+        "privacyBullet1": "Local Browser Math: Date calculation math is calculated directly using JavaScript Date objects.",
+        "privacyBullet2": "Zero Remote Tracking: Your internal cron schedules and server timing rules remain completely private."
+      },
+      "faq": {
+        "q1": "What is standard Cron syntax?",
+        "a1": "Standard cron expressions consist of 5 fields: Minute, Hour, Day of Month, Month, and Day of Week.",
+        "q2": "Can I calculate future execution times in UTC?",
+        "a2": "Yes, our tool shows both local browser timezone and UTC execution timestamps."
+      }
     },
     "jwtInspector": {
       "pageTitle": "JWT Inspector & Token Decoder",
@@ -515,7 +607,59 @@
       "feat2Title": "Expiration Validation",
       "feat2Desc": "Live exp claim validation shows whether the token is currently active or expired with exact timestamps.",
       "feat3Title": "Syntax Highlighted Output",
-      "feat3Desc": "Header and payload are rendered with full JSON syntax highlighting for easy inspection."
+      "feat3Desc": "Header and payload are rendered with full JSON syntax highlighting for easy inspection.",
+      "guide": {
+        "title": "How the JWT Inspector & Decoder Works",
+        "intro": "JSON Web Tokens (JWT) are a compact, URL-safe means of representing claims to be transferred between two parties. Our interactive JWT Inspector allows backend and frontend developers to debug bearer tokens instantly without sending auth headers across the network.",
+        "step1": "Paste Authorization Bearer Token: Simply paste your raw JWT string (e.g. eyJhbGci...) into the input editor.",
+        "step2": "Automatic Structure Separation: The decoder splits the token into its three core dot-separated (.) components: Header (Algorithm & Token Type), Payload (User Claims & Scopes), and Signature Verification.",
+        "step3": "Claim Epoch Decoding: Standard claims such as exp (expiration time), iat (issued at), and nbf (not before) are highlighted and translated to readable dates.",
+        "privacyTitle": "The Privacy & Zero Cloud Retention Advantage",
+        "privacyIntro": "Using standard online JWT decoders carries significant security risks—pasting production OAuth tokens, admin JWTs, or session cookies into third-party servers exposes your application to credential leaks, unauthorized API calls, and man-in-the-middle attacks.",
+        "privacyBullet1": "Zero Cloud Retention: All parsing and JSON decoding logic executes purely in JavaScript within your local browser runtime. No HTTP POST requests are fired, no server access logs store your claims, and your authorization credentials remain strictly on your machine.",
+        "privacyBullet2": "Offline Security Inspection: Inspect authorization bearer tokens fully offline without risk of token leakages, token reuse, or session hijacking."
+      },
+      "faq": {
+        "q1": "Is it safe to paste production JWT tokens into this decoder?",
+        "a1": "Yes. C³ MindLoop operates 100% client-side. The JWT decoding happens entirely within your browser's JavaScript engine without sending your token or claims over any network request.",
+        "q2": "Does this tool verify the signature of my JWT?",
+        "a2": "This tool inspects and decodes the unencrypted Header and Payload claims. Signature verification requires your secret key or public RSA/ECDSA key, which you can test locally without exposing secrets.",
+        "q3": "Why is my decoded JWT showing 'Token Expired'?",
+        "a3": "The inspector checks the 'exp' (expiration) claim inside the payload against your system's current UNIX timestamp. If the expiration timestamp has passed, the tool highlights it as expired.",
+        "q4": "What algorithms are supported for JWT parsing?",
+        "a4": "Our client-side parser supports all standard RFC 7519 JSON Web Signature algorithms including HMAC (HS256, HS384, HS512), RSA (RS256, RS384, RS512), and ECDSA (ES256, ES384)."
+      }
+    },
+    "regexTester": {
+      "pageTitle": "Regex Tester & Visual Debugger",
+      "pageBadge": "100% Client-Side • Local Browser Processing",
+      "breadcrumb": "Regex Tester",
+      "breadcrumbParent": "Developer Tools",
+      "feat1Title": "Real-Time Pattern Matching",
+      "feat1Desc": "Test Regular Expressions instantly against test strings with live match highlighting and index location tracking.",
+      "feat2Title": "Global, Case-Insensitive & Multiline Flags",
+      "feat2Desc": "Toggle standard JS regex flags (g, i, m, s, u, y) dynamically to test edge cases.",
+      "feat3Title": "100% In-Browser Execution",
+      "feat3Desc": "Your patterns and test strings are evaluated locally in V8. Zero server transmission protects your sensitive data logs.",
+      "guide": {
+        "title": "How the Client-Side Regex Tester Works",
+        "intro": "Regular Expressions (Regex) are crucial for input validation, string extraction, and text transformation. Our local tester evaluates patterns in real-time:",
+        "step1": "Input Pattern & Flags: Type your regular expression (e.g., ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2}$) and select desired flags.",
+        "step2": "Enter Test String: Paste your raw text corpus into the test area.",
+        "step3": "Visual Match Breakdown: Extracted groups, match indices, and total match counts highlight instantly with color-coded tokens.",
+        "privacyTitle": "Zero Server Evaluation & ReDoS Protection",
+        "privacyIntro": "Many online regex checkers process strings on backend engines, creating performance bottlenecks and privacy risks:",
+        "privacyBullet1": "100% Local Engine: C³ MindLoop executes all RegExp parsing directly in your client browser runtime, keeping your test payloads private and isolated from external networks.",
+        "privacyBullet2": "Safe Parsing Isolation: Test proprietary data formats, authorization logs, and personal test strings securely offline."
+      },
+      "faq": {
+        "q1": "Is this Regex Tester 100% free and private?",
+        "a1": "Yes. All regex evaluation runs locally in your browser. No strings or patterns leave your machine.",
+        "q2": "Which JavaScript Regex engine is used?",
+        "a2": "It leverages your browser's native JavaScript ECMAScript RegExp engine, fully supporting modern features like named capture groups and lookbehinds.",
+        "q3": "Can I test email, URL, and phone number patterns?",
+        "a3": "Absolutely! You can use the built-in cheatsheet presets or type custom expressions to validate emails, URLs, IP addresses, and custom tokens."
+      }
     }
   }
 }

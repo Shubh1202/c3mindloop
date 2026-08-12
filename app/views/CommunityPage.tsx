@@ -45,7 +45,7 @@ export const CommunityPage: React.FC = () => {
   };
 
   const events = [
-    { title: 'System Design Masterclass: High Throughput Redis Queues', date: 'August 14, 2026', time: '18:00 UTC', host: 'Shubham Prajapati' },
+    { title: 'System Design Masterclass: High Throughput Redis Queues', date: 'August 14, 2026', time: '18:00 UTC', host: 'C³ MindLoop Team' },
     { title: 'Live Hackathon: Build an AI Agent in 4 Hours', date: 'August 22, 2026', time: '15:00 UTC', host: 'Elena Rostova' },
     { title: 'Friday Night Crash Post-Mortem Stories', date: 'August 29, 2026', time: '21:00 UTC', host: 'Marcus Vance' }
   ];

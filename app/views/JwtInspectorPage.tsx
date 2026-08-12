@@ -5,6 +5,7 @@ import { Link } from '../lib/router-compat';
 import { ArrowLeft } from 'lucide-react';
 import { JwtInspectorTool } from '../components/tools/JwtInspectorTool';
 import { CTASection } from '../components/sections/CTASection';
+import { ToolSeoWrapper } from '../components/seo/ToolSeoWrapper';
 import { useTranslation } from '../lib/i18n';
 
 export const JwtInspectorPage: React.FC = () => {
@@ -12,7 +13,7 @@ export const JwtInspectorPage: React.FC = () => {
 
   return (
     <div className="pt-6 sm:pt-8 pb-16 bg-app text-theme-main relative z-10">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
 
         {/* Breadcrumb */}
         <div className="space-y-1.5 border-b border-theme-subtle pb-3">
@@ -38,27 +39,8 @@ export const JwtInspectorPage: React.FC = () => {
         {/* Tool */}
         <JwtInspectorTool />
 
-        {/* Feature Info Cards */}
-        <div className="pt-12 border-t border-theme-subtle grid grid-cols-1 md:grid-cols-3 gap-6 text-xs font-mono text-theme-muted">
-          <div className="p-4 rounded-lg bg-surface border border-theme-subtle space-y-2">
-            <h3 className="text-sm font-semibold text-theme-main font-sans">
-              {t('tools.jwtInspector.feat1Title')}
-            </h3>
-            <p className="leading-relaxed">{t('tools.jwtInspector.feat1Desc')}</p>
-          </div>
-          <div className="p-4 rounded-lg bg-surface border border-theme-subtle space-y-2">
-            <h3 className="text-sm font-semibold text-theme-main font-sans">
-              {t('tools.jwtInspector.feat2Title')}
-            </h3>
-            <p className="leading-relaxed">{t('tools.jwtInspector.feat2Desc')}</p>
-          </div>
-          <div className="p-4 rounded-lg bg-surface border border-theme-subtle space-y-2">
-            <h3 className="text-sm font-semibold text-theme-main font-sans">
-              {t('tools.jwtInspector.feat3Title')}
-            </h3>
-            <p className="leading-relaxed">{t('tools.jwtInspector.feat3Desc')}</p>
-          </div>
-        </div>
+        {/* SEO Wrapper */}
+        <ToolSeoWrapper toolKey="jwtInspector" />
 
         <CTASection />
       </div>

@@ -216,6 +216,23 @@ export const seoConfig = {
         'Free online JWT decoder. 100% client-side - your token never leaves the browser.',
     },
   },
+  regexTester: {
+    title: 'Client-Side Regex Tester & Visual Debugger - C³ MindLoop',
+    description:
+      'Free in-browser Regular Expression tester with real-time match highlighting, flags, capture groups, and cheatsheet. 100% private client-side parsing.',
+    keywords: [
+      'regex tester', 'regular expression debugger', 'client-side regex',
+      'regex matcher', 'regex pattern tester', 'online regex tool'
+    ],
+    canonical: `${BASE_URL}/tools/regex-tester`,
+    openGraph: {
+      title: 'Client-Side Regex Tester & Debugger | C³ MindLoop',
+      description:
+        'Test Regular Expressions with live match highlights and capture groups. 100% browser-based.',
+      url: `${BASE_URL}/tools/regex-tester`,
+      images: [{ url: defaultOgImage, width: 1200, height: 630, alt: 'Regex Tester Tool - C³ MindLoop' }],
+    },
+  },
   officeEditor: {
     title: 'Office Editor VS Code Extension - View & Edit Office Files',
     description:
@@ -415,3 +432,24 @@ export const officeEditorSchema = {
   offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
   publisher: { '@type': 'Organization', name: 'C³ MindLoop', url: BASE_URL },
 };
+
+export const regexTesterSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: 'Regex Tester & Visual Debugger',
+  url: `${BASE_URL}/tools/regex-tester`,
+  applicationCategory: 'WebApplication',
+  operatingSystem: 'All Web Browsers',
+  description:
+    'Free online Regular Expression tester with live match highlighting, flags, capture groups, and cheatsheet.',
+  featureList: [
+    'Real-time regex pattern matching',
+    'Global, case-insensitive, multiline flag toggles',
+    'Capture group extraction and match index breakdown',
+    'Built-in regex cheatsheet presets',
+    '100% client-side execution - zero data logging'
+  ],
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+  publisher: { '@type': 'Organization', name: 'C³ MindLoop', url: BASE_URL },
+};
+
