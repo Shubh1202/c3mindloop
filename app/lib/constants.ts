@@ -65,6 +65,15 @@ const formatted = JSON.stringify(JSON.parse(input), null, 2);`
     category: 'utilities',
     icon: 'Terminal',
     techStack: ['Cron Parser', 'Date Arithmetic', 'Local Processing']
+  },
+  {
+    id: 'sql-to-json',
+    nameKey: 'SQL & cURL to JSON Converter',
+    descKey: 'Convert SQL INSERT statements and cURL commands into clean, structured JSON arrays. Supports datatype inference, header extraction, and multi-format export.',
+    status: 'live',
+    category: 'utilities',
+    icon: 'Layers',
+    techStack: ['SQL Parser', 'cURL Parser', 'Local Processing']
   }
 ];
 

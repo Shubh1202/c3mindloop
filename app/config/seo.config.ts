@@ -233,6 +233,31 @@ export const seoConfig = {
       images: [{ url: defaultOgImage, width: 1200, height: 630, alt: 'Regex Tester Tool - C³ MindLoop' }],
     },
   },
+  sqlToJson: {
+    title: 'SQL & cURL to JSON Converter - Free Online Tool | C³ MindLoop',
+    description:
+      'Free online SQL INSERT and cURL command to JSON converter. Parse SQL queries and cURL requests into structured JSON arrays instantly. 100% client-side, zero server transmission.',
+    keywords: [
+      'sql to json', 'sql insert to json', 'curl to json', 'curl command parser',
+      'sql query converter', 'insert into json converter', 'curl request to json',
+      'sql to json online free', 'curl headers to json', 'sql json parser online',
+      'convert sql to json', 'convert curl to json', 'database to json converter',
+      'curl body parser', 'sql select to json array', 'C³ MindLoop sql converter',
+    ],
+    canonical: `${BASE_URL}/tools/sql-to-json`,
+    openGraph: {
+      title: 'SQL & cURL to JSON Converter | C³ MindLoop',
+      description:
+        'Convert SQL INSERT statements and cURL commands into clean JSON. 100% client-side, zero server transmission.',
+      url: `${BASE_URL}/tools/sql-to-json`,
+      images: [{ url: defaultOgImage, width: 1200, height: 630, alt: 'SQL to JSON Converter - C³ MindLoop' }],
+    },
+    twitter: {
+      title: 'SQL & cURL to JSON Converter - Free | C³ MindLoop',
+      description: 'Convert SQL and cURL to JSON. 100% client-side, no data sent to server.',
+      images: [defaultOgImage],
+    },
+  },
   officeEditor: {
     title: 'Office Editor VS Code Extension - View & Edit Office Files',
     description:
@@ -453,3 +478,22 @@ export const regexTesterSchema = {
   publisher: { '@type': 'Organization', name: 'C³ MindLoop', url: BASE_URL },
 };
 
+export const sqlToJsonSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: 'SQL & cURL to JSON Converter',
+  url: `${BASE_URL}/tools/sql-to-json`,
+  applicationCategory: 'WebApplication',
+  operatingSystem: 'All Web Browsers',
+  description:
+    'Free online SQL INSERT and cURL command to JSON converter. Parse SQL queries and cURL requests into structured JSON arrays. 100% client-side.',
+  featureList: [
+    'SQL INSERT INTO statement to JSON array parsing',
+    'cURL command header and body extraction',
+    'Multi-format JSON export (clipboard + download)',
+    'Datatype inference (boolean, integer, string)',
+    '100% client-side execution - zero data transmission',
+  ],
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+  publisher: { '@type': 'Organization', name: 'C³ MindLoop', url: BASE_URL },
+};

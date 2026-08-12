@@ -660,6 +660,53 @@
         "q3": "Can I test email, URL, and phone number patterns?",
         "a3": "Absolutely! You can use the built-in cheatsheet presets or type custom expressions to validate emails, URLs, IP addresses, and custom tokens."
       }
+    },
+    "sqlToJson": {
+      "pageTitle": "SQL & cURL to JSON Converter",
+      "pageBadge": "100% Client-Side • Local Browser Processing",
+      "breadcrumb": "SQL to JSON",
+      "breadcrumbParent": "Developer Tools",
+      "features": [
+        {
+          "icon": "database",
+          "title": "SQL INSERT / SELECT Parser",
+          "desc": "Convert SQL raw queries and INSERT statements directly into clean JSON arrays or nested object structures instantly."
+        },
+        {
+          "icon": "terminal",
+          "title": "cURL Request to JSON Payload",
+          "desc": "Parse cURL commands to extract headers, authentication tokens, and request body parameters into structured JSON."
+        },
+        {
+          "icon": "shield-check",
+          "title": "100% In-Browser Isolation",
+          "desc": "Your SQL statements, database table schema, and cURL headers are processed entirely in client-side memory. Zero server uploads."
+        },
+        {
+          "icon": "code-bracket",
+          "title": "Multi-Format Export",
+          "desc": "Export formatted JSON output directly to clipboard or download as .json files for instant integration into API testing."
+        }
+      ],
+      "guide": {
+        "title": "How the SQL & cURL to JSON Converter Works",
+        "intro": "Converting database records or API shell commands into JSON is a daily task for backend software engineers. Select your input mode (SQL or cURL), paste your raw data, and let the parser build structured JSON output instantly inside your browser.",
+        "step1": "Select Input Mode: Switch between SQL Query mode or cURL Command mode using the toolbar toggle.",
+        "step2": "Paste Source Data: Paste your raw SQL INSERT INTO table (col1, col2) VALUES (...) queries or cURL terminal execution strings.",
+        "step3": "Instant Parsing: The parser extracts key-value pairs, sanitizes datatypes (booleans, integers, strings), and builds structured JSON output.",
+        "privacyTitle": "Data Privacy & Local Memory Processing",
+        "privacyIntro": "Pasting production database dumps or cURL commands containing private API keys and Bearer tokens into cloud converters poses serious security risks.",
+        "privacyBullet1": "C³ MindLoop Guarantees Absolute Privacy: All regex matching and string parsing happens inside your browser runtime. No data is stored, logged, or sent over HTTP endpoints.",
+        "privacyBullet2": "Offline Capable: The converter works entirely offline. Paste your SQL or cURL command and convert without needing an internet connection."
+      },
+      "faq": {
+        "q1": "Is this converter completely free and private?",
+        "a1": "Yes. It operates 100% client-side in your browser. Neither your SQL queries nor cURL authentication tokens leave your computer.",
+        "q2": "What types of SQL queries are supported?",
+        "a2": "It parses standard ANSI SQL INSERT INTO statements and CSV/TSV table outputs into structured JSON array format.",
+        "q3": "Can it convert cURL headers and request bodies?",
+        "a3": "Yes! It automatically extracts -H (headers), -d / --data / --data-raw (request payloads), and HTTP methods (POST, PUT, GET) into clean JSON."
+      }
     }
   }
 }

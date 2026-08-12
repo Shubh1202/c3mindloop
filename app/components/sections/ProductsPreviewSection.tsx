@@ -66,6 +66,7 @@ export const ProductsPreviewSection: React.FC = () => {
                 'curl-converter': '/tools/curl-converter',
                 'cron-visualizer': '/tools/cron-visualizer',
                 'regex-tester': '/tools/regex-tester',
+                'sql-to-json': '/tools/sql-to-json',
               };
               const toolHref = toolRoutes[prod.id];
 

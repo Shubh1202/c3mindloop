@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Cpu, LayoutGrid, CloudLightning, FileCode, Layers, Zap, FlaskConical, ArrowUpRight, Terminal } from 'lucide-react';
+import { Cpu, LayoutGrid, CloudLightning, FileCode, Layers, Zap, FlaskConical, ArrowUpRight, Terminal, Code2, ShieldCheck, Database } from 'lucide-react';
 import { useTranslation } from '../lib/i18n';
 import { PRODUCTS_LIST } from '../lib/constants';
 import { SEOHead } from '../components/layout/SEOHead';
@@ -27,6 +27,9 @@ export const ProductsPage: React.FC = () => {
     Zap,
     FlaskConical,
     Terminal,
+    Code2,
+    ShieldCheck,
+    Database,
   };
 
   const categories = ['all', 'extensions', 'json', 'encoders', 'auth', 'crypto', 'utilities'];
@@ -101,6 +104,7 @@ export const ProductsPage: React.FC = () => {
                   'curl-converter': '/tools/curl-converter',
                   'cron-visualizer': '/tools/cron-visualizer',
                   'regex-tester': '/tools/regex-tester',
+                  'sql-to-json': '/tools/sql-to-json',
                 };
                 const toolHref = toolRoutes[prod.id];
 

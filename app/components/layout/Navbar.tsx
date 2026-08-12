@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from '../../lib/router-compat';
 import { motion, AnimatePresence } from 'motion/react';
-import { Menu, X, Command, RotateCcw, Code2, ShieldCheck, Zap, Clock, Terminal, Regex } from 'lucide-react';
+import { Menu, X, Command, RotateCcw, Code2, ShieldCheck, Zap, Clock, Terminal, Regex, Database } from 'lucide-react';
 import { useTranslation } from '../../lib/i18n';
 import { LanguageSelector } from '../ui/LanguageSelector';
 import { ThemeToggle } from '../ui/ThemeToggle';
@@ -45,6 +45,7 @@ export const Navbar: React.FC<{
     { name: 'JSON Formatter', sub: 'Format & Validate', path: '/tools/json-formatter', icon: Code2 },
     { name: 'JWT Inspector', sub: 'Decode & Inspect', path: '/tools/jwt-inspector', icon: ShieldCheck },
     { name: 'Regex Tester', sub: 'Test & Debug', path: '/tools/regex-tester', icon: Regex },
+    { name: 'SQL to JSON', sub: 'Convert & Export', path: '/tools/sql-to-json', icon: Database },
   ];
 
   const navLinks = [

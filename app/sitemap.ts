@@ -10,6 +10,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: '/tools/jwt-inspector',    freq: 'weekly', priority: 0.9 },
     { path: '/tools/regex-tester',     freq: 'weekly', priority: 0.9 },
     { path: '/tools/base64-encoder',   freq: 'weekly', priority: 0.9 },
+    { path: '/tools/sql-to-json',      freq: 'weekly', priority: 0.9 },
     { path: '/blog',                   freq: 'daily',  priority: 0.8 },
     { path: '/guides',                 freq: 'weekly', priority: 0.75 },
     { path: '/about',                  freq: 'weekly', priority: 0.7 },
