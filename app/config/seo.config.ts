@@ -1,4 +1,4 @@
-export const BASE_URL = 'https://ccube.dev';
+export const BASE_URL = 'https://www.c3mindloop.com';
 
 const defaultOgImage = `${BASE_URL}/og-image.png`;
 
@@ -214,6 +214,28 @@ export const seoConfig = {
       title: 'JWT Decoder & Inspector - Free | C³ MindLoop',
       description:
         'Free online JWT decoder. 100% client-side - your token never leaves the browser.',
+    },
+  },
+  officeEditor: {
+    title: 'Office Editor VS Code Extension - View & Edit Office Files',
+    description:
+      'View and edit Excel, Word, PowerPoint, and PDF files directly inside VS Code with Office Editor. Local, fast, secure, and offline-first.',
+    keywords: [
+      'Office Editor VS Code', 'VS Code Office Extension', 'view docx in vs code',
+      'edit xlsx in vs code', 'VS Code excel viewer', 'VS Code pdf viewer',
+      'office editor extension', 'c3mindloop office editor'
+    ],
+    canonical: `${BASE_URL}/tools/office-editor`,
+    openGraph: {
+      title: 'Office Editor VS Code Extension - View & Edit Office Files | C³ MindLoop',
+      description:
+        'View and edit Excel, Word, and PDF files directly inside VS Code. Local and private processing.',
+      url: `${BASE_URL}/tools/office-editor`,
+      images: [{ url: defaultOgImage, width: 1200, height: 630, alt: 'Office Editor Extension - C³ MindLoop' }],
+    },
+    twitter: {
+      title: 'Office Editor VS Code Extension | C³ MindLoop',
+      description: 'View & edit Excel, Word, and PDF files inside VS Code.',
       images: [defaultOgImage],
     },
   },
@@ -370,6 +392,25 @@ export const jsonFormatterSchema = {
     'Interactive collapsible tree view',
     'JSON minification',
     'Zero data transmission - fully private',
+  ],
+  publisher: { '@type': 'Organization', name: 'C³ MindLoop', url: BASE_URL },
+};
+
+export const officeEditorSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: 'Office Editor VS Code Extension',
+  url: `${BASE_URL}/tools/office-editor`,
+  applicationCategory: 'DeveloperApplication',
+  operatingSystem: 'Windows, macOS, Linux',
+  description:
+    'VS Code extension to view and edit Excel, Word, PowerPoint, and PDF files directly within your IDE. Local-first and fully offline.',
+  featureList: [
+    'Excel sheet viewer and editor (.xlsx, .xls)',
+    'Word document viewer (.docx, .doc)',
+    'PowerPoint previewer (.pptx)',
+    'PDF document viewer',
+    'Local execution - no third-party cloud uploads',
   ],
   offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
   publisher: { '@type': 'Organization', name: 'C³ MindLoop', url: BASE_URL },

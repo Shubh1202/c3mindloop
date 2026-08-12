@@ -69,8 +69,8 @@ export const LegalPage: React.FC = () => {
             </div>
             <p className="mt-12 text-center text-xs font-mono text-theme-muted">
               Questions? Reach us at{' '}
-              <a href="mailto:hello@c3mindloop.dev" className="text-[#1D9BF0] hover:underline">
-                hello@c3mindloop.dev
+              <a href="mailto:hello@c3mindloop.com" className="text-[#1D9BF0] hover:underline">
+                hello@c3mindloop.com
               </a>
               {' '}or inspect our source on GitHub.
             </p>
@@ -125,10 +125,10 @@ export const LegalPage: React.FC = () => {
           <p className="mt-12 text-center text-xs font-mono text-theme-muted">
             Questions? Reach us at{' '}
             <a
-              href="mailto:hello@c3mindloop.dev"
+              href="mailto:hello@c3mindloop.com"
               className="text-[#1D9BF0] hover:underline"
             >
-              hello@c3mindloop.dev
+              hello@c3mindloop.com
             </a>
             {' '}or inspect our source on GitHub.
           </p>

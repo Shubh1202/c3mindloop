@@ -143,8 +143,8 @@ export const ContactPage: React.FC = () => {
                     <Mail className="w-5 h-5 text-[#1D9BF0] shrink-0 mt-0.5" />
                     <div>
                       <span className="text-xs font-mono uppercase font-bold text-theme-muted block">Direct Email</span>
-                      <a href="mailto:hello@cmindloop.com" className="text-body font-medium text-[#1D9BF0] hover:underline">
-                        hello@cmindloop.com
+                      <a href="mailto:hello@c3mindloop.com" className="text-body font-medium text-[#1D9BF0] hover:underline">
+                        hello@c3mindloop.com
                       </a>
                     </div>
                   </div>

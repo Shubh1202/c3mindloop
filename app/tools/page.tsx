@@ -11,12 +11,12 @@ export const metadata: Metadata = {
     'client side developer tools', 'developer tools no login', 'private dev tools',
     'C³ MindLoop tools', 'ccube dev tools', 'c3mindloop utilities',
   ],
-  alternates: { canonical: 'https://ccube.dev/tools' },
+  alternates: { canonical: 'https://www.c3mindloop.com/tools' },
   openGraph: {
     title: 'Free Developer Utilities - JSON, JWT, Base64 | C³ MindLoop',
     description:
       'Browse all C³ MindLoop free developer tools: JSON Formatter, Base64 Encoder, JWT Decoder and more. 100% client-side, no data collection.',
-    url: 'https://ccube.dev/tools',
+    url: 'https://www.c3mindloop.com/tools',
   },
   twitter: {
     card: 'summary_large_image',
