@@ -17,7 +17,7 @@ export const OfficeEditorPage: React.FC = () => {
 
       <div className="pt-6 sm:pt-8 pb-16 bg-app text-theme-main relative z-10 font-sans">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-          
+
           {/* Breadcrumb Navigation & Compact Title */}
           <div className="space-y-1.5 border-b border-theme-subtle pb-3">
             <div className="flex items-center gap-2 text-xs font-mono text-theme-muted">
@@ -31,7 +31,7 @@ export const OfficeEditorPage: React.FC = () => {
 
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-0.5">
               <h1 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight text-theme-main">
-                Office Editor — VS Code Extension
+                Office Editor - VS Code Extension
               </h1>
               <span className="text-[11px] font-mono text-neutral-400 bg-surface px-2.5 py-1 rounded border border-theme-subtle shrink-0">
                 Local Editor • 100% Offline-First
@@ -94,7 +94,7 @@ export const OfficeEditorPage: React.FC = () => {
 
           {/* Detailed Content / SEO Prose */}
           <div className="pt-10 border-t border-theme-subtle space-y-12">
-            
+
             {/* Structured Features Grid */}
             <div className="space-y-6">
               <h2 className="text-xl font-bold text-theme-main">

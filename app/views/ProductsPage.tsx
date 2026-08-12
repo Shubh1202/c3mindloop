@@ -39,14 +39,14 @@ export const ProductsPage: React.FC = () => {
   return (
     <>
       <SEOHead
-        title="Developer Utilities & VS Code Extension — C³ MindLoop"
+        title="Developer Utilities & VS Code Extension - C³ MindLoop"
         description="Explore C³ MindLoop Developer Tools: Office Editor VS Code Extension, JSON Formatter, Base64 Encoder, JWT Inspector, Hash Generator, and Regex Tester."
         canonical="/tools"
       />
 
       <div className="pt-16 pb-20 bg-app text-theme-main relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
-          
+
           {/* Page Header */}
           <div className="text-center max-w-4xl mx-auto space-y-6">
             <span className="text-xs font-mono uppercase tracking-widest text-[#1D9BF0] font-semibold block">
@@ -65,11 +65,10 @@ export const ProductsPage: React.FC = () => {
                 <button
                   key={cat}
                   onClick={() => setSelectedCategory(cat)}
-                  className={`px-3.5 py-1.5 rounded-md text-xs font-mono font-medium uppercase tracking-wider transition-all cursor-pointer ${
-                    selectedCategory === cat
+                  className={`px-3.5 py-1.5 rounded-md text-xs font-mono font-medium uppercase tracking-wider transition-all cursor-pointer ${selectedCategory === cat
                       ? 'bg-[#1D9BF0] text-white'
                       : 'bg-surface border border-theme-subtle text-theme-muted hover:text-theme-main'
-                  }`}
+                    }`}
                 >
                   {cat}
                 </button>
@@ -105,17 +104,17 @@ export const ProductsPage: React.FC = () => {
                 const toolHref = toolRoutes[prod.id];
 
                 return (
-                    <Link
-                      key={prod.id}
-                      href={toolHref ?? '/tools'}
-                      onClick={(e: React.MouseEvent<HTMLAnchorElement>) => {
-                        if (!toolHref) {
-                          e.preventDefault();
-                          setSelectedProduct(prod);
-                        }
-                      }}
-                      className="py-8 px-2 sm:px-4 flex flex-col md:flex-row md:items-center justify-between gap-6 hover:bg-surface/50 transition-colors cursor-pointer group"
-                    >
+                  <Link
+                    key={prod.id}
+                    href={toolHref ?? '/tools'}
+                    onClick={(e: React.MouseEvent<HTMLAnchorElement>) => {
+                      if (!toolHref) {
+                        e.preventDefault();
+                        setSelectedProduct(prod);
+                      }
+                    }}
+                    className="py-8 px-2 sm:px-4 flex flex-col md:flex-row md:items-center justify-between gap-6 hover:bg-surface/50 transition-colors cursor-pointer group"
+                  >
                     {/* Left: Index + Icon + Details */}
                     <div className="flex items-start gap-5 max-w-3xl">
                       <span className="text-xs font-mono text-theme-muted pt-1 w-6 shrink-0">

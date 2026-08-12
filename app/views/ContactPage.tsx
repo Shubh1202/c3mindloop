@@ -27,14 +27,14 @@ export const ContactPage: React.FC = () => {
   return (
     <>
       <SEOHead
-        title="Contact Engineering Team — C³ MindLoop"
+        title="Contact Engineering Team - C³ MindLoop"
         description="Get in touch with C³ MindLoop. Project inquiries, SaaS architecture consulting, partnerships, and technical questions."
         canonical="/contact"
       />
 
       <div className="pt-16 pb-20 relative z-10 bg-app">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-          
+
           {/* Authentic Header */}
           <div className="text-center max-w-3xl mx-auto space-y-6">
             <span className="text-xs font-mono uppercase tracking-widest text-[#1D9BF0] font-semibold block">
@@ -49,7 +49,7 @@ export const ContactPage: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-            
+
             {/* Contact Form Box */}
             <div className="lg:col-span-7 p-5 sm:p-8 rounded-xl bg-surface border border-theme-subtle">
               {submitted ? (
@@ -177,7 +177,7 @@ export const ContactPage: React.FC = () => {
                   Authenticity First
                 </span>
                 <p className="text-body-small text-theme-muted">
-                  C³ MindLoop is an open technology ecosystem. We do not maintain fake office fronts or exaggerated claims—we focus on real software, real code, and real engineering value.
+                  C³ MindLoop is an open technology ecosystem. We do not maintain fake office fronts or exaggerated claims-we focus on real software, real code, and real engineering value.
                 </p>
               </div>
             </div>

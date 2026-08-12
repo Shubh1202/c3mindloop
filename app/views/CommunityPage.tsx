@@ -53,14 +53,14 @@ export const CommunityPage: React.FC = () => {
   return (
     <>
       <SEOHead
-        title="Community — Coding. Crashing. Crying."
+        title="Community - Coding. Crashing. Crying."
         description="Join 120,000+ developers in the C³ MindLoop community. Share production crash stories, contribute to open source, and attend live workshops."
         canonical="/community"
       />
 
       <div className="pt-16 pb-20 bg-app text-theme-main relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-20">
-          
+
           {/* Header */}
           <div className="text-center max-w-4xl mx-auto space-y-4">
             <span className="text-xs font-semibold uppercase tracking-widest text-[#1D9BF0] block">
@@ -129,7 +129,7 @@ export const CommunityPage: React.FC = () => {
           {/* Crash Stories Wall (Open List View with 1px Line Dividers, No Badges) */}
           <div className="space-y-8">
             <h2 className="text-h2 text-theme-main">Production Post-Mortems</h2>
-            
+
             <div className="divide-y divide-theme-subtle border-t border-b border-theme-subtle">
               {stories.map((story, idx) => (
                 <div key={story.id} className="py-8 grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
@@ -142,7 +142,7 @@ export const CommunityPage: React.FC = () => {
                   <div className="md:col-span-9 space-y-4">
                     <h3 className="text-h3 text-theme-main">{story.title}</h3>
                     <p className="text-body text-theme-muted leading-relaxed">{story.story}</p>
-                    
+
                     <div className="pt-3 border-t border-theme-subtle text-xs text-theme-main space-y-1">
                       <span className="font-semibold uppercase tracking-wider text-[#1D9BF0] block">
                         KEY LESSON:

@@ -136,7 +136,7 @@ export const JwtInspectorTool: React.FC = () => {
     expired: { icon: ShieldAlert, color: 'text-red-400', bg: 'bg-red-500/10 border-red-500/30', label: t('tools.jwtInspector.statusExpired') },
     'no-exp': { icon: ShieldOff, color: 'text-neutral-400', bg: 'bg-neutral-500/10 border-neutral-500/30', label: t('tools.jwtInspector.statusNoExp') },
     invalid: { icon: AlertCircle, color: 'text-red-400', bg: 'bg-red-500/10 border-red-500/30', label: t('tools.jwtInspector.statusInvalid') },
-    empty: { icon: ShieldOff, color: 'text-neutral-500', bg: 'bg-neutral-800/50 border-neutral-700', label: '—' },
+    empty: { icon: ShieldOff, color: 'text-neutral-500', bg: 'bg-neutral-800/50 border-neutral-700', label: '-' },
   };
 
   const status = decoded ? decoded.status : (error ? 'invalid' : 'empty');
@@ -190,16 +190,14 @@ export const JwtInspectorTool: React.FC = () => {
       </div>
 
       {/* Main layout: side-by-side or stacked */}
-      <div className={`${
-        isSideBySide
-          ? 'grid grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-neutral-800'
-          : 'flex flex-col'
-      } ${isFullScreen ? 'flex-1 overflow-hidden' : ''}`}>
+      <div className={`${isSideBySide
+        ? 'grid grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-neutral-800'
+        : 'flex flex-col'
+        } ${isFullScreen ? 'flex-1 overflow-hidden' : ''}`}>
 
         {/* Input pane */}
-        <div className={`flex flex-col p-3 sm:p-4 space-y-2 ${
-          isFullScreen && isSideBySide ? 'overflow-y-auto' : ''
-        }`}>
+        <div className={`flex flex-col p-3 sm:p-4 space-y-2 ${isFullScreen && isSideBySide ? 'overflow-y-auto' : ''
+          }`}>
           <div className="text-xs font-mono text-neutral-400 pb-1 border-b border-neutral-900">
             <span className="font-semibold text-neutral-300">Encoded JWT Token</span>
           </div>
@@ -208,9 +206,8 @@ export const JwtInspectorTool: React.FC = () => {
             onChange={(e) => handleDecode(e.target.value)}
             placeholder={t('tools.jwtInspector.inputPlaceholder')}
             spellCheck={false}
-            className={`w-full p-3 font-mono text-xs bg-neutral-900/90 text-neutral-100 border border-neutral-800 rounded focus:border-[#1D9BF0] focus:outline-none resize-y leading-relaxed transition-colors placeholder-neutral-600 ${
-              isSideBySide ? 'min-h-[300px]' : 'min-h-[80px] max-h-[300px]'
-            }`}
+            className={`w-full p-3 font-mono text-xs bg-neutral-900/90 text-neutral-100 border border-neutral-800 rounded focus:border-[#1D9BF0] focus:outline-none resize-y leading-relaxed transition-colors placeholder-neutral-600 ${isSideBySide ? 'min-h-[300px]' : 'min-h-[80px] max-h-[300px]'
+              }`}
           />
           {error && (
             <div className="flex items-start gap-2 p-3 bg-red-950/40 border border-red-900/80 rounded text-xs text-red-300 font-mono">
@@ -221,13 +218,11 @@ export const JwtInspectorTool: React.FC = () => {
         </div>
 
         {/* Output pane: 3 panels */}
-        <div className={`${
-          isSideBySide
-            ? 'flex flex-col divide-y divide-neutral-800'
-            : 'grid grid-cols-1 lg:grid-cols-3 divide-y lg:divide-y-0 lg:divide-x divide-neutral-800'
-        } ${isFullScreen && isSideBySide ? 'overflow-y-auto' : ''} ${
-          !isSideBySide ? 'min-h-[320px]' : ''
-        }`}>
+        <div className={`${isSideBySide
+          ? 'flex flex-col divide-y divide-neutral-800'
+          : 'grid grid-cols-1 lg:grid-cols-3 divide-y lg:divide-y-0 lg:divide-x divide-neutral-800'
+          } ${isFullScreen && isSideBySide ? 'overflow-y-auto' : ''} ${!isSideBySide ? 'min-h-[320px]' : ''
+          }`}>
 
           {/* Panel 1: Header */}
           <div className={`flex flex-col p-3 sm:p-4 space-y-2 ${isFullScreen && !isSideBySide ? 'overflow-y-auto' : ''}`}>

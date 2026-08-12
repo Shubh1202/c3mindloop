@@ -39,7 +39,7 @@ const SAMPLE_JSON_DATA = {
     role: "Core Developer",
     github: "shubhamprajapati1202"
   },
-  tags: [ "developer-tools", "json", "formatter", "privacy-first" ]
+  tags: ["developer-tools", "json", "formatter", "privacy-first"]
 };
 
 export const JsonFormatterTool: React.FC = () => {
@@ -55,8 +55,17 @@ export const JsonFormatterTool: React.FC = () => {
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [isSideBySide, setIsSideBySide] = useState(true);
   const [isTyping, setIsTyping] = useState(false);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Show a transient toast notification
+  const showToast = (message: string) => {
+    if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+    setToastMessage(message);
+    toastTimerRef.current = setTimeout(() => setToastMessage(null), 3000);
+  };
 
   // Lock body scroll + Esc key + hide navbar when fullscreen
   useEffect(() => {
@@ -106,8 +115,8 @@ export const JsonFormatterTool: React.FC = () => {
     return parseInt(indentOption, 10);
   };
 
-  // Format JSON
-  const handleFormat = () => {
+  // Format JSON - syncs prettified result back to the input textarea
+  const handleFormat = (syncToInput = false) => {
     if (!rawInput.trim()) {
       setFormattedOutput('');
       setParsedObject(null);
@@ -122,6 +131,9 @@ export const JsonFormatterTool: React.FC = () => {
       const formatted = JSON.stringify(parsed, null, getIndentValue());
       setParsedObject(parsed);
       setFormattedOutput(formatted);
+      if (syncToInput) {
+        setRawInput(formatted);
+      }
       setIsValid(true);
       setErrorMessage(null);
       setErrorLine(null);
@@ -131,6 +143,9 @@ export const JsonFormatterTool: React.FC = () => {
       const errLoc = parseJsonErrorLocation(rawInput, err);
       setErrorMessage(errLoc.message);
       setErrorLine(errLoc.line);
+      if (syncToInput) {
+        showToast(`Invalid JSON syntax: ${errLoc.message}`);
+      }
     }
   };
 
@@ -159,7 +174,7 @@ export const JsonFormatterTool: React.FC = () => {
     handleFormat();
   };
 
-  // Auto-format on initial mount or rawInput change — debounced to avoid aggressive error feedback while typing
+  // Auto-format on initial mount or rawInput change - debounced to avoid aggressive error feedback while typing
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
     setIsTyping(true);
@@ -264,249 +279,264 @@ export const JsonFormatterTool: React.FC = () => {
     <>
 
       <div className={`bg-neutral-950 border border-neutral-800 font-sans text-neutral-100 flex flex-col ${isFullScreen ? 'fixed inset-0 z-[9999] overflow-hidden' : 'w-full rounded-lg shadow-2xl'}`}>
-      
-      {/* Primary Control Toolbar */}
-      <div className={`px-3 py-2.5 bg-neutral-900 border-b border-neutral-800 flex flex-wrap items-center justify-between gap-2 text-xs font-mono ${isFullScreen ? 'sticky top-0 z-[10000]' : ''}`}>
-        <div className="flex flex-wrap items-center gap-2">
-          <button
-            onClick={handleFormat}
-            className="px-3 py-1.5 rounded bg-[#1D9BF0] hover:bg-[#1A8CD8] text-white font-semibold transition-colors flex items-center gap-1.5 cursor-pointer shadow-sm"
-          >
-            <AlignLeft className="w-3.5 h-3.5" />
-            <span>Format</span>
-          </button>
 
-          <button
-            onClick={handleMinify}
-            className="px-3 py-1.5 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-200 transition-colors flex items-center gap-1.5 cursor-pointer"
-          >
-            <FileCode className="w-3.5 h-3.5" />
-            <span>Minify</span>
-          </button>
-
-          <button
-            onClick={handleValidate}
-            className="px-3 py-1.5 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-200 transition-colors flex items-center gap-1.5 cursor-pointer"
-          >
-            <CheckCircle2 className="w-3.5 h-3.5 text-sky-400" />
-            <span>Validate</span>
-          </button>
-
-          <button
-            onClick={handleLoadSample}
-            className="px-2.5 py-1.5 rounded bg-neutral-800/80 hover:bg-neutral-700 text-neutral-300 transition-colors cursor-pointer"
-          >
-            Sample JSON
-          </button>
-
-          <button
-            onClick={handleClear}
-            className="px-2.5 py-1.5 rounded bg-neutral-800/80 hover:bg-red-950 hover:text-red-300 text-neutral-400 transition-colors flex items-center gap-1 cursor-pointer"
-          >
-            <Trash2 className="w-3.5 h-3.5" />
-            <span>Clear</span>
-          </button>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-2">
-          {/* Indent Selector */}
-          <div className="flex items-center bg-neutral-950 p-1 rounded border border-neutral-800 text-xs font-mono">
-            <span className="text-neutral-500 px-2">Spacing:</span>
+        {/* Primary Control Toolbar */}
+        <div className={`px-3 py-2.5 bg-neutral-900 border-b border-neutral-800 flex flex-wrap items-center justify-between gap-2 text-xs font-mono ${isFullScreen ? 'sticky top-0 z-[10000]' : ''}`}>
+          <div className="flex flex-wrap items-center gap-2">
             <button
-              onClick={() => setIndentOption('2')}
-              className={`px-2 py-0.5 rounded transition-colors ${indentOption === '2' ? 'bg-[#1D9BF0] text-white font-semibold' : 'text-neutral-400 hover:text-white'}`}
+              onClick={() => handleFormat(true)}
+              className="px-3 py-1.5 rounded bg-[#1D9BF0] hover:bg-[#1A8CD8] text-white font-semibold transition-colors flex items-center gap-1.5 cursor-pointer shadow-sm"
             >
-              2 Sp
+              <AlignLeft className="w-3.5 h-3.5" />
+              <span>Format</span>
             </button>
+
             <button
-              onClick={() => setIndentOption('4')}
-              className={`px-2 py-0.5 rounded transition-colors ${indentOption === '4' ? 'bg-[#1D9BF0] text-white font-semibold' : 'text-neutral-400 hover:text-white'}`}
+              onClick={handleMinify}
+              className="px-3 py-1.5 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-200 transition-colors flex items-center gap-1.5 cursor-pointer"
             >
-              4 Sp
+              <FileCode className="w-3.5 h-3.5" />
+              <span>Minify</span>
             </button>
+
             <button
-              onClick={() => setIndentOption('tab')}
-              className={`px-2 py-0.5 rounded transition-colors ${indentOption === 'tab' ? 'bg-[#1D9BF0] text-white font-semibold' : 'text-neutral-400 hover:text-white'}`}
+              onClick={handleValidate}
+              className="px-3 py-1.5 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-200 transition-colors flex items-center gap-1.5 cursor-pointer"
             >
-              Tab
+              <CheckCircle2 className="w-3.5 h-3.5 text-sky-400" />
+              <span>Validate</span>
+            </button>
+
+            <button
+              onClick={handleLoadSample}
+              className="px-2.5 py-1.5 rounded bg-neutral-800/80 hover:bg-neutral-700 text-neutral-300 transition-colors cursor-pointer"
+            >
+              Sample JSON
+            </button>
+
+            <button
+              onClick={handleClear}
+              className="px-2.5 py-1.5 rounded bg-neutral-800/80 hover:bg-red-950 hover:text-red-300 text-neutral-400 transition-colors flex items-center gap-1 cursor-pointer"
+            >
+              <Trash2 className="w-3.5 h-3.5" />
+              <span>Clear</span>
             </button>
           </div>
 
-          <input
-            type="file"
-            ref={fileInputRef}
-            onChange={handleFileUpload}
-            accept=".json,application/json,text/plain"
-            className="hidden"
-          />
-          <button
-            onClick={() => fileInputRef.current?.click()}
-            className="px-2.5 py-1.5 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-300 flex items-center gap-1 transition-colors cursor-pointer"
-          >
-            <Upload className="w-3.5 h-3.5" />
-            <span>Upload</span>
-          </button>
+          <div className="flex flex-wrap items-center gap-2">
+            {/* Indent Selector */}
+            <div className="flex items-center bg-neutral-950 p-1 rounded border border-neutral-800 text-xs font-mono">
+              <span className="text-neutral-500 px-2">Spacing:</span>
+              <button
+                onClick={() => setIndentOption('2')}
+                className={`px-2 py-0.5 rounded transition-colors ${indentOption === '2' ? 'bg-[#1D9BF0] text-white font-semibold' : 'text-neutral-400 hover:text-white'}`}
+              >
+                2 Sp
+              </button>
+              <button
+                onClick={() => setIndentOption('4')}
+                className={`px-2 py-0.5 rounded transition-colors ${indentOption === '4' ? 'bg-[#1D9BF0] text-white font-semibold' : 'text-neutral-400 hover:text-white'}`}
+              >
+                4 Sp
+              </button>
+              <button
+                onClick={() => setIndentOption('tab')}
+                className={`px-2 py-0.5 rounded transition-colors ${indentOption === 'tab' ? 'bg-[#1D9BF0] text-white font-semibold' : 'text-neutral-400 hover:text-white'}`}
+              >
+                Tab
+              </button>
+            </div>
 
-          <button
-            onClick={handleDownload}
-            disabled={!formattedOutput && !rawInput}
-            className="px-2.5 py-1.5 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-300 disabled:opacity-40 flex items-center gap-1 transition-colors cursor-pointer"
-          >
-            <Download className="w-3.5 h-3.5" />
-            <span>Download</span>
-          </button>
-
-          <button
-            onClick={handleCopy}
-            disabled={!formattedOutput && !rawInput}
-            className="px-3 py-1.5 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-200 disabled:opacity-40 flex items-center gap-1.5 transition-colors cursor-pointer"
-          >
-            {copied ? <Check className="w-3.5 h-3.5 text-sky-400" /> : <Copy className="w-3.5 h-3.5" />}
-            <span>{copied ? 'Copied' : 'Copy'}</span>
-          </button>
-
-          {/* Layout toggle — desktop only */}
-          <div className="hidden lg:flex items-center bg-neutral-950 p-1 rounded border border-neutral-800">
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleFileUpload}
+              accept=".json,application/json,text/plain"
+              className="hidden"
+            />
             <button
-              onClick={() => setIsSideBySide(true)}
-              title="Side-by-Side View"
-              className={`p-1 rounded transition-colors cursor-pointer ${isSideBySide ? 'bg-[#1D9BF0] text-white' : 'text-neutral-400 hover:text-white'}`}
+              onClick={() => fileInputRef.current?.click()}
+              className="px-2.5 py-1.5 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-300 flex items-center gap-1 transition-colors cursor-pointer"
             >
-              <Columns2 className="w-3.5 h-3.5" />
+              <Upload className="w-3.5 h-3.5" />
+              <span>Upload</span>
             </button>
+
             <button
-              onClick={() => setIsSideBySide(false)}
-              title="Stacked View"
-              className={`p-1 rounded transition-colors cursor-pointer ${!isSideBySide ? 'bg-[#1D9BF0] text-white' : 'text-neutral-400 hover:text-white'}`}
+              onClick={handleDownload}
+              disabled={!formattedOutput && !rawInput}
+              className="px-2.5 py-1.5 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-300 disabled:opacity-40 flex items-center gap-1 transition-colors cursor-pointer"
             >
-              <Rows2 className="w-3.5 h-3.5" />
+              <Download className="w-3.5 h-3.5" />
+              <span>Download</span>
+            </button>
+
+            <button
+              onClick={handleCopy}
+              disabled={!formattedOutput && !rawInput}
+              className="px-3 py-1.5 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-200 disabled:opacity-40 flex items-center gap-1.5 transition-colors cursor-pointer"
+            >
+              {copied ? <Check className="w-3.5 h-3.5 text-sky-400" /> : <Copy className="w-3.5 h-3.5" />}
+              <span>{copied ? 'Copied' : 'Copy'}</span>
+            </button>
+
+            {/* Layout toggle - desktop only */}
+            <div className="hidden lg:flex items-center bg-neutral-950 p-1 rounded border border-neutral-800">
+              <button
+                onClick={() => setIsSideBySide(true)}
+                title="Side-by-Side View"
+                className={`p-1 rounded transition-colors cursor-pointer ${isSideBySide ? 'bg-[#1D9BF0] text-white' : 'text-neutral-400 hover:text-white'}`}
+              >
+                <Columns2 className="w-3.5 h-3.5" />
+              </button>
+              <button
+                onClick={() => setIsSideBySide(false)}
+                title="Stacked View"
+                className={`p-1 rounded transition-colors cursor-pointer ${!isSideBySide ? 'bg-[#1D9BF0] text-white' : 'text-neutral-400 hover:text-white'}`}
+              >
+                <Rows2 className="w-3.5 h-3.5" />
+              </button>
+            </div>
+
+            <button
+              onClick={() => setIsFullScreen(!isFullScreen)}
+              title={isFullScreen ? 'Exit Full Screen' : 'Full Screen'}
+              className="p-1.5 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-300 flex items-center gap-1 transition-colors cursor-pointer"
+            >
+              {isFullScreen ? <Minimize2 className="w-3.5 h-3.5" /> : <Maximize2 className="w-3.5 h-3.5" />}
             </button>
           </div>
-
-          <button
-            onClick={() => setIsFullScreen(!isFullScreen)}
-            title={isFullScreen ? 'Exit Full Screen' : 'Full Screen'}
-            className="p-1.5 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-300 flex items-center gap-1 transition-colors cursor-pointer"
-          >
-            {isFullScreen ? <Minimize2 className="w-3.5 h-3.5" /> : <Maximize2 className="w-3.5 h-3.5" />}
-          </button>
         </div>
-      </div>
 
-      {/* Main Dual Split Pane Area */}
-      <div className={`grid divide-neutral-800 ${
-        isSideBySide
+        {/* Main Dual Split Pane Area */}
+        <div className={`grid divide-neutral-800 ${isSideBySide
           ? 'grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x'
           : 'grid-cols-1 divide-y'
-      } ${isFullScreen ? 'flex-1 overflow-hidden' : 'min-h-[480px]'}`}>
-        
-        {/* Left Pane: Raw JSON Input */}
-        <div className={`flex flex-col bg-neutral-950 p-3 sm:p-4 space-y-2 ${isFullScreen ? 'overflow-y-auto' : ''}`}>
-          <div className="flex items-center justify-between text-xs font-mono text-neutral-400 pb-1 border-b border-neutral-900">
-            <span className="font-semibold text-neutral-300">Raw JSON Input</span>
-            <div className="flex items-center gap-3 text-[11px]">
-              <span>{lineCount} lines</span>
-              <span>•</span>
-              <span>{rawBytes} bytes</span>
+          } ${isFullScreen ? 'flex-1 overflow-hidden' : 'min-h-[480px]'}`}>
+
+          {/* Left Pane: Raw JSON Input */}
+          <div className={`flex flex-col bg-neutral-950 p-3 sm:p-4 space-y-2 ${isFullScreen ? 'overflow-y-auto' : ''}`}>
+            <div className="flex items-center justify-between text-xs font-mono text-neutral-400 pb-1 border-b border-neutral-900">
+              <span className="font-semibold text-neutral-300">Raw JSON Input</span>
+              <div className="flex items-center gap-3 text-[11px]">
+                <span>{lineCount} lines</span>
+                <span>•</span>
+                <span>{rawBytes} bytes</span>
+              </div>
+            </div>
+
+            <div className="relative flex-1 flex">
+              <textarea
+                value={rawInput}
+                onChange={(e) => setRawInput(e.target.value)}
+                placeholder="Paste raw JSON here..."
+                spellCheck={false}
+                className="w-full h-full min-h-[400px] p-3 font-mono text-xs sm:text-sm bg-neutral-900/90 text-neutral-100 border border-neutral-800 rounded focus:border-[#1D9BF0] focus:outline-none resize-y leading-relaxed transition-colors"
+              />
             </div>
           </div>
 
-          <div className="relative flex-1 flex">
-            <textarea
-              value={rawInput}
-              onChange={(e) => setRawInput(e.target.value)}
-              placeholder="Paste raw JSON here..."
-              spellCheck={false}
-              className="w-full h-full min-h-[400px] p-3 font-mono text-xs sm:text-sm bg-neutral-900/90 text-neutral-100 border border-neutral-800 rounded focus:border-[#1D9BF0] focus:outline-none resize-y leading-relaxed transition-colors"
-            />
+          {/* Right Pane: Output (Code or Tree View) */}
+          <div className={`flex flex-col bg-neutral-950 p-3 sm:p-4 space-y-2 ${isFullScreen ? 'overflow-y-auto' : ''}`}>
+            <div className="flex items-center justify-between text-xs font-mono text-neutral-400 pb-1 border-b border-neutral-900">
+              <div className="flex items-center gap-2">
+                <span className="font-semibold text-neutral-300">Formatted Output</span>
+                {/* View Switcher */}
+                <div className="flex items-center bg-neutral-900 p-0.5 rounded border border-neutral-800 text-[11px]">
+                  <button
+                    onClick={() => setViewMode('code')}
+                    className={`px-2 py-0.5 rounded transition-colors ${viewMode === 'code' ? 'bg-[#1D9BF0] text-white font-medium' : 'text-neutral-400 hover:text-white'}`}
+                  >
+                    Code View
+                  </button>
+                  <button
+                    onClick={() => setViewMode('tree')}
+                    disabled={!isValid || !parsedObject}
+                    className={`px-2 py-0.5 rounded transition-colors disabled:opacity-40 flex items-center gap-1 ${viewMode === 'tree' ? 'bg-[#1D9BF0] text-white font-medium' : 'text-neutral-400 hover:text-white'}`}
+                  >
+                    <FolderTree className="w-3 h-3" />
+                    <span>Tree View</span>
+                  </button>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3 text-[11px]">
+                <span>{outputBytes} bytes</span>
+              </div>
+            </div>
+
+            {/* View Container */}
+            <div className="flex-1 bg-neutral-900/90 border border-neutral-800 rounded min-h-[400px] overflow-hidden flex flex-col">
+              {isValid || isTyping ? (
+                viewMode === 'code' ? (
+                  renderHighlightedJson(formattedOutput || rawInput)
+                ) : (
+                  <JsonTreeView data={parsedObject} initialExpandedDepth={2} />
+                )
+              ) : (
+                <div className="p-6 text-red-400 font-mono text-xs space-y-3">
+                  <div className="flex items-center gap-2 text-red-400 font-semibold text-sm">
+                    <AlertCircle className="w-4 h-4 shrink-0" />
+                    <span>Invalid JSON Syntax</span>
+                  </div>
+                  <div className="p-3 bg-red-950/40 border border-red-900/80 rounded text-red-300 leading-relaxed font-mono">
+                    {errorMessage}
+                  </div>
+                  {errorLine && (
+                    <p className="text-neutral-400 text-[11px]">
+                      📍 Syntax error identified around Line {errorLine}. Please review your brackets, trailing commas, or quotes.
+                    </p>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
-        {/* Right Pane: Output (Code or Tree View) */}
-        <div className={`flex flex-col bg-neutral-950 p-3 sm:p-4 space-y-2 ${isFullScreen ? 'overflow-y-auto' : ''}`}>
-          <div className="flex items-center justify-between text-xs font-mono text-neutral-400 pb-1 border-b border-neutral-900">
-            <div className="flex items-center gap-2">
-              <span className="font-semibold text-neutral-300">Formatted Output</span>
-              {/* View Switcher */}
-              <div className="flex items-center bg-neutral-900 p-0.5 rounded border border-neutral-800 text-[11px]">
-                <button
-                  onClick={() => setViewMode('code')}
-                  className={`px-2 py-0.5 rounded transition-colors ${viewMode === 'code' ? 'bg-[#1D9BF0] text-white font-medium' : 'text-neutral-400 hover:text-white'}`}
-                >
-                  Code View
-                </button>
-                <button
-                  onClick={() => setViewMode('tree')}
-                  disabled={!isValid || !parsedObject}
-                  className={`px-2 py-0.5 rounded transition-colors disabled:opacity-40 flex items-center gap-1 ${viewMode === 'tree' ? 'bg-[#1D9BF0] text-white font-medium' : 'text-neutral-400 hover:text-white'}`}
-                >
-                  <FolderTree className="w-3 h-3" />
-                  <span>Tree View</span>
-                </button>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3 text-[11px]">
-              <span>{outputBytes} bytes</span>
-            </div>
-          </div>
-
-          {/* View Container */}
-          <div className="flex-1 bg-neutral-900/90 border border-neutral-800 rounded min-h-[400px] overflow-hidden flex flex-col">
-            {isValid || isTyping ? (
-              viewMode === 'code' ? (
-                renderHighlightedJson(formattedOutput || rawInput)
-              ) : (
-                <JsonTreeView data={parsedObject} initialExpandedDepth={2} />
-              )
+        {/* Validation Banner / Status Line */}
+        <div className="px-4 py-2 bg-neutral-900/80 border-t border-neutral-800 flex flex-wrap items-center justify-between gap-2 text-xs font-mono">
+          <div className="flex items-center gap-2">
+            {isTyping ? (
+              <span className="text-neutral-400 flex items-center gap-1.5 font-medium">
+                <span className="w-2 h-2 rounded-full bg-neutral-400 animate-pulse" />
+                <span>Editing...</span>
+              </span>
+            ) : isValid ? (
+              <span className="text-sky-400 flex items-center gap-1.5 font-medium">
+                <CheckCircle2 className="w-3.5 h-3.5" />
+                <span>Valid JSON Payload</span>
+              </span>
             ) : (
-              <div className="p-6 text-red-400 font-mono text-xs space-y-3">
-                <div className="flex items-center gap-2 text-red-400 font-semibold text-sm">
-                  <AlertCircle className="w-4 h-4 shrink-0" />
-                  <span>Invalid JSON Syntax</span>
-                </div>
-                <div className="p-3 bg-red-950/40 border border-red-900/80 rounded text-red-300 leading-relaxed font-mono">
-                  {errorMessage}
-                </div>
-                {errorLine && (
-                  <p className="text-neutral-400 text-[11px]">
-                    📍 Syntax error identified around Line {errorLine}. Please review your brackets, trailing commas, or quotes.
-                  </p>
-                )}
-              </div>
+              <span className="text-red-400 flex items-center gap-1.5 font-medium">
+                <AlertCircle className="w-3.5 h-3.5" />
+                <span>Syntax Error Detected</span>
+              </span>
             )}
           </div>
+
+          {/* Strict Minimal Privacy Badge (per AGENTSKILLS.md) */}
+          <div className="text-neutral-400 text-[11px] flex items-center gap-1.5">
+            <Info className="w-3.5 h-3.5 text-neutral-500" />
+            <span>Local browser processing • No data sent to any server</span>
+          </div>
         </div>
       </div>
 
-      {/* Validation Banner / Status Line */}
-      <div className="px-4 py-2 bg-neutral-900/80 border-t border-neutral-800 flex flex-wrap items-center justify-between gap-2 text-xs font-mono">
-        <div className="flex items-center gap-2">
-          {isTyping ? (
-            <span className="text-neutral-400 flex items-center gap-1.5 font-medium">
-              <span className="w-2 h-2 rounded-full bg-neutral-400 animate-pulse" />
-              <span>Editing...</span>
-            </span>
-          ) : isValid ? (
-            <span className="text-sky-400 flex items-center gap-1.5 font-medium">
-              <CheckCircle2 className="w-3.5 h-3.5" />
-              <span>Valid JSON Payload</span>
-            </span>
-          ) : (
-            <span className="text-red-400 flex items-center gap-1.5 font-medium">
-              <AlertCircle className="w-3.5 h-3.5" />
-              <span>Syntax Error Detected</span>
-            </span>
-          )}
+      {/* Error Toast Notification */}
+      {toastMessage && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[10001] animate-[fadeSlideUp_0.25s_ease-out]">
+          <div className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-red-950/95 border border-red-800/60 text-red-300 text-xs font-mono shadow-xl backdrop-blur-sm">
+            <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+            <span className="max-w-[400px] truncate">{toastMessage}</span>
+            <button
+              onClick={() => setToastMessage(null)}
+              className="ml-2 text-red-400 hover:text-red-200 transition-colors cursor-pointer"
+            >
+              ✕
+            </button>
+          </div>
         </div>
-
-        {/* Strict Minimal Privacy Badge (per AGENTSKILLS.md) */}
-        <div className="text-neutral-400 text-[11px] flex items-center gap-1.5">
-          <Info className="w-3.5 h-3.5 text-neutral-500" />
-          <span>Local browser processing • No data sent to any server</span>
-        </div>
-      </div>
-    </div>
+      )}
     </>
   );
 };

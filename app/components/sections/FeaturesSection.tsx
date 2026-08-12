@@ -26,7 +26,7 @@ export const FeaturesSection: React.FC = () => {
       style={{ backgroundColor: isDark ? 'transparent' : '#F8FAFC' }}
     >
 
-      {/* Parallax Banner Background — dark mode only */}
+      {/* Parallax Banner Background - dark mode only */}
       {isDark && (
         <div
           className="absolute inset-0 pointer-events-none z-0"
@@ -40,7 +40,7 @@ export const FeaturesSection: React.FC = () => {
         />
       )}
 
-      {/* Dark overlay — dark mode only */}
+      {/* Dark overlay - dark mode only */}
       {isDark && (
         <div className="absolute inset-0 bg-[#0e0e0e]/85 pointer-events-none z-0" />
       )}

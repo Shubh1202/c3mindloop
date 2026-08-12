@@ -30,7 +30,7 @@ const faqPageSchema = {
       'name': 'Is this JSON Formatter secure for sensitive corporate configs and API keys?',
       'acceptedAnswer': {
         '@type': 'Answer',
-        'text': 'Absolutely. The core security advantage of our platform is that all operations run 100% locally inside your browser context using client-side JavaScript. Unlike conventional online formatters that transmit your data to backend servers—exposing sensitive credentials, private keys, or customer records to potential database logging and third-party monitoring—our formatter runs offline. Your JSON payload never traverses the internet, assuring strict compliance with corporate data protection policies, SOC 2 protocols, and general privacy requirements.'
+        'text': 'Absolutely. The core security advantage of our platform is that all operations run 100% locally inside your browser context using client-side JavaScript. Unlike conventional online formatters that transmit your data to backend servers-exposing sensitive credentials, private keys, or customer records to potential database logging and third-party monitoring-our formatter runs offline. Your JSON payload never traverses the internet, assuring strict compliance with corporate data protection policies, SOC 2 protocols, and general privacy requirements.'
       }
     },
     {

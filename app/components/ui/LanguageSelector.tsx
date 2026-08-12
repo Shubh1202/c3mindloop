@@ -8,6 +8,7 @@ import type { SupportedLocale } from '../../types';
 export const LanguageSelector: React.FC = () => {
   const { locale, setLocale } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const languages: { code: SupportedLocale; label: string; flag: string }[] = [
@@ -20,6 +21,7 @@ export const LanguageSelector: React.FC = () => {
   const activeLang = languages.find((l) => l.code === locale) || languages[0];
 
   useEffect(() => {
+    setMounted(true);
     const handleClickOutside = (e: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
         setIsOpen(false);
@@ -28,6 +30,14 @@ export const LanguageSelector: React.FC = () => {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  if (!mounted) {
+    return (
+      <div className="h-9 px-3 rounded-lg bg-neutral-900 border border-white/10 text-xs font-medium text-neutral-300 flex items-center justify-center shrink-0">
+        <Globe className="w-3.5 h-3.5 text-[#1D9BF0]" />
+      </div>
+    );
+  }
 
   return (
     <div className="relative z-50 pointer-events-auto" ref={dropdownRef}>

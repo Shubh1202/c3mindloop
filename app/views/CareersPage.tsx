@@ -32,7 +32,7 @@ export const CareersPage: React.FC = () => {
   return (
     <>
       <SEOHead
-        title="Careers — Join C³ MindLoop Engineering"
+        title="Careers - Join C³ MindLoop Engineering"
         description="Build the future of developer tools, AI engines, and SaaS products. View open engineering positions at C³ MindLoop."
         canonical="/careers"
       />

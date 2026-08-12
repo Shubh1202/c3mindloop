@@ -49,7 +49,7 @@ export const BrandPhilosophySection: React.FC = () => {
 
       {/* 2-Column Editorial Header with Right Panel Code Snippet Card */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start mb-12 relative z-10">
-        
+
         {/* Left Column: Title & Subtitle */}
         <div className="lg:col-span-7 space-y-4">
           <span className="text-xs font-mono uppercase tracking-widest text-[#1D9BF0] font-semibold block">
@@ -72,7 +72,7 @@ export const BrandPhilosophySection: React.FC = () => {
                 {t('philosophySection.communityCardQuote', '"Coding. Crashing. Crying."')}
               </div>
               <p className="text-body-small text-theme-muted font-normal leading-relaxed">
-                {t('philosophySection.communityCardDesc', 'The unvarnished reality of software engineering. Writing code, encountering production crashes, debugging late into the night — and turning those lessons into craft.')}
+                {t('philosophySection.communityCardDesc', 'The unvarnished reality of software engineering. Writing code, encountering production crashes, debugging late into the night - and turning those lessons into craft.')}
               </p>
             </div>
 

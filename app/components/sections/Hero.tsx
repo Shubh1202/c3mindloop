@@ -107,10 +107,10 @@ export const Hero: React.FC = () => {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        
+
         {/* Main 2-Column Editorial Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
-          
+
           {/* Left Column: High-Typography Display Headline */}
           <div className="lg:col-span-7 space-y-6">
             <motion.div
@@ -130,13 +130,15 @@ export const Hero: React.FC = () => {
               className="space-y-4"
             >
               <h1 className="text-display text-theme-main font-bold leading-tight">
-                {t('hero.titleLine1', 'Think. Build.')}<br />
-                {t('hero.titleLine2', 'Learn.')}{' '}
+                {t('hero.titleStatic', 'Think. Build. Learn. Deploy.')}
+              </h1>
+              <div className="text-lg sm:text-xl font-mono text-theme-muted flex items-baseline gap-2 pt-2">
+                <span>Cycle:</span>
                 <span className="text-sky-400 font-semibold inline-flex items-baseline gap-[2px]">
                   {displayWord}
                   <span className="animate-cursor-blink text-sky-300 font-thin">|</span>
                 </span>
-              </h1>
+              </div>
             </motion.div>
 
             <motion.p
@@ -145,7 +147,7 @@ export const Hero: React.FC = () => {
               transition={{ duration: 0.4, delay: 0.15 }}
               className="text-body-large text-theme-muted font-normal max-w-xl leading-relaxed"
             >
-              {t('hero.description', 'Free, open-source, client-side browser utilities built for daily developer workflows. No tracking, zero server retention — 100% local execution.')}
+              {t('hero.description', 'Free, open-source, client-side browser utilities built for daily developer workflows. No tracking, zero server retention - 100% local execution.')}
             </motion.p>
 
             <motion.div
@@ -153,20 +155,20 @@ export const Hero: React.FC = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0.18 }}
             >
-              {/* Terminal prompt — replaces pill badge */}
+              {/* Terminal prompt - replaces pill badge */}
               <div className="inline-flex items-center gap-1.5 bg-neutral-900/80 border border-neutral-800 rounded-md px-3 py-1.5 font-mono text-xs mb-3">
                 <span className="text-emerald-400 select-none">$</span>
-                <span className="text-neutral-500">status:</span>
-                <span className="text-neutral-300">{t('hero.pill', 'Coding. Crashing. Crying.')}</span>
+                <span className="text-neutral-300">status:</span>
+                <span className="text-neutral-100">{t('hero.pill', 'Coding. Crashing. Crying.')}</span>
               </div>
 
               {/* Plain Text Dev Reality Equation (No Pill, No Slashes) */}
-              <div className="font-mono text-xs text-neutral-400 mb-8 flex flex-wrap items-center gap-1.5">
-                <span className="text-amber-400 font-medium">{t('hero.equationA', 'Client Demand')}</span>
-                <span className="text-sky-400">+</span>
-                <span className="text-amber-400 font-medium">{t('hero.equationB', 'Boss Pressure')}</span>
-                <span className="text-sky-400">=</span>
-                <span className="text-red-400 font-semibold">{t('hero.equationResult', 'Programmers Have No Life')}</span>
+              <div className="font-mono text-xs text-neutral-200 mb-8 flex flex-wrap items-center gap-1.5">
+                <span className="text-amber-300 font-semibold">{t('hero.equationA', 'Client Demand')}</span>
+                <span className="text-sky-300">+</span>
+                <span className="text-amber-300 font-semibold">{t('hero.equationB', 'Boss Pressure')}</span>
+                <span className="text-sky-300">=</span>
+                <span className="text-red-400 font-bold">{t('hero.equationResult', 'Programmers Have No Life')}</span>
               </div>
             </motion.div>
 
@@ -204,7 +206,7 @@ export const Hero: React.FC = () => {
           >
             {/* Utility Card Wrapper */}
             <div className="animate-glow-pulse bg-neutral-900 dark:bg-neutral-950 border border-cyan-500/30 rounded-lg overflow-hidden shadow-2xl font-mono text-xs">
-              
+
               {/* Utility Header */}
               <div className="px-4 py-3 bg-neutral-950 border-b border-neutral-800 flex items-center justify-between">
                 <div className="flex items-center gap-2">
@@ -294,22 +296,26 @@ export const Hero: React.FC = () => {
             </div>
 
             {/* Quick Links to Utility Categories */}
-            <div className="p-3.5 rounded-lg bg-surface border border-theme-subtle space-y-2">
-              <span className="text-[11px] font-mono uppercase tracking-wider text-theme-muted block font-semibold">
+            <div className="p-4 rounded-lg bg-neutral-950 border border-theme-subtle space-y-3">
+              <span className="text-[11px] font-mono uppercase tracking-wider text-neutral-300 block font-bold">
                 {t('hero.utilitiesLabel', 'Available Browser Utilities')}
               </span>
-              <div className="flex flex-wrap gap-1.5">
-                <Link to="/tools" className="px-2.5 py-1 rounded bg-app border border-theme-subtle text-xs text-theme-main hover:text-[#1D9BF0] hover:border-[#1D9BF0]/40 transition-colors">
-                  JSON Formatter
+              <div className="grid grid-cols-2 gap-2">
+                <Link to="/tools/json-formatter" className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-md bg-neutral-900 border border-neutral-800 text-xs font-semibold text-neutral-200 hover:text-white hover:border-[#1D9BF0] hover:bg-neutral-850 transition-all shadow-sm">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#1D9BF0]"></span>
+                  <span>JSON Formatter</span>
                 </Link>
-                <Link to="/tools" className="px-2.5 py-1 rounded bg-app border border-theme-subtle text-xs text-theme-main hover:text-[#1D9BF0] hover:border-[#1D9BF0]/40 transition-colors">
-                  Base64 Encode/Decode
+                <Link to="/tools/base64-encoder" className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-md bg-neutral-900 border border-neutral-800 text-xs font-semibold text-neutral-200 hover:text-white hover:border-emerald-500 hover:bg-neutral-850 transition-all shadow-sm">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                  <span>Base64 Encoder</span>
                 </Link>
-                <Link to="/tools" className="px-2.5 py-1 rounded bg-app border border-theme-subtle text-xs text-theme-main hover:text-[#1D9BF0] hover:border-[#1D9BF0]/40 transition-colors">
-                  JWT Inspector
+                <Link to="/tools/jwt-inspector" className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-md bg-neutral-900 border border-neutral-800 text-xs font-semibold text-neutral-200 hover:text-white hover:border-purple-500 hover:bg-neutral-850 transition-all shadow-sm">
+                  <span className="w-1.5 h-1.5 rounded-full bg-purple-500"></span>
+                  <span>JWT Inspector</span>
                 </Link>
-                <Link to="/tools" className="px-2.5 py-1 rounded bg-app border border-theme-subtle text-xs text-theme-main hover:text-[#1D9BF0] hover:border-[#1D9BF0]/40 transition-colors">
-                  Regex Tester
+                <Link to="/tools/office-editor" className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-md bg-neutral-900 border border-neutral-800 text-xs font-semibold text-neutral-200 hover:text-white hover:border-amber-500 hover:bg-neutral-850 transition-all shadow-sm">
+                  <span className="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                  <span>Office Editor</span>
                 </Link>
               </div>
             </div>

@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { ArrowLeft, Terminal } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: '404 Page Not Found — C³ MindLoop',
+  title: '404 Page Not Found - C³ MindLoop',
   description: 'The requested page or route could not be found.',
 };
 

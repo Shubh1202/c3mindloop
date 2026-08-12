@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
-import { OfficeEditorPage } from './../../views/OfficeEditorPage';
-import { seoConfig, officeEditorSchema } from './../../config/seo.config';
+import { OfficeEditorPage } from '@/app/views/OfficeEditorPage';
+import { seoConfig, officeEditorSchema } from '@/app/config/seo.config';
 
 const { officeEditor } = seoConfig;
 

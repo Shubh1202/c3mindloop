@@ -141,7 +141,7 @@ const tryAcquireLock = async (redis: Redis, lockKey: string, ttlSeconds: number)
     slug: 'why-we-built-mindloop-ai-reflection-engine',
     title: 'Why We Built MindLoop AI: AST-Based Refactoring Loops Over Token Guessing',
     excerpt: 'Generic AI auto-completers produce brittle code. Discover how AST-based reflection loops verify type invariants before suggesting fixes.',
-    content: `Most generative AI coding tools act like auto-complete on steroids—they guess tokens without inspecting the surrounding type hierarchy or project imports. MindLoop AI approaches code as an Abstract Syntax Tree (AST)...`,
+    content: `Most generative AI coding tools act like auto-complete on steroids-they guess tokens without inspecting the surrounding type hierarchy or project imports. MindLoop AI approaches code as an Abstract Syntax Tree (AST)...`,
     category: 'AI & Agents',
     author: {
       name: 'Elena Rostova',

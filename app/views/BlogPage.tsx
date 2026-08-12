@@ -40,14 +40,14 @@ export const BlogPage: React.FC = () => {
   return (
     <>
       <SEOHead
-        title="Engineering Publication — C³ MindLoop"
+        title="Engineering Publication - C³ MindLoop"
         description="Deep-dive technical articles on distributed systems, AI agent design, React performance, and engineering craft by the C³ MindLoop team."
         canonical="/blog"
       />
 
       <div className="pt-16 pb-20 relative z-10 bg-app">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
-          
+
           {/* Header */}
           <div className="text-center max-w-3xl mx-auto space-y-6">
             <span className="text-xs font-mono uppercase tracking-widest text-[#1D9BF0] font-semibold block">
@@ -78,11 +78,10 @@ export const BlogPage: React.FC = () => {
                 <button
                   key={cat}
                   onClick={() => setSelectedCategory(cat)}
-                  className={`px-3.5 py-1.5 rounded-lg text-xs font-mono transition-all cursor-pointer ${
-                    selectedCategory === cat
-                      ? 'bg-[#1D9BF0] text-white font-semibold'
-                      : 'bg-surface border border-theme-subtle text-theme-muted hover:text-theme-main'
-                  }`}
+                  className={`px-3.5 py-1.5 rounded-lg text-xs font-mono transition-all cursor-pointer ${selectedCategory === cat
+                    ? 'bg-[#1D9BF0] text-white font-semibold'
+                    : 'bg-surface border border-theme-subtle text-theme-muted hover:text-theme-main'
+                    }`}
                 >
                   {cat === 'all' ? t('blog.allCategories', 'All Categories') : cat}
                 </button>

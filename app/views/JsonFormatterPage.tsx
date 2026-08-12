@@ -14,7 +14,7 @@ const FAQ_ITEMS = [
   },
   {
     question: "Is this JSON Formatter secure for sensitive corporate configs and API keys?",
-    answer: "Absolutely. The core security advantage of our platform is that all operations run 100% locally inside your browser context using client-side JavaScript. Unlike conventional online formatters that transmit your data to backend servers—exposing sensitive credentials, private keys, or customer records to potential database logging and third-party monitoring—our formatter runs offline. Your JSON payload never traverses the internet, assuring strict compliance with corporate data protection policies, SOC 2 protocols, and general privacy requirements."
+    answer: "Absolutely. The core security advantage of our platform is that all operations run 100% locally inside your browser context using client-side JavaScript. Unlike conventional online formatters that transmit your data to backend servers-exposing sensitive credentials, private keys, or customer records to potential database logging and third-party monitoring-our formatter runs offline. Your JSON payload never traverses the internet, assuring strict compliance with corporate data protection policies, SOC 2 protocols, and general privacy requirements."
   },
   {
     question: "How does the built-in syntax error detector work?",
@@ -40,14 +40,14 @@ export const JsonFormatterPage: React.FC = () => {
   return (
     <>
       <SEOHead
-        title="100% Private Client-Side JSON Formatter & Validator — C³ MindLoop"
+        title="100% Private Client-Side JSON Formatter & Validator - C³ MindLoop"
         description="Free, ultra-fast client-side JSON formatter, validator, minifier, and interactive tree viewer. 100% browser-based with zero server retention."
         canonical="/tools/json-formatter"
       />
 
       <div className="pt-6 sm:pt-8 pb-16 bg-app text-theme-main relative z-10 font-sans">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-          
+
           {/* Breadcrumb Navigation & Compact Title */}
           <div className="space-y-1.5 border-b border-theme-subtle pb-3">
             <div className="flex items-center gap-2 text-xs font-mono text-theme-muted">
@@ -106,7 +106,7 @@ export const JsonFormatterPage: React.FC = () => {
 
           {/* On-Page Content Enrichment Section (SEO Deep-Dive) */}
           <div className="pt-10 border-t border-theme-subtle space-y-8">
-            
+
             {/* Detailed Guide & Overview */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 text-sm text-theme-muted leading-relaxed">
               <div className="space-y-4">
@@ -149,16 +149,16 @@ export const JsonFormatterPage: React.FC = () => {
             </div>
 
             {/* Interactive FAQ Accordion UI */}
-            <div className="space-y-4 max-w-4xl pt-6">
-              <h2 className="text-lg font-bold text-theme-main">
+            <div className="space-y-4 max-w-4xl mx-auto pt-6">
+              <h2 className="text-lg font-bold text-theme-main text-center">
                 Frequently Asked Questions
               </h2>
               <div className="space-y-3">
                 {FAQ_ITEMS.map((item, index) => {
                   const isOpen = openFaqIndex === index;
                   return (
-                    <div 
-                      key={index} 
+                    <div
+                      key={index}
                       className="border border-theme-subtle rounded-lg bg-surface overflow-hidden"
                     >
                       <button
@@ -166,11 +166,11 @@ export const JsonFormatterPage: React.FC = () => {
                         className="w-full flex items-center justify-between p-4 text-left font-semibold text-theme-main hover:bg-neutral-900 transition-colors"
                       >
                         <span>{item.question}</span>
-                        <ChevronDown 
-                          className={`w-4 h-4 text-theme-muted transition-transform duration-200 ${isOpen ? 'transform rotate-180' : ''}`} 
+                        <ChevronDown
+                          className={`w-4 h-4 text-theme-muted transition-transform duration-200 ${isOpen ? 'transform rotate-180' : ''}`}
                         />
                       </button>
-                      <div 
+                      <div
                         className={`transition-all duration-300 ease-in-out ${isOpen ? 'max-h-80 border-t border-theme-subtle p-4 opacity-100' : 'max-h-0 opacity-0 overflow-hidden'}`}
                       >
                         <p className="text-sm text-theme-muted leading-relaxed">

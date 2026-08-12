@@ -43,20 +43,20 @@ export function AppClientShell({ children }: { children: React.ReactNode }) {
           {/* Global Dynamic Grid Background */}
           <GridBackground />
 
-          {/* Navigation Bar — must be direct child with no overflow ancestor */}
+          {/* Navigation Bar - must be direct child with no overflow ancestor */}
           <Navbar
             onOpenCmdPalette={() => setCmdPaletteOpen(true)}
             onReplayIntro={handleReplayIntro}
           />
 
-          {/* Page Content — overflow-x clipped here, below the sticky header */}
+          {/* Page Content - overflow-x clipped here, below the sticky header */}
           <div className="overflow-x-hidden">
-          <main id="main-content" className="relative z-10">
-            {children}
-          </main>
+            <main id="main-content" className="relative z-10">
+              {children}
+            </main>
 
-          {/* Site Footer */}
-          <Footer onReplayIntro={handleReplayIntro} />
+            {/* Site Footer */}
+            <Footer onReplayIntro={handleReplayIntro} />
           </div>
 
           {/* Global Search Palette (Cmd+K) */}

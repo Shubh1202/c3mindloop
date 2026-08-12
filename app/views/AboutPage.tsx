@@ -48,7 +48,7 @@ export const AboutPage: React.FC = () => {
       <div className="pt-16 pb-20 bg-app text-theme-main relative z-10 overflow-hidden">
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16 relative z-10">
-          
+
           {/* Hero Header */}
           <div className="text-center max-w-4xl mx-auto space-y-4">
             <span className="text-xs font-mono uppercase tracking-widest text-[#1D9BF0] font-semibold block">
@@ -147,7 +147,7 @@ export const AboutPage: React.FC = () => {
             <div className="space-y-4">
               <h2 className="text-h2 text-theme-main font-semibold">{t('about.storyTitle', 'The Continuous Developer Loop')}</h2>
               <p className="text-body text-theme-muted font-normal leading-relaxed">
-                {t('about.storyP1', 'C³ MindLoop started as a raw developer community dedicated to honest coding experiences. We recognized that software engineering isn\'t a linear path of clean code—it\'s a continuous loop of hypothesis, execution, failure, and insight.')}
+                {t('about.storyP1', 'C³ MindLoop started as a raw developer community dedicated to honest coding experiences. We recognized that software engineering isn\'t a linear path of clean code-it\'s a continuous loop of hypothesis, execution, failure, and insight.')}
               </p>
               <p className="text-body text-theme-muted font-normal leading-relaxed">
                 {t('about.storyP2', 'Today, C³ MindLoop spans developer masterclasses, autonomous AI tools, open-source infrastructure, and high-performance SaaS applications used by teams globally.')}

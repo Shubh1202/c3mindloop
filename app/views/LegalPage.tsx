@@ -32,7 +32,7 @@ export const LegalPage: React.FC = () => {
     return (
       <>
         <SEOHead
-          title="Terms of Service — C³ MindLoop"
+          title="Terms of Service - C³ MindLoop"
           description="Terms of service and usage guidelines for C³ MindLoop developer tools and open-source platforms."
           canonical={location.pathname}
         />
@@ -83,7 +83,7 @@ export const LegalPage: React.FC = () => {
   return (
     <>
       <SEOHead
-        title="Privacy Policy — C³ MindLoop | Zero Data Collection, Client-Side Processing"
+        title="Privacy Policy - C³ MindLoop | Zero Data Collection, Client-Side Processing"
         description="C³ MindLoop's privacy policy. 100% client-side processing, zero data collection, offline developer utilities. Your code never leaves your browser."
         canonical={location.pathname}
       />

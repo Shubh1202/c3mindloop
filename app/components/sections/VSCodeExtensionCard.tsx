@@ -21,7 +21,7 @@ export const VSCodeExtensionCard: React.FC = () => {
               </span>
             </div>
             <h3 className="text-xl sm:text-2xl font-bold text-white mt-1">
-              Office Editor (Docx, Xlsx) — VS Code Extension
+              Office Editor (Docx, Xlsx) - VS Code Extension
             </h3>
           </div>
         </div>

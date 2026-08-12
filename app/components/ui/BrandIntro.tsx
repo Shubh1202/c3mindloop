@@ -7,7 +7,7 @@ import { Code2, Brain, Sparkles, X } from 'lucide-react';
 const LS_KEY = 'c3_last_intro_date';
 const today = () => new Date().toISOString().slice(0, 10);
 
-// Random initial cube rotation — new values on every page load
+// Random initial cube rotation - new values on every page load
 const randRot = () => Math.floor(Math.random() * 360);
 const INIT_RX = randRot();
 const INIT_RY = randRot();
@@ -28,7 +28,7 @@ export const BrandIntro: React.FC<BrandIntroProps> = ({ onComplete, forceShow = 
     setPrefersReducedMotion(mediaQuery.matches);
 
     if (forceShow) {
-      // Manual replay (e.g. from footer/navbar button) — always show
+      // Manual replay (e.g. from footer/navbar button) - always show
       setIsVisible(true);
       return;
     }
@@ -120,7 +120,7 @@ export const BrandIntro: React.FC<BrandIntroProps> = ({ onComplete, forceShow = 
 
         {/* Main Stage */}
         <div className="relative z-10 flex flex-col items-center justify-center text-center px-4 max-w-lg mx-auto space-y-8">
-          
+
           {/* 3D Glassmorphic Cube - Smooth 2.2s Rotation Sequence */}
           <div className="w-52 h-52 sm:w-64 sm:h-64 relative perspective-[1200px] flex items-center justify-center">
             <motion.div
@@ -128,10 +128,10 @@ export const BrandIntro: React.FC<BrandIntroProps> = ({ onComplete, forceShow = 
                 prefersReducedMotion
                   ? { rotateY: INIT_RY, rotateX: INIT_RX }
                   : {
-                      rotateX: [INIT_RX, INIT_RX + 360],
-                      rotateY: [INIT_RY, INIT_RY + 360],
-                      rotateZ: [INIT_RZ, INIT_RZ],
-                    }
+                    rotateX: [INIT_RX, INIT_RX + 360],
+                    rotateY: [INIT_RY, INIT_RY + 360],
+                    rotateZ: [INIT_RZ, INIT_RZ],
+                  }
               }
               transition={{
                 duration: 2.2,
