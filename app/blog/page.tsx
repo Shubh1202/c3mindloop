@@ -11,12 +11,12 @@ export const metadata: Metadata = {
     'react performance articles', 'distributed systems blog', 'C³ MindLoop blog',
     'ccube dev blog', 'c3mindloop engineering',
   ],
-  alternates: { canonical: 'https://ccube.dev/blog' },
+  alternates: { canonical: 'https://www.c3mindloop.com/blog' },
   openGraph: {
     title: 'Engineering Blog - Developer Guides & Technical Articles | C³ MindLoop',
     description:
       'Technical articles and developer guides from the C³ MindLoop team. JSON, JWT, web security, React and more.',
-    url: 'https://ccube.dev/blog',
+    url: 'https://www.c3mindloop.com/blog',
   },
   twitter: {
     card: 'summary_large_image',

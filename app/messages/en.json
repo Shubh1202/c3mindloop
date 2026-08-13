@@ -707,6 +707,38 @@
         "q3": "Can it convert cURL headers and request bodies?",
         "a3": "Yes! It automatically extracts -H (headers), -d / --data / --data-raw (request payloads), and HTTP methods (POST, PUT, GET) into clean JSON."
       }
+    },
+    "hashGenerator": {
+      "pageTitle": "Hash Generator & Checksum Calculator",
+      "pageBadge": "100% Client-Side • Native WebCrypto API",
+      "breadcrumb": "Hash Generator",
+      "breadcrumbParent": "Developer Tools",
+      "feat1Title": "Multi-Algorithm Hashing",
+      "feat1Desc": "Instantly generate SHA-256, SHA-512, SHA-1, and SHA-3 cryptographic hashes simultaneously from any text input.",
+      "feat2Title": "Local File Checksum Verification",
+      "feat2Desc": "Upload files locally to verify digital signatures and file integrity checksums without any cloud transmission.",
+      "feat3Title": "Native WebCrypto API Execution",
+      "feat3Desc": "Leverages browser-native crypto.subtle primitives for maximum speed and 100% offline isolation. No third-party libraries required.",
+      "guide": {
+        "title": "How the Client-Side Hash Generator Works",
+        "intro": "Cryptographic hash functions transform arbitrary input data into a fixed-length digest string. Our local tool handles hash generation in real-time without any server contact.",
+        "step1": "Select Input Type: Choose between raw text input mode or local file checksum analysis mode using the toolbar toggle.",
+        "step2": "Enter Text or Upload File: Paste your string directly or select a local file. The tool reads it from memory without uploading.",
+        "step3": "Instant Hash Output: SHA-256, SHA-512, SHA-1, and MD5 hashes update instantly with one-click copy functionality.",
+        "step4": "Compare Checksum: Optionally paste an expected hash value to verify file integrity against downloaded checksums.",
+        "privacyTitle": "Data Privacy & In-Browser Crypto Safety",
+        "privacyIntro": "Hashing passwords, sensitive API keys, or proprietary software binaries on third-party web servers introduces data leak vulnerabilities.",
+        "privacyBullet1": "C\u00b3 MindLoop Guarantees Absolute Privacy: All hashing calculations execute via your browser's native crypto.subtle JavaScript engine. No bytes are ever transmitted across HTTP networks.",
+        "privacyBullet2": "Works Offline: Once the page loads, the hash generator operates completely offline. Ideal for air-gapped environments and secure workstations."
+      },
+      "faq": {
+        "q1": "Is my input text or file uploaded to a server?",
+        "a1": "No. All hash computations occur 100% locally in your browser's WebCrypto engine. Your data never leaves your device.",
+        "q2": "What hashing algorithms are supported?",
+        "a2": "We support SHA-256, SHA-512, SHA-1 via the native Web Crypto API, and MD5 via a client-side JavaScript implementation.",
+        "q3": "Can I verify the checksum of large software files?",
+        "a3": "Yes! Files uploaded for checksum verification are read directly from local memory using File API, ensuring fast and private hashing without cloud upload."
+      }
     }
   }
 }

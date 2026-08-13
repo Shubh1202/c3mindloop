@@ -11,7 +11,7 @@ export interface SEOProps {
 export const defaultSEO = {
   title: 'C³ MindLoop - The Ecosystem for Developers, AI & SaaS',
   description: 'MindLoop represents the continuous loop of learning, problem-solving, innovation and building. The future ecosystem for Developer Education, AI, SaaS Products, Automation, and Open Source.',
-  url: 'https://cmindloop.com',
+  url: 'https://www.c3mindloop.com',
   ogImage: '/logo.svg',
   siteName: 'C³ MindLoop'
 };
@@ -21,7 +21,7 @@ export function generateOrganizationSchema() {
     '@context': 'https://schema.org',
     '@type': 'Organization',
     name: 'C³ MindLoop',
-    url: 'https://cmindloop.com',
+    url: 'https://www.c3mindloop.com',
     logo: '/logo.svg',
     slogan: 'Coding. Crashing. Crying.',
     description: 'The ecosystem for Developer Education, AI, SaaS Products, Automation & Open Source.',
@@ -40,10 +40,10 @@ export function generateWebsiteSchema() {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
     name: 'C³ MindLoop',
-    url: 'https://cmindloop.com',
+    url: 'https://www.c3mindloop.com',
     potentialAction: {
       '@type': 'SearchAction',
-      target: 'https://cmindloop.com/blog?q={search_term_string}',
+      target: 'https://www.c3mindloop.com/blog?q={search_term_string}',
       'query-input': 'required name=search_term_string'
     }
   };
@@ -57,7 +57,7 @@ export function generateBreadcrumbSchema(items: { name: string; url: string }[])
       '@type': 'ListItem',
       position: index + 1,
       name: item.name,
-      item: `https://cmindloop.com${item.url}`
+      item: `https://www.c3mindloop.com${item.url}`
     }))
   };
 }
@@ -74,7 +74,7 @@ export function generateArticleSchema(article: {
     '@type': 'Article',
     headline: article.title,
     description: article.description,
-    url: `https://cmindloop.com${article.url}`,
+    url: `https://www.c3mindloop.com${article.url}`,
     datePublished: article.datePublished,
     author: {
       '@type': 'Person',

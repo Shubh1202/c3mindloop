@@ -91,6 +91,12 @@ export const metadata: Metadata = {
   },
   alternates: {
     canonical: cfg.baseUrl,
+    languages: {
+      'en-US': cfg.baseUrl,
+      'en-GB': cfg.baseUrl,
+      'en-CA': cfg.baseUrl,
+      'x-default': cfg.baseUrl,
+    },
   },
 };
 

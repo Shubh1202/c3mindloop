@@ -12,7 +12,9 @@ export const SEOHead: React.FC<SEOProps> = ({
 }) => {
   const fullTitle = title ? `${title} | C³ MindLoop` : defaultSEO.title;
   const metaDesc = description || defaultSEO.description;
-  const canonicalUrl = canonical ? `https://cmindloop.com${canonical}` : defaultSEO.url;
+  const canonicalUrl = canonical
+    ? (canonical.startsWith('http') ? canonical : `https://www.c3mindloop.com${canonical}`)
+    : defaultSEO.url;
 
   useEffect(() => {
     document.title = fullTitle;

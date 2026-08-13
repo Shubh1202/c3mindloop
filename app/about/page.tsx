@@ -10,12 +10,12 @@ export const metadata: Metadata = {
     'developer tools company', 'privacy first developer tools', 'open source dev tools team',
     'who made ccube dev tools', 'c3mindloop mission',
   ],
-  alternates: { canonical: 'https://ccube.dev/about' },
+  alternates: { canonical: 'https://www.c3mindloop.com/about' },
   openGraph: {
     title: 'About C³ MindLoop - Our Story, Vision & Philosophy',
     description:
       'Learn about C³ MindLoop (CCube) - the team behind free, privacy-first browser developer tools.',
-    url: 'https://ccube.dev/about',
+    url: 'https://www.c3mindloop.com/about',
   },
   twitter: {
     card: 'summary_large_image',
