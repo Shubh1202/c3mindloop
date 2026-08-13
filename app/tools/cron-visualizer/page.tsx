@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { CronVisualizerPage } from './../../views/CronVisualizerPage';
+import { CronVisualizerPage } from '@/app/views/CronVisualizerPage';
 import { seoConfig, cronVisualizerSchema } from './../../config/seo.config';
 
 const { cronVisualizer } = seoConfig;

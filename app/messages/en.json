@@ -739,6 +739,40 @@
         "q3": "Can I verify the checksum of large software files?",
         "a3": "Yes! Files uploaded for checksum verification are read directly from local memory using File API, ensuring fast and private hashing without cloud upload."
       }
+    },
+    "atsResume": {
+      "pageTitle": "ATS Resume Generator",
+      "pageBadge": "100% Client-Side • No Upload • Print to PDF",
+      "breadcrumb": "ATS Resume Generator",
+      "breadcrumbParent": "Developer Tools",
+      "feat1Title": "100% Private Resume Builder",
+      "feat1Desc": "Create your resume with absolute privacy. No database, no tracking, and zero data leaves your local browser sandbox.",
+      "feat2Title": "ATS-Optimised Schema",
+      "feat2Desc": "Designed based on Workday, Lever, and Greenhouse parsing guidelines to ensure maximum keyword readability and structural parsing accuracy.",
+      "feat3Title": "Clean Vector PDF Output",
+      "feat3Desc": "Generates a perfectly styled single-page or multi-page technical resume using standard print styles for crisp, selectable vector PDF printing.",
+      "guide": {
+        "title": "How the ATS Resume Generator Works",
+        "intro": "Building an ATS-compliant resume requires clear structure and clean typography. This tool helps you format your experience, projects, skills, and education to bypass automated parser bottlenecks:",
+        "step1": "Structured Input: Fill in the collapsible sections for Contact Info, Professional Summary, Technical Skills, Experience, Projects, and Education.",
+        "step2": "Interactive Real-Time Preview: Toggle between the Edit tab and the Preview tab (or side-by-side Split View on desktop screens) to review formatting changes dynamically.",
+        "step3": "Bypass ATS Parsing Errors: Standard templates with custom CSS layout tables or decorative graphics fail to parse. Our template uses basic linear text styling to ensure standard parser parsers (Workday, Lever) read the text correctly.",
+        "step4": "Print to Vector PDF: Click the Export PDF button to trigger your browser's native print API. Select 'Save as PDF' and check layout presets to ensure standard paper scaling.",
+        "privacyTitle": "The Privacy and Zero-SaaS Security Promise",
+        "privacyIntro": "Traditional resume builder SaaS websites require user accounts, store personal data in centralized databases, and often track or sell candidate metrics. C³ MindLoop operates differently:",
+        "privacyBullet1": "Zero Data Collection: We do not use user logins, cookies, or databases. Your employment history, contact credentials, and achievements exist only in your browser memory.",
+        "privacyBullet2": "Air-Gapped Operation: Once loaded, the resume generator functions completely offline. No telemetry, analytics, or background requests are sent to external servers."
+      },
+      "faq": {
+        "q1": "Is this ATS Resume Generator really free?",
+        "a1": "Yes. It is fully free with no limitations, premium paywalls, or watermarks. All candidate features are open-source and run locally in your web browser.",
+        "q2": "What makes a resume 'ATS-compliant'?",
+        "a2": "An ATS-compliant resume uses standard, linear layouts, standard fonts (such as Arial, Helvetica, or Times New Roman), and has no complex graphical tables, colored icons, progress bars, or multi-column layout flows that break text extraction. It organizes information under standard headings like 'Experience' and 'Education' so that parsing tools (like Workday, Lever, and Greenhouse) can accurately scan and map your credentials.",
+        "q3": "How do I download my resume as a PDF file?",
+        "a3": "Simply click the 'Export PDF' button on the toolbar. This activates the browser's native print interface. Set your printer destination to 'Save as PDF', ensure that headers and footers are turned off, and then save the resulting vector document to your computer.",
+        "q4": "Are my personal details sent to your servers?",
+        "a4": "Absolutely not. All processing occurs locally in your browser. We have no backend databases, candidate dashboards, or data tracking servers, ensuring 100% GDPR and SOC-2 data isolation compliance."
+      }
     }
   }
 }

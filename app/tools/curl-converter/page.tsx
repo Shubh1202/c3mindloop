@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { CurlConverterPage } from './../../views/CurlConverterPage';
+import { CurlConverterPage } from '@/app/views/CurlConverterPage';
 import { seoConfig, curlConverterSchema } from './../../config/seo.config';
 
 const { curlConverter } = seoConfig;

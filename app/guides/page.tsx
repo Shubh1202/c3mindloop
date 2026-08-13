@@ -1,16 +1,16 @@
 import type { Metadata } from 'next';
-import { BlogPage } from './../views/BlogPage';
+import { BlogPage } from '@/app/views/BlogPage';
 
 export const metadata: Metadata = {
   title: 'Engineering Guides & Masterclasses',
   description: 'In-depth engineering guides, architecture patterns, and technical masterclasses by C³ MindLoop.',
   alternates: {
-    canonical: 'https://c3mindloop.dev/guides',
+    canonical: 'https://www.c3mindloop.com/guides',
   },
   openGraph: {
     title: 'Engineering Guides & Masterclasses | C³ MindLoop',
     description: 'In-depth engineering guides, architecture patterns, and technical masterclasses by C³ MindLoop.',
-    url: 'https://c3mindloop.dev/guides',
+    url: 'https://www.c3mindloop.com/guides',
   },
 };
 

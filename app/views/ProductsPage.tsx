@@ -32,7 +32,7 @@ export const ProductsPage: React.FC = () => {
     Database,
   };
 
-  const categories = ['all', 'extensions', 'json', 'encoders', 'auth', 'crypto', 'utilities'];
+  const categories = ['all', 'extensions', 'json', 'encoders', 'auth', 'crypto', 'utilities', 'resume'];
 
   const filteredProducts = PRODUCTS_LIST.filter((p) => {
     if (selectedCategory === 'all') return true;
@@ -106,6 +106,7 @@ export const ProductsPage: React.FC = () => {
                   'regex-tester': '/tools/regex-tester',
                   'sql-to-json': '/tools/sql-to-json',
                   'hash-generator': '/tools/hash-generator',
+                  'ats-resume-generator': '/tools/ats-resume-generator',
                 };
                 const toolHref = toolRoutes[prod.id];
 

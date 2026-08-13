@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { JwtInspectorPage } from './../../views/JwtInspectorPage';
+import { JwtInspectorPage } from '@/app/views/JwtInspectorPage';
 import { seoConfig, jwtInspectorSchema } from './../../config/seo.config';
 
 const { jwtInspector } = seoConfig;

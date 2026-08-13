@@ -74,6 +74,15 @@ const formatted = JSON.stringify(JSON.parse(input), null, 2);`
     category: 'utilities',
     icon: 'Layers',
     techStack: ['SQL Parser', 'cURL Parser', 'Local Processing']
+  },
+  {
+    id: 'ats-resume-generator',
+    nameKey: 'ATS Resume Generator',
+    descKey: 'Build ATS-optimised developer resumes in your browser. Live preview, section editor, and one-click PDF export. Zero server upload — 100% client-side.',
+    status: 'live',
+    category: 'resume',
+    icon: 'FileCode',
+    techStack: ['Client-Side', 'Print API', 'Zero Upload']
   }
 ];
 

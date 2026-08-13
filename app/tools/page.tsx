@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { ProductsPage } from './../views/ProductsPage';
+import { ProductsPage } from '@/app/views/ProductsPage';
 
 export const metadata: Metadata = {
   title: 'Free Developer Utilities - JSON Formatter, JWT Decoder, Base64 Encoder',

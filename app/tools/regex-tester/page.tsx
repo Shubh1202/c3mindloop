@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { RegexTesterPage } from '../../views/RegexTesterPage';
+import { RegexTesterPage } from '@/app/views/RegexTesterPage';
 import { seoConfig, regexTesterSchema } from '../../config/seo.config';
 
 const { regexTester } = seoConfig;

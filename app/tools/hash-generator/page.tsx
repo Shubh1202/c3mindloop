@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { HashGeneratorPage } from '../../views/HashGeneratorPage';
+import { HashGeneratorPage } from '@/app/views/HashGeneratorPage';
 import { seoConfig, hashGeneratorSchema } from '../../config/seo.config';
 
 const { hashGenerator } = seoConfig;

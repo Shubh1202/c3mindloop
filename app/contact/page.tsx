@@ -1,16 +1,16 @@
 import type { Metadata } from 'next';
-import { ContactPage } from './../views/ContactPage';
+import { ContactPage } from '@/app/views/ContactPage';
 
 export const metadata: Metadata = {
   title: 'Contact Engineering Team',
   description: 'Get in touch with C³ MindLoop software architects, ask technical questions, or inquire about custom development consulting.',
   alternates: {
-    canonical: 'https://c3mindloop.dev/contact',
+    canonical: 'https://www.c3mindloop.com/contact',
   },
   openGraph: {
     title: 'Contact Engineering Team | C³ MindLoop',
     description: 'Get in touch with C³ MindLoop software architects.',
-    url: 'https://c3mindloop.dev/contact',
+    url: 'https://www.c3mindloop.com/contact',
   },
 };
 

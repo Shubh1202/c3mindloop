@@ -319,6 +319,34 @@ export const seoConfig = {
       images: [defaultOgImage],
     },
   },
+
+  atsResume: {
+    title: 'ATS Resume Generator - Free Online Tool | 100% Private Client-Side | C\u00b3 MindLoop',
+    description:
+      'Free online ATS compliant resume generator for software developers. 100% Private & Client-Side with zero server upload. Build Workday & Lever parseable PDF resumes instantly.',
+    keywords: [
+      'free ats compliant resume builder online',
+      'developer cv generator',
+      'ats resume template free',
+      'software engineer resume builder',
+      'private resume builder no upload',
+      'client-side resume generator',
+      'workday ats resume parser',
+      'lever ats resume',
+      'pdf resume generator online free',
+      'technical resume builder 2025',
+      'resume builder no sign up',
+      '100% private resume tool',
+    ],
+    canonical: `${BASE_URL}/tools/ats-resume-generator`,
+    openGraph: {
+      title: 'ATS Resume Generator - Free & Private | C\u00b3 MindLoop',
+      description:
+        'Build ATS-optimised developer resumes in seconds. Zero server upload. Client-side only. Exports as a clean PDF.',
+      url: `${BASE_URL}/tools/ats-resume-generator`,
+      type: 'website' as const,
+    },
+  },
 };
 
 // ── JSON-LD Schemas ──────────────────────────────────────────────────────────
@@ -565,3 +593,27 @@ export const hashGeneratorSchema = {
   offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
   publisher: { '@type': 'Organization', name: 'C³ MindLoop', url: BASE_URL },
 };
+
+// ─── ATS Resume Generator ────────────────────────────────────────────────────
+export const atsResumeSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: 'ATS Resume Generator',
+  url: `${BASE_URL}/tools/ats-resume-generator`,
+  applicationCategory: 'WebApplication',
+  operatingSystem: 'All',
+  browserRequirements: 'Requires JavaScript',
+  description:
+    'Free online ATS compliant resume generator for software developers. 100% Private & Client-Side with zero server upload. Build Workday & Lever parseable PDF resumes instantly.',
+  featureList: [
+    'ATS-optimised resume builder for developers',
+    'Live preview with instant PDF print export',
+    'Workday, Lever & Greenhouse ATS compatible',
+    '100% client-side - zero server upload, GDPR Compliant',
+    'Section editor: Experience, Skills, Projects, Education',
+    'Download as vector PDF via browser print API',
+  ],
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+  publisher: { '@type': 'Organization', name: 'C³ MindLoop', url: BASE_URL },
+};
+

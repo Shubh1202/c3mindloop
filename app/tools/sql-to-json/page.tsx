@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { SqlToJsonPage } from '../../views/SqlToJsonPage';
+import { SqlToJsonPage } from '@/app/views/SqlToJsonPage';
 import { seoConfig, sqlToJsonSchema } from '../../config/seo.config';
 
 const { sqlToJson } = seoConfig;

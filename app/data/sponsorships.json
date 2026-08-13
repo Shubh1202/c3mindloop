@@ -1,0 +1,22 @@
+[
+  {
+    "id": "office-editor-vscode",
+    "label": "VS Code Extension",
+    "headline": "Open Excel, Word & PDF files inside VS Code",
+    "body": "Office Editor brings native Office file support directly into your editor. 14.4k+ installs. No cloud, no conversion.",
+    "cta": "Install Free",
+    "href": "https://marketplace.visualstudio.com/items?itemName=C3MindLoop.office-editor",
+    "badge": "14.4k+ Installs",
+    "accent": "#007ACC"
+  },
+  {
+    "id": "c3mindloop-github",
+    "label": "Open Source",
+    "headline": "C³ MindLoop is open source",
+    "body": "All developer tools are open source. Audit the code, fork it, or contribute on GitHub.",
+    "cta": "View on GitHub",
+    "href": "https://github.com/Shubh1202/c3mindloop",
+    "badge": "MIT License",
+    "accent": "#6e40c9"
+  }
+]

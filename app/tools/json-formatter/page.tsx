@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { JsonFormatterPage } from './../../views/JsonFormatterPage';
+import { JsonFormatterPage } from '@/app/views/JsonFormatterPage';
 import { seoConfig, jsonFormatterSchema } from './../../config/seo.config';
 
 const { jsonFormatter } = seoConfig;
