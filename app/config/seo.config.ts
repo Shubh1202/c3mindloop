@@ -26,29 +26,26 @@ export const seoConfig = {
   },
 
   home: {
-    title: 'Free Browser-Based Local Developer Utilities',
+    title: 'C³ MindLoop — Free, Private & Open Source Developer Utilities',
     description:
-      'C³ MindLoop offers free, 100% client-side developer tools - JSON formatter, JWT decoder, Base64 encoder and more. No ads, no data collection, no backend.',
+      'Instant browser-based developer tools with zero server processing. Use 100% private JSON Formatter, Base64 Encoder, JWT Inspector, Hash Generator, and ATS Resume Builder.',
     keywords: [
-      'free developer tools online', 'browser based developer tools', 'client side developer utilities',
-      'offline dev tools no backend', 'private developer tools no tracking', 'local developer tools',
-      'json formatter free', 'jwt decoder free', 'base64 encoder free',
-      'developer utility platform', 'open source dev tools', 'best free developer tools 2025',
-      'developer tools no login', 'instant developer tools', 'fast developer utilities',
-      'C3 MindLoop', 'CCube', 'ccube.dev', 'c3mindloop tools',
+      'developer tools', 'json formatter', 'jwt inspector', 'base64 encoder',
+      'client-side web tools', 'free online dev utilities', 'ats resume builder'
     ],
     canonical: BASE_URL,
     openGraph: {
-      title: 'C³ MindLoop | Free Browser-Based Local Developer Utilities',
+      type: 'website' as const,
+      title: 'C³ MindLoop — Free, Private & Open Source Developer Utilities',
       description:
-        'Free, 100% client-side developer tools. Format JSON, decode JWTs, convert Base64 - all in your browser with zero data tracking.',
+        'Instant browser-based developer tools with zero server processing. Use 100% private JSON Formatter, Base64 Encoder, JWT Inspector, Hash Generator, and ATS Resume Builder.',
       url: BASE_URL,
       images: [{ url: defaultOgImage, width: 1200, height: 630, alt: 'C³ MindLoop - Free Developer Tools' }],
     },
     twitter: {
-      title: 'C³ MindLoop | Free Browser-Based Local Developer Utilities',
+      title: 'C³ MindLoop — Free, Private & Open Source Developer Utilities',
       description:
-        'Free, 100% client-side developer tools. Format JSON, decode JWTs, convert Base64 - zero data tracking.',
+        'Instant browser-based developer tools with zero server processing. Use 100% private JSON Formatter, Base64 Encoder, JWT Inspector, Hash Generator, and ATS Resume Builder.',
       images: [defaultOgImage],
     },
   },

@@ -21,6 +21,9 @@ const termsSections = [
   { title: 'section3Title', body: 'section3Body' },
   { title: 'section4Title', body: 'section4Body' },
   { title: 'section5Title', body: 'section5Body' },
+  { title: 'section6Title', body: 'section6Body' },
+  { title: 'section7Title', body: 'section7Body' },
+  { title: 'section8Title', body: 'section8Body' },
 ];
 
 export const LegalPage: React.FC = () => {
@@ -40,7 +43,7 @@ export const LegalPage: React.FC = () => {
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center space-y-4 mb-10">
               <span className="text-xs font-mono uppercase tracking-widest text-[#1D9BF0] font-semibold block">
-                Legal
+                {t('terms.kicker')}
               </span>
               <h1 className="text-h1 text-theme-main">
                 {t('terms.title', 'Terms of Service')}
@@ -68,11 +71,11 @@ export const LegalPage: React.FC = () => {
               ))}
             </div>
             <p className="mt-12 text-center text-xs font-mono text-theme-muted">
-              Questions? Reach us at{' '}
-              <a href="mailto:hello@c3mindloop.com" className="text-[#1D9BF0] hover:underline">
-                hello@c3mindloop.com
+              {t('terms.footerStart')}
+              <a href={`mailto:${t('terms.footerEmail')}`} className="text-[#1D9BF0] hover:underline">
+                {t('terms.footerEmail')}
               </a>
-              {' '}or inspect our source on GitHub.
+              {t('terms.footerEnd')}
             </p>
           </div>
         </div>
@@ -93,7 +96,7 @@ export const LegalPage: React.FC = () => {
 
           <div className="text-center space-y-4 mb-10">
             <span className="text-xs font-mono uppercase tracking-widest text-[#1D9BF0] font-semibold block">
-              Privacy First
+              {t('privacy.kicker')}
             </span>
             <h1 className="text-h1 text-theme-main">
               {t('privacy.title', 'Privacy Policy')}
@@ -122,15 +125,24 @@ export const LegalPage: React.FC = () => {
             ))}
           </div>
 
+          <div className="mt-12 p-6 rounded-xl bg-app border border-theme-subtle space-y-2">
+            <span className="text-xs font-mono text-[#1D9BF0] font-semibold uppercase tracking-wider block">
+              {t('privacy.complianceTitle')}
+            </span>
+            <p className="text-body-small text-theme-muted leading-relaxed">
+              {t('privacy.complianceBody')}
+            </p>
+          </div>
+
           <p className="mt-12 text-center text-xs font-mono text-theme-muted">
-            Questions? Reach us at{' '}
+            {t('privacy.footerStart')}
             <a
-              href="mailto:hello@c3mindloop.com"
+              href={`mailto:${t('privacy.footerEmail')}`}
               className="text-[#1D9BF0] hover:underline"
             >
-              hello@c3mindloop.com
+              {t('privacy.footerEmail')}
             </a>
-            {' '}or inspect our source on GitHub.
+            {t('privacy.footerEnd')}
           </p>
 
         </div>

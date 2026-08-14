@@ -11,6 +11,7 @@ import { Product } from '../types';
 import { CTASection } from '../components/sections/CTASection';
 import { VSCodeExtensionCard } from '../components/sections/VSCodeExtensionCard';
 import { JsonFormatterTool } from '../components/tools/JsonFormatterTool';
+import { ToolCard } from '../components/ui/ToolCard';
 import { Link } from '../lib/router-compat';
 
 export const ProductsPage: React.FC = () => {
@@ -79,20 +80,12 @@ export const ProductsPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Featured Extension Card */}
-          <div className="space-y-4">
-            <h2 className="text-xs font-mono font-semibold uppercase tracking-wider text-theme-muted">
-              Featured Extension
-            </h2>
-            <VSCodeExtensionCard />
-          </div>
-
           {/* Editorial Structural List Layout */}
           <div className="space-y-4">
             <h2 className="text-xs font-mono font-semibold uppercase tracking-wider text-theme-muted">
               Browser Utilities
             </h2>
-            <div className="divide-y divide-theme-subtle border-t border-b border-theme-subtle">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
               {filteredProducts.map((prod, idx) => {
                 const Icon = iconMap[prod.icon] || Cpu;
                 const name = t(prod.nameKey, prod.id);
@@ -111,51 +104,27 @@ export const ProductsPage: React.FC = () => {
                 const toolHref = toolRoutes[prod.id];
 
                 return (
-                  <Link
+                  <ToolCard
                     key={prod.id}
-                    href={toolHref ?? '/tools'}
-                    onClick={(e: React.MouseEvent<HTMLAnchorElement>) => {
-                      if (!toolHref) {
-                        e.preventDefault();
-                        setSelectedProduct(prod);
-                      }
-                    }}
-                    className="py-8 px-2 sm:px-4 flex flex-col md:flex-row md:items-center justify-between gap-6 hover:bg-surface/50 transition-colors cursor-pointer group"
-                  >
-                    {/* Left: Index + Icon + Details */}
-                    <div className="flex items-start gap-5 max-w-3xl">
-                      <span className="text-xs font-mono text-theme-muted pt-1 w-6 shrink-0">
-                        0{idx + 1}
-                      </span>
-                      <div className="p-2.5 rounded-md bg-[#1D9BF0]/10 text-[#1D9BF0] shrink-0">
-                        <Icon className="w-5 h-5" />
-                      </div>
-                      <div>
-                        <h3 className="text-h3 text-theme-main group-hover:text-[#1D9BF0] transition-colors flex items-center gap-2">
-                          <span>{name}</span>
-                          <ArrowUpRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity text-[#1D9BF0]" />
-                        </h3>
-                        <p className="text-body-small text-theme-muted mt-1 leading-relaxed">
-                          {desc}
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Right: Tech Stack */}
-                    <div className="flex flex-wrap items-center gap-2 md:justify-end shrink-0 pl-11 md:pl-0">
-                      {prod.techStack.map((tech) => (
-                        <span
-                          key={tech}
-                          className="px-2.5 py-1 rounded bg-app border border-theme-subtle text-code text-theme-muted"
-                        >
-                          {tech}
-                        </span>
-                      ))}
-                    </div>
-                  </Link>
+                    prod={prod}
+                    idx={idx}
+                    name={name}
+                    desc={desc}
+                    toolHref={toolHref}
+                    Icon={Icon}
+                    onClick={setSelectedProduct}
+                  />
                 );
               })}
             </div>
+          </div>
+
+          {/* IDE & VS Code Extensions */}
+          <div className="space-y-4 pt-4">
+            <h2 className="text-xs font-mono font-semibold uppercase tracking-wider text-theme-muted">
+              IDE & VS Code Extensions
+            </h2>
+            <VSCodeExtensionCard />
           </div>
 
           <CTASection />

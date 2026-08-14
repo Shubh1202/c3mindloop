@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useCallback, useEffect } from 'react';
-import { Copy, Check, Trash2, ShieldCheck, ShieldAlert, ShieldOff, Clock, Info, AlertCircle, Maximize2, Minimize2, Columns2, Rows2 } from 'lucide-react';
+import { Copy, Check, Trash2, ShieldCheck, ShieldAlert, ShieldOff, Clock, Info, AlertCircle, Maximize2, Minimize2, Columns2, Rows2, Key, HelpCircle } from 'lucide-react';
 import { useTranslation } from '../../lib/i18n';
 
 const SAMPLE_JWT =
@@ -15,6 +15,12 @@ interface DecodedJWT {
   status: TokenStatus;
   expiresAt: Date | null;
   issuedAt: Date | null;
+}
+
+interface SecurityWarning {
+  level: 'critical' | 'warning';
+  title: string;
+  message: string;
 }
 
 function base64UrlDecode(str: string): string {
@@ -69,6 +75,56 @@ function formatDate(date: Date): string {
   });
 }
 
+function getCountdownText(expiresAt: Date): { text: string; isExpired: boolean } {
+  const diff = expiresAt.getTime() - Date.now();
+  const absDiff = Math.abs(diff);
+  const secs = Math.floor((absDiff / 1000) % 60);
+  const mins = Math.floor((absDiff / (1000 * 60)) % 60);
+  const hours = Math.floor((absDiff / (1000 * 60 * 60)) % 24);
+  const days = Math.floor(absDiff / (1000 * 60 * 60 * 24));
+
+  let timeStr = '';
+  if (days > 0) timeStr += `${days}d `;
+  if (hours > 0 || days > 0) timeStr += `${hours.toString().padStart(2, '0')}h : `;
+  timeStr += `${mins.toString().padStart(2, '0')}m : ${secs.toString().padStart(2, '0')}s`;
+
+  if (diff < 0) {
+    let agoStr = '';
+    if (days > 0) agoStr = `${days} day${days > 1 ? 's' : ''}`;
+    else if (hours > 0) agoStr = `${hours} hour${hours > 1 ? 's' : ''}`;
+    else if (mins > 0) agoStr = `${mins} minute${mins > 1 ? 's' : ''}`;
+    else agoStr = `${secs} second${secs > 1 ? 's' : ''}`;
+    return { text: `Expired (${agoStr} ago)`, isExpired: true };
+  }
+  return { text: `Expires in: ${timeStr}`, isExpired: false };
+}
+
+export function scanJwtSecurity(header: any, payload: any, rawToken: string, secret?: string) {
+  const warnings: string[] = [];
+
+  // 1. Alg None Vulnerability Check
+  if (!header?.alg || header.alg.toLowerCase() === 'none') {
+    warnings.push("CRITICAL: Token uses 'alg: none'. This allows signature bypass vulnerabilities!");
+  }
+
+  // 2. Missing Standard Claims
+  if (!payload?.exp) {
+    warnings.push("WARNING: Token lacks an 'exp' (Expiration Time) claim. It will never expire.");
+  }
+
+  // 3. Check for Weak/Default Key Indicators (if secret provided)
+  const commonWeakSecrets = ['secret', '123456', 'admin', 'password', 'jwt_secret', 'app_secret'];
+  if (secret && header?.alg && header.alg.startsWith('HS')) {
+    if (commonWeakSecrets.includes(secret.toLowerCase())) {
+      warnings.push("CRITICAL: Token uses a weak signature secret. Common keys are easily cracked by offline attacks.");
+    } else if (secret.length < 32) {
+      warnings.push("WARNING: HMAC key is too short. Signature secrets should be at least 32 characters (256 bits).");
+    }
+  }
+
+  return warnings;
+}
+
 export const JwtInspectorTool: React.FC = () => {
   const { t } = useTranslation();
   const [token, setToken] = useState('');
@@ -78,6 +134,123 @@ export const JwtInspectorTool: React.FC = () => {
   const [copiedPayload, setCopiedPayload] = useState(false);
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [isSideBySide, setIsSideBySide] = useState(true);
+  
+  // Real-time countdown
+  const [countdown, setCountdown] = useState<string | null>(null);
+  const [isExpired, setIsExpired] = useState(false);
+
+  // Client-Side signature verification state
+  const [signatureSecret, setSignatureSecret] = useState('');
+  const [signatureValid, setSignatureValid] = useState<boolean | null>(null);
+
+  // Security Scanner Alerts
+  const [warnings, setWarnings] = useState<SecurityWarning[]>([]);
+
+  // Expiry Countdown Interval Hook
+  useEffect(() => {
+    if (!decoded || !decoded.expiresAt) {
+      setCountdown(null);
+      setIsExpired(false);
+      return;
+    }
+    const updateCountdown = () => {
+      const { text, isExpired: exp } = getCountdownText(decoded.expiresAt!);
+      setCountdown(text);
+      setIsExpired(exp);
+    };
+    updateCountdown();
+    const interval = setInterval(updateCountdown, 1000);
+    return () => clearInterval(interval);
+  }, [decoded]);
+
+  // Client-Side signature verification hook
+  useEffect(() => {
+    const verifySignature = async () => {
+      if (!token.trim() || !decoded || !signatureSecret.trim()) {
+        setSignatureValid(null);
+        return;
+      }
+      
+      const alg = decoded.header.alg;
+      if (!alg || !alg.startsWith('HS')) {
+        setSignatureValid(null);
+        return;
+      }
+
+      try {
+        const parts = token.trim().split('.');
+        const dataStr = `${parts[0]}.${parts[1]}`;
+        const encoder = new TextEncoder();
+        const keyData = encoder.encode(signatureSecret);
+        const data = encoder.encode(dataStr);
+        
+        let hashName = '';
+        if (alg === 'HS256') hashName = 'SHA-256';
+        else if (alg === 'HS384') hashName = 'SHA-384';
+        else if (alg === 'HS512') hashName = 'SHA-512';
+        else {
+          setSignatureValid(null);
+          return;
+        }
+
+        const cryptoKey = await window.crypto.subtle.importKey(
+          'raw',
+          keyData,
+          { name: 'HMAC', hash: hashName },
+          false,
+          ['verify']
+        );
+
+        const sigBase64 = parts[2].replace(/-/g, '+').replace(/_/g, '/');
+        const sigPadded = sigBase64.padEnd(sigBase64.length + ((4 - (sigBase64.length % 4)) % 4), '=');
+        const sigBinary = atob(sigPadded);
+        const sigBytes = new Uint8Array(sigBinary.length);
+        for (let i = 0; i < sigBinary.length; i++) sigBytes[i] = sigBinary.charCodeAt(i);
+
+        const isOk = await window.crypto.subtle.verify(
+          'HMAC',
+          cryptoKey,
+          sigBytes,
+          data
+        );
+        setSignatureValid(isOk);
+      } catch {
+        setSignatureValid(false);
+      }
+    };
+
+    verifySignature();
+  }, [token, signatureSecret, decoded]);
+
+  // Security Scanner logic hook
+  useEffect(() => {
+    if (!decoded) {
+      setWarnings([]);
+      return;
+    }
+    const scannerWarnings = scanJwtSecurity(decoded.header, decoded.payload, token, signatureSecret);
+    const list: SecurityWarning[] = scannerWarnings.map(msg => {
+      const isCritical = msg.startsWith("CRITICAL");
+      return {
+        level: isCritical ? 'critical' : 'warning',
+        title: isCritical ? 'Critical Security Flaw' : 'Security Warning',
+        message: msg.replace(/^(CRITICAL|WARNING):\s*/, ''),
+      };
+    });
+
+    const alg = decoded.header.alg;
+    if (alg && !alg.startsWith('HS') && alg.toLowerCase() !== 'none' && signatureSecret.trim().length > 0) {
+      list.push({
+        level: 'warning',
+        title: 'Asymmetric Key Algorithm Used',
+        message: `Token signature algorithm uses ${alg} (RSA/ECDSA). Local HS Verification tool only supports HMAC signatures.`,
+      });
+    }
+
+    setWarnings(list);
+  }, [decoded, signatureSecret, token]);
+
+
 
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => { if (e.key === 'Escape' && isFullScreen) setIsFullScreen(false); };
@@ -102,18 +275,21 @@ export const JwtInspectorTool: React.FC = () => {
     if (!value.trim()) {
       setDecoded(null);
       setError(null);
+      setSignatureValid(null);
       return;
     }
     const parts = value.trim().split('.');
     if (parts.length !== 3) {
       setDecoded(null);
       setError(t('tools.jwtInspector.errorInvalid'));
+      setSignatureValid(null);
       return;
     }
     const result = decodeJWT(value);
     if (!result) {
       setDecoded(null);
       setError(t('tools.jwtInspector.errorDecode'));
+      setSignatureValid(null);
       return;
     }
     setDecoded(result);
@@ -156,7 +332,7 @@ export const JwtInspectorTool: React.FC = () => {
           <button onClick={() => handleDecode(SAMPLE_JWT)} className="px-2.5 py-1.5 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-300 transition-colors cursor-pointer">
             {t('tools.jwtInspector.inputSample')}
           </button>
-          <button onClick={() => { setToken(''); setDecoded(null); setError(null); }} className="px-2.5 py-1.5 rounded bg-neutral-800 hover:bg-red-950 hover:text-red-300 text-neutral-400 transition-colors flex items-center gap-1 cursor-pointer">
+          <button onClick={() => { setToken(''); setDecoded(null); setError(null); setSignatureValid(null); setSignatureSecret(''); }} className="px-2.5 py-1.5 rounded bg-neutral-800 hover:bg-red-950 hover:text-red-300 text-neutral-400 transition-colors flex items-center gap-1 cursor-pointer">
             <Trash2 className="w-3 h-3" />
             {t('tools.jwtInspector.inputClear')}
           </button>
@@ -195,36 +371,94 @@ export const JwtInspectorTool: React.FC = () => {
         : 'flex flex-col'
         } ${isFullScreen ? 'flex-1 overflow-hidden' : ''}`}>
 
-        {/* Input pane */}
-        <div className={`flex flex-col p-3 sm:p-4 space-y-2 ${isFullScreen && isSideBySide ? 'overflow-y-auto' : ''
-          }`}>
-          <div className="text-xs font-mono text-neutral-400 pb-1 border-b border-neutral-900">
-            <span className="font-semibold text-neutral-300">Encoded JWT Token</span>
+        {/* Left Input & verification settings */}
+        <div className={`flex flex-col p-3 sm:p-4 space-y-4 ${isFullScreen && isSideBySide ? 'overflow-y-auto' : ''}`}>
+          <div className="flex flex-col space-y-2">
+            <div className="text-xs font-mono text-neutral-400 pb-1 border-b border-neutral-900">
+              <span className="font-semibold text-neutral-300">Encoded JWT Token</span>
+            </div>
+            <textarea
+              value={token}
+              onChange={(e) => handleDecode(e.target.value)}
+              placeholder={t('tools.jwtInspector.inputPlaceholder')}
+              spellCheck={false}
+              className={`w-full p-3 font-mono text-xs bg-neutral-900/90 text-neutral-100 border border-neutral-800 rounded focus:border-[#1D9BF0] focus:outline-none resize-y leading-relaxed transition-colors placeholder-neutral-600 ${isSideBySide ? 'min-h-[160px]' : 'min-h-[80px]'}`}
+            />
+            {error && (
+              <div className="flex items-start gap-2 p-3 bg-red-950/40 border border-red-900/80 rounded text-xs text-red-300 font-mono">
+                <AlertCircle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
+                <span>{error}</span>
+              </div>
+            )}
           </div>
-          <textarea
-            value={token}
-            onChange={(e) => handleDecode(e.target.value)}
-            placeholder={t('tools.jwtInspector.inputPlaceholder')}
-            spellCheck={false}
-            className={`w-full p-3 font-mono text-xs bg-neutral-900/90 text-neutral-100 border border-neutral-800 rounded focus:border-[#1D9BF0] focus:outline-none resize-y leading-relaxed transition-colors placeholder-neutral-600 ${isSideBySide ? 'min-h-[300px]' : 'min-h-[80px] max-h-[300px]'
-              }`}
-          />
-          {error && (
-            <div className="flex items-start gap-2 p-3 bg-red-950/40 border border-red-900/80 rounded text-xs text-red-300 font-mono">
-              <AlertCircle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
-              <span>{error}</span>
+
+          {/* Client-Side HMAC Signature Verification */}
+          {decoded && decoded.header.alg && decoded.header.alg.startsWith('HS') && (
+            <div className="p-3 bg-neutral-900/40 border border-neutral-800 rounded-lg space-y-2">
+              <div className="flex items-center gap-2 text-xs font-mono font-semibold text-neutral-300">
+                <Key className="w-3.5 h-3.5 text-[#1D9BF0]" />
+                <span>Verify HMAC Signature ({decoded.header.alg})</span>
+              </div>
+              <p className="text-[11px] text-neutral-400 font-mono leading-normal">
+                HMAC verification occurs entirely in your browser via the Web Crypto API. Your secret key is never sent over the network.
+              </p>
+              <div className="flex items-center gap-2">
+                <input
+                  type="password"
+                  placeholder="HMAC Secret Key (e.g. your-256-bit-secret)"
+                  value={signatureSecret}
+                  onChange={(e) => setSignatureSecret(e.target.value)}
+                  className="flex-1 px-3 py-1.5 bg-neutral-950 border border-neutral-800 rounded text-xs font-mono text-neutral-200 focus:outline-none focus:border-[#1D9BF0]"
+                />
+                {signatureSecret.trim() && (
+                  <div className={`px-2.5 py-1.5 rounded border text-[11px] font-mono font-bold shrink-0 ${
+                    signatureValid ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400' : 'bg-red-500/10 border-red-500/30 text-red-400'
+                  }`}>
+                    {signatureValid ? 'Signature Verified ✓' : 'Invalid Signature ✗'}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Security Scanner Panel */}
+          {decoded && (
+            <div className="p-3 bg-neutral-900/40 border border-neutral-800 rounded-lg space-y-2">
+              <div className="text-xs font-mono font-semibold text-neutral-300 flex items-center gap-1.5">
+                <ShieldCheck className="w-3.5 h-3.5 text-[#1D9BF0]" />
+                <span>JWT Security Scanner</span>
+              </div>
+              {warnings.length === 0 ? (
+                <div className="flex items-center gap-1.5 text-[11px] font-mono text-emerald-400">
+                  <ShieldCheck className="w-3.5 h-3.5" />
+                  <span>No vulnerabilities detected in headers or payloads.</span>
+                </div>
+              ) : (
+                <div className="space-y-2 max-h-[160px] overflow-y-auto pr-1">
+                  {warnings.map((w, i) => (
+                    <div key={i} className={`p-2.5 rounded border flex items-start gap-2 text-[11px] font-mono ${
+                      w.level === 'critical' ? 'bg-red-950/20 border-red-900/40 text-red-300' : 'bg-amber-950/15 border-amber-900/30 text-amber-300'
+                    }`}>
+                      <AlertCircle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
+                      <div>
+                        <div className="font-semibold mb-0.5">{w.title}</div>
+                        <div className="text-neutral-400 leading-relaxed">{w.message}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           )}
         </div>
 
-        {/* Output pane: 3 panels */}
+        {/* Right Output pane */}
         <div className={`${isSideBySide
           ? 'flex flex-col divide-y divide-neutral-800'
           : 'grid grid-cols-1 lg:grid-cols-3 divide-y lg:divide-y-0 lg:divide-x divide-neutral-800'
-          } ${isFullScreen && isSideBySide ? 'overflow-y-auto' : ''} ${!isSideBySide ? 'min-h-[320px]' : ''
-          }`}>
+          } ${isFullScreen && isSideBySide ? 'overflow-y-auto' : ''} ${!isSideBySide ? 'min-h-[320px]' : ''}`}>
 
-          {/* Panel 1: Header */}
+          {/* Header Panel */}
           <div className={`flex flex-col p-3 sm:p-4 space-y-2 ${isFullScreen && !isSideBySide ? 'overflow-y-auto' : ''}`}>
             <div className="flex items-center justify-between text-xs font-mono pb-1 border-b border-neutral-900">
               <span className="font-semibold text-[#1D9BF0]">{t('tools.jwtInspector.headerLabel')}</span>
@@ -235,16 +469,16 @@ export const JwtInspectorTool: React.FC = () => {
                 </button>
               )}
             </div>
-            <div className="flex-1 bg-neutral-900/90 border border-neutral-800 rounded overflow-auto min-h-[160px]">
+            <div className="flex-1 bg-neutral-900/90 border border-neutral-800 rounded min-h-[160px] flex flex-col overflow-hidden">
               {decoded ? (
-                <pre className="font-mono text-xs p-3 leading-relaxed text-neutral-200" dangerouslySetInnerHTML={{ __html: highlightJson(decoded.header) }} />
+                <pre className="font-mono text-xs p-3 leading-relaxed text-neutral-200 whitespace-pre-wrap break-words [word-break:break-word] overflow-y-auto flex-1" dangerouslySetInnerHTML={{ __html: highlightJson(decoded.header) }} />
               ) : (
                 <div className="p-4 text-xs text-neutral-600 font-mono italic">{token ? '...' : 'Awaiting token input'}</div>
               )}
             </div>
           </div>
 
-          {/* Panel 2: Payload */}
+          {/* Payload Panel */}
           <div className={`flex flex-col p-3 sm:p-4 space-y-2 ${isFullScreen && !isSideBySide ? 'overflow-y-auto' : ''}`}>
             <div className="flex items-center justify-between text-xs font-mono pb-1 border-b border-neutral-900">
               <span className="font-semibold text-[#1D9BF0]">{t('tools.jwtInspector.payloadLabel')}</span>
@@ -255,44 +489,70 @@ export const JwtInspectorTool: React.FC = () => {
                 </button>
               )}
             </div>
-            <div className="flex-1 bg-neutral-900/90 border border-neutral-800 rounded overflow-auto min-h-[160px]">
+            <div className="flex-1 bg-neutral-900/90 border border-neutral-800 rounded min-h-[160px] flex flex-col overflow-hidden">
               {decoded ? (
-                <pre className="font-mono text-xs p-3 leading-relaxed text-neutral-200" dangerouslySetInnerHTML={{ __html: highlightJson(decoded.payload) }} />
+                <pre className="font-mono text-xs p-3 leading-relaxed text-neutral-200 whitespace-pre-wrap break-words [word-break:break-word] overflow-y-auto flex-1" dangerouslySetInnerHTML={{ __html: highlightJson(decoded.payload) }} />
               ) : (
                 <div className="p-4 text-xs text-neutral-600 font-mono italic">{token ? '...' : 'Awaiting token input'}</div>
               )}
             </div>
-            {decoded && (decoded.expiresAt || decoded.issuedAt) && (
-              <div className="space-y-1.5 pt-1 text-[11px] font-mono">
-                {decoded.issuedAt && (
-                  <div className="flex items-center gap-2 text-neutral-400">
+
+            {/* Countdown and Timestamps */}
+            {decoded && (
+              <div className="space-y-1.5 pt-1.5 text-[11px] font-mono border-t border-neutral-900">
+                {countdown && (
+                  <div className={`flex items-center gap-2 px-2 py-1 rounded-md text-[10px] font-bold ${
+                    isExpired ? 'bg-red-500/10 text-red-400 border border-red-500/20' : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
+                  }`}>
                     <Clock className="w-3 h-3 shrink-0" />
-                    <span className="text-neutral-500">{t('tools.jwtInspector.issuedAt')}:</span>
-                    <span>{formatDate(decoded.issuedAt)}</span>
+                    <span>{countdown}</span>
                   </div>
                 )}
-                {decoded.expiresAt && (
-                  <div className={`flex items-center gap-2 ${decoded.status === 'expired' ? 'text-red-400' : 'text-emerald-400'}`}>
-                    <Clock className="w-3 h-3 shrink-0" />
-                    <span className="text-neutral-500">{t('tools.jwtInspector.expiresAt')}:</span>
-                    <span>{formatDate(decoded.expiresAt)}</span>
-                  </div>
-                )}
+                <div className="grid grid-cols-1 gap-1 text-neutral-400 pl-1 pt-0.5">
+                  {decoded.issuedAt && (
+                    <div className="flex items-center gap-2">
+                      <span className="text-neutral-500">{t('tools.jwtInspector.issuedAt')}:</span>
+                      <span>{formatDate(decoded.issuedAt)}</span>
+                    </div>
+                  )}
+                  {decoded.expiresAt && (
+                    <div className="flex items-center gap-2">
+                      <span className="text-neutral-500">{t('tools.jwtInspector.expiresAt')}:</span>
+                      <span>{formatDate(decoded.expiresAt)}</span>
+                    </div>
+                  )}
+                </div>
               </div>
             )}
           </div>
 
-          {/* Panel 3: Signature */}
+          {/* Signature Panel */}
           <div className={`flex flex-col p-3 sm:p-4 space-y-2 ${isFullScreen && !isSideBySide ? 'overflow-y-auto' : ''}`}>
             <div className="text-xs font-mono pb-1 border-b border-neutral-900">
               <span className="font-semibold text-[#1D9BF0]">{t('tools.jwtInspector.signatureLabel')}</span>
             </div>
             <div className="flex-1 bg-neutral-900/90 border border-neutral-800 rounded min-h-[160px] flex flex-col items-center justify-center p-4 text-center space-y-3">
-              <ShieldOff className="w-8 h-8 text-neutral-600" />
-              <p className="text-xs text-neutral-500 font-mono leading-relaxed">{t('tools.jwtInspector.signatureNote')}</p>
+              {signatureSecret.trim() && signatureValid !== null ? (
+                signatureValid ? (
+                  <>
+                    <ShieldCheck className="w-8 h-8 text-emerald-400" />
+                    <p className="text-xs font-semibold text-emerald-400 font-mono">HMAC Signature Valid ✓</p>
+                  </>
+                ) : (
+                  <>
+                    <ShieldAlert className="w-8 h-8 text-red-400" />
+                    <p className="text-xs font-semibold text-red-400 font-mono">Invalid HMAC Signature ✗</p>
+                  </>
+                )
+              ) : (
+                <>
+                  <ShieldOff className="w-8 h-8 text-neutral-600" />
+                  <p className="text-xs text-neutral-500 font-mono leading-relaxed">{t('tools.jwtInspector.signatureNote')}</p>
+                </>
+              )}
               {decoded && token.split('.')[2] && (
                 <div className="w-full mt-2 p-2 bg-neutral-950 border border-neutral-800 rounded">
-                  <p className="text-[10px] font-mono text-neutral-600 break-all">{token.split('.')[2]}</p>
+                  <p className="text-[10px] font-mono text-neutral-600 break-all whitespace-pre-wrap">{token.split('.')[2]}</p>
                 </div>
               )}
             </div>

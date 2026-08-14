@@ -5,12 +5,21 @@ import { seoConfig, jsonFormatterSchema } from './../../config/seo.config';
 const { jsonFormatter } = seoConfig;
 
 export const metadata: Metadata = {
-  title: jsonFormatter.title,
-  description: jsonFormatter.description,
+  title: 'JSON Formatter & Validator - Free Online Tool | 100% Private Client-Side',
+  description: 'Free, 100% private client-side JSON Formatter and Validator. Beautify, minify, and validate complex JSON datasets locally in your browser with real-time syntax checking.',
   keywords: [...jsonFormatter.keywords],
   alternates: { canonical: jsonFormatter.canonical },
-  openGraph: jsonFormatter.openGraph,
-  twitter: { card: 'summary_large_image', ...jsonFormatter.twitter },
+  openGraph: {
+    ...jsonFormatter.openGraph,
+    title: 'JSON Formatter & Validator - Free Online Tool | 100% Private Client-Side',
+    description: 'Free, 100% private client-side JSON Formatter and Validator. Beautify, minify, and validate complex JSON datasets locally in your browser with real-time syntax checking.',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    ...jsonFormatter.twitter,
+    title: 'JSON Formatter & Validator - Free Online Tool | 100% Private Client-Side',
+    description: 'Free, 100% private client-side JSON Formatter and Validator. Beautify, minify, and validate complex JSON datasets locally in your browser with real-time syntax checking.',
+  },
 };
 
 const faqPageSchema = {
@@ -22,7 +31,7 @@ const faqPageSchema = {
       'name': 'What is a JSON Formatter and why is it used?',
       'acceptedAnswer': {
         '@type': 'Answer',
-        'text': 'A JSON Formatter is a developer utility designed to parse raw, minified JSON text and restructure it with consistent indentation and line breaks, transforming dense strings into highly readable text. This process is commonly referred to as beautifying or pretty-printing. Developers use it to debug complex API payloads, inspect structured config files, locate nesting anomalies, and communicate structural state information clearly to team members. Additionally, our formatter acts as a validator, alerting you to broken JSON structures or mismatched brackets before your application code parses them.'
+        'text': 'A JSON Formatter is a utility tool that takes raw, minified, or unformatted JSON strings and converts them into a human-readable format with proper indentation and line breaks.'
       }
     },
     {
@@ -30,7 +39,7 @@ const faqPageSchema = {
       'name': 'Is this JSON Formatter secure for sensitive corporate configs and API keys?',
       'acceptedAnswer': {
         '@type': 'Answer',
-        'text': 'Absolutely. The core security advantage of our platform is that all operations run 100% locally inside your browser context using client-side JavaScript. Unlike conventional online formatters that transmit your data to backend servers-exposing sensitive credentials, private keys, or customer records to potential database logging and third-party monitoring-our formatter runs offline. Your JSON payload never traverses the internet, assuring strict compliance with corporate data protection policies, SOC 2 protocols, and general privacy requirements.'
+        'text': 'Yes, 100%. Unlike cloud-based SaaS tools, C³ MindLoop runs entirely on client-side processing using your browser\'s V8 engine. No data ever leaves your filesystem or machine.'
       }
     },
     {
@@ -38,7 +47,7 @@ const faqPageSchema = {
       'name': 'How does the built-in syntax error detector work?',
       'acceptedAnswer': {
         '@type': 'Answer',
-        'text': 'When you enter a JSON string, the tool processes it using your browser\'s native V8 JavaScript parser. If the structure violates RFC 8259 guidelines (for instance, if there is a trailing comma, a missing quotation mark, or unmatched brackets), the parser throws a syntax error. Our application catches this error, extracts the character position and context, and maps it to a human-readable line and column indicator. This live error feedback helps you troubleshoot and correct structural mistakes instantly without guessing.'
+        'text': 'The engine tokenizes the inputs in real-time. If it finds a structural issue (like missing brackets or commas), it instantly highlights the exact line location and error type.'
       }
     },
     {
@@ -46,7 +55,7 @@ const faqPageSchema = {
       'name': 'Can I use this JSON tool without an active internet connection?',
       'acceptedAnswer': {
         '@type': 'Answer',
-        'text': 'Yes. Because the formatting, tree rendering, and validation algorithms are implemented purely in client-side code and do not require server-side execution, you can load the page once and run it offline. It is fully functional in low-connectivity environments, inside restricted enterprise intranets, or when working on local dev servers with no external network routes.'
+        'text': 'Absolutely. Since all minification, formatting, and tree-mapping algorithms are written in native client-side JavaScript, the tool functions perfectly offline once the page is loaded.'
       }
     },
     {
@@ -54,7 +63,7 @@ const faqPageSchema = {
       'name': 'Why should I choose client-side tools over cloud-based formatters?',
       'acceptedAnswer': {
         '@type': 'Answer',
-        'text': 'Cloud-based formatters require sending your payloads over the wire to their servers, where your data could be cached, logged, or intercepted. A local client-side formatter guarantees that your data stays on your machine. This eliminates security risks, reduces bandwidth latency, and guarantees instantaneous performance regardless of your network connection speed. It is the professional engineering standard for working with production database dumps and secure configuration files.'
+        'text': 'Cloud-based formatters transmit your data over public networks, posing severe security and log leakage risks. Client-side processing ensures complete network isolation and faster parsing with zero overhead.'
       }
     }
   ]

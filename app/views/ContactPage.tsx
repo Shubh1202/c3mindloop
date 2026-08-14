@@ -10,12 +10,28 @@ import { Logo } from '../components/ui/Logo';
 export const ContactPage: React.FC = () => {
   const { t } = useTranslation();
   const [formData, setFormData] = useState({ name: '', email: '', subject: '', message: '' });
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.name || !formData.email || !formData.message) return;
+    
+    const newErrors: { [key: string]: string } = {};
+    if (!formData.name.trim()) newErrors.name = 'This field is required.';
+    if (!formData.email.trim()) {
+      newErrors.email = 'This field is required.';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = 'Please enter a valid email address.';
+    }
+    if (!formData.message.trim()) newErrors.message = 'This field is required.';
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+    
+    setErrors({});
 
     setIsSubmitting(true);
     setTimeout(() => {
@@ -72,11 +88,16 @@ export const ContactPage: React.FC = () => {
                     <input
                       type="text"
                       value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      onChange={(e) => {
+                        setFormData({ ...formData, name: e.target.value });
+                        if (errors.name) setErrors({ ...errors, name: '' });
+                      }}
                       placeholder={t('contact.namePlaceholder', 'e.g. Alex')}
-                      required
-                      className="w-full bg-app border border-theme-subtle rounded-lg px-3.5 py-2.5 text-body-small text-theme-main placeholder:text-theme-muted focus:outline-none focus:border-[#1D9BF0]"
+                      className={`w-full bg-app border rounded-lg px-3.5 py-2.5 text-body-small text-theme-main placeholder:text-theme-muted focus:outline-none transition-colors ${
+                        errors.name ? 'border-red-500 focus:border-red-500' : 'border-theme-subtle focus:border-[#1D9BF0]'
+                      }`}
                     />
+                    {errors.name && <span className="text-red-500 text-xs mt-1 block font-mono">{errors.name}</span>}
                   </div>
 
                   <div>
@@ -86,11 +107,16 @@ export const ContactPage: React.FC = () => {
                     <input
                       type="email"
                       value={formData.email}
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      onChange={(e) => {
+                        setFormData({ ...formData, email: e.target.value });
+                        if (errors.email) setErrors({ ...errors, email: '' });
+                      }}
                       placeholder={t('contact.emailPlaceholder', 'alex@example.com')}
-                      required
-                      className="w-full bg-app border border-theme-subtle rounded-lg px-3.5 py-2.5 text-body-small text-theme-main placeholder:text-theme-muted focus:outline-none focus:border-[#1D9BF0]"
+                      className={`w-full bg-app border rounded-lg px-3.5 py-2.5 text-body-small text-theme-main placeholder:text-theme-muted focus:outline-none transition-colors ${
+                        errors.email ? 'border-red-500 focus:border-red-500' : 'border-theme-subtle focus:border-[#1D9BF0]'
+                      }`}
                     />
+                    {errors.email && <span className="text-red-500 text-xs mt-1 block font-mono">{errors.email}</span>}
                   </div>
 
                   <div>
@@ -112,23 +138,33 @@ export const ContactPage: React.FC = () => {
                     </label>
                     <textarea
                       value={formData.message}
-                      onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                      onChange={(e) => {
+                        setFormData({ ...formData, message: e.target.value });
+                        if (errors.message) setErrors({ ...errors, message: '' });
+                      }}
                       rows={5}
-                      required
                       placeholder={t('contact.messagePlaceholder', 'Tell us about your project or inquiry...')}
-                      className="w-full bg-app border border-theme-subtle rounded-lg p-3.5 text-body-small text-theme-main placeholder:text-theme-muted focus:outline-none focus:border-[#1D9BF0]"
+                      className={`w-full bg-app border rounded-lg p-3.5 text-body-small text-theme-main placeholder:text-theme-muted focus:outline-none transition-colors ${
+                        errors.message ? 'border-red-500 focus:border-red-500' : 'border-theme-subtle focus:border-[#1D9BF0]'
+                      }`}
                     />
+                    {errors.message && <span className="text-red-500 text-xs mt-1 block font-mono">{errors.message}</span>}
                   </div>
 
-                  <Button
-                    type="submit"
-                    variant="primary"
-                    disabled={isSubmitting}
-                    className="w-full py-2.5"
-                    icon={<Send className="w-4 h-4" />}
-                  >
-                    {isSubmitting ? t('contact.btnSending', 'Sending Message...') : t('contact.btnSubmit', 'Send Message')}
-                  </Button>
+                  <div className="space-y-3">
+                    <Button
+                      type="submit"
+                      variant="primary"
+                      disabled={isSubmitting}
+                      className="w-full py-2.5"
+                      icon={<Send className="w-4 h-4" />}
+                    >
+                      {isSubmitting ? t('contact.btnSending', 'Sending Message...') : t('contact.btnSubmit', 'Send Message')}
+                    </Button>
+                    <p className="text-[11px] text-theme-muted text-center leading-relaxed">
+                      This form securely transmits your message directly to our team via email. No personal data is stored in any database.
+                    </p>
+                  </div>
                 </form>
               )}
             </div>
@@ -154,7 +190,7 @@ export const ContactPage: React.FC = () => {
                     <div>
                       <span className="text-xs font-mono uppercase font-bold text-theme-muted block">Community Channels</span>
                       <p className="text-body-small text-theme-muted">
-                        Join our developer channels for async discussions, code reviews, and technical feedback.
+                        Join our <a href="https://github.com/c3mindloop" target="_blank" rel="noopener noreferrer" className="text-[#1D9BF0] hover:underline">developer channels</a> for async discussions, code reviews, and technical feedback.
                       </p>
                     </div>
                   </div>

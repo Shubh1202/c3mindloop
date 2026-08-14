@@ -259,15 +259,15 @@
     "title": "Frequently Asked Questions",
     "subtitle": "Everything you need to know about C³ MindLoop, our products, and community.",
     "q1": "What does C³ MindLoop stand for?",
-    "a1": "C³ represents our three core pillars: Community, Creation, and Continuation. MindLoop is the continuous cycle of thinking, building, learning, and repeating.",
+    "a1": "C³ stands for Coding, Crashing, Crying-the actual loop every developer lives through daily. You write code, it breaks, you debug it, you ship. The superscript ³ is the honest shorthand for that cycle. MindLoop is the mental process that never fully switches off-you're in the shower thinking about a race condition, or waking up at 3am knowing why the null check failed. This platform is built around that developer reality, not a polished version of it.",
     "q2": "What kind of tools does C³ MindLoop offer?",
-    "a2": "We offer developer tools, AI code assistance, system design guides, open-source packages, and custom engineering services.",
-    "q3": "How can I try MindLoop AI tools?",
-    "a3": "You can try our browser AI playground directly on the homepage or test code snippets in our Products section.",
+    "a2": "All tools run 100% locally in your browser-no account, no backend, no data collection. The current lineup: JSON Formatter, JWT Inspector, Base64 Encoder, Regex Tester, Cron Visualizer, cURL Converter, SQL to JSON Converter, Hash Generator, and ATS Resume Generator. There's also an Office Editor VS Code extension with 14,400+ marketplace installs. Every tool processes your data inside your browser tab. Nothing leaves your machine.",
+    "q3": "How do I get started with the tools?",
+    "a3": "Go to the Tools page and pick one. No signup, no install, no waiting. Paste your JSON, JWT, Base64 string, or regex pattern directly into the editor and results appear instantly. Each tool is a standalone browser utility you can bookmark and return to anytime. If you're trying a few for the first time, the JSON Formatter and JWT Inspector are the most used. The ATS Resume Generator is useful if you're actively job hunting as a developer.",
     "q4": "Are C³ MindLoop open-source projects free to use?",
-    "a4": "Yes! All our public repositories are open-source and free to use for personal and commercial projects.",
+    "a4": "Yes-all public repositories are open-source under the MIT license, meaning you can use, fork, modify, and distribute them for personal or commercial projects without restrictions. The browser tools are free with no paywalls or usage limits. The VS Code Office Editor extension is also free on the Visual Studio Marketplace with no premium tier. Browse the GitHub repository for source code, contribution guidelines, and open issues.",
     "q5": "How can I get involved in the community?",
-    "a5": "You can join our developer channels, share crash stories, contribute to open-source projects, or follow our engineering blog."
+    "a5": "The most direct path is GitHub-open issues, submit pull requests, or explore the source code. The community page lists active discussion channels. If you've had a painful production incident worth sharing, crash story submissions are welcome: real debugging postmortems, not polished case studies. Engineering guides on the site come from actual development work. If you've got something worth writing up, reach out through the contact page."
   },
   "testimonials": {
     "kicker": "Developer Perspectives",
@@ -342,7 +342,17 @@
     "section4Title": "4. Limitation of Liability",
     "section4Body": "In no event shall C³ MindLoop or its maintainers be liable for any data loss, syntax errors, or indirect damages resulting from the use of our utility tools.",
     "section5Title": "5. Changes and Updates",
-    "section5Body": "We reserve the right to modify these terms at any time. Continued use of the platform constitutes acceptance of updated terms."
+    "section5Body": "We reserve the right to modify these terms at any time. Continued use of the platform constitutes acceptance of updated terms.",
+    "section6Title": "6. Governing Law & Jurisdiction",
+    "section6Body": "These Terms shall be governed and construed in accordance with the laws of India, without regard to its conflict of law provisions. Any legal disputes shall be subject to exclusive jurisdiction.",
+    "section7Title": "7. Open Source License",
+    "section7Body": "Unless otherwise specified, C³ MindLoop codebases and utilities are distributed under the MIT License. You are free to inspect, modify, and contribute via our official GitHub repository.",
+    "section8Title": "8. Third-Party Utilities & Extensions",
+    "section8Body": "Our platform may showcase or link to third-party tools, IDE extensions (e.g., VS Code extensions), or external resources. We do not maintain or guarantee the functionality, uptime, or security of third-party assets.",
+    "kicker": "Legal",
+    "footerStart": "Questions? Reach us at ",
+    "footerEmail": "hello@c3mindloop.com",
+    "footerEnd": " or inspect our source on GitHub."
   },
   "privacy": {
     "title": "Privacy Policy",
@@ -354,14 +364,20 @@
     "section2Body": "We operate under a strict Zero Data Retention policy. We do not store, log, monitor, inspect, or backup any data that you paste, type, or process within our tools. Because all processing happens offline on your client machine, we have zero access to your internal payloads, proprietary source code, or confidential tokens. There is no server-side database receiving your input. There never was.",
     "section3Title": "3. Local Storage and Browser State Management",
     "section3Body": "To provide a seamless experience, such as remembering your active workspace settings, UI preferences, or temporary tool history, C³ MindLoop may use local browser storage mechanisms like localStorage and sessionStorage. This data lives strictly on your local machine. It is never transmitted to us or any third party, and you can clear it completely at any time through your browser settings.",
-    "section4Title": "4. Network Traffic, Cookies, and Analytics",
-    "section4Body": "C³ MindLoop is designed to be completely ad-free and tracking-light. We do not use third-party advertising networks, cross-site trackers, or invasive data-mining cookies. We may collect non-identifiable, aggregated technical metrics such as page view counts, browser type, and country-level location, solely to monitor server status, system performance, and bandwidth utilization. These metrics contain zero payload data and zero personal identifiers.",
+    "section4Title": "4. Analytics & Usage Data",
+    "section4Body": "C³ MindLoop is designed to be completely ad-free and tracking-light. We do not use third-party advertising networks, cross-site trackers, or invasive data-mining cookies. Anonymous page view metrics are collected via Google Analytics 4 (GA4) with IP anonymization enabled (anonymize_ip: true), ensuring zero personal identifier collection. These metrics contain zero payload data and are used solely to monitor system performance and aggregate traffic trends.",
     "section5Title": "5. Outgoing Client Requests and API Testing",
     "section5Body": "If you use our API and cURL testing utilities to trigger HTTP or REST requests, those requests originate directly from your web browser to your targeted destination endpoint. C³ MindLoop does not proxy, inspect, reroute, or log your API request bodies or headers. The connection is yours, end to end.",
     "section6Title": "6. Open-Source Third-Party Libraries",
     "section6Body": "C³ MindLoop incorporates verified open-source software libraries to handle specific formatting and parsing functions. These libraries run strictly inside your local browser environment and have no network access to external servers. We periodically review open-source components to ensure compliance with security standards and licensing requirements.",
     "section7Title": "7. Policy Updates and Contact",
-    "section7Body": "We may update this Privacy Policy from time to time to reflect architecture upgrades or new browser capabilities. Continued use of C³ MindLoop implies acceptance of the current policy. If you have questions about our client-side architecture or want to inspect how the tools work, feel free to reach out or browse our codebase on GitHub."
+    "section7Body": "We may update this Privacy Policy from time to time to reflect architecture upgrades or new browser capabilities. Continued use of C³ MindLoop implies acceptance of the current policy. If you have questions about our client-side architecture or want to inspect how the tools work, feel free to reach out or browse our codebase on GitHub.",
+    "kicker": "Privacy First",
+    "complianceTitle": "GDPR & CCPA Compliance",
+    "complianceBody": "C³ MindLoop operates on a zero-server-retention architecture. Because no personally identifiable information (PII) is stored, tracked, or resold, our platform is fully compliant with EU GDPR and California CCPA guidelines by design.",
+    "footerStart": "Questions? Reach us at ",
+    "footerEmail": "hello@c3mindloop.com",
+    "footerEnd": " or inspect our source on GitHub."
   },
   "footer": {
     "tagline": "Think. Build. Learn. Repeat.",
@@ -422,15 +438,15 @@
       },
       "faq": {
         "q1": "What is a JSON Formatter and why is it used?",
-        "a1": "A JSON Formatter is a developer utility designed to parse raw, minified JSON text and restructure it with consistent indentation and line breaks, transforming dense strings into highly readable text. This process is commonly referred to as beautifying or pretty-printing. Developers use it to debug complex API payloads, inspect structured config files, locate nesting anomalies, and communicate structural state information clearly to team members. Additionally, our formatter acts as a validator, alerting you to broken JSON structures or mismatched brackets before your application code parses them.",
+        "a1": "A JSON Formatter is a utility tool that takes raw, minified, or unformatted JSON strings and converts them into a human-readable format with proper indentation and line breaks.",
         "q2": "Is this JSON Formatter secure for sensitive corporate configs and API keys?",
-        "a2": "Absolutely. The core security advantage of our platform is that all operations run 100% locally inside your browser context using client-side JavaScript. Unlike conventional online formatters that transmit your data to backend servers—exposing sensitive credentials, private keys, or customer records to potential database logging and third-party monitoring—our formatter runs offline. Your JSON payload never traverses the internet, assuring strict compliance with corporate data protection policies, SOC 2 protocols, and general privacy requirements.",
+        "a2": "Yes, 100%. Unlike cloud-based SaaS tools, C³ MindLoop runs entirely on client-side processing using your browser's V8 engine. No data ever leaves your filesystem or machine.",
         "q3": "How does the built-in syntax error detector work?",
-        "a3": "When you enter a JSON string, the tool processes it using your browser's native V8 JavaScript parser. If the structure violates RFC 8259 guidelines (for instance, if there is a trailing comma, a missing quotation mark, or unmatched brackets), the parser throws a syntax error. Our application catches this error, extracts the character position and context, and maps it to a human-readable line and column indicator. This live error feedback helps you troubleshoot and correct structural mistakes instantly without guessing.",
+        "a3": "The engine tokenizes the inputs in real-time. If it finds a structural issue (like missing brackets or commas), it instantly highlights the exact line location and error type.",
         "q4": "Can I use this JSON tool without an active internet connection?",
-        "a4": "Yes. Because the formatting, tree rendering, and validation algorithms are implemented purely in client-side code and do not require server-side execution, you can load the page once and run it offline. It is fully functional in low-connectivity environments, inside restricted enterprise intranets, or when working on local dev servers with no external network routes.",
+        "a4": "Absolutely. Since all minification, formatting, and tree-mapping algorithms are written in native client-side JavaScript, the tool functions perfectly offline once the page is loaded.",
         "q5": "Why should I choose client-side tools over cloud-based formatters?",
-        "a5": "Cloud-based formatters require sending your payloads over the wire to their servers, where your data could be cached, logged, or intercepted. A local client-side formatter guarantees that your data stays on your machine. This eliminates security risks, reduces bandwidth latency, and guarantees instantaneous performance regardless of your network connection speed. It is the professional engineering standard for working with production database dumps and secure configuration files."
+        "a5": "Cloud-based formatters transmit your data over public networks, posing severe security and log leakage risks. Client-side processing ensures complete network isolation and faster parsing with zero overhead."
       }
     },
     "base64Encoder": {
@@ -519,9 +535,9 @@
       },
       "faq": {
         "q1": "Which languages are supported for cURL conversion?",
-        "a1": "JavaScript (Fetch, Axios), Node.js, Python (requests), Go (net/http), and PHP (cURL, Guzzle).",
+        "a1": "This tool supports 7 major target implementations: JavaScript (Fetch & Axios), Node.js (node-fetch), Python (requests), Go (net/http), and PHP (native cURL & Guzzle).",
         "q2": "Are API tokens in cURL commands safe?",
-        "a2": "Yes. Code conversion is performed 100% client-side with zero network calls."
+        "a2": "Yes, 100% safe. The parsing logic is executed entirely inside your browser's JavaScript engine. No text strings, tokens, or network headers are ever transmitted to an external server."
       }
     },
     "cronVisualizer": {
@@ -621,13 +637,13 @@
       },
       "faq": {
         "q1": "Is it safe to paste production JWT tokens into this decoder?",
-        "a1": "Yes. C³ MindLoop operates 100% client-side. The JWT decoding happens entirely within your browser's JavaScript engine without sending your token or claims over any network request.",
+        "a1": "Yes, absolutely. Unlike cloud-hosted utilities, C³ MindLoop decodes tokens using native browser atob and TextDecoder APIs completely offline. Your sensitive authorization credentials, signatures, and private claims are never transmitted to any external server.",
         "q2": "Does this tool verify the signature of my JWT?",
-        "a2": "This tool inspects and decodes the unencrypted Header and Payload claims. Signature verification requires your secret key or public RSA/ECDSA key, which you can test locally without exposing secrets.",
+        "a2": "The decoder structures and translates Header and Payload properties locally. For signature verification, you can input your HMAC/RSA secret key directly into the local browser sandbox using native Web Crypto APIs.",
         "q3": "Why is my decoded JWT showing 'Token Expired'?",
-        "a3": "The inspector checks the 'exp' (expiration) claim inside the payload against your system's current UNIX timestamp. If the expiration timestamp has passed, the tool highlights it as expired.",
+        "a3": "JSON Web Tokens contain an 'exp' (Expiration Time) epoch claim. Our inspector automatically reads this timestamp and evaluates it against your current system time to alert you if the authorization window has closed.",
         "q4": "What algorithms are supported for JWT parsing?",
-        "a4": "Our client-side parser supports all standard RFC 7519 JSON Web Signature algorithms including HMAC (HS256, HS384, HS512), RSA (RS256, RS384, RS512), and ECDSA (ES256, ES384)."
+        "a4": "This tool supports structural decoding for all standard JWT and JWS algorithms, including HMAC (HS256, HS384, HS512) and RSA/ECDSA (RS256, RS512, ES256) token payload structures."
       }
     },
     "regexTester": {
@@ -654,11 +670,11 @@
       },
       "faq": {
         "q1": "Is this Regex Tester 100% free and private?",
-        "a1": "Yes. All regex evaluation runs locally in your browser. No strings or patterns leave your machine.",
+        "a1": "Yes, completely free and private. C³ MindLoop runs all RegExp tokenization and pattern testing inside your local device's browser window using JavaScript's native engine. Your proprietary data strings and patterns never travel over HTTP networks.",
         "q2": "Which JavaScript Regex engine is used?",
-        "a2": "It leverages your browser's native JavaScript ECMAScript RegExp engine, fully supporting modern features like named capture groups and lookbehinds.",
+        "a2": "This tool utilizes your browser's native ECMAScript RegExp engine (V8 engine in Chrome/Edge, SpiderMonkey in Firefox). It supports standard flags like global (g), case-insensitive (i), and multiline (m).",
         "q3": "Can I test email, URL, and phone number patterns?",
-        "a3": "Absolutely! You can use the built-in cheatsheet presets or type custom expressions to validate emails, URLs, IP addresses, and custom tokens."
+        "a3": "Absolutely. The interface provides built-in quick presets for standard validations, including RFC-compliant email matching, domain/URL structures, IPv4 addresses, and UUID v4 string schemas."
       }
     },
     "sqlToJson": {
@@ -701,11 +717,11 @@
       },
       "faq": {
         "q1": "Is this converter completely free and private?",
-        "a1": "Yes. It operates 100% client-side in your browser. Neither your SQL queries nor cURL authentication tokens leave your computer.",
+        "a1": "Yes, 100% free and private. Since C³ MindLoop runs entirely client-side, your database dumps, table names, sensitive records, or cURL API tokens are processed locally within your browser context and never transmitted over public networks.",
         "q2": "What types of SQL queries are supported?",
-        "a2": "It parses standard ANSI SQL INSERT INTO statements and CSV/TSV table outputs into structured JSON array format.",
+        "a2": "The current engine natively parses standard SQL INSERT INTO table_name (columns) VALUES (...); statements, dynamically mapping values into structural JSON object arrays while handling booleans, numbers, strings, and null bounds.",
         "q3": "Can it convert cURL headers and request bodies?",
-        "a3": "Yes! It automatically extracts -H (headers), -d / --data / --data-raw (request payloads), and HTTP methods (POST, PUT, GET) into clean JSON."
+        "a3": "Absolutely. When switched to cURL mode, the local parser tokenizes terminal strings, capturing -H network headers, methods, and -d or --data-raw request bodies to organize them into a clean JSON API scheme."
       }
     },
     "hashGenerator": {
@@ -765,13 +781,13 @@
       },
       "faq": {
         "q1": "Is this ATS Resume Generator really free?",
-        "a1": "Yes. It is fully free with no limitations, premium paywalls, or watermarks. All candidate features are open-source and run locally in your web browser.",
+        "a1": "Yes, fully free-no account, no premium tier, no watermarks, no character limits. Everything runs locally in your browser. You fill in the form, see a live preview, and export to PDF directly from your browser's print dialog. There's no SaaS subscription hiding behind a free trial. The source code is open and the tool will stay free.",
         "q2": "What makes a resume 'ATS-compliant'?",
-        "a2": "An ATS-compliant resume uses standard, linear layouts, standard fonts (such as Arial, Helvetica, or Times New Roman), and has no complex graphical tables, colored icons, progress bars, or multi-column layout flows that break text extraction. It organizes information under standard headings like 'Experience' and 'Education' so that parsing tools (like Workday, Lever, and Greenhouse) can accurately scan and map your credentials.",
-        "q3": "How do I download my resume as a PDF file?",
-        "a3": "Simply click the 'Export PDF' button on the toolbar. This activates the browser's native print interface. Set your printer destination to 'Save as PDF', ensure that headers and footers are turned off, and then save the resulting vector document to your computer.",
+        "a2": "ATS systems like Workday, Lever, and Greenhouse parse resumes as plain text, not as visually formatted documents. That means multi-column layouts, icons, colored headers, progress bars, and embedded tables all break the parser. An ATS-compliant resume uses a single-column linear layout, standard section headings (Experience, Education, Skills), readable fonts like Arial or Helvetica, and no decorative graphics. This tool's output template is built specifically around those constraints.",
+        "q3": "How do I download my resume as a PDF?",
+        "a3": "Click the 'Export PDF' button in the top toolbar. This triggers your browser's built-in print dialog. In the destination dropdown, choose 'Save as PDF'. Make sure headers and footers are turned off in the print options-those add browser chrome (URLs, page numbers) that don't belong on a resume. The output is a vector PDF, not a screenshot, so text remains selectable and parseable.",
         "q4": "Are my personal details sent to your servers?",
-        "a4": "Absolutely not. All processing occurs locally in your browser. We have no backend databases, candidate dashboards, or data tracking servers, ensuring 100% GDPR and SOC-2 data isolation compliance."
+        "a4": "Nothing leaves your browser. The entire tool runs as client-side JavaScript-there's no backend, no database, and no analytics capturing form input. Your name, email, employment history, and GitHub handle stay inside your browser tab. If you close the page, the data is gone. Use the Save JSON button to download a local backup of your progress that you can reload anytime."
       }
     }
   }

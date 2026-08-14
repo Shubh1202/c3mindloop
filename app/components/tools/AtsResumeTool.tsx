@@ -6,6 +6,7 @@ import {
   Trash2,
   Printer,
   Download,
+  Upload,
   ChevronDown,
   ChevronUp,
   User,
@@ -336,6 +337,7 @@ export const AtsResumeTool: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'edit' | 'split' | 'preview'>('split');
   const [isFullscreen, setIsFullscreen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const loadInputRef = useRef<HTMLInputElement>(null);
 
   // Sync fullscreen state with browser Escape key / API events
   useEffect(() => {
@@ -463,6 +465,38 @@ export const AtsResumeTool: React.FC = () => {
   // ── Print / PDF Export ─────────────────────────────────────────────────────
   const handlePrint = () => window.print();
 
+  // ── Save Progress as JSON ─────────────────────────────────────────────────
+  const saveJson = () => {
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'resume-data.json';
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  // ── Load Progress from JSON ───────────────────────────────────────────────
+  const loadJson = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      try {
+        const parsed = JSON.parse(evt.target?.result as string) as ResumeData;
+        // Basic shape check before applying
+        if (parsed && parsed.contact && Array.isArray(parsed.experience)) {
+          setData(parsed);
+        }
+      } catch {
+        // Silently ignore malformed files
+      }
+    };
+    reader.readAsText(file);
+    // Reset so the same file can be re-loaded if needed
+    e.target.value = '';
+  };
+
   return (
     <div ref={containerRef} className="border border-neutral-800 rounded-xl overflow-hidden bg-neutral-950">
 
@@ -510,6 +544,37 @@ export const AtsResumeTool: React.FC = () => {
           <span className="hidden sm:block text-[10px] font-mono text-neutral-500 bg-neutral-900 border border-neutral-800 px-2 py-1 rounded">
             Client-Side · No Upload
           </span>
+
+          {/* Hidden file input for JSON restore */}
+          <input
+            ref={loadInputRef}
+            id="ats-load-json-input"
+            type="file"
+            accept=".json,application/json"
+            className="hidden"
+            onChange={loadJson}
+          />
+
+          <button
+            id="ats-save-json-btn"
+            onClick={saveJson}
+            title="Save progress as resume-data.json"
+            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono bg-neutral-800 hover:bg-neutral-700 text-neutral-300 hover:text-neutral-100 border border-neutral-700 rounded transition-colors"
+          >
+            <Download className="w-3.5 h-3.5" />
+            Save JSON
+          </button>
+
+          <button
+            id="ats-load-json-btn"
+            onClick={() => loadInputRef.current?.click()}
+            title="Restore progress from a saved resume-data.json"
+            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono bg-neutral-800 hover:bg-neutral-700 text-neutral-300 hover:text-neutral-100 border border-neutral-700 rounded transition-colors"
+          >
+            <Upload className="w-3.5 h-3.5" />
+            Load JSON
+          </button>
+
           <button
             id="ats-fullscreen-btn"
             onClick={toggleFullscreen}
