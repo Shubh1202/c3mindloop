@@ -3,6 +3,7 @@ import { Inter, JetBrains_Mono } from 'next/font/google';
 import './globals.css';
 import { AppClientShell } from './components/layout/AppClientShell';
 import { seoConfig, organizationSchema, websiteSchema, webApplicationSchema } from './config/seo.config';
+import { GoogleAnalytics } from '@next/third-parties/google';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -123,6 +124,7 @@ export default function RootLayout({
       </head>
       <body className="bg-neutral-950 text-neutral-100 antialiased min-h-screen">
         <AppClientShell>{children}</AppClientShell>
+        <GoogleAnalytics gaId="G-6KLCC79WE4" />
       </body>
     </html>
   );
