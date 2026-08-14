@@ -167,7 +167,15 @@
     "storiesSub": "Real, unfiltered stories from engineers about production outages and learnings.",
     "reposTitle": "Open Source Repositories",
     "joinBtn": "Join Community",
-    "submitStory": "Share Your Crash Story"
+    "submitStory": "Share Your Crash Story",
+    "faq": {
+      "q1": "How can I submit my production crash story or post-mortem?",
+      "a1": "You can submit your anonymous production post-mortems and key engineering lessons directly via our community GitHub repository PR or the inline submission drawer.",
+      "q2": "Are the workshops and masterclasses free to attend?",
+      "a2": "Yes, all live C³ MindLoop system design and hackathon sessions are 100% free and open for developers worldwide.",
+      "q3": "Can I list my open-source project on C³ MindLoop?",
+      "a3": "Absolutely! We showcase high-impact, privacy-first developer tools and open-source repositories built by our active developer community."
+    }
   },
   "blog": {
     "kicker": "Engineering Insights",
@@ -181,9 +189,9 @@
     "noResults": "No articles found matching your criteria."
   },
   "about": {
-    "kicker": "Story & Philosophy",
-    "title": "Redefining How Engineers Think, Learn, and Build",
-    "subtitle": "C³ MindLoop was created to bridge developer reality with intelligent software tools.",
+    "kicker": "Engineered for Privacy",
+    "title": "Engineered for Privacy. Built for Developers.",
+    "subtitle": "A modern privacy-first developer utility suite. Engineered for instant, 100% client-side data parsing, formatting, and cryptographic operations with zero server network latency.",
     "brandSectionTitle": "Why C³ MindLoop?",
     "brandSectionDesc": "The name isn't random. Every part of it describes exactly what developers go through, and what this platform was built around.",
     "brandC3Label": "C³",
@@ -198,9 +206,9 @@
     "brandPrivacyLabel": "How we build tools",
     "brandPrivacyTitle": "100% Local Browser Execution. Zero Server Data Logging.",
     "brandPrivacyDesc": "Every private browser utility on this platform, including the client-side JSON Formatter, JWT Decoder, and Base64 Encoder, runs entirely in your browser. No data leaves your machine. No server logs your input. We built it this way because that's the only way we'd want to use it ourselves.",
-    "storyTitle": "The Continuous Developer Loop",
-    "storyP1": "C³ MindLoop started with a simple realization: software engineering isn't a linear path of clean code. It's a continuous loop of hypothesis, execution, crash, and insight.",
-    "storyP2": "Today, C³ MindLoop brings together developer educational resources, AI experimentation, open-source projects, and micro-SaaS tooling.",
+    "storyTitle": "The Mission",
+    "storyP1": "C³ MindLoop is built to solve developer friction with absolute privacy. We deliver zero-latency client-side processing, seamless WebCrypto integration, and zero-log developer workflows.",
+    "storyP2": "By running everything locally inside your browser tab, we protect your configurations, API keys, credentials, and codebases from being stored or tracked on remote networks.",
     "pillarsTitle": "The C³ Tri-Pillar Matrix",
     "p1Name": "Community (Coding, Crashing, Crying)",
     "p1Desc": "Authentic developer connection where engineers share real challenges, bugs, and lessons learned.",
@@ -208,36 +216,44 @@
     "p2Desc": "Building software tools that eliminate developer friction and enhance productivity.",
     "p3Name": "Continuation (Think, Build, Learn, Repeat)",
     "p3Desc": "The perpetual feedback loop that drives continuous personal growth and product improvement.",
-    "valuesTitle": "Core Principles",
-    "principle01": "PRINCIPLE 01",
-    "principle02": "PRINCIPLE 02",
-    "principle03": "PRINCIPLE 03",
-    "val1Title": "Craft Over Clutter",
-    "val1Desc": "We build minimal, fast, elegant software that respects developer time and focus.",
-    "val2Title": "Honesty in Engineering",
-    "val2Desc": "No fake benchmarks, no exaggerated claims. We focus on real code, real learning, and real solutions.",
-    "val3Title": "Open Technical Knowledge",
-    "val3Desc": "Empowering developers through open-source code, guides, and accessible tools.",
+    "valuesTitle": "Core Values",
+    "principle01": "🛡️ 100% Client-Side Sandbox",
+    "principle02": "⚡ Sub-Millisecond Execution",
+    "principle03": "🔓 Open Standard Compliance",
+    "val1Title": "100% Client-Side Sandbox",
+    "val1Desc": "No data leaves your device. All calculations, parsing, and hashing operations happen locally in memory.",
+    "val2Title": "Sub-Millisecond Execution",
+    "val2Desc": "Powered by native browser Web APIs & Web Workers for maximum speed without network latency.",
+    "val3Title": "Open Standard Compliance",
+    "val3Desc": "Engineered around standard specs including RFC 4648, standard JSON formats, and WebCrypto standards.",
     "timelineTitle": "Evolution Timeline",
-    "milestone1Year": "2024",
-    "milestone1Title": "The Genesis",
-    "milestone1Desc": "C³ MindLoop launched as a developer movement honoring authentic engineering.",
-    "milestone2Year": "2025",
-    "milestone2Title": "100k Community",
-    "milestone2Desc": "Reached 100,000 active developers across YouTube, Discord, and GitHub open-source repositories.",
-    "milestone3Year": "2026",
-    "milestone3Title": "MindLoop AI & SaaS Suite",
-    "milestone3Desc": "Released AST-based AI reflection engines, MindLoop Studio, and serverless Cloud Edge platform.",
-    "teamTitle": "Leadership Team",
-    "member1Name": "C³ MindLoop Team",
-    "member1Role": "Founder & Principal Architect",
-    "member1Bio": "Passionate software architect building resilient developer infrastructure.",
-    "member2Name": "Elena Rostova",
-    "member2Role": "Head of AI Research",
-    "member2Bio": "AI researcher specializing in AST code synthesis and LLM reflection loops.",
-    "member3Name": "Marcus Vance",
-    "member3Role": "Developer Relations Lead",
-    "member3Bio": "Open source advocate building empathetic engineering communities worldwide."
+    "milestone1Year": "2025",
+    "milestone1Title": "The Genesis & Architecture",
+    "milestone1Desc": "C³ MindLoop concept was founded. Built on pure client-side processing principles with 100% data privacy at its core.",
+    "milestone2Year": "Early 2026",
+    "milestone2Title": "Product Activation & Developer Suite",
+    "milestone2Desc": "Officially activated the core tool suite, deploying 15+ sub-millisecond client-side browser utilities including WebCrypto Hashers, JWT Inspectors, and JSON Parsers.",
+    "milestone3Year": "2026 & Beyond",
+    "milestone3Title": "Ecosystem Expansion",
+    "milestone3Desc": "Expanding client-side Web Worker engines, AST code transformers, and open-source developer workflows.",
+    "teamTitle": "Engineering Team",
+    "member1Name": "Client-Side Runtimes",
+    "member1Role": "Core Engineering",
+    "member1Bio": "Focuses on maximizing browser V8 execution speeds, WebCrypto imports, and localized sandboxing.",
+    "member2Name": "Language & AST Parsers",
+    "member2Role": "Systems Development",
+    "member2Bio": "Develops AST engines, parsing strategies, and offline static analysis features.",
+    "member3Name": "Open Source & Integrations",
+    "member3Role": "Ecosystem Tooling",
+    "member3Bio": "Ensures active integration with frameworks, package maintainers, and developer ecosystem tooling.",
+    "faq": {
+      "q1": "What is C³ MindLoop?",
+      "a1": "C³ MindLoop is an all-in-one suite of developer utilities designed for speed, accuracy, and absolute data privacy. From JSON formatting to cryptographic hash computations, all operations execute locally within your browser's client-side memory sandbox.",
+      "q2": "How does C³ MindLoop ensure data privacy?",
+      "a2": "Unlike traditional cloud tools, C³ MindLoop processes all input text, files, configurations, and API keys completely client-side using native browser APIs like WebCrypto, FileReader, and local Web Workers. Zero byte data is ever uploaded or logged to external servers.",
+      "q3": "Is C³ MindLoop free for commercial and personal development?",
+      "a3": "Yes, C³ MindLoop is completely free to use for individual software developers, enterprise DevOps engineers, students, and security analysts."
+    }
   },
   "roadmap": {
     "kicker": "Ecosystem Vision",
@@ -493,11 +509,11 @@
       },
       "faq": {
         "q1": "What is Base64 encoding used for?",
-        "a1": "Base64 is used to transmit binary data over media designed to handle textual data, such as embedding images in HTML/CSS or passing token data in URLs.",
+        "a1": "Base64 encoding is primarily used to transmit binary data (like images, zip files, or binary certificates) over network channels that only reliably support text characters, such as embedding media in HTML/CSS Data URIs or passing Basic Authentication credentials in HTTP headers.",
         "q2": "Is Base64 encryption?",
-        "a2": "No, Base64 is an encoding format, not encryption. It provides no secrecy or data protection on its own.",
+        "a2": "No, Base64 is absolutely not encryption. It is a data masking and translation mechanism designed for structural compatibility, not security. Anyone can instantly reverse a Base64 string back to plain text using native tools without any cryptographic keys.",
         "q3": "Does this Base64 tool send data to servers?",
-        "a3": "No. All conversion operations run 100% locally inside your web browser."
+        "a3": "No. C³ MindLoop handles all text and file string evaluations within your local client device using native browser JavaScript APIs (btoa, atob, and FileReader). Your raw configuration logs, files, and credentials never travel across any public network nodes."
       }
     },
     "curlConverter": {
@@ -585,9 +601,9 @@
       },
       "faq": {
         "q1": "What is standard Cron syntax?",
-        "a1": "Standard cron expressions consist of 5 fields: Minute, Hour, Day of Month, Month, and Day of Week.",
+        "a1": "Standard cron syntax is a time-based job scheduling format consisting of 5 space-separated fields representing: Minute (0-59), Hour (0-23), Day of Month (1-31), Month (1-12), and Day of Week (0-6). Some advanced systems utilize a 6-part syntax that includes an additional seconds field at the beginning or a year field at the end.",
         "q2": "Can I calculate future execution times in UTC?",
-        "a2": "Yes, our tool shows both local browser timezone and UTC execution timestamps."
+        "a2": "Yes, absolutely. The C³ MindLoop Cron engine automatically computes upcoming job execution schedules in real-time, displaying timestamps translated into both your native local browser timezone and synchronized Coordinated Universal Time (UTC) for seamless server alignment."
       }
     },
     "jwtInspector": {
@@ -749,11 +765,11 @@
       },
       "faq": {
         "q1": "Is my input text or file uploaded to a server?",
-        "a1": "No. All hash computations occur 100% locally in your browser's WebCrypto engine. Your data never leaves your device.",
+        "a1": "No, never. C³ MindLoop utilizes your browser's native crypto.subtle API primitives to calculate cryptographic digests directly in your device's memory sandbox. No files or strings ever cross public networks.",
         "q2": "What hashing algorithms are supported?",
-        "a2": "We support SHA-256, SHA-512, SHA-1 via the native Web Crypto API, and MD5 via a client-side JavaScript implementation.",
+        "a2": "This utility simultaneously computes standard secure cryptographic hash algorithms including SHA-256, SHA-512, and SHA-1 using native WebCrypto, alongside legacy MD5 strings computed locally via clean JavaScript.",
         "q3": "Can I verify the checksum of large software files?",
-        "a3": "Yes! Files uploaded for checksum verification are read directly from local memory using File API, ensuring fast and private hashing without cloud upload."
+        "a3": "Yes, you can upload installers, binaries, or archival files locally. The file reader streams your data chunk-by-chunk directly into the local hashing engine to verify integrity against your expected signature values without crashes."
       }
     },
     "atsResume": {

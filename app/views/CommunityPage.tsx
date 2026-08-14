@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
-import { MessageSquare, Flame, AlertTriangle, Calendar, CheckCircle2 } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import { MessageSquare, Flame, AlertTriangle, Calendar, CheckCircle2, Github, ExternalLink } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { useTranslation } from '../lib/i18n';
 import { CRASH_STORIES } from '../lib/constants';
@@ -9,7 +9,6 @@ import { SEOHead } from '../components/layout/SEOHead';
 import { Button } from '../components/ui/Button';
 import { Modal } from '../components/ui/Modal';
 import { CTASection } from '../components/sections/CTASection';
-import { VSCodeExtensionCard } from '../components/sections/VSCodeExtensionCard';
 
 export const CommunityPage: React.FC = () => {
   const { t } = useTranslation();
@@ -46,15 +45,31 @@ export const CommunityPage: React.FC = () => {
 
   const events = [
     { title: 'System Design Masterclass: High Throughput Redis Queues', date: 'August 14, 2026', time: '18:00 UTC', host: 'C³ MindLoop Team' },
-    { title: 'Live Hackathon: Build an AI Agent in 4 Hours', date: 'August 22, 2026', time: '15:00 UTC', host: 'Elena Rostova' },
-    { title: 'Friday Night Crash Post-Mortem Stories', date: 'August 29, 2026', time: '21:00 UTC', host: 'Marcus Vance' }
+    { title: 'Live Hackathon: Build an AI Agent in 4 Hours', date: 'August 22, 2026', time: '15:00 UTC', host: 'C³ AI Team' },
+    { title: 'Friday Night Crash Post-Mortem Stories', date: 'August 29, 2026', time: '21:00 UTC', host: 'C³ Dev Advocates' }
   ];
+
+  const isPast = (dateStr: string) => {
+    return new Date(dateStr) < new Date('2026-08-15');
+  };
+
+  const getCalendarUrl = (title: string, dateStr: string, timeStr: string) => {
+    try {
+      const start = new Date(`${dateStr} ${timeStr.replace(' UTC', '')} UTC`);
+      const end = new Date(start.getTime() + 60 * 60 * 1000); // 1 hour duration default
+      const formatTimeStr = (d: Date) => d.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+      const dates = `${formatTimeStr(start)}/${formatTimeStr(end)}`;
+      return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(title)}&dates=${dates}&details=${encodeURIComponent('Live stream event from C³ MindLoop. Zero-data developer workshop.')}&location=Online+Stream`;
+    } catch {
+      return '#';
+    }
+  };
 
   return (
     <>
       <SEOHead
-        title="Community - Coding. Crashing. Crying."
-        description="Join 120,000+ developers in the C³ MindLoop community. Share production crash stories, contribute to open source, and attend live workshops."
+        title="Community & Open Source Projects - C³ MindLoop"
+        description="Explore open-source developer projects, production post-mortems, and live engineering workshops at C³ MindLoop. Share your crash stories and build smarter together."
         canonical="/community"
       />
 
@@ -117,13 +132,121 @@ export const CommunityPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Featured Developer Project */}
-          <div className="space-y-4">
+          {/* Featured Developer Projects */}
+          <div className="space-y-6">
             <div className="flex items-center justify-between border-b border-theme-subtle pb-3">
               <h2 className="text-h2 text-theme-main">Featured Developer Projects</h2>
-              <span className="text-xs font-mono text-theme-muted uppercase tracking-wider">VS Code Marketplace</span>
+              <span className="text-xs font-mono text-theme-muted uppercase tracking-wider">Open Source & Extensions</span>
             </div>
-            <VSCodeExtensionCard />
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {/* Project 1 */}
+              <div className="border border-white/10 rounded-xl p-6 bg-neutral-900/60 hover:bg-neutral-900/80 hover:border-[#1D9BF0]/30 transition-all flex flex-col justify-between space-y-4">
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400 bg-white/5 px-2 py-0.5 rounded border border-white/10">
+                      VS Code Extension
+                    </span>
+                    <span className="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
+                      14.4k+ Installs
+                    </span>
+                  </div>
+                  <h3 className="text-lg font-bold text-white leading-snug">Office Editor VS Code Extension</h3>
+                  <p className="text-xs text-neutral-400 leading-relaxed font-sans">
+                    WYSIWYG document & spreadsheet editor directly inside VS Code supporting Docx and Xlsx parsing.
+                  </p>
+                </div>
+                <div className="pt-4 border-t border-white/5 flex flex-col sm:flex-row gap-2">
+                  <a
+                    href="https://marketplace.visualstudio.com/items?itemName=shubhamprajapati1202.office-editor"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded bg-[#007ACC] hover:bg-[#0062A3] text-white font-mono text-[10px] font-bold uppercase transition-all"
+                  >
+                    <span>Install</span>
+                  </a>
+                  <a
+                    href="https://github.com/Shubh1202/office-editor"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-300 border border-neutral-700 font-mono text-[10px] font-bold uppercase transition-all"
+                  >
+                    <Github className="w-3.5 h-3.5" />
+                    <span>GitHub</span>
+                  </a>
+                </div>
+              </div>
+
+              {/* Project 2 */}
+              <div className="border border-white/10 rounded-xl p-6 bg-neutral-900/60 hover:bg-neutral-900/80 hover:border-[#1D9BF0]/30 transition-all flex flex-col justify-between space-y-4">
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400 bg-white/5 px-2 py-0.5 rounded border border-white/10">
+                      Web Worker Module
+                    </span>
+                    <span className="text-[10px] font-mono text-sky-400 bg-sky-500/10 px-2 py-0.5 rounded border border-sky-500/20">
+                      WebCrypto
+                    </span>
+                  </div>
+                  <h3 className="text-lg font-bold text-white leading-snug">Client-Side WebCrypto Hasher</h3>
+                  <p className="text-xs text-neutral-400 leading-relaxed font-sans">
+                    Pure client-side Web Worker file hashing module supporting SHA-256, SHA-512, MD5, and HMAC signatures.
+                  </p>
+                </div>
+                <div className="pt-4 border-t border-white/5 flex flex-col sm:flex-row gap-2">
+                  <a
+                    href="/tools/hash-generator"
+                    className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded bg-[#1D9BF0] hover:bg-[#1A8CD8] text-white font-mono text-[10px] font-bold uppercase transition-all"
+                  >
+                    <span>Try Tool</span>
+                  </a>
+                  <a
+                    href="https://github.com/Shubh1202/c3mindloop"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-300 border border-neutral-700 font-mono text-[10px] font-bold uppercase transition-all"
+                  >
+                    <Github className="w-3.5 h-3.5" />
+                    <span>GitHub</span>
+                  </a>
+                </div>
+              </div>
+
+              {/* Project 3 */}
+              <div className="border border-white/10 rounded-xl p-6 bg-neutral-900/60 hover:bg-neutral-900/80 hover:border-[#1D9BF0]/30 transition-all flex flex-col justify-between space-y-4">
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400 bg-white/5 px-2 py-0.5 rounded border border-white/10">
+                      NPM Package
+                    </span>
+                    <span className="text-[10px] font-mono text-[#1D9BF0] bg-[#1D9BF0]/10 px-2 py-0.5 rounded border border-[#1D9BF0]/20">
+                      AST Systems
+                    </span>
+                  </div>
+                  <h3 className="text-lg font-bold text-white leading-snug">AST Code Synthesis Engine</h3>
+                  <p className="text-xs text-neutral-400 leading-relaxed font-sans">
+                    In-browser JavaScript/TypeScript AST parser and structural code transformer library.
+                  </p>
+                </div>
+                <div className="pt-4 border-t border-white/5 flex flex-col sm:flex-row gap-2">
+                  <a
+                    href="/tools/regex-tester"
+                    className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded bg-[#1D9BF0] hover:bg-[#1A8CD8] text-white font-mono text-[10px] font-bold uppercase transition-all"
+                  >
+                    <span>Try Tool</span>
+                  </a>
+                  <a
+                    href="https://github.com/Shubh1202/c3mindloop"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-300 border border-neutral-700 font-mono text-[10px] font-bold uppercase transition-all"
+                  >
+                    <Github className="w-3.5 h-3.5" />
+                    <span>GitHub</span>
+                  </a>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Crash Stories Wall (Open List View with 1px Line Dividers, No Badges) */}
@@ -133,14 +256,25 @@ export const CommunityPage: React.FC = () => {
             <div className="divide-y divide-theme-subtle border-t border-b border-theme-subtle">
               {stories.map((story, idx) => (
                 <div key={story.id} className="py-8 grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
-                  <div className="md:col-span-3 space-y-1">
+                  <div className="md:col-span-3 space-y-2">
                     <span className="text-xs font-mono text-theme-muted block">0{idx + 1}</span>
                     <span className="text-body-small font-semibold text-[#1D9BF0] block">{story.author}</span>
                     <span className="text-xs text-theme-muted block">{story.role}</span>
                   </div>
 
                   <div className="md:col-span-9 space-y-4">
-                    <h3 className="text-h3 text-theme-main">{story.title}</h3>
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                      <h3 className="text-h3 text-theme-main">{story.title}</h3>
+                      <a
+                        href="https://github.com/Shubh1202/c3mindloop"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded bg-neutral-900 hover:bg-neutral-800 text-neutral-400 border border-neutral-800 text-[10px] font-mono transition-all cursor-pointer w-fit"
+                      >
+                        <Github className="w-3 h-3" />
+                        <span>View Source on GitHub</span>
+                      </a>
+                    </div>
                     <p className="text-body text-theme-muted leading-relaxed">{story.story}</p>
 
                     <div className="pt-3 border-t border-theme-subtle text-xs text-theme-main space-y-1">
@@ -163,19 +297,74 @@ export const CommunityPage: React.FC = () => {
             </h2>
 
             <div className="divide-y divide-theme-subtle border-t border-b border-theme-subtle">
-              {events.map((ev) => (
-                <div key={ev.title} className="py-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
-                  <div className="space-y-1">
-                    <span className="text-xs font-semibold uppercase tracking-wider text-[#1D9BF0]">
-                      {ev.date} • {ev.time}
-                    </span>
-                    <h3 className="text-h3 text-theme-main">{ev.title}</h3>
+              {events.map((ev) => {
+                const past = isPast(ev.date);
+                return (
+                  <div key={ev.title} className="py-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="text-xs font-semibold uppercase tracking-wider text-[#1D9BF0]">
+                          {ev.date} • {ev.time}
+                        </span>
+                        {past ? (
+                          <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-neutral-900 border border-neutral-800 text-neutral-400">
+                            Past Event
+                          </span>
+                        ) : (
+                          <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-sky-500/10 border border-sky-500/20 text-sky-400">
+                            Upcoming Live
+                          </span>
+                        )}
+                      </div>
+                      <h3 className="text-h3 text-theme-main">{ev.title}</h3>
+                      <div className="text-xs text-theme-muted">
+                        Host: <span className="text-theme-main font-medium">{ev.host}</span>
+                      </div>
+                    </div>
+
+                    <div>
+                      {past ? (
+                        <a
+                          href="https://www.youtube.com"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded bg-neutral-900 hover:bg-neutral-800 text-neutral-300 border border-neutral-800 font-mono text-xs font-semibold uppercase tracking-wider transition-all cursor-pointer"
+                        >
+                          <span>Watch Recording</span>
+                        </a>
+                      ) : (
+                        <a
+                          href={getCalendarUrl(ev.title, ev.date, ev.time)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded border border-neutral-700 hover:border-[#1D9BF0]/40 bg-neutral-900 hover:bg-neutral-800 text-neutral-300 font-mono text-xs font-semibold uppercase tracking-wider transition-all cursor-pointer"
+                        >
+                          <span>Add to Calendar</span>
+                        </a>
+                      )}
+                    </div>
                   </div>
-                  <div className="text-xs text-theme-muted">
-                    Host: <span className="text-theme-main font-medium">{ev.host}</span>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
+            </div>
+          </div>
+
+          {/* FAQs Section */}
+          <div className="space-y-8 pt-12 border-t border-theme-subtle">
+            <h2 className="text-h2 text-theme-main">Frequently Asked Questions</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="p-5 bg-neutral-900/50 border border-theme-subtle rounded-xl space-y-2">
+                <h3 className="text-sm font-semibold text-[#1D9BF0]">{t('community.faq.q1', 'How can I submit my production crash story or post-mortem?')}</h3>
+                <p className="text-xs text-theme-muted leading-relaxed">{t('community.faq.a1')}</p>
+              </div>
+              <div className="p-5 bg-neutral-900/50 border border-theme-subtle rounded-xl space-y-2">
+                <h3 className="text-sm font-semibold text-[#1D9BF0]">{t('community.faq.q2', 'Are the workshops and masterclasses free to attend?')}</h3>
+                <p className="text-xs text-theme-muted leading-relaxed">{t('community.faq.a2')}</p>
+              </div>
+              <div className="p-5 bg-neutral-900/50 border border-theme-subtle rounded-xl space-y-2">
+                <h3 className="text-sm font-semibold text-[#1D9BF0]">{t('community.faq.q3', 'Can I list my open-source project on C³ MindLoop?')}</h3>
+                <p className="text-xs text-theme-muted leading-relaxed">{t('community.faq.a3')}</p>
+              </div>
             </div>
           </div>
 

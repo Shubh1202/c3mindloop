@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState, useCallback, useEffect, useRef } from 'react';
-import { Copy, Check, Trash2, Upload, ArrowLeftRight, Info, AlertCircle, Maximize2, Minimize2 } from 'lucide-react';
+import React, { useState, useCallback, useEffect, useRef, useMemo } from 'react';
+import { Copy, Check, Trash2, Upload, ArrowLeftRight, Info, AlertCircle, Maximize2, Minimize2, Image } from 'lucide-react';
 import { useTranslation } from '../../lib/i18n';
 
 type Mode = 'encode' | 'decode';
@@ -24,6 +24,38 @@ function decodeBase64(b64: string): string {
   return new TextDecoder().decode(bytes);
 }
 
+// Detect if a string is a Data URI or raw base64 that could be a media resource
+function detectMediaPreview(input: string, output: string, mode: Mode): { type: 'image' | 'pdf' | null; src: string } {
+  // In encode mode: if the OUTPUT is a data URI (file was uploaded)
+  if (mode === 'encode') {
+    if (output.startsWith('data:image/')) return { type: 'image', src: output };
+    if (output.startsWith('data:application/pdf')) return { type: 'pdf', src: output };
+  }
+
+  // In decode mode: check the INPUT (the raw base64) or the decoded OUTPUT
+  if (mode === 'decode') {
+    // If input looks like a data URI
+    const trimmedInput = input.trim();
+    if (trimmedInput.startsWith('data:image/')) return { type: 'image', src: trimmedInput };
+    if (trimmedInput.startsWith('data:application/pdf')) return { type: 'pdf', src: trimmedInput };
+    // If decoded output looks like a data URI
+    if (output.startsWith('data:image/')) return { type: 'image', src: output };
+    if (output.startsWith('data:application/pdf')) return { type: 'pdf', src: output };
+    // Try to reconstruct from plain base64 with common image mime types
+    if (/^[A-Za-z0-9+/]+=*$/.test(trimmedInput.replace(/\s/g, ''))) {
+      const raw = trimmedInput.replace(/\s/g, '');
+      // Peek first bytes to detect common image signatures (base64-encoded)
+      // PNG: iVBOR, JPEG: /9j/, GIF: R0lG, WEBP: UklG
+      if (raw.startsWith('iVBOR')) return { type: 'image', src: `data:image/png;base64,${raw}` };
+      if (raw.startsWith('/9j/')) return { type: 'image', src: `data:image/jpeg;base64,${raw}` };
+      if (raw.startsWith('R0lG')) return { type: 'image', src: `data:image/gif;base64,${raw}` };
+      if (raw.startsWith('UklG')) return { type: 'image', src: `data:image/webp;base64,${raw}` };
+    }
+  }
+
+  return { type: null, src: '' };
+}
+
 const SAMPLE_ENCODE = '{"user": "C3MindLoop", "role": "developer", "status": "active"}';
 const SAMPLE_DECODE = 'eyJ1c2VyIjogIkMzTWluZExvb3AiLCAicm9sZSI6ICJkZXZlbG9wZXIiLCAic3RhdHVzIjogImFjdGl2ZSJ9';
 
@@ -37,6 +69,7 @@ export const Base64Tool: React.FC = () => {
   const [copied, setCopied] = useState(false);
   const [fileInfo, setFileInfo] = useState<string | null>(null);
   const [isFullScreen, setIsFullScreen] = useState(false);
+  const [imgError, setImgError] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -61,6 +94,7 @@ export const Base64Tool: React.FC = () => {
     (value: string, currentMode: Mode, currentUrlSafe: boolean) => {
       setError(null);
       setFileInfo(null);
+      setImgError(false);
       if (!value.trim()) { setOutput(''); return; }
       try {
         if (currentMode === 'encode') {
@@ -105,6 +139,7 @@ export const Base64Tool: React.FC = () => {
       setOutput(dataUri);
       setFileInfo(`${file.name} • ${(file.size / 1024).toFixed(1)} KB • ${file.type || 'unknown'}`);
       setError(null);
+      setImgError(false);
     };
     reader.readAsDataURL(file);
     e.target.value = '';
@@ -118,7 +153,7 @@ export const Base64Tool: React.FC = () => {
   };
 
   const handleClear = () => {
-    setInput(''); setOutput(''); setError(null); setFileInfo(null);
+    setInput(''); setOutput(''); setError(null); setFileInfo(null); setImgError(false);
   };
 
   const handleSample = () => {
@@ -126,6 +161,12 @@ export const Base64Tool: React.FC = () => {
     setInput(sample);
     process(sample, mode, urlSafe);
   };
+
+  // Determine media preview
+  const mediaPreview = useMemo(
+    () => detectMediaPreview(input, output, mode),
+    [input, output, mode]
+  );
 
   return (
     <div className={`bg-neutral-950 border border-neutral-800 font-sans text-neutral-100 flex flex-col ${isFullScreen ? 'fixed inset-0 z-[9999] overflow-hidden' : 'w-full rounded-lg shadow-2xl'}`}>
@@ -232,7 +273,7 @@ export const Base64Tool: React.FC = () => {
             onChange={(e) => handleInput(e.target.value)}
             placeholder={mode === 'encode' ? t('tools.base64Encoder.placeholderEncode') : t('tools.base64Encoder.placeholderDecode')}
             spellCheck={false}
-            className={`w-full p-3 font-mono text-xs bg-neutral-900/90 text-neutral-100 border border-neutral-800 rounded focus:border-[#1D9BF0] focus:outline-none resize-y leading-relaxed transition-colors placeholder-neutral-600 min-h-[250px] max-h-[800px] overflow-y-auto ${isFullScreen ? 'h-[calc(100vh-120px)] max-h-none resize-none' : ''}`}
+            className={`w-full p-3 font-mono text-xs bg-neutral-900/90 text-neutral-100 border border-neutral-800 rounded focus:border-[#1D9BF0] focus:outline-none resize-y leading-relaxed transition-colors placeholder-neutral-600 min-h-[250px] max-h-[800px] overflow-y-auto whitespace-pre-wrap break-all [word-break:break-all] ${isFullScreen ? 'h-[calc(100vh-120px)] max-h-none resize-none' : ''}`}
           />
           {error && (
             <div className="flex items-start gap-2 p-3 bg-red-950/40 border border-red-900/80 rounded text-xs text-red-300 font-mono">
@@ -256,8 +297,35 @@ export const Base64Tool: React.FC = () => {
             value={output}
             readOnly
             placeholder={t('tools.base64Encoder.outputPlaceholder')}
-            className={`w-full p-3 font-mono text-xs bg-neutral-900/50 text-emerald-300 border border-neutral-800 rounded resize-y leading-relaxed placeholder-neutral-700 focus:outline-none min-h-[250px] max-h-[800px] overflow-y-auto ${isFullScreen ? 'h-[calc(100vh-120px)] max-h-none resize-none' : ''}`}
+            className={`w-full p-3 font-mono text-xs bg-neutral-900/50 text-emerald-300 border border-neutral-800 rounded resize-y leading-relaxed placeholder-neutral-700 focus:outline-none min-h-[250px] max-h-[800px] overflow-y-auto whitespace-pre-wrap break-all [word-break:break-all] ${isFullScreen ? 'h-[calc(100vh-120px)] max-h-none resize-none' : ''}`}
           />
+
+          {/* Live Media Preview */}
+          {mediaPreview.type && !imgError && (
+            <div className="mt-2 rounded-lg border border-neutral-800 bg-neutral-900/60 overflow-hidden">
+              <div className="px-3 py-2 border-b border-neutral-800 flex items-center gap-1.5 text-[11px] font-mono text-neutral-400">
+                <Image className="w-3.5 h-3.5 text-sky-400" />
+                <span className="text-sky-400 font-semibold">Live Media Preview</span>
+                <span className="ml-auto text-neutral-600">{mediaPreview.type === 'pdf' ? 'PDF' : 'Image'} · Client-Side Render</span>
+              </div>
+              <div className="p-3 flex items-center justify-center min-h-[120px] max-h-[360px] overflow-auto bg-neutral-950/60">
+                {mediaPreview.type === 'image' ? (
+                  <img
+                    src={mediaPreview.src}
+                    alt="Base64 decoded image preview"
+                    onError={() => setImgError(true)}
+                    className="max-w-full max-h-[320px] object-contain rounded border border-neutral-800"
+                  />
+                ) : (
+                  <iframe
+                    src={mediaPreview.src}
+                    title="Base64 decoded PDF preview"
+                    className="w-full h-[320px] rounded border border-neutral-800 bg-white"
+                  />
+                )}
+              </div>
+            </div>
+          )}
         </div>
       </div>
 

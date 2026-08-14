@@ -3,7 +3,7 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 import {
   Copy, Check, Trash2, Upload, Download, Info,
-  ShieldCheck, Maximize2, Minimize2, FileText, RotateCcw,
+  ShieldCheck, Maximize2, Minimize2, FileText, RotateCcw, KeyRound,
 } from 'lucide-react';
 
 // ── Tiny pure-JS MD5 (no external dep needed) ────────────────────────────────
@@ -87,6 +87,20 @@ async function computeFileHashes(file: File): Promise<Record<string, string>> {
   return { md5: md5(text), sha1, sha256, sha512 };
 }
 
+// ── HMAC helper ───────────────────────────────────────────────────────────────
+async function generateHMAC(key: string, message: string, algo: 'SHA-256' | 'SHA-512'): Promise<string> {
+  const enc = new TextEncoder();
+  const cryptoKey = await crypto.subtle.importKey(
+    'raw',
+    enc.encode(key),
+    { name: 'HMAC', hash: algo },
+    false,
+    ['sign']
+  );
+  const signature = await crypto.subtle.sign('HMAC', cryptoKey, enc.encode(message));
+  return Array.from(new Uint8Array(signature)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
 // ── Component ─────────────────────────────────────────────────────────────────
 const ALGO_LABELS: Record<string, string> = {
   md5: 'MD5',
@@ -109,8 +123,17 @@ export const HashGeneratorTool: React.FC = () => {
   const [fileName, setFileName] = useState('');
   const [fileSize, setFileSize] = useState(0);
   const [isFullScreen, setIsFullScreen] = useState(false);
+
+  // HMAC states
+  const [hmacKey, setHmacKey] = useState('');
+  const [hmacSig256, setHmacSig256] = useState('');
+  const [hmacSig512, setHmacSig512] = useState('');
+  const [isComputingHmac, setIsComputingHmac] = useState(false);
+  const [showHmac, setShowHmac] = useState(false);
+
   const fileInputRef = useRef<HTMLInputElement>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const hmacDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Fullscreen
   useEffect(() => {
@@ -135,6 +158,32 @@ export const HashGeneratorTool: React.FC = () => {
     return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
   }, [text, mode]);
 
+  // HMAC: recompute when key or text changes
+  useEffect(() => {
+    if (!hmacKey.trim() || !text.trim()) {
+      setHmacSig256('');
+      setHmacSig512('');
+      return;
+    }
+    if (hmacDebounceRef.current) clearTimeout(hmacDebounceRef.current);
+    hmacDebounceRef.current = setTimeout(async () => {
+      setIsComputingHmac(true);
+      try {
+        const [sig256, sig512] = await Promise.all([
+          generateHMAC(hmacKey, text, 'SHA-256'),
+          generateHMAC(hmacKey, text, 'SHA-512'),
+        ]);
+        setHmacSig256(sig256);
+        setHmacSig512(sig512);
+      } catch {
+        setHmacSig256('Error: invalid key or message');
+        setHmacSig512('Error: invalid key or message');
+      }
+      setIsComputingHmac(false);
+    }, 300);
+    return () => { if (hmacDebounceRef.current) clearTimeout(hmacDebounceRef.current); };
+  }, [hmacKey, text]);
+
   const handleFileUpload = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -154,21 +203,36 @@ export const HashGeneratorTool: React.FC = () => {
     setTimeout(() => setCopiedKey(null), 1800);
   };
 
+  const handleCopyHmac = (which: '256' | '512') => {
+    const val = which === '256' ? hmacSig256 : hmacSig512;
+    if (!val) return;
+    navigator.clipboard.writeText(val);
+    setCopiedKey(`hmac${which}`);
+    setTimeout(() => setCopiedKey(null), 1800);
+  };
+
   const handleCopyAll = () => {
-    const all = Object.entries(ALGO_LABELS)
+    const stdHashes = Object.entries(ALGO_LABELS)
       .filter(([k]) => hashes[k])
       .map(([k, label]) => `${label}: ${hashes[k]}`)
       .join('\n');
-    navigator.clipboard.writeText(all);
+    const hmacPart = hmacKey && hmacSig256
+      ? `\nHMAC-SHA-256: ${hmacSig256}\nHMAC-SHA-512: ${hmacSig512}`
+      : '';
+    navigator.clipboard.writeText(stdHashes + hmacPart);
     setCopiedKey('all');
     setTimeout(() => setCopiedKey(null), 1800);
   };
 
   const handleDownload = () => {
-    const all = Object.entries(ALGO_LABELS)
+    const stdHashes = Object.entries(ALGO_LABELS)
       .filter(([k]) => hashes[k])
       .map(([k, label]) => `${label}: ${hashes[k]}`)
       .join('\n');
+    const hmacPart = hmacKey && hmacSig256
+      ? `\nHMAC-SHA-256: ${hmacSig256}\nHMAC-SHA-512: ${hmacSig512}`
+      : '';
+    const all = stdHashes + hmacPart;
     if (!all) return;
     const blob = new Blob([all], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
@@ -179,10 +243,21 @@ export const HashGeneratorTool: React.FC = () => {
     URL.revokeObjectURL(url);
   };
 
-  const handleClear = () => { setText(''); setHashes({}); setFileName(''); setFileSize(0); setCompareValue(''); };
+  const handleClear = () => {
+    setText('');
+    setHashes({});
+    setFileName('');
+    setFileSize(0);
+    setCompareValue('');
+    setHmacKey('');
+    setHmacSig256('');
+    setHmacSig512('');
+  };
 
   const compareMatch = compareValue.trim()
-    ? Object.values(hashes).some((h) => h.toLowerCase() === compareValue.trim().toLowerCase())
+    ? Object.values(hashes).some((h) => h.toLowerCase() === compareValue.trim().toLowerCase()) ||
+      (hmacSig256 && hmacSig256.toLowerCase() === compareValue.trim().toLowerCase()) ||
+      (hmacSig512 && hmacSig512.toLowerCase() === compareValue.trim().toLowerCase())
     : null;
 
   return (
@@ -232,6 +307,15 @@ export const HashGeneratorTool: React.FC = () => {
             </>
           )}
 
+          {/* HMAC toggle */}
+          <button
+            onClick={() => setShowHmac(!showHmac)}
+            className={`px-2.5 py-1.5 rounded border text-[11px] font-sans flex items-center gap-1 transition-colors cursor-pointer ${showHmac ? 'bg-amber-500/20 border-amber-500/50 text-amber-400' : 'bg-neutral-800/80 border-neutral-700 text-neutral-400 hover:text-white'}`}
+          >
+            <KeyRound className="w-3.5 h-3.5" />
+            <span>HMAC</span>
+          </button>
+
           <button
             onClick={handleClear}
             className="px-2.5 py-1.5 rounded bg-neutral-800/80 hover:bg-red-950 hover:text-red-300 text-neutral-400 text-[11px] font-sans flex items-center gap-1 transition-colors cursor-pointer"
@@ -270,6 +354,25 @@ export const HashGeneratorTool: React.FC = () => {
           </button>
         </div>
       </div>
+
+      {/* HMAC Key Input Panel */}
+      {showHmac && (
+        <div className="px-4 py-3 bg-amber-950/20 border-b border-amber-900/40 space-y-1.5">
+          <label className="text-[11px] font-sans font-semibold text-amber-400 flex items-center gap-1.5">
+            <KeyRound className="w-3.5 h-3.5" />
+            HMAC Secret Key
+            {isComputingHmac && <span className="text-amber-300/60 animate-pulse ml-2">Computing...</span>}
+          </label>
+          <input
+            type="text"
+            value={hmacKey}
+            onChange={(e) => setHmacKey(e.target.value)}
+            placeholder="Enter your HMAC secret key to compute HMAC-SHA-256 and HMAC-SHA-512..."
+            className="w-full p-2.5 bg-neutral-900 border border-amber-900/50 rounded text-neutral-200 text-xs font-mono focus:outline-none focus:border-amber-500/60 transition-colors"
+          />
+          <p className="text-[10px] text-neutral-600 font-sans">Signatures are computed locally via <code className="text-amber-600">crypto.subtle.sign</code> — key never transmitted.</p>
+        </div>
+      )}
 
       {/* Main Layout */}
       <div className={`grid grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-neutral-800 ${isFullScreen ? 'flex-1 overflow-hidden' : 'min-h-[400px]'}`}>
@@ -338,6 +441,7 @@ export const HashGeneratorTool: React.FC = () => {
           </div>
 
           <div className="space-y-3 flex-1">
+            {/* Standard hash cards */}
             {Object.entries(ALGO_LABELS).map(([key, label]) => {
               const hash = hashes[key];
               const isMatch = compareValue.trim() && hash
@@ -350,8 +454,8 @@ export const HashGeneratorTool: React.FC = () => {
                     {isMatch === true && <span className="text-[10px] text-emerald-400 font-sans font-semibold">✓ Verified</span>}
                     {isMatch === false && <span className="text-[10px] text-red-400 font-sans">✗ Mismatch</span>}
                   </div>
-                  <div className={`flex items-center gap-2 p-2.5 rounded border bg-neutral-900/90 transition-colors ${isMatch === true ? 'border-emerald-800/60' : isMatch === false ? 'border-red-900/50' : 'border-neutral-800'}`}>
-                    <code className={`flex-1 text-[11px] break-all leading-relaxed select-all ${hash ? 'text-sky-300' : 'text-neutral-700 italic'}`}>
+                  <div className={`flex items-start gap-2 p-2.5 rounded border bg-neutral-900/90 transition-colors ${isMatch === true ? 'border-emerald-800/60' : isMatch === false ? 'border-red-900/50' : 'border-neutral-800'}`}>
+                    <code className={`flex-1 text-[11px] break-all whitespace-pre-wrap [word-break:break-all] leading-relaxed select-all ${hash ? 'text-sky-300' : 'text-neutral-700 italic'}`}>
                       {hash || (isComputing ? 'computing...' : '—')}
                     </code>
                     {hash && (
@@ -367,6 +471,51 @@ export const HashGeneratorTool: React.FC = () => {
                 </div>
               );
             })}
+
+            {/* HMAC Signature Section */}
+            {showHmac && (
+              <div className="mt-2 pt-3 border-t border-amber-900/40 space-y-3">
+                <span className="text-[11px] font-sans font-semibold text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
+                  <KeyRound className="w-3.5 h-3.5" />
+                  HMAC Signatures
+                </span>
+
+                {(['256', '512'] as const).map((bits) => {
+                  const label = `HMAC-SHA-${bits}`;
+                  const sig = bits === '256' ? hmacSig256 : hmacSig512;
+                  const isHmacMatch = compareValue.trim() && sig
+                    ? sig.toLowerCase() === compareValue.trim().toLowerCase()
+                    : null;
+                  return (
+                    <div key={bits} className="space-y-1">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[11px] font-sans font-semibold text-amber-500/80 uppercase tracking-wider">{label}</span>
+                        {isHmacMatch === true && <span className="text-[10px] text-emerald-400 font-sans font-semibold">✓ Verified</span>}
+                        {isHmacMatch === false && <span className="text-[10px] text-red-400 font-sans">✗ Mismatch</span>}
+                      </div>
+                      <div className={`flex items-start gap-2 p-2.5 rounded border bg-neutral-900/90 transition-colors ${isHmacMatch === true ? 'border-emerald-800/60' : 'border-amber-900/30'}`}>
+                        <code className={`flex-1 text-[11px] break-all whitespace-pre-wrap [word-break:break-all] leading-relaxed select-all ${sig ? 'text-amber-300' : 'text-neutral-700 italic'}`}>
+                          {!hmacKey.trim()
+                            ? 'Enter a secret key above to compute HMAC...'
+                            : isComputingHmac
+                              ? 'computing...'
+                              : sig || '—'}
+                        </code>
+                        {sig && (
+                          <button
+                            onClick={() => handleCopyHmac(bits)}
+                            className="shrink-0 p-1 text-neutral-500 hover:text-neutral-200 transition-colors cursor-pointer"
+                            title={`Copy ${label}`}
+                          >
+                            {copiedKey === `hmac${bits}` ? <Check className="w-3.5 h-3.5 text-amber-400" /> : <Copy className="w-3.5 h-3.5" />}
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -379,7 +528,7 @@ export const HashGeneratorTool: React.FC = () => {
         </div>
         <div className="flex items-center gap-1.5 text-neutral-500">
           <ShieldCheck className="w-3.5 h-3.5 text-emerald-500/70" />
-          <span>Web Crypto API (SHA) + JS MD5</span>
+          <span>Web Crypto API (SHA + HMAC) + JS MD5</span>
         </div>
       </div>
     </div>

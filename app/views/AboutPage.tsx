@@ -20,19 +20,19 @@ export const AboutPage: React.FC = () => {
     {
       name: t('about.member1Name'),
       role: t('about.member1Role'),
-      avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80',
+      icon: <ShieldCheck className="w-8 h-8 text-[#1D9BF0]" />,
       bio: t('about.member1Bio'),
     },
     {
       name: t('about.member2Name'),
       role: t('about.member2Role'),
-      avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=300&q=80',
+      icon: <Terminal className="w-8 h-8 text-[#1D9BF0]" />,
       bio: t('about.member2Bio'),
     },
     {
       name: t('about.member3Name'),
       role: t('about.member3Role'),
-      avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=300&q=80',
+      icon: <Code2 className="w-8 h-8 text-[#1D9BF0]" />,
       bio: t('about.member3Bio'),
     },
   ];
@@ -40,8 +40,8 @@ export const AboutPage: React.FC = () => {
   return (
     <>
       <SEOHead
-        title="About C³ MindLoop - Coding. Crashing. Crying. The Developer Reality."
-        description="C³ stands for Coding, Crashing, Crying. MindLoop is the developer cycle: Think, Build, Learn, Repeat. Free private browser utilities including client-side JSON Formatter, JWT Decoder, and Base64 Encoder. Zero server data logging."
+        title="About C³ MindLoop - 100% Private Client-Side Developer Utilities"
+        description="Learn about C³ MindLoop, a modern privacy-first developer utility suite. Engineered for instant, 100% client-side data parsing, formatting, and cryptographic operations with zero server network latency."
         canonical="/about"
       />
 
@@ -52,13 +52,13 @@ export const AboutPage: React.FC = () => {
           {/* Hero Header */}
           <div className="text-center max-w-4xl mx-auto space-y-4">
             <span className="text-xs font-mono uppercase tracking-widest text-[#1D9BF0] font-semibold block">
-              {t('about.kicker', 'Story & Philosophy')}
+              {t('about.kicker', 'Engineered for Privacy')}
             </span>
             <h1 className="text-h1 text-theme-main">
-              {t('about.title', 'Redefining How Engineers Think, Learn, and Build')}
+              {t('about.title', 'Engineered for Privacy. Built for Developers.')}
             </h1>
             <p className="text-body-large text-theme-muted font-normal max-w-2xl mx-auto">
-              {t('about.subtitle', 'C³ MindLoop was born out of frustration with surface-level tutorials and brittle software tooling.')}
+              {t('about.subtitle', 'A modern privacy-first developer utility suite. Engineered for instant, 100% client-side data parsing, formatting, and cryptographic operations with zero server network latency.')}
             </p>
           </div>
 
@@ -145,12 +145,12 @@ export const AboutPage: React.FC = () => {
           {/* Narrative Story */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start pt-12 border-t border-theme-subtle">
             <div className="space-y-4">
-              <h2 className="text-h2 text-theme-main font-semibold">{t('about.storyTitle', 'The Continuous Developer Loop')}</h2>
+              <h2 className="text-h2 text-theme-main font-semibold">{t('about.storyTitle', 'The Mission')}</h2>
               <p className="text-body text-theme-muted font-normal leading-relaxed">
-                {t('about.storyP1', 'C³ MindLoop started as a raw developer community dedicated to honest coding experiences. We recognized that software engineering isn\'t a linear path of clean code-it\'s a continuous loop of hypothesis, execution, failure, and insight.')}
+                {t('about.storyP1')}
               </p>
               <p className="text-body text-theme-muted font-normal leading-relaxed">
-                {t('about.storyP2', 'Today, C³ MindLoop spans developer masterclasses, autonomous AI tools, open-source infrastructure, and high-performance SaaS applications used by teams globally.')}
+                {t('about.storyP2')}
               </p>
             </div>
 
@@ -181,24 +181,24 @@ export const AboutPage: React.FC = () => {
 
           {/* Principles Grid - Editorial Line Dividers */}
           <div className="space-y-8 pt-12 border-t border-theme-subtle">
-            <h2 className="text-h1 text-theme-main font-bold">{t('about.valuesTitle', 'Core Principles')}</h2>
+            <h2 className="text-h1 text-theme-main font-bold">{t('about.valuesTitle', 'Core Values')}</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <div className="border-l border-theme-subtle pl-6 space-y-3">
-                <span className="text-xs font-mono text-[#1D9BF0]">{t('about.principle01', 'PRINCIPLE 01')}</span>
-                <h3 className="text-xl font-semibold text-theme-main">{t('about.val1Title', 'Craft Over Clutter')}</h3>
-                <p className="text-sm text-theme-muted font-normal leading-relaxed">{t('about.val1Desc', 'We build minimal, fast, elegant software that respects developer time.')}</p>
+                <span className="text-xs font-mono text-[#1D9BF0]">{t('about.principle01', '🛡️ 100% Client-Side Sandbox')}</span>
+                <h3 className="text-xl font-semibold text-theme-main">{t('about.val1Title')}</h3>
+                <p className="text-sm text-theme-muted font-normal leading-relaxed">{t('about.val1Desc')}</p>
               </div>
 
               <div className="border-l border-theme-subtle pl-6 space-y-3">
-                <span className="text-xs font-mono text-[#1D9BF0]">{t('about.principle02', 'PRINCIPLE 02')}</span>
-                <h3 className="text-xl font-semibold text-theme-main">{t('about.val2Title', 'Honesty in Engineering')}</h3>
-                <p className="text-sm text-theme-muted font-normal leading-relaxed">{t('about.val2Desc', 'No fake benchmarks or hype. Real metrics, real code, and real post-mortems.')}</p>
+                <span className="text-xs font-mono text-[#1D9BF0]">{t('about.principle02', '⚡ Sub-Millisecond Execution')}</span>
+                <h3 className="text-xl font-semibold text-theme-main">{t('about.val2Title')}</h3>
+                <p className="text-sm text-theme-muted font-normal leading-relaxed">{t('about.val2Desc')}</p>
               </div>
 
               <div className="border-l border-theme-subtle pl-6 space-y-3">
-                <span className="text-xs font-mono text-[#1D9BF0]">{t('about.principle03', 'PRINCIPLE 03')}</span>
-                <h3 className="text-xl font-semibold text-theme-main">{t('about.val3Title', 'Open Access Knowledge')}</h3>
-                <p className="text-sm text-theme-muted font-normal leading-relaxed">{t('about.val3Desc', 'Core tools and education should empower every developer globally.')}</p>
+                <span className="text-xs font-mono text-[#1D9BF0]">{t('about.principle03', '🔓 Open Standard Compliance')}</span>
+                <h3 className="text-xl font-semibold text-theme-main">{t('about.val3Title')}</h3>
+                <p className="text-sm text-theme-muted font-normal leading-relaxed">{t('about.val3Desc')}</p>
               </div>
             </div>
           </div>
@@ -219,16 +219,13 @@ export const AboutPage: React.FC = () => {
 
           {/* Team - Editorial Layout */}
           <div className="space-y-8 pt-12 border-t border-theme-subtle">
-            <h2 className="text-h1 text-theme-main font-bold">{t('about.teamTitle', 'Leadership Team')}</h2>
+            <h2 className="text-h1 text-theme-main font-bold">{t('about.teamTitle', 'Engineering Divisions')}</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {team.map((member) => (
                 <div key={member.name} className="border-l border-theme-subtle pl-6 space-y-3">
-                  <img
-                    src={member.avatar}
-                    alt={member.name}
-                    referrerPolicy="no-referrer"
-                    className="w-16 h-16 rounded-full object-cover border border-theme-subtle"
-                  />
+                  <div className="p-2 bg-neutral-900 border border-theme-subtle rounded-lg w-fit">
+                    {member.icon}
+                  </div>
                   <div>
                     <h3 className="text-lg font-semibold text-theme-main">{member.name}</h3>
                     <p className="text-xs text-[#1D9BF0] font-mono mt-0.5">{member.role}</p>

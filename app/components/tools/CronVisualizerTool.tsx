@@ -20,34 +20,37 @@ interface CronParts {
   dow: string;
 }
 
-function parseCron(expr: string): CronParts | null {
+function parseCron(expr: string, flavor: 'standard' | 'quartz'): CronParts | null {
   const parts = expr.trim().split(/\s+/);
-  if (parts.length === 5) {
-    const [minute, hour, dom, month, dow] = parts;
-    return { minute, hour, dom, month, dow };
-  }
-  if (parts.length === 6) {
-    const [second, minute, hour, dom, month, dow] = parts;
-    return { second, minute, hour, dom, month, dow };
+  if (flavor === 'standard') {
+    if (parts.length === 5) {
+      const [minute, hour, dom, month, dow] = parts;
+      return { minute, hour, dom, month, dow };
+    }
+  } else {
+    if (parts.length === 6) {
+      const [second, minute, hour, dom, month, dow] = parts;
+      return { second, minute, hour, dom, month, dow };
+    }
   }
   return null;
 }
 
 // ── Human-readable description ───────────────────────────────────────────────
 
-function describeField(value: string, type: 'minute' | 'hour' | 'dom' | 'month' | 'dow'): string {
-  if (value === '*') return null as unknown as string;
+function describeField(value: string, type: 'second' | 'minute' | 'hour' | 'dom' | 'month' | 'dow'): string {
+  if (value === '*' || value === '?') return null as unknown as string;
 
   if (value.startsWith('*/')) {
     const step = value.slice(2);
-    const unit = { minute: 'minute', hour: 'hour', dom: 'day', month: 'month', dow: 'day of week' }[type];
+    const unit = { second: 'second', minute: 'minute', hour: 'hour', dom: 'day', month: 'month', dow: 'day of week' }[type];
     return `every ${step} ${unit}s`;
   }
 
   if (value.includes('-')) {
     const [from, to] = value.split('-');
     if (type === 'month') return `${MONTHS[+from - 1]} through ${MONTHS[+to - 1]}`;
-    if (type === 'dow') return `${DAYS[+from]} through ${DAYS[+to]}`;
+    if (type === 'dow') return `${DAYS[+from % 7]} through ${DAYS[+to % 7]}`;
     if (type === 'hour') return `${padHour(+from)} through ${padHour(+to)}`;
     return `${from} through ${to}`;
   }
@@ -55,48 +58,108 @@ function describeField(value: string, type: 'minute' | 'hour' | 'dom' | 'month' 
   if (value.includes(',')) {
     const vals = value.split(',');
     if (type === 'month') return vals.map(v => MONTHS[+v - 1]).join(', ');
-    if (type === 'dow') return vals.map(v => DAYS[+v]).join(', ');
+    if (type === 'dow') return vals.map(v => DAYS[+v % 7]).join(', ');
     if (type === 'hour') return vals.map(v => padHour(+v)).join(', ');
     return vals.join(', ');
   }
 
   if (type === 'month') return MONTHS[+value - 1] ?? value;
-  if (type === 'dow') return DAYS[+value] ?? value;
+  if (type === 'dow') return DAYS[+value % 7] ?? value;
   if (type === 'hour') return padHour(+value);
   return value;
 }
 
 function padHour(h: number): string {
+  if (isNaN(h)) return '12:00 AM';
   const suffix = h >= 12 ? 'PM' : 'AM';
   const display = h % 12 === 0 ? 12 : h % 12;
   return `${display}:00 ${suffix}`;
 }
 
-function buildDescription(parts: CronParts): string {
-  const { minute, hour, dom, month, dow } = parts;
+function describeHour(value: string): string {
+  if (value === '*') return 'every hour';
+  if (value.startsWith('*/')) {
+    return `every ${value.slice(2)} hours`;
+  }
+  if (value.includes('-')) {
+    const [from, to] = value.split('-').map(Number);
+    if (!isNaN(from) && !isNaN(to)) {
+      return `hours ${padHour(from)} through ${padHour(to)}`;
+    }
+  }
+  if (value.includes(',')) {
+    const vals = value.split(',').map(Number).filter(v => !isNaN(v));
+    return `hours ${vals.map(padHour).join(', ')}`;
+  }
+  const single = Number(value);
+  if (!isNaN(single)) return padHour(single);
+  return value;
+}
 
-  const minuteDesc = describeField(minute, 'minute');
-  const hourDesc   = describeField(hour, 'hour');
+function describeMinute(value: string): string {
+  if (value === '*') return 'every minute';
+  if (value.startsWith('*/')) {
+    return `every ${value.slice(2)} minutes`;
+  }
+  if (value.includes('-')) {
+    const [from, to] = value.split('-').map(Number);
+    if (!isNaN(from) && !isNaN(to)) {
+      return `minutes ${from} through ${to}`;
+    }
+  }
+  if (value.includes(',')) {
+    return `minutes ${value}`;
+  }
+  return `minute ${value}`;
+}
+
+function buildDescription(parts: CronParts, flavor: 'standard' | 'quartz'): string {
+  const { second, minute, hour, dom, month, dow } = parts;
+
   const domDesc    = describeField(dom, 'dom');
   const monthDesc  = describeField(month, 'month');
   const dowDesc    = describeField(dow, 'dow');
 
-  let time = 'every minute';
-  if (minute !== '*' && hour !== '*') {
-    time = `at ${padHour(+hour.split(',')[0])} minute ${minute}`;
-    if (minute === '0') time = `at ${padHour(+hour.split(',')[0])}`;
-  } else if (hour !== '*') {
-    time = `every minute of ${hourDesc}`;
-  } else if (minute !== '*') {
-    time = `at minute ${minuteDesc}`;
+  let time = '';
+  if (minute === '*' && hour === '*') {
+    time = 'every minute';
+  } else if (hour === '*') {
+    if (minute.startsWith('*/')) {
+      time = `${describeMinute(minute)}`;
+    } else {
+      time = `at ${describeMinute(minute)} of every hour`;
+    }
+  } else if (minute === '*') {
+    time = `every minute of ${describeHour(hour)}`;
+  } else {
+    if (minute.startsWith('*/') || minute.includes(',') || minute.includes('-') ||
+        hour.includes('-') || hour.includes(',') || hour.startsWith('*/')) {
+      time = `at ${describeMinute(minute)} of ${describeHour(hour)}`;
+    } else {
+      const hrVal = Number(hour);
+      const displayMin = minute.padStart(2, '0');
+      const suffix = hrVal >= 12 ? 'PM' : 'AM';
+      const displayHr = hrVal % 12 === 0 ? 12 : hrVal % 12;
+      time = `at ${displayHr}:${displayMin} ${suffix}`;
+    }
+  }
+
+  // Add seconds description if in Quartz mode and seconds is not '*' or '0'
+  if (flavor === 'quartz' && second && second !== '*' && second !== '0') {
+    const secDesc = describeField(second, 'second');
+    if (second.startsWith('*/')) {
+      time = `${time} (specifically ${secDesc})`;
+    } else {
+      time = `${time} (at second ${second})`;
+    }
   }
 
   const parts2: string[] = [time];
 
-  if (dow !== '*') parts2.push(`on ${dowDesc}`);
-  else if (dom !== '*') parts2.push(`on day ${domDesc} of the month`);
+  if (dow && dow !== '*' && dow !== '?') parts2.push(`on ${dowDesc}`);
+  else if (dom && dom !== '*' && dom !== '?') parts2.push(`on day ${domDesc} of the month`);
 
-  if (month !== '*') parts2.push(`in ${monthDesc}`);
+  if (month && month !== '*') parts2.push(`in ${monthDesc}`);
 
   return parts2.join(', ');
 }
@@ -104,7 +167,7 @@ function buildDescription(parts: CronParts): string {
 // ── Next execution calculator ────────────────────────────────────────────────
 
 function matchesField(value: string, current: number, min: number, max: number): boolean {
-  if (value === '*') return true;
+  if (value === '*' || value === '?') return true;
   if (value.startsWith('*/')) {
     const step = parseInt(value.slice(2), 10);
     return (current - min) % step === 0;
@@ -117,23 +180,33 @@ function matchesField(value: string, current: number, min: number, max: number):
   return parseInt(value, 10) === current;
 }
 
-function getNextExecutions(parts: CronParts, count = 5): { local: Date; utc: Date }[] {
+function getNextExecutions(parts: CronParts, flavor: 'standard' | 'quartz', count = 5): { local: Date; utc: Date }[] {
   const results: { local: Date; utc: Date }[] = [];
   const now = new Date();
-  // Start 1 minute ahead
-  const cursor = new Date(now.getTime() + 60_000);
-  cursor.setSeconds(0, 0);
+  const cursor = new Date(now.getTime() + (flavor === 'quartz' ? 1000 : 60_000));
+  
+  if (flavor === 'standard') {
+    cursor.setSeconds(0, 0);
+  } else {
+    cursor.setMilliseconds(0);
+  }
 
   let iterations = 0;
   while (results.length < count && iterations < 500_000) {
     iterations++;
+    const sec   = cursor.getSeconds();
     const min   = cursor.getMinutes();
     const hr    = cursor.getHours();
     const dom   = cursor.getDate();
     const month = cursor.getMonth() + 1;
     const dow   = cursor.getDay();
 
+    const secMatches = flavor === 'quartz' && parts.second 
+      ? matchesField(parts.second, sec, 0, 59)
+      : true;
+
     if (
+      secMatches &&
       matchesField(parts.month, month, 1, 12) &&
       matchesField(parts.dom, dom, 1, 31) &&
       matchesField(parts.dow, dow, 0, 6) &&
@@ -141,7 +214,10 @@ function getNextExecutions(parts: CronParts, count = 5): { local: Date; utc: Dat
       matchesField(parts.minute, min, 0, 59)
     ) {
       results.push({ local: new Date(cursor), utc: new Date(cursor) });
-      cursor.setMinutes(cursor.getMinutes() + 1);
+    }
+    
+    if (flavor === 'quartz') {
+      cursor.setSeconds(cursor.getSeconds() + 1);
     } else {
       cursor.setMinutes(cursor.getMinutes() + 1);
     }
@@ -152,6 +228,7 @@ function getNextExecutions(parts: CronParts, count = 5): { local: Date; utc: Dat
 // ── Builder state ────────────────────────────────────────────────────────────
 
 interface BuilderState {
+  second: string;
   minute: string;
   hour: string;
   dom: string;
@@ -159,9 +236,12 @@ interface BuilderState {
   dow: string;
 }
 
-const DEFAULT_BUILDER: BuilderState = { minute: '*', hour: '*', dom: '*', month: '*', dow: '*' };
+const DEFAULT_BUILDER: BuilderState = { second: '0', minute: '*', hour: '*', dom: '*', month: '*', dow: '*' };
 
-function builderToCron(b: BuilderState): string {
+function builderToCron(b: BuilderState, flavor: 'standard' | 'quartz'): string {
+  if (flavor === 'quartz') {
+    return `${b.second} ${b.minute} ${b.hour} ${b.dom} ${b.month} ${b.dow}`;
+  }
   return `${b.minute} ${b.hour} ${b.dom} ${b.month} ${b.dow}`;
 }
 
@@ -199,12 +279,14 @@ function FieldSelector({
 
 // ── Main component ───────────────────────────────────────────────────────────
 
-const SAMPLE_CRON = '*/15 9-17 * * 1-5';
+const SAMPLE_CRON_STANDARD = '*/15 9-17 * * 1-5';
+const SAMPLE_CRON_QUARTZ   = '0 */15 9-17 * * ?';
 
 export const CronVisualizerTool: React.FC = () => {
   const { t } = useTranslation();
-  const [input, setInput] = useState(SAMPLE_CRON);
-  const [builder, setBuilder] = useState<BuilderState>({ minute: '*/15', hour: '9-17', dom: '*', month: '*', dow: '1-5' });
+  const [flavor, setFlavor] = useState<'standard' | 'quartz'>('standard');
+  const [input, setInput] = useState(SAMPLE_CRON_STANDARD);
+  const [builder, setBuilder] = useState<BuilderState>({ second: '0', minute: '*/15', hour: '9-17', dom: '*', month: '*', dow: '1-5' });
   const [activeTab, setActiveTab] = useState<'input' | 'builder'>('input');
   const [copied, setCopied] = useState(false);
   const [isFullScreen, setIsFullScreen] = useState(false);
@@ -227,21 +309,33 @@ export const CronVisualizerTool: React.FC = () => {
     };
   }, [isFullScreen]);
 
-  const cronExpr = activeTab === 'builder' ? builderToCron(builder) : input;
+  // Handle flavor switch
+  const handleFlavorChange = (nextFlavor: 'standard' | 'quartz') => {
+    setFlavor(nextFlavor);
+    if (nextFlavor === 'standard') {
+      setInput(SAMPLE_CRON_STANDARD);
+      setBuilder({ second: '0', minute: '*/15', hour: '9-17', dom: '*', month: '*', dow: '1-5' });
+    } else {
+      setInput(SAMPLE_CRON_QUARTZ);
+      setBuilder({ second: '0', minute: '*/15', hour: '9-17', dom: '*', month: '*', dow: '?' });
+    }
+  };
+
+  const cronExpr = activeTab === 'builder' ? builderToCron(builder, flavor) : input;
 
   const parsed = useMemo(() => {
-    try { return parseCron(cronExpr); } catch { return null; }
-  }, [cronExpr]);
+    try { return parseCron(cronExpr, flavor); } catch { return null; }
+  }, [cronExpr, flavor]);
 
   const description = useMemo(() => {
     if (!parsed) return null;
-    try { return buildDescription(parsed); } catch { return null; }
-  }, [parsed]);
+    try { return buildDescription(parsed, flavor); } catch { return null; }
+  }, [parsed, flavor]);
 
   const nextRuns = useMemo(() => {
     if (!parsed) return [];
-    try { return getNextExecutions(parsed, 5); } catch { return []; }
-  }, [parsed]);
+    try { return getNextExecutions(parsed, flavor, 5); } catch { return []; }
+  }, [parsed, flavor]);
 
   const handleCopy = useCallback(() => {
     navigator.clipboard.writeText(cronExpr);
@@ -250,17 +344,32 @@ export const CronVisualizerTool: React.FC = () => {
   }, [cronExpr]);
 
   const handleReset = useCallback(() => {
-    setInput(SAMPLE_CRON);
-    setBuilder({ minute: '*/15', hour: '9-17', dom: '*', month: '*', dow: '1-5' });
-  }, []);
+    if (flavor === 'standard') {
+      setInput(SAMPLE_CRON_STANDARD);
+      setBuilder({ second: '0', minute: '*/15', hour: '9-17', dom: '*', month: '*', dow: '1-5' });
+    } else {
+      setInput(SAMPLE_CRON_QUARTZ);
+      setBuilder({ second: '0', minute: '*/15', hour: '9-17', dom: '*', month: '*', dow: '?' });
+    }
+  }, [flavor]);
 
   const syncBuilderFromInput = useCallback(() => {
-    const p = parseCron(input);
+    const p = parseCron(input, flavor);
     if (p) {
-      setBuilder({ minute: p.minute, hour: p.hour, dom: p.dom, month: p.month, dow: p.dow });
+      setBuilder({
+        second: p.second || '0',
+        minute: p.minute,
+        hour: p.hour,
+        dom: p.dom,
+        month: p.month,
+        dow: p.dow
+      });
       setActiveTab('builder');
     }
-  }, [input]);
+  }, [input, flavor]);
+
+  const secondOpts = Array.from({ length: 60 }, (_, i) => ({ label: String(i).padStart(2, '0') + 's', value: String(i) }));
+  secondOpts.unshift(...['*/5','*/10','*/15','*/30'].map(v => ({ label: v, value: v })));
 
   const minuteOpts = Array.from({ length: 60 }, (_, i) => ({ label: String(i).padStart(2, '0'), value: String(i) }));
   minuteOpts.unshift(...['*/5','*/10','*/15','*/30'].map(v => ({ label: v, value: v })));
@@ -269,8 +378,16 @@ export const CronVisualizerTool: React.FC = () => {
   hourOpts.unshift(...['9-17','0-5','18-23'].map(v => ({ label: v, value: v })));
 
   const domOpts = Array.from({ length: 31 }, (_, i) => ({ label: String(i + 1), value: String(i + 1) }));
+  if (flavor === 'quartz') {
+    domOpts.unshift({ label: '? (no specific value)', value: '?' });
+  }
+
   const monthOpts = MONTHS.map((m, i) => ({ label: m, value: String(i + 1) }));
+
   const dowOpts = DAYS.map((d, i) => ({ label: d, value: String(i) }));
+  if (flavor === 'quartz') {
+    dowOpts.unshift({ label: '? (no specific value)', value: '?' });
+  }
   dowOpts.unshift({ label: '1-5 (Mon-Fri)', value: '1-5' });
   dowOpts.unshift({ label: '0,6 (Weekends)', value: '0,6' });
 
@@ -281,20 +398,41 @@ export const CronVisualizerTool: React.FC = () => {
 
       {/* Toolbar */}
       <div className={`px-3 py-2.5 bg-neutral-900 border-b border-neutral-800 flex flex-wrap items-center justify-between gap-2 text-xs font-mono ${isFullScreen ? 'sticky top-0 z-[10000]' : 'rounded-t-lg'}`}>
-        <div className="flex items-center gap-1 bg-neutral-950 p-0.5 rounded border border-neutral-800">
-          <button
-            onClick={() => setActiveTab('input')}
-            className={`px-3 py-1 rounded text-xs font-mono transition-colors cursor-pointer ${activeTab === 'input' ? 'bg-[#1D9BF0] text-white' : 'text-neutral-400 hover:text-white'}`}
-          >
-            {t('tools.cronVisualizer.tabInput')}
-          </button>
-          <button
-            onClick={() => setActiveTab('builder')}
-            className={`px-3 py-1 rounded text-xs font-mono transition-colors cursor-pointer ${activeTab === 'builder' ? 'bg-[#1D9BF0] text-white' : 'text-neutral-400 hover:text-white'}`}
-          >
-            {t('tools.cronVisualizer.tabBuilder')}
-          </button>
+        
+        {/* Left Toolbar Cluster: View Mode & Flavor Selectors */}
+        <div className="flex items-center gap-2 flex-wrap">
+          <div className="flex items-center bg-neutral-950 p-0.5 rounded border border-neutral-800">
+            <button
+              onClick={() => setActiveTab('input')}
+              className={`px-3 py-1 rounded text-xs font-mono transition-colors cursor-pointer ${activeTab === 'input' ? 'bg-[#1D9BF0] text-white' : 'text-neutral-400 hover:text-white'}`}
+            >
+              {t('tools.cronVisualizer.tabInput')}
+            </button>
+            <button
+              onClick={() => setActiveTab('builder')}
+              className={`px-3 py-1 rounded text-xs font-mono transition-colors cursor-pointer ${activeTab === 'builder' ? 'bg-[#1D9BF0] text-white' : 'text-neutral-400 hover:text-white'}`}
+            >
+              {t('tools.cronVisualizer.tabBuilder')}
+            </button>
+          </div>
+
+          <div className="flex items-center bg-neutral-950 p-0.5 rounded border border-neutral-800">
+            <button
+              onClick={() => handleFlavorChange('standard')}
+              className={`px-2.5 py-1 rounded text-[11px] font-mono transition-colors cursor-pointer ${flavor === 'standard' ? 'bg-[#1D9BF0]/20 text-[#1D9BF0] border border-[#1D9BF0]/30 font-semibold' : 'text-neutral-400 hover:text-white border border-transparent'}`}
+            >
+              5-Field (Standard)
+            </button>
+            <button
+              onClick={() => handleFlavorChange('quartz')}
+              className={`px-2.5 py-1 rounded text-[11px] font-mono transition-colors cursor-pointer ${flavor === 'quartz' ? 'bg-[#1D9BF0]/20 text-[#1D9BF0] border border-[#1D9BF0]/30 font-semibold' : 'text-neutral-400 hover:text-white border border-transparent'}`}
+            >
+              6-Field (Quartz / AWS)
+            </button>
+          </div>
         </div>
+
+        {/* Right Toolbar Cluster: Actions */}
         <div className="flex items-center gap-2">
           {activeTab === 'input' && isValid && (
             <button
@@ -337,21 +475,26 @@ export const CronVisualizerTool: React.FC = () => {
           {activeTab === 'input' ? (
             <div className="space-y-2">
               <label className="text-xs font-mono text-neutral-400">
-                {t('tools.cronVisualizer.inputLabel')}
+                {t('tools.cronVisualizer.inputLabel')} ({flavor === 'standard' ? '5-field format' : '6-field format'})
               </label>
               <input
                 type="text"
                 value={input}
                 onChange={e => setInput(e.target.value)}
-                placeholder={t('tools.cronVisualizer.inputPlaceholder')}
+                placeholder={flavor === 'standard' ? 'e.g. */15 9-17 * * 1-5' : 'e.g. 0 */15 9-17 * * ?'}
                 spellCheck={false}
                 className="w-full px-3 py-2.5 font-mono text-sm bg-neutral-900 border border-neutral-800 rounded focus:border-[#1D9BF0] focus:outline-none text-neutral-100 placeholder-neutral-600 transition-colors"
               />
               {/* Field labels */}
-              <div className="grid grid-cols-5 gap-1 text-[10px] font-mono text-neutral-500 text-center px-0.5">
-                {['MIN','HOUR','DOM','MON','DOW'].map(f => (
-                  <span key={f} className="bg-neutral-900 border border-neutral-800 rounded py-0.5">{f}</span>
-                ))}
+              <div className={`grid ${flavor === 'standard' ? 'grid-cols-5' : 'grid-cols-6'} gap-1 text-[10px] font-mono text-neutral-500 text-center px-0.5`}>
+                {flavor === 'standard' 
+                  ? ['MIN','HOUR','DOM','MON','DOW'].map(f => (
+                      <span key={f} className="bg-neutral-900 border border-neutral-800 rounded py-0.5">{f}</span>
+                    ))
+                  : ['SEC','MIN','HOUR','DOM','MON','DOW'].map(f => (
+                      <span key={f} className="bg-neutral-900 border border-neutral-800 rounded py-0.5">{f}</span>
+                    ))
+                }
               </div>
               {!isValid && input.trim() && (
                 <div className="flex items-center gap-2 p-2.5 bg-red-950/40 border border-red-900/60 rounded text-xs text-red-300 font-mono">
@@ -363,14 +506,7 @@ export const CronVisualizerTool: React.FC = () => {
               <div className="space-y-1.5 pt-1">
                 <p className="text-[11px] font-mono text-neutral-500">{t('tools.cronVisualizer.presetsLabel')}</p>
                 <div className="flex flex-wrap gap-1.5">
-                  {[
-                    { label: 'Every minute', value: '* * * * *' },
-                    { label: 'Every hour', value: '0 * * * *' },
-                    { label: 'Daily midnight', value: '0 0 * * *' },
-                    { label: 'Every 15 min', value: '*/15 * * * *' },
-                    { label: 'Weekdays 9am', value: '0 9 * * 1-5' },
-                    { label: 'Every Sunday', value: '0 0 * * 0' },
-                  ].map(p => (
+                  {(flavor === 'standard' ? PRESETS_STANDARD : PRESETS_QUARTZ).map(p => (
                     <button
                       key={p.value}
                       onClick={() => setInput(p.value)}
@@ -386,6 +522,9 @@ export const CronVisualizerTool: React.FC = () => {
             <div className="space-y-3">
               <p className="text-xs font-mono text-neutral-400">{t('tools.cronVisualizer.builderLabel')}</p>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                {flavor === 'quartz' && (
+                  <FieldSelector label="Second" value={builder.second} onChange={v => setBuilder(b => ({ ...b, second: v }))} options={secondOpts} allowStar={true} />
+                )}
                 <FieldSelector label="Minute" value={builder.minute} onChange={v => setBuilder(b => ({ ...b, minute: v }))} options={minuteOpts} />
                 <FieldSelector label="Hour" value={builder.hour} onChange={v => setBuilder(b => ({ ...b, hour: v }))} options={hourOpts} />
                 <FieldSelector label="Day of Month" value={builder.dom} onChange={v => setBuilder(b => ({ ...b, dom: v }))} options={domOpts} />
@@ -407,7 +546,7 @@ export const CronVisualizerTool: React.FC = () => {
           {/* Human-readable */}
           <div className="space-y-2">
             <p className="text-xs font-mono text-neutral-400">{t('tools.cronVisualizer.descriptionLabel')}</p>
-            <div className="p-3 bg-neutral-900 border border-neutral-800 rounded min-h-[52px] flex items-center">
+            <div className="p-3 bg-neutral-900 border border-neutral-800 rounded min-h-[52px] flex items-center whitespace-pre-wrap break-words [word-break:break-word] overflow-x-hidden">
               {description ? (
                 <p className="text-sm text-neutral-100 leading-relaxed capitalize">{description}</p>
               ) : (
@@ -424,7 +563,7 @@ export const CronVisualizerTool: React.FC = () => {
             {nextRuns.length > 0 ? (
               <div className="space-y-1.5">
                 {nextRuns.map((run, i) => (
-                  <div key={i} className="grid grid-cols-[auto_1fr_1fr] gap-2 items-center p-2 bg-neutral-900 border border-neutral-800 rounded text-xs font-mono">
+                  <div key={i} className="grid grid-cols-[auto_1fr_1fr] gap-2 items-center p-2 bg-neutral-900 border border-neutral-800 rounded text-xs font-mono whitespace-pre-wrap break-words [word-break:break-word] overflow-x-hidden">
                     <span className="text-neutral-600 w-4 text-center">{i + 1}</span>
                     <div>
                       <p className="text-[10px] text-neutral-500 mb-0.5">{t('tools.cronVisualizer.localTime')}</p>
@@ -464,3 +603,20 @@ export const CronVisualizerTool: React.FC = () => {
     </div>
   );
 };
+
+const PRESETS_STANDARD = [
+  { label: 'Every minute', value: '* * * * *' },
+  { label: 'Every hour', value: '0 * * * *' },
+  { label: 'Daily midnight', value: '0 0 * * *' },
+  { label: 'Every 15 min', value: '*/15 * * * *' },
+  { label: 'Weekdays 9am', value: '0 9 * * 1-5' },
+  { label: 'Every Sunday', value: '0 0 * * 0' },
+];
+
+const PRESETS_QUARTZ = [
+  { label: 'Every second', value: '* * * * * *' },
+  { label: 'Every 10 seconds', value: '*/10 * * * * *' },
+  { label: 'Daily midnight', value: '0 0 0 * * ?' },
+  { label: 'Every 15 min', value: '0 */15 * * * ?' },
+  { label: 'Weekdays 9am', value: '0 0 9 * * 1-5' },
+];
