@@ -51,6 +51,7 @@ export const Navbar: React.FC<{
     { name: 'Hash Generator', sub: 'SHA-256 & MD5', path: '/tools/hash-generator', icon: Hash },
     { name: 'Cron Visualizer', sub: 'Parse & Schedule', path: '/tools/cron-visualizer', icon: Clock },
     { name: 'Regex Tester', sub: 'Test & Debug', path: '/tools/regex-tester', icon: Regex },
+    { name: 'PDF Suite', sub: 'Compress & Merge', path: '/tools/pdf-suite', icon: FileText, isNew: true },
   ];
 
   const toolsDropdown = [...col1Tools, ...col2Tools];

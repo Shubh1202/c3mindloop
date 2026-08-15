@@ -350,6 +350,29 @@ export const seoConfig = {
       images: [defaultOgImage],
     },
   },
+  pdfSuite: {
+    title: '100% Private Client-Side PDF Compressor & Merger - Free Online Tool',
+    description: 'Compress, merge, and split PDF files 100% in your browser. Zero file uploads, zero server processing, complete document privacy.',
+    keywords: [
+      'compress pdf client side', 'private pdf merger', 'offline pdf compressor', 'in-browser pdf tools', 'no upload pdf merger',
+      'split pdf client side', 'merge pdf locally', 'free pdf suite online', 'secure pdf merger', 'secure pdf compressor',
+      'local pdf parser', 'extract pages pdf client side', 'pdf optimization browser', 'pdf-lib tool online',
+      '100% Private', 'Client-Side Execution', 'No Server Upload', 'GDPR Compliant', 'Free Online Utility',
+      'merge pdf files free no upload', 'compress pdf memory sandbox', 'c3mindloop pdf suite', 'ccube pdf tool'
+    ],
+    canonical: `${BASE_URL}/tools/pdf-suite`,
+    openGraph: {
+      title: '100% Private Client-Side PDF Compressor & Merger | C³ MindLoop',
+      description: 'Compress, merge, and split PDF files locally in your browser with zero server uploads.',
+      url: `${BASE_URL}/tools/pdf-suite`,
+      images: [{ url: defaultOgImage, width: 1200, height: 630, alt: 'PDF Suite - C³ MindLoop' }],
+    },
+    twitter: {
+      title: '100% Private Client-Side PDF Suite | C³ MindLoop',
+      description: 'Compress, merge, and split PDF files locally. No uploads, zero tracking.',
+      images: [defaultOgImage],
+    },
+  },
 
   atsResume: {
     title: 'ATS Resume Generator - Free Online Tool | 100% Private Client-Side | C\u00b3 MindLoop',
@@ -656,6 +679,27 @@ export const atsResumeSchema = {
     '100% client-side - zero server upload, GDPR Compliant',
     'Section editor: Experience, Skills, Projects, Education',
     'Download as vector PDF via browser print API',
+  ],
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+  publisher: { '@type': 'Organization', name: 'C³ MindLoop', url: BASE_URL },
+};
+
+export const pdfSuiteSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: 'PDF Suite (Compress, Merge & Split)',
+  url: `${BASE_URL}/tools/pdf-suite`,
+  applicationCategory: 'WebApplication',
+  operatingSystem: 'All',
+  browserRequirements: 'Requires JavaScript',
+  description:
+    'Free 100% private client-side PDF suite. Compress PDF sizes, merge multiple documents, and split page ranges locally in browser memory without server uploads.',
+  featureList: [
+    'Client-side PDF merging with custom file re-ordering',
+    'Client-side PDF compression with Basic and Strong presets',
+    'Client-side PDF page range splitting and extraction',
+    '100% client-side execution — documents never upload to any server',
+    'GDPR compliant and secure document sandbox',
   ],
   offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
   publisher: { '@type': 'Organization', name: 'C³ MindLoop', url: BASE_URL },

@@ -83,6 +83,15 @@ const formatted = JSON.stringify(JSON.parse(input), null, 2);`
     category: 'resume',
     icon: 'FileCode',
     techStack: ['Client-Side', 'Print API', 'Zero Upload']
+  },
+  {
+    id: 'pdf-suite',
+    nameKey: 'PDF Suite (Compress, Merge & Split)',
+    descKey: 'Compress, merge, and split PDF documents 100% locally inside your browser memory sandbox. Zero server uploads.',
+    status: 'live',
+    category: 'utilities',
+    icon: 'Layers',
+    techStack: ['pdf-lib', 'pdfjs-dist', 'Canvas APIs', 'Local Processing']
   }
 ];
 

@@ -68,6 +68,8 @@ export const ProductsPreviewSection: React.FC = () => {
                 'regex-tester': '/tools/regex-tester',
                 'sql-to-json': '/tools/sql-to-json',
                 'hash-generator': '/tools/hash-generator',
+                'ats-resume-generator': '/tools/ats-resume-generator',
+                'pdf-suite': '/tools/pdf-suite',
               };
               const toolHref = toolRoutes[prod.id];
 
