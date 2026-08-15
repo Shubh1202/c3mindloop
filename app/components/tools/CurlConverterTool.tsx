@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useCallback, useEffect } from 'react';
-import { Copy, Check, Trash2, AlertCircle, Info, Terminal, Maximize2, Minimize2, Columns2, Rows2 } from 'lucide-react';
+import { Copy, Check, Trash2, AlertCircle, Info, Terminal, Maximize2, Minimize2, Columns2, Rows2, Eye, EyeOff, Lock, ListChecks, AlertTriangle, LayoutList, ChevronDown, ChevronUp, AlignLeft, Code } from 'lucide-react';
 import { useTranslation } from '../../lib/i18n';
 
 // ── Types ────────────────────────────────────────────────────────────────────
@@ -94,6 +94,47 @@ function parseCurl(raw: string): ParsedCurl | null {
 
   if (!result.url) return null;
   return result;
+}
+
+// ── Diagnostics ──────────────────────────────────────────────────────────────
+
+interface Diagnostic {
+  type: 'warning' | 'info';
+  message: string;
+}
+
+function analyzeCurl(parsed: ParsedCurl): Diagnostic[] {
+  const issues: Diagnostic[] = [];
+  
+  const method = parsed.method.toUpperCase();
+  const hasBody = !!parsed.body;
+  const contentTypeKey = Object.keys(parsed.headers).find(k => k.toLowerCase() === 'content-type');
+  
+  if (hasBody && !contentTypeKey) {
+    if (parsed.body?.trim().startsWith('{') || parsed.body?.trim().startsWith('[')) {
+      issues.push({ type: 'warning', message: 'Possible issue: Request appears to contain JSON, but Content-Type: application/json is not explicitly specified.' });
+    }
+  }
+
+  try {
+    const urlObj = new URL(parsed.url);
+    const searchParams = new URLSearchParams(urlObj.search);
+    for (const [key, value] of Array.from(searchParams.entries())) {
+      if (/[^\x20-\x7E]/.test(key) || /[^\x20-\x7E]/.test(value)) {
+         issues.push({ type: 'warning', message: `Possible URL encoding issue in query parameter: ${key}` });
+         break;
+      }
+    }
+  } catch (e) {
+    // Ignored, bad URL format
+  }
+
+  return issues;
+}
+
+function escapeArg(arg: string) {
+  if (!arg.includes(' ') && !arg.includes('"') && !arg.includes("'") && !arg.includes('\\')) return arg;
+  return `'${arg.replace(/'/g, "'\\''")}'`;
 }
 
 // ── Code Generators ──────────────────────────────────────────────────────────
@@ -257,9 +298,13 @@ export const CurlConverterTool: React.FC = () => {
   const [input, setInput] = useState('');
   const [lang, setLang] = useState<Language>('js-fetch');
   const [copied, setCopied] = useState(false);
+  const [copiedMinified, setCopiedMinified] = useState(false);
 
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [isSideBySide, setIsSideBySide] = useState(true);
+
+  const [showAuth, setShowAuth] = useState(false);
+  const [showChecklist, setShowChecklist] = useState(false);
 
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => { if (e.key === 'Escape' && isFullScreen) setIsFullScreen(false); };
@@ -290,6 +335,31 @@ export const CurlConverterTool: React.FC = () => {
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   }, [output]);
+
+  const handleFormat = () => {
+    const tokens = tokenize(input.trim());
+    if (!tokens.length) return;
+    let formatted = tokens[0];
+    for (let i = 1; i < tokens.length; i++) {
+        if (tokens[i].startsWith('-') && tokens[i].length <= 2) {
+            formatted += ' \\\n  ' + tokens[i];
+        } else if (tokens[i].startsWith('--')) {
+            formatted += ' \\\n  ' + tokens[i];
+        } else {
+            formatted += ' ' + escapeArg(tokens[i]);
+        }
+    }
+    setInput(formatted);
+  };
+
+  const handleMinify = () => {
+    const tokens = tokenize(input.trim());
+    if (!tokens.length) return;
+    let minified = tokens.map(escapeArg).join(' ');
+    navigator.clipboard.writeText(minified);
+    setCopiedMinified(true);
+    setTimeout(() => setCopiedMinified(false), 2000);
+  };
 
   const handleSample = () => setInput(SAMPLE_CURL);
   const handleClear = () => setInput('');
@@ -353,10 +423,22 @@ export const CurlConverterTool: React.FC = () => {
 
         {/* Left / Top pane: Input */}
         <div className={`flex flex-col p-3 sm:p-4 space-y-2 bg-neutral-950 ${
-          isFullScreen ? 'overflow-y-auto' : ''
+          isFullScreen ? 'overflow-y-auto' : 'overflow-y-auto'
         }`}>
-          <div className="text-xs font-mono text-neutral-400 pb-1 border-b border-neutral-900">
+          <div className="flex items-center justify-between text-xs font-mono text-neutral-400 pb-1 border-b border-neutral-900">
             <span className="font-semibold text-neutral-300">cURL Input</span>
+            {hasInput && (
+              <div className="flex items-center gap-2">
+                <button onClick={handleFormat} className="text-neutral-500 hover:text-neutral-300 transition-colors flex items-center gap-1 cursor-pointer" title="Format / Beautify cURL">
+                  <AlignLeft className="w-3.5 h-3.5" />
+                  <span>Format</span>
+                </button>
+                <button onClick={handleMinify} className="text-neutral-500 hover:text-neutral-300 transition-colors flex items-center gap-1 cursor-pointer" title="Copy Minified cURL">
+                  {copiedMinified ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Code className="w-3.5 h-3.5" />}
+                  <span>{copiedMinified ? 'Copied' : 'Minify'}</span>
+                </button>
+              </div>
+            )}
           </div>
           <textarea
             value={input}
@@ -364,13 +446,150 @@ export const CurlConverterTool: React.FC = () => {
             placeholder={t('tools.curlConverter.inputPlaceholder')}
             spellCheck={false}
             className={`w-full p-3 font-mono text-xs bg-neutral-900/90 text-neutral-100 border border-neutral-800 rounded focus:border-[#1D9BF0] focus:outline-none resize-y leading-relaxed transition-colors placeholder-neutral-600 ${
-              isSideBySide ? 'min-h-[340px]' : 'min-h-[120px] max-h-[280px]'
+              isSideBySide ? 'min-h-[120px] max-h-[300px]' : 'min-h-[120px] max-h-[280px]'
             }`}
           />
           {isInvalid && (
             <div className="flex items-start gap-2 p-3 bg-red-950/40 border border-red-900/80 rounded text-xs text-red-300 font-mono">
               <AlertCircle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
               <span>{t('tools.curlConverter.errorInvalid')}</span>
+            </div>
+          )}
+
+          {/* Parsed Inspector UI */}
+          {parsed && (
+            <div className="space-y-4 border-t border-neutral-900 pt-4 mt-2">
+              <div className="flex items-center gap-2 text-xs font-mono">
+                <LayoutList className="w-4 h-4 text-[#1D9BF0]" />
+                <span className="font-semibold text-neutral-300">API Request Inspector</span>
+              </div>
+
+              {/* Basic Info */}
+              <div className="grid grid-cols-[auto_1fr] gap-3 text-xs font-mono">
+                 <div className="bg-neutral-800 text-neutral-300 px-2 py-1 rounded font-bold text-center">
+                    {parsed.method}
+                 </div>
+                 <div className="bg-neutral-900/50 border border-neutral-800 px-3 py-1 rounded text-neutral-400 break-all">
+                    {parsed.url}
+                 </div>
+              </div>
+
+              {/* Headers Table */}
+              {Object.keys(parsed.headers).length > 0 && (
+                 <div className="space-y-1 text-[11px] font-mono">
+                    <div className="text-neutral-500 font-semibold mb-1">Headers</div>
+                    <div className="border border-neutral-800 rounded bg-neutral-900/40 divide-y divide-neutral-800">
+                       {Object.entries(parsed.headers).map(([k, v]) => {
+                          const isAuth = k.toLowerCase() === 'authorization';
+                          return (
+                             <div key={k} className="flex flex-wrap sm:flex-nowrap p-2 gap-2">
+                                <div className="w-full sm:w-1/3 text-sky-400 break-all">{k}</div>
+                                <div className="w-full sm:w-2/3 text-neutral-300 break-all flex items-center justify-between">
+                                   {isAuth && !showAuth ? (
+                                      <span className="flex items-center gap-1 text-neutral-500 bg-neutral-800/50 px-1.5 py-0.5 rounded cursor-help" title="Token value is hidden to prevent shoulder-surfing. The original value is still preserved for code generation.">
+                                        <Lock className="w-3 h-3" /> [ 🔒 Auth Token Masked ]
+                                      </span>
+                                   ) : (
+                                      <span>{v}</span>
+                                   )}
+                                   {isAuth && (
+                                      <button onClick={() => setShowAuth(!showAuth)} className="text-neutral-500 hover:text-neutral-300 ml-2 cursor-pointer flex items-center gap-1 px-1.5 py-0.5 rounded border border-neutral-800">
+                                         {showAuth ? <EyeOff className="w-3 h-3" /> : <Eye className="w-3 h-3" />}
+                                         <span>{showAuth ? 'Hide' : 'Reveal'}</span>
+                                      </button>
+                                   )}
+                                </div>
+                             </div>
+                          );
+                       })}
+                    </div>
+                 </div>
+              )}
+
+              {/* Query Params */}
+              {(() => {
+                 try {
+                    const urlObj = new URL(parsed.url);
+                    const searchParams = new URLSearchParams(urlObj.search);
+                    const entries = Array.from(searchParams.entries());
+                    if (entries.length === 0) return null;
+                    return (
+                       <div className="space-y-1 text-[11px] font-mono mt-3">
+                          <div className="text-neutral-500 font-semibold mb-1">Query Parameters</div>
+                          <div className="border border-neutral-800 rounded bg-neutral-900/40 divide-y divide-neutral-800">
+                             {entries.map(([k, v], i) => (
+                                <div key={i} className="flex flex-wrap sm:flex-nowrap p-2 gap-2">
+                                   <div className="w-full sm:w-1/3 text-purple-400 break-all">{k}</div>
+                                   <div className="w-full sm:w-2/3 text-neutral-300 break-all">{v}</div>
+                                </div>
+                             ))}
+                          </div>
+                       </div>
+                    );
+                 } catch {
+                    return null;
+                 }
+              })()}
+
+              {/* Body Viewer */}
+              {parsed.body && (
+                 <div className="space-y-1 text-[11px] font-mono mt-3">
+                    <div className="text-neutral-500 font-semibold mb-1">Request Body</div>
+                    <pre className="bg-neutral-900/50 border border-neutral-800 rounded p-2 text-neutral-300 whitespace-pre-wrap break-all">
+                       {parsed.body}
+                    </pre>
+                 </div>
+              )}
+
+              {/* Diagnostics Panel */}
+              {(() => {
+                 const diags = analyzeCurl(parsed);
+                 if (diags.length === 0) return null;
+                 return (
+                    <div className="space-y-2 mt-4 p-3 border border-amber-900/30 bg-amber-950/10 rounded">
+                       <div className="flex items-center gap-1.5 text-xs font-mono font-semibold text-amber-500">
+                          <AlertTriangle className="w-3.5 h-3.5" />
+                          <span>Request Diagnostics</span>
+                       </div>
+                       <div className="space-y-1.5">
+                          {diags.map((d, i) => (
+                             <div key={i} className="text-[11px] font-mono text-amber-300/80 flex items-start gap-1.5">
+                                <span className="text-amber-500 mt-0.5">•</span>
+                                <span>{d.message}</span>
+                             </div>
+                          ))}
+                       </div>
+                    </div>
+                 );
+              })()}
+
+              {/* Reproducible Checklist */}
+              <div className="mt-4 p-3 border border-neutral-800 bg-neutral-900/40 rounded cursor-pointer transition-colors hover:bg-neutral-900/60" onClick={() => setShowChecklist(!showChecklist)}>
+                 <div className="flex items-center justify-between text-xs font-mono font-semibold text-neutral-300">
+                    <div className="flex items-center gap-1.5">
+                       <ListChecks className="w-3.5 h-3.5 text-emerald-500" />
+                       <span>API Debug Checklist</span>
+                    </div>
+                    {showChecklist ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+                 </div>
+                 {showChecklist && (
+                    <div className="mt-3 space-y-2 text-[11px] font-mono text-neutral-400" onClick={e => e.stopPropagation()}>
+                       <label className="flex items-start gap-2 cursor-pointer">
+                          <input type="checkbox" className="mt-0.5 bg-neutral-900 border-neutral-700 rounded text-[#1D9BF0] cursor-pointer" />
+                          <span>Check CORS response headers in browser Network panel (Cannot be verified from cURL alone)</span>
+                       </label>
+                       <label className="flex items-start gap-2 cursor-pointer">
+                          <input type="checkbox" className="mt-0.5 bg-neutral-900 border-neutral-700 rounded text-[#1D9BF0] cursor-pointer" />
+                          <span>Authorization header format valid (e.g. Bearer &lt;token&gt;)?</span>
+                       </label>
+                       <label className="flex items-start gap-2 cursor-pointer">
+                          <input type="checkbox" className="mt-0.5 bg-neutral-900 border-neutral-700 rounded text-[#1D9BF0] cursor-pointer" />
+                          <span>Body payload structure matches expected Content-Type?</span>
+                       </label>
+                    </div>
+                 )}
+              </div>
+
             </div>
           )}
         </div>
