@@ -36,19 +36,20 @@ const regexFaqPageSchema = {
 };
 
 export const metadata: Metadata = {
-  title: 'Regex Tester & Visual Debugger - Free Online Tool | 100% Private Client-Side',
-  description: 'Free, 100% private client-side Regex Tester and Visual Debugger. Test ECMAScript regular expressions locally with real-time match highlighting, index tracking, and zero server interaction.',
+  title: 'Regex Tester, Debugger & AI Pattern Generator - Free Online Tool | 100% Private',
+  description: 'Free online Regex Tester with live match highlighting, capture groups, code export, and an AI Pattern Generator. Describe a pattern in plain English — get a battle-tested regex instantly. 100% Private, zero server upload.',
   keywords: regexTester.keywords,
   alternates: { canonical: regexTester.canonical },
   openGraph: {
     ...regexTester.openGraph,
-    title: 'Regex Tester & Visual Debugger - Free Online Tool | 100% Private Client-Side',
-    description: 'Free, 100% private client-side Regex Tester and Visual Debugger. Test ECMAScript regular expressions locally with real-time match highlighting, index tracking, and zero server interaction.',
+    title: 'Regex Tester, Debugger & AI Pattern Generator — Free | C³ MindLoop',
+    description: 'Test regex patterns with live highlighting and capture groups. Describe a pattern in plain English — the AI generator writes it for you. 100% Private, zero server upload.',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Regex Tester & Visual Debugger - Free Online Tool | 100% Private Client-Side',
-    description: 'Free, 100% private client-side Regex Tester and Visual Debugger. Test ECMAScript regular expressions locally with real-time match highlighting, index tracking, and zero server interaction.',
+    ...regexTester.twitter,
+    title: 'Regex Tester + AI Pattern Generator — Free | C³ MindLoop',
+    description: 'Live regex testing + AI pattern generator from plain English. 100% Private, zero server upload.',
   },
 };
 

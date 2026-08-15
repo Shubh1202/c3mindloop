@@ -51,19 +51,26 @@ export const seoConfig = {
   },
 
   jsonFormatter: {
-    title: 'JSON Formatter & Validator - Free Online Tool | 100% Private Client-Side',
+    title: 'JSON Formatter, Validator & AI Smart Repair - Free Online Tool | 100% Private',
     description:
-      'Free online JSON formatter, validator, beautifier and minifier. 100% Private & Client-Side with zero server upload. Format, validate, and inspect JSON as an interactive tree.',
+      'Free online JSON formatter, validator, beautifier and minifier with built-in AI Smart Repair. Fixes trailing commas, missing brackets, single quotes, and unquoted keys — 100% client-side, zero server upload.',
     keywords: [
       // High-volume primary
       'json formatter', 'json formatter online', 'json beautifier', 'json validator',
       'json minifier', 'json viewer', 'json parser online', 'format json online',
       // High-intent Tier-1 CPC
       '100% Private', 'Client-Side Execution', 'No Server Upload', 'GDPR Compliant', 'Free Online Utility',
-      // Long-tail
+      // AI Smart Repair long-tail
+      'json smart repair', 'json ai repair', 'fix broken json online', 'json syntax fixer',
+      'auto fix json errors', 'fix json trailing commas', 'fix json missing brackets',
+      'json repair tool', 'json error fixer online', 'malformed json fixer',
+      'fix single quotes json', 'unquoted keys json fix', 'js comment in json fix',
+      'in-browser json ai', 'local ai json tool', 'json ai assist browser',
+      // Tree & format long-tail
       'free json formatter online', 'json formatter and validator', 'json beautifier online free',
       'json pretty print online', 'json lint online', 'json format checker',
       'online json editor', 'json tree viewer', 'json to tree view',
+      'json to typescript interface', 'json to go struct', 'json to csv converter',
       'json formatter no login', 'json formatter offline', 'client side json formatter',
       'json formatter privacy', 'json formatter no data collection',
       // Competitor alternatives
@@ -74,16 +81,16 @@ export const seoConfig = {
     ],
     canonical: `${BASE_URL}/tools/json-formatter`,
     openGraph: {
-      title: 'JSON Formatter & Validator - Free Online Tool | C³ MindLoop',
+      title: 'JSON Formatter, Validator & AI Smart Repair — Free | C³ MindLoop',
       description:
-        'Free online JSON formatter, validator and beautifier. 100% Private & Client-Side with zero server upload. Format, validate, minify or view JSON as tree.',
+        'Format, validate, and auto-repair JSON in the browser. Built-in AI Smart Repair fixes trailing commas, missing brackets, and more — 100% Private, zero server upload.',
       url: `${BASE_URL}/tools/json-formatter`,
       images: [{ url: defaultOgImage, width: 1200, height: 630, alt: 'JSON Formatter Tool - C³ MindLoop' }],
     },
     twitter: {
-      title: 'JSON Formatter & Validator - Free | C³ MindLoop',
+      title: 'JSON Formatter + AI Smart Repair — Free | C³ MindLoop',
       description:
-        'Free online JSON formatter and validator. 100% Private & Client-Side, zero server upload.',
+        'Format, validate & auto-repair JSON locally. 100% Private, zero server upload. AI Smart Repair runs in-browser.',
       images: [defaultOgImage],
     },
   },
@@ -222,21 +229,48 @@ export const seoConfig = {
     },
   },
   regexTester: {
-    title: 'Regex Tester & Debugger - Free Online Tool | 100% Private Client-Side',
+    title: 'Regex Tester, Debugger & AI Pattern Generator - Free Online Tool | 100% Private',
     description:
-      'Free online Regular Expression tester with live match highlighting, flags, capture groups, and cheatsheet. 100% Private client-side parsing with zero server upload.',
+      'Free online Regular Expression tester with live match highlighting, capture groups, code export, and an AI Pattern Generator. Describe a pattern in plain English — the tool writes the regex. 100% Private, zero server upload.',
     keywords: [
-      'regex tester', 'regular expression debugger', 'client-side regex',
-      'regex matcher', 'regex pattern tester', 'online regex tool',
-      '100% Private', 'Client-Side Execution', 'No Server Upload', 'GDPR Compliant', 'Free Online Utility'
+      // High-volume primary
+      'regex tester', 'regex tester online', 'regular expression tester', 'regex debugger',
+      'regex pattern tester', 'online regex tool', 'regex checker', 'regex validator online',
+      // High-intent Tier-1 CPC
+      '100% Private', 'Client-Side Execution', 'No Server Upload', 'GDPR Compliant', 'Free Online Utility',
+      // AI Regex Generator long-tail
+      'ai regex generator', 'regex generator from description', 'generate regex from text',
+      'plain english regex generator', 'in-browser regex ai', 'regex pattern generator online',
+      'natural language regex', 'regex from plain text', 'auto generate regex',
+      'local ai regex tool', 'regex ai browser', 'regex suggestion tool',
+      // Pattern-specific long-tail
+      'email regex pattern', 'uuid regex', 'jwt regex', 'ipv4 regex pattern',
+      'url regex javascript', 'phone number regex', 'semver regex', 'hex color regex',
+      'password regex', 'credit card regex', 'date regex iso 8601', 'mac address regex',
+      // Feature long-tail
+      'regex capture groups online', 'regex match highlighter', 'regex flags online',
+      'regex to javascript code', 'regex to python', 'regex to go', 'regex to php',
+      'regex cheatsheet online', 'regex presets', 'ecmascript regex tester',
+      'regex tester no login', 'regex tester offline', 'client side regex tester',
+      'regex tester privacy', 'regex no data collection',
+      // Competitor alternatives
+      'regex101 alternative', 'regexr alternative', 'regexpal alternative',
+      // Brand
+      'C³ MindLoop regex tool', 'ccube regex tester',
     ],
     canonical: `${BASE_URL}/tools/regex-tester`,
     openGraph: {
-      title: 'Regex Tester & Debugger - Free Online Tool | C³ MindLoop',
+      title: 'Regex Tester, Debugger & AI Generator — Free | C³ MindLoop',
       description:
-        'Test Regular Expressions with live match highlights and capture groups. 100% Private & Client-Side.',
+        'Test regex patterns with live highlighting and capture groups. Describe a pattern in plain English — the AI generator writes it for you. 100% Private, zero server upload.',
       url: `${BASE_URL}/tools/regex-tester`,
       images: [{ url: defaultOgImage, width: 1200, height: 630, alt: 'Regex Tester Tool - C³ MindLoop' }],
+    },
+    twitter: {
+      title: 'Regex Tester + AI Pattern Generator — Free | C³ MindLoop',
+      description:
+        'Live regex testing + AI pattern generator from plain English. 100% Private, zero server upload.',
+      images: [defaultOgImage],
     },
   },
   sqlToJson: {
@@ -387,13 +421,16 @@ export const webApplicationSchema = {
   operatingSystem: 'All',
   browserRequirements: 'Requires JavaScript',
   offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
-  description: 'Free local-first developer tools: JSON formatter, JWT decoder, Base64 encoder - all 100% client-side.',
+  description: 'Free local-first developer tools with built-in AI assist: JSON formatter with Smart Repair, Regex Tester with AI Pattern Generator, JWT decoder, Base64 encoder — all 100% client-side, zero data transmission.',
   featureList: [
-    'JSON Formatter and Validator',
+    'JSON Formatter, Validator and Beautifier',
+    'JSON AI Smart Repair (fixes trailing commas, missing brackets, unquoted keys)',
+    'Regex Tester with live match highlighting and capture groups',
+    'Regex AI Pattern Generator from plain-English description',
     'JWT Decoder and Inspector',
     'Base64 Encoder and Decoder',
-    '100% client-side processing',
-    'Zero data transmission',
+    'Local AI Assist via in-browser Web Worker (opt-in, zero download until invoked)',
+    '100% client-side processing — zero data transmission',
     'No login required',
   ],
   publisher: { '@type': 'Organization', name: 'C³ MindLoop', url: BASE_URL },
@@ -489,19 +526,25 @@ export const cronVisualizerSchema = {
 export const jsonFormatterSchema = {
   '@context': 'https://schema.org',
   '@type': 'SoftwareApplication',
-  name: 'JSON Formatter, Validator & Beautifier',
+  name: 'JSON Formatter, Validator, Beautifier & AI Smart Repair',
   url: `${BASE_URL}/tools/json-formatter`,
   applicationCategory: 'WebApplication',
   operatingSystem: 'All',
   browserRequirements: 'Requires JavaScript',
   description:
-    'Free online JSON formatter, validator, beautifier and minifier. 100% Private, Client-Side Execution, GDPR Compliant with zero server upload.',
+    'Free online JSON formatter, validator, beautifier, minifier with built-in AI Smart Repair. Automatically fixes trailing commas, missing brackets, single quotes, JS comments, and unquoted keys. 100% Private, Client-Side Execution, GDPR Compliant, zero server upload.',
   featureList: [
-    'Client-side JSON formatting and beautifying',
-    'JSON validation with error location',
-    'Interactive collapsible tree view',
-    'JSON minification',
-    'Zero server upload - fully private',
+    'Client-side JSON formatting and beautifying with 2-space, 4-space, and tab indentation',
+    'Real-time JSON validation with exact error line and column location',
+    'Interactive collapsible tree view for nested structures',
+    'JSON minification and compact output',
+    'AI Smart Repair: auto-fixes trailing commas, missing closing brackets, single quotes, JS comments, unquoted keys',
+    'Convert JSON to TypeScript interfaces',
+    'Convert JSON to Go structs',
+    'Convert JSON to CSV',
+    'File upload (.json) and file download support',
+    'Synchronized side-by-side scroll between input and output',
+    'Zero server upload — fully private and GDPR compliant',
   ],
   offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
   publisher: { '@type': 'Organization', name: 'C³ MindLoop', url: BASE_URL },
@@ -530,19 +573,23 @@ export const officeEditorSchema = {
 export const regexTesterSchema = {
   '@context': 'https://schema.org',
   '@type': 'SoftwareApplication',
-  name: 'Regex Tester & Visual Debugger',
+  name: 'Regex Tester, Visual Debugger & AI Pattern Generator',
   url: `${BASE_URL}/tools/regex-tester`,
   applicationCategory: 'WebApplication',
   operatingSystem: 'All',
   browserRequirements: 'Requires JavaScript',
   description:
-    'Free online Regular Expression tester with live match highlighting, flags, capture groups, and cheatsheet. 100% Private, Client-Side Execution, GDPR Compliant.',
+    'Free online Regular Expression tester with live match highlighting, flags, capture groups, code export, and an AI Pattern Generator. Describe what you need in plain English — email, UUID, JWT, semver — and get a battle-tested pattern instantly. 100% Private, Client-Side Execution, GDPR Compliant.',
   featureList: [
-    'Real-time regex pattern matching',
-    'Global, case-insensitive, multiline flag toggles',
+    'Real-time regex pattern matching with live match highlighting',
+    'Global, case-insensitive, multiline, sticky, unicode flag toggles',
     'Capture group extraction and match index breakdown',
-    'Built-in regex cheatsheet presets',
-    '100% client-side execution - zero data logging'
+    'AI Pattern Generator: type plain English, get a production-ready regex (23+ templates)',
+    'One-click "Apply Pattern" pipes AI-generated regex directly into the tester',
+    'Code export: JavaScript, Python, Go, PHP snippets from the current pattern',
+    'Built-in presets: Email, URL, IPv4, UUID v4, and more',
+    'Inline regex cheatsheet: character classes, quantifiers, anchors, groups',
+    '100% client-side ECMAScript RegExp engine — zero data logging',
   ],
   offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
   publisher: { '@type': 'Organization', name: 'C³ MindLoop', url: BASE_URL },

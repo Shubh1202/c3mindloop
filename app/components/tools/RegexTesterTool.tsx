@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { Copy, Check, Trash2, ShieldCheck, AlertCircle, Info, BookOpen, Maximize2, Minimize2, FileText, Code } from 'lucide-react';
+import { LocalAIPanel } from './LocalAIPanel';
 
 interface MatchGroup {
   index: number;
@@ -115,6 +116,20 @@ export const RegexTesterTool: React.FC = () => {
     setTestString('');
   };
 
+  // Called by LocalAIPanel when the user hits "Apply Pattern to Tester"
+  const handleApplyRegex = useCallback((newPattern: string, newFlags: string) => {
+    setPattern(newPattern);
+    // Reconstruct flags object from the flags string so the toggle UI stays in sync
+    const validFlags = ['g', 'i', 'm', 's', 'u', 'y'] as const;
+    setFlags((prev) => {
+      const next = { ...prev };
+      for (const f of validFlags) {
+        next[f] = newFlags.includes(f);
+      }
+      return next;
+    });
+  }, []);
+
   // Code Snippet Builders
   const generatedCode = useMemo(() => {
     const cleanPattern = pattern || '.*';
@@ -200,6 +215,14 @@ export const RegexTesterTool: React.FC = () => {
             {isFullScreen ? <Minimize2 className="w-3.5 h-3.5" /> : <Maximize2 className="w-3.5 h-3.5" />}
           </button>
         </div>
+      </div>
+
+      {/* Local AI Assist Panel */}
+      <div className="px-3 py-2 bg-neutral-950 border-b border-neutral-800">
+        <LocalAIPanel
+          mode="regex-gen"
+          onApplyRegex={handleApplyRegex}
+        />
       </div>
 
       {/* Cheatsheet Quick Panel */}

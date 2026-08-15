@@ -5,20 +5,20 @@ import { seoConfig, jsonFormatterSchema } from './../../config/seo.config';
 const { jsonFormatter } = seoConfig;
 
 export const metadata: Metadata = {
-  title: 'JSON Formatter & Validator - Free Online Tool | 100% Private Client-Side',
-  description: 'Free, 100% private client-side JSON Formatter and Validator. Beautify, minify, and validate complex JSON datasets locally in your browser with real-time syntax checking.',
+  title: 'JSON Formatter, Validator & AI Smart Repair - Free Online Tool | 100% Private',
+  description: 'Free online JSON formatter, validator and minifier with built-in AI Smart Repair. Fixes trailing commas, missing brackets, single quotes, and unquoted keys — 100% client-side, zero server upload.',
   keywords: [...jsonFormatter.keywords],
   alternates: { canonical: jsonFormatter.canonical },
   openGraph: {
     ...jsonFormatter.openGraph,
-    title: 'JSON Formatter & Validator - Free Online Tool | 100% Private Client-Side',
-    description: 'Free, 100% private client-side JSON Formatter and Validator. Beautify, minify, and validate complex JSON datasets locally in your browser with real-time syntax checking.',
+    title: 'JSON Formatter, Validator & AI Smart Repair — Free | C³ MindLoop',
+    description: 'Format, validate, and auto-repair JSON in the browser. AI Smart Repair fixes trailing commas, missing brackets, and more — 100% Private, zero server upload.',
   },
   twitter: {
     card: 'summary_large_image',
     ...jsonFormatter.twitter,
-    title: 'JSON Formatter & Validator - Free Online Tool | 100% Private Client-Side',
-    description: 'Free, 100% private client-side JSON Formatter and Validator. Beautify, minify, and validate complex JSON datasets locally in your browser with real-time syntax checking.',
+    title: 'JSON Formatter + AI Smart Repair — Free | C³ MindLoop',
+    description: 'Format, validate & auto-repair JSON locally. 100% Private, zero server upload. AI Smart Repair runs in-browser.',
   },
 };
 

@@ -19,6 +19,7 @@ import {
   Link2Off,
 } from 'lucide-react';
 import { JsonTreeView } from './JsonTreeView';
+import { LocalAIPanel } from './LocalAIPanel';
 
 type IndentOption = '2' | '4' | 'tab';
 type OutputMode = 'json' | 'typescript' | 'go' | 'csv';
@@ -603,7 +604,17 @@ export const JsonFormatterTool: React.FC = () => {
           </div>
         </div>
 
-        {/* Main Dual Split Pane Area */}
+        {/* Local AI Assist Panel */}
+        <div className="px-3 py-2 bg-neutral-950 border-b border-neutral-800">
+          <LocalAIPanel
+            mode="json-repair"
+            rawJson={rawInput}
+            onApplyJson={(fixed) => {
+              setRawInput(fixed);
+              setTimeout(() => handleFormat(true), 50);
+            }}
+          />
+        </div>
         <div className={`grid divide-neutral-800 ${isSideBySide
           ? 'grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x'
           : 'grid-cols-1 divide-y'
