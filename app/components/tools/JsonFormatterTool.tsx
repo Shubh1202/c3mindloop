@@ -17,12 +17,70 @@ import {
   Rows2,
   Link2,
   Link2Off,
+  Zap,
+  Activity,
+  Layers,
 } from 'lucide-react';
 import { JsonTreeView } from './JsonTreeView';
-import { LocalAIPanel } from './LocalAIPanel';
+import { LocalAIPanel, smartRepairJson } from './LocalAIPanel';
 
 type IndentOption = '2' | '4' | 'tab';
 type OutputMode = 'json' | 'typescript' | 'go' | 'csv';
+
+interface JsonMetrics {
+  totalKeys: number;
+  maxDepth: number;
+  nullCount: number;
+  emptyCount: number;
+  potentialDuplicates: number;
+}
+
+function calculateJsonMetrics(obj: any, depth = 0): JsonMetrics {
+  let metrics: JsonMetrics = { totalKeys: 0, maxDepth: depth, nullCount: 0, emptyCount: 0, potentialDuplicates: 0 };
+  if (obj === null) {
+    metrics.nullCount++;
+    return metrics;
+  }
+  if (Array.isArray(obj)) {
+    if (obj.length === 0) metrics.emptyCount++;
+    let currentMaxDepth = depth;
+    for (const item of obj) {
+      const childMetrics = calculateJsonMetrics(item, depth + 1);
+      metrics.totalKeys += childMetrics.totalKeys;
+      metrics.nullCount += childMetrics.nullCount;
+      metrics.emptyCount += childMetrics.emptyCount;
+      currentMaxDepth = Math.max(currentMaxDepth, childMetrics.maxDepth);
+    }
+    metrics.maxDepth = currentMaxDepth;
+    return metrics;
+  }
+  if (typeof obj === 'object') {
+    const keys = Object.keys(obj);
+    if (keys.length === 0) {
+      metrics.emptyCount++;
+      return metrics;
+    }
+    metrics.totalKeys += keys.length;
+    let currentMaxDepth = depth;
+    for (const key of keys) {
+      const childMetrics = calculateJsonMetrics(obj[key], depth + 1);
+      metrics.totalKeys += childMetrics.totalKeys;
+      metrics.nullCount += childMetrics.nullCount;
+      metrics.emptyCount += childMetrics.emptyCount;
+      currentMaxDepth = Math.max(currentMaxDepth, childMetrics.maxDepth);
+    }
+    metrics.maxDepth = currentMaxDepth;
+    return metrics;
+  }
+  if (typeof obj === 'string' && obj.trim() === '') metrics.emptyCount++;
+  return metrics;
+}
+
+function checkPotentialDuplicates(rawString: string): number {
+  const keyMatches = rawString.match(/"([^"\\]*(\\.[^"\\]*)*)"\s*:/g) || [];
+  const uniqueKeys = new Set(keyMatches);
+  return keyMatches.length - uniqueKeys.size;
+}
 
 const SAMPLE_JSON_DATA = {
   appName: "C³ MindLoop",
@@ -183,6 +241,11 @@ export const JsonFormatterTool: React.FC = () => {
   const [isTyping, setIsTyping] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   
+  // JSON Debugger States
+  const [jsonMetrics, setJsonMetrics] = useState<JsonMetrics | null>(null);
+  const [autoFixProposed, setAutoFixProposed] = useState<{fixed: string, changes: string[]} | null>(null);
+  const [showInspector, setShowInspector] = useState(false);
+  
   const fileInputRef = useRef<HTMLInputElement>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -289,12 +352,19 @@ export const JsonFormatterTool: React.FC = () => {
       setIsValid(true);
       setErrorMessage(null);
       setErrorLine(null);
+      setAutoFixProposed(null);
+      
+      const metrics = calculateJsonMetrics(parsed, 1);
+      metrics.potentialDuplicates = checkPotentialDuplicates(rawInput);
+      setJsonMetrics(metrics);
     } catch (err: any) {
       setIsValid(false);
       setParsedObject(null);
+      setJsonMetrics(null);
       const errLoc = parseJsonErrorLocation(rawInput, err);
       setErrorMessage(errLoc.message);
       setErrorLine(errLoc.line);
+      setAutoFixProposed(null);
       if (syncToInput) {
         showToast(`Invalid JSON syntax: ${errLoc.message}`);
       }
@@ -322,6 +392,27 @@ export const JsonFormatterTool: React.FC = () => {
 
   const handleValidate = () => {
     handleFormat();
+  };
+
+  const handleAutoFixPreview = () => {
+    const result = smartRepairJson(rawInput);
+    if (result.fixed !== rawInput) {
+      setAutoFixProposed(result);
+    } else {
+      showToast("No automatic fixes found. Syntax might be too malformed.");
+    }
+  };
+
+  const applyAutoFix = () => {
+    if (autoFixProposed) {
+      setRawInput(autoFixProposed.fixed);
+      setAutoFixProposed(null);
+      setTimeout(() => handleFormat(true), 50);
+    }
+  };
+  
+  const discardAutoFix = () => {
+    setAutoFixProposed(null);
   };
 
   useEffect(() => {
@@ -652,23 +743,31 @@ export const JsonFormatterTool: React.FC = () => {
                 {/* View Switcher */}
                 <div className="flex items-center bg-neutral-900 p-0.5 rounded border border-neutral-800 text-[11px]">
                   <button
-                    onClick={() => setViewMode('code')}
-                    className={`px-2 py-0.5 rounded transition-colors ${viewMode === 'code' ? 'bg-[#1D9BF0] text-white font-medium' : 'text-neutral-400 hover:text-white'}`}
+                    onClick={() => { setViewMode('code'); setShowInspector(false); }}
+                    className={`px-2 py-0.5 rounded transition-colors ${viewMode === 'code' && !showInspector ? 'bg-[#1D9BF0] text-white font-medium' : 'text-neutral-400 hover:text-white'}`}
                   >
                     Code View
                   </button>
                   <button
-                    onClick={() => setViewMode('tree')}
+                    onClick={() => { setViewMode('tree'); setShowInspector(false); }}
                     disabled={!isValid || !parsedObject}
-                    className={`px-2 py-0.5 rounded transition-colors disabled:opacity-40 flex items-center gap-1 ${viewMode === 'tree' ? 'bg-[#1D9BF0] text-white font-medium' : 'text-neutral-400 hover:text-white'}`}
+                    className={`px-2 py-0.5 rounded transition-colors disabled:opacity-40 flex items-center gap-1 ${viewMode === 'tree' && !showInspector ? 'bg-[#1D9BF0] text-white font-medium' : 'text-neutral-400 hover:text-white'}`}
                   >
                     <FolderTree className="w-3 h-3" />
                     <span>Tree View</span>
                   </button>
+                  <button
+                    onClick={() => setShowInspector(true)}
+                    disabled={!isValid || !parsedObject}
+                    className={`px-2 py-0.5 rounded transition-colors disabled:opacity-40 flex items-center gap-1 ${showInspector ? 'bg-[#1D9BF0] text-white font-medium' : 'text-neutral-400 hover:text-white'}`}
+                  >
+                    <Activity className="w-3 h-3" />
+                    <span>Data Inspector</span>
+                  </button>
                 </div>
 
                 {/* Conversion Tab Selector */}
-                {viewMode === 'code' && (
+                {viewMode === 'code' && !showInspector && (
                   <div className="flex items-center bg-neutral-900 p-0.5 rounded border border-neutral-800 text-[11px]">
                     <button
                       onClick={() => setOutputMode('json')}
@@ -716,13 +815,45 @@ export const JsonFormatterTool: React.FC = () => {
               className="flex-1 bg-neutral-900/90 border border-neutral-800 rounded min-h-[400px] overflow-y-auto flex flex-col"
             >
               {isValid || isTyping ? (
-                viewMode === 'code' ? (
+                showInspector && jsonMetrics ? (
+                  <div className="p-4 sm:p-6 text-sm text-neutral-300 font-mono space-y-4">
+                    <div className="flex items-center gap-2 text-sky-400 font-semibold mb-2">
+                      <Layers className="w-4 h-4" />
+                      <span>Data Inspector Insights</span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="bg-neutral-900 p-3 rounded border border-neutral-800">
+                        <div className="text-neutral-500 text-[10px] uppercase mb-1">Total Keys</div>
+                        <div className="text-lg font-semibold">{jsonMetrics.totalKeys}</div>
+                      </div>
+                      <div className="bg-neutral-900 p-3 rounded border border-neutral-800">
+                        <div className="text-neutral-500 text-[10px] uppercase mb-1">Max Nesting Depth</div>
+                        <div className="text-lg font-semibold">{jsonMetrics.maxDepth}</div>
+                      </div>
+                      <div className="bg-neutral-900 p-3 rounded border border-neutral-800">
+                        <div className="text-neutral-500 text-[10px] uppercase mb-1">Null / Empty Values</div>
+                        <div className="text-lg font-semibold">{jsonMetrics.nullCount + jsonMetrics.emptyCount}</div>
+                      </div>
+                      <div className="bg-neutral-900 p-3 rounded border border-neutral-800">
+                        <div className="text-neutral-500 text-[10px] uppercase mb-1">Potential Duplicate Keys</div>
+                        <div className={`text-lg font-semibold ${jsonMetrics.potentialDuplicates > 0 ? 'text-amber-400' : ''}`}>
+                          {jsonMetrics.potentialDuplicates}
+                        </div>
+                      </div>
+                    </div>
+                    {jsonMetrics.potentialDuplicates > 0 && (
+                      <div className="mt-4 p-3 bg-amber-950/30 border border-amber-900/50 rounded text-amber-300/90 text-xs">
+                        ⚠️ Potential duplicate keys detected. Note that standard JSON parsers will overwrite duplicate keys, keeping only the last occurrence.
+                      </div>
+                    )}
+                  </div>
+                ) : viewMode === 'code' ? (
                   renderHighlightedCode(getActiveOutputText(), outputMode)
                 ) : (
                   <JsonTreeView data={parsedObject} initialExpandedDepth={2} />
                 )
               ) : (
-                <div className="p-6 text-red-400 font-mono text-xs space-y-3">
+                <div className="p-6 text-red-400 font-mono text-xs space-y-4">
                   <div className="flex items-center gap-2 text-red-400 font-semibold text-sm">
                     <AlertCircle className="w-4 h-4 shrink-0" />
                     <span>Invalid JSON Syntax</span>
@@ -734,6 +865,45 @@ export const JsonFormatterTool: React.FC = () => {
                     <p className="text-neutral-400 text-[11px]">
                       📍 Syntax error identified around Line {errorLine}. Please review your brackets, trailing commas, or quotes.
                     </p>
+                  )}
+                  
+                  {!autoFixProposed ? (
+                    <div className="pt-4 border-t border-red-900/30">
+                      <button
+                        onClick={handleAutoFixPreview}
+                        className="px-3 py-1.5 bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 border border-sky-500/30 rounded transition-colors flex items-center gap-2"
+                      >
+                        <Zap className="w-3.5 h-3.5" />
+                        <span>Auto-Fix Syntax</span>
+                      </button>
+                      <p className="mt-2 text-[10px] text-neutral-500">Detects and fixes trailing commas, missing quotes, and comments.</p>
+                    </div>
+                  ) : (
+                    <div className="pt-4 border-t border-red-900/30 space-y-3">
+                      <div className="flex items-center gap-2 text-sky-400 font-semibold text-sm">
+                        <Zap className="w-4 h-4" />
+                        <span>Proposed Fixes</span>
+                      </div>
+                      <ul className="list-disc pl-4 space-y-1 text-sky-200/80 text-[11px]">
+                        {autoFixProposed.changes.map((change, idx) => (
+                          <li key={idx}>{change}</li>
+                        ))}
+                      </ul>
+                      <div className="flex gap-2 pt-2">
+                        <button
+                          onClick={applyAutoFix}
+                          className="px-3 py-1.5 bg-sky-500 hover:bg-sky-400 text-white rounded font-medium transition-colors"
+                        >
+                          Accept Fix
+                        </button>
+                        <button
+                          onClick={discardAutoFix}
+                          className="px-3 py-1.5 bg-neutral-800 hover:bg-neutral-700 text-neutral-300 rounded transition-colors"
+                        >
+                          Discard
+                        </button>
+                      </div>
+                    </div>
                   )}
                 </div>
               )}
