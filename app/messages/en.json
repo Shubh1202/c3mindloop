@@ -805,6 +805,24 @@
         "q4": "Are my personal details sent to your servers?",
         "a4": "Nothing leaves your browser. The entire tool runs as client-side JavaScript-there's no backend, no database, and no analytics capturing form input. Your name, email, employment history, and GitHub handle stay inside your browser tab. If you close the page, the data is gone. Use the Save JSON button to download a local backup of your progress that you can reload anytime."
       }
+    },
+    "aiPromptBuilder": {
+      "pageTitle": "100% Private Client-Side AI Prompt Context Builder",
+      "pageBadge": "100% Client-Side • Local Browser Processing",
+      "breadcrumb": "AI Prompt Context Builder",
+      "breadcrumbParent": "Developer Tools",
+      "feat1Title": "Privacy-First Sanitization",
+      "feat1Desc": "No corporate code or credentials are ever sent to a server. Stripping of Bearer tokens, DB URIs, and API keys happens 100% locally.",
+      "feat2Title": "Optimized LLM Templates",
+      "feat2Desc": "Instantly wraps raw code or schemas into highly structured system prompts tailored for Claude, ChatGPT, or Cursor.",
+      "feat3Title": "Quick Actions Integrations",
+      "feat3Desc": "One-click copy, copy as clean Markdown block, or direct link integration to open prompts straight in ChatGPT or Claude.",
+      "faq": {
+        "q1": "How does the local sanitization engine work?",
+        "a1": "The sanitization engine uses native client-side regular expressions to parse and redact sensitive patterns like Bearer tokens, AWS keys, JWTs, IPv4/v6 addresses, database URIs, and API keys. The redaction process happens entirely in your browser memory before output generation.",
+        "q2": "Are there templates for other prompts?",
+        "a2": "Yes, we support structured presets for Debug Error, Architecture Design, Write Unit Tests, Refactor Code, and Schema to ORM, each with a pre-configured senior engineer prompt template."
+      }
     }
   }
 }

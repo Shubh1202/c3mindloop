@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Cpu, LayoutGrid, CloudLightning, FileCode, Layers, Zap, FlaskConical, ArrowUpRight, Terminal, Code2, ShieldCheck, Database } from 'lucide-react';
+import { Cpu, LayoutGrid, CloudLightning, FileCode, Layers, Zap, FlaskConical, ArrowUpRight, Terminal, Code2, ShieldCheck, Database, Sparkles } from 'lucide-react';
 import { useTranslation } from '../lib/i18n';
 import { PRODUCTS_LIST } from '../lib/constants';
 import { SEOHead } from '../components/layout/SEOHead';
@@ -31,6 +31,7 @@ export const ProductsPage: React.FC = () => {
     Code2,
     ShieldCheck,
     Database,
+    Sparkles,
   };
 
   const categories = ['all', 'extensions', 'json', 'encoders', 'auth', 'crypto', 'utilities', 'resume'];
@@ -100,6 +101,7 @@ export const ProductsPage: React.FC = () => {
                   'sql-to-json': '/tools/sql-to-json',
                   'hash-generator': '/tools/hash-generator',
                   'ats-resume-generator': '/tools/ats-resume-generator',
+                  'ai-prompt-builder': '/tools/ai-prompt-builder',
                 };
                 const toolHref = toolRoutes[prod.id];
 

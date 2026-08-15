@@ -78,13 +78,10 @@ export const Footer: React.FC<{ onReplayIntro?: () => void }> = ({ onReplayIntro
               {t('footer.colTools', 'TOOLS')}
             </h4>
             <ul className="space-y-2.5 text-sm text-theme-muted">
-              <li><Link to="/tools" className="hover:text-[#1D9BF0] transition-colors">{t('footer.toolsJson', 'JSON Utilities')}</Link></li>
-              <li><Link to="/tools" className="hover:text-[#1D9BF0] transition-colors">{t('footer.toolsCode', 'Code Formatters')}</Link></li>
-              <li><Link to="/tools" className="hover:text-[#1D9BF0] transition-colors">{t('footer.toolsJwt', 'JWT & Web Tools')}</Link></li>
-              <li className="flex items-center justify-between text-theme-muted/70">
-                <span>{t('footer.toolsPdf', 'PDF & File Utilities')}</span>
-                <span className="text-[10px] font-mono text-amber-500/90 bg-amber-500/10 border border-amber-500/20 px-1.5 py-0.5 rounded">{t('footer.toolsPdfSoon', 'Coming Soon')}</span>
-              </li>
+              <li><Link to="/tools/json-formatter" className="hover:text-[#1D9BF0] transition-colors">{t('footer.toolsJson', 'JSON Utilities')}</Link></li>
+              <li><Link to="/tools/ai-prompt-builder" className="hover:text-[#1D9BF0] transition-colors">AI Prompt Builder</Link></li>
+              <li><Link to="/tools/pdf-suite" className="hover:text-[#1D9BF0] transition-colors">PDF Suite</Link></li>
+              <li><Link to="/tools" className="hover:text-[#1D9BF0] transition-colors">All Developer Tools</Link></li>
             </ul>
           </div>
 

@@ -401,6 +401,22 @@ export const seoConfig = {
       type: 'website' as const,
     },
   },
+  aiPromptBuilder: {
+    title: 'AI Prompt Context Builder - Free Online Tool | 100% Private Client-Side | C\u00b3 MindLoop',
+    description: 'Sanitize raw technical context (code snippets, database schemas, JSON logs) locally in your browser and format them into optimized system prompts for LLMs (ChatGPT, Claude, Cursor).',
+    keywords: [
+      'ai prompt builder', 'prompt context builder', 'sanitize code for chatgpt', 'sanitize prompts for claude',
+      'privacy first prompt tool', 'redact api keys code', 'llm prompt sanitizer', 'code helper for cursor',
+      '100% Private', 'Client-Side Execution', 'No Server Upload', 'GDPR Compliant', 'Free Online Utility'
+    ],
+    canonical: `${BASE_URL}/tools/ai-prompt-builder`,
+    openGraph: {
+      title: 'AI Prompt Context Builder - Free & Private | C\u00b3 MindLoop',
+      description: 'Sanitize raw technical context locally in your browser and format into optimized prompts for LLMs.',
+      url: `${BASE_URL}/tools/ai-prompt-builder`,
+      type: 'website' as const,
+    },
+  },
 };
 
 // ── JSON-LD Schemas ──────────────────────────────────────────────────────────
@@ -700,6 +716,27 @@ export const pdfSuiteSchema = {
     'Client-side PDF page range splitting and extraction',
     '100% client-side execution — documents never upload to any server',
     'GDPR compliant and secure document sandbox',
+  ],
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+  publisher: { '@type': 'Organization', name: 'C³ MindLoop', url: BASE_URL },
+};
+
+export const aiPromptBuilderSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: 'AI Prompt Context Builder',
+  url: `${BASE_URL}/tools/ai-prompt-builder`,
+  applicationCategory: 'WebApplication',
+  operatingSystem: 'All',
+  browserRequirements: 'Requires JavaScript',
+  description:
+    'Free online AI Prompt Context Builder. Sanitize raw technical context locally in your browser and format them into optimized prompts for LLMs.',
+  featureList: [
+    'Local zero-knowledge regex-based sanitization',
+    'Automatic redaction of Bearer tokens, DB URIs, IPs, and API secrets',
+    'Dynamic LLM template injection for Debugging, Refactoring, Unit Tests, and Schemas',
+    'Quick action controls to copy prompts, copy as Markdown, and open directly in ChatGPT/Claude',
+    '100% client-side execution — your data never leaves your device',
   ],
   offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
   publisher: { '@type': 'Organization', name: 'C³ MindLoop', url: BASE_URL },

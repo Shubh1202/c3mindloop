@@ -92,6 +92,15 @@ const formatted = JSON.stringify(JSON.parse(input), null, 2);`
     category: 'utilities',
     icon: 'Layers',
     techStack: ['pdf-lib', 'pdfjs-dist', 'Canvas APIs', 'Local Processing']
+  },
+  {
+    id: 'ai-prompt-builder',
+    nameKey: 'AI Prompt Context Builder',
+    descKey: 'Sanitize raw technical context (code, logs, schemas) and generate optimized LLM system prompts locally.',
+    status: 'live',
+    category: 'utilities',
+    icon: 'Sparkles',
+    techStack: ['Privacy Sanitizer', 'Regex Engine', 'Local Templates']
   }
 ];
 

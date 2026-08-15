@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from '../../lib/router-compat';
 import { motion, AnimatePresence } from 'motion/react';
-import { Menu, X, Command, RotateCcw, Code2, ShieldCheck, Zap, Clock, Terminal, Regex, Database, Hash, FileText } from 'lucide-react';
+import { Menu, X, Command, RotateCcw, Code2, ShieldCheck, Zap, Clock, Terminal, Regex, Database, Hash, FileText, Sparkles } from 'lucide-react';
 import { useTranslation } from '../../lib/i18n';
 import { LanguageSelector } from '../ui/LanguageSelector';
 import { ThemeToggle } from '../ui/ThemeToggle';
@@ -43,6 +43,7 @@ export const Navbar: React.FC<{
     { name: 'Base64 Encoder', sub: 'Encode & Decode', path: '/tools/base64-encoder', icon: Zap },
     { name: 'SQL to JSON', sub: 'Convert & Export', path: '/tools/sql-to-json', icon: Database },
     { name: 'cURL Converter', sub: 'Convert to Code', path: '/tools/curl-converter', icon: Terminal },
+    { name: 'AI Prompt Builder', sub: 'Sanitize & Optimize', path: '/tools/ai-prompt-builder', icon: Sparkles, isNew: true },
   ];
 
   const col2Tools = [
