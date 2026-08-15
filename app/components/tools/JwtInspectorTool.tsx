@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useCallback, useEffect } from 'react';
-import { Copy, Check, Trash2, ShieldCheck, ShieldAlert, ShieldOff, Clock, Info, AlertCircle, Maximize2, Minimize2, Columns2, Rows2, Key, HelpCircle } from 'lucide-react';
+import { Copy, Check, Trash2, ShieldCheck, ShieldAlert, ShieldOff, Clock, Info, AlertCircle, Maximize2, Minimize2, Columns2, Rows2, Key, HelpCircle, ChevronUp, ChevronDown } from 'lucide-react';
 import { useTranslation } from '../../lib/i18n';
 
 const SAMPLE_JWT =
@@ -19,6 +19,11 @@ interface DecodedJWT {
 
 interface SecurityWarning {
   level: 'critical' | 'warning';
+  title: string;
+  message: string;
+}
+
+export interface SecurityFact {
   title: string;
   message: string;
 }
@@ -101,28 +106,34 @@ function getCountdownText(expiresAt: Date): { text: string; isExpired: boolean }
 
 export function scanJwtSecurity(header: any, payload: any, rawToken: string, secret?: string) {
   const warnings: string[] = [];
+  const facts: SecurityFact[] = [];
 
-  // 1. Alg None Vulnerability Check
+  // Facts
+  if (header?.alg) facts.push({ title: "Algorithm", message: `Token uses ${header.alg}` });
+  if (header?.typ) facts.push({ title: "Token Type", message: `Declared as ${header.typ}` });
+  if (payload?.iss) facts.push({ title: "Issuer", message: `Issuer (iss) is present` });
+  if (payload?.aud) facts.push({ title: "Audience", message: `Audience (aud) is present` });
+  if (payload?.iat) facts.push({ title: "Issued At", message: `Token has issuance timestamp` });
+
+  // Warnings
   if (!header?.alg || header.alg.toLowerCase() === 'none') {
-    warnings.push("CRITICAL: Token uses 'alg: none'. This allows signature bypass vulnerabilities!");
+    warnings.push("CRITICAL: alg:none is present. Verify that your server rejects unsigned tokens.");
   }
 
-  // 2. Missing Standard Claims
   if (!payload?.exp) {
-    warnings.push("WARNING: Token lacks an 'exp' (Expiration Time) claim. It will never expire.");
+    warnings.push("WARNING: Token lacks an 'exp' (Expiration Time) claim. It will never expire automatically.");
   }
 
-  // 3. Check for Weak/Default Key Indicators (if secret provided)
-  const commonWeakSecrets = ['secret', '123456', 'admin', 'password', 'jwt_secret', 'app_secret'];
-  if (secret && header?.alg && header.alg.startsWith('HS')) {
-    if (commonWeakSecrets.includes(secret.toLowerCase())) {
-      warnings.push("CRITICAL: Token uses a weak signature secret. Common keys are easily cracked by offline attacks.");
-    } else if (secret.length < 32) {
-      warnings.push("WARNING: HMAC key is too short. Signature secrets should be at least 32 characters (256 bits).");
-    }
+  if (payload?.nbf && (new Date(payload.nbf * 1000) > new Date())) {
+    warnings.push("WARNING: Token is not active yet (nbf claim is in the future).");
   }
 
-  return warnings;
+  const now = Math.floor(Date.now() / 1000);
+  if (payload?.exp && payload.exp < now) {
+    warnings.push("WARNING: Token is expired.");
+  }
+
+  return { warnings, facts };
 }
 
 export const JwtInspectorTool: React.FC = () => {
@@ -145,6 +156,10 @@ export const JwtInspectorTool: React.FC = () => {
 
   // Security Scanner Alerts
   const [warnings, setWarnings] = useState<SecurityWarning[]>([]);
+  const [facts, setFacts] = useState<SecurityFact[]>([]);
+  
+  // Auth Checklist
+  const [showChecklist, setShowChecklist] = useState(false);
 
   // Expiry Countdown Interval Hook
   useEffect(() => {
@@ -226,10 +241,11 @@ export const JwtInspectorTool: React.FC = () => {
   useEffect(() => {
     if (!decoded) {
       setWarnings([]);
+      setFacts([]);
       return;
     }
-    const scannerWarnings = scanJwtSecurity(decoded.header, decoded.payload, token, signatureSecret);
-    const list: SecurityWarning[] = scannerWarnings.map(msg => {
+    const scanner = scanJwtSecurity(decoded.header, decoded.payload, token, signatureSecret);
+    const list: SecurityWarning[] = scanner.warnings.map(msg => {
       const isCritical = msg.startsWith("CRITICAL");
       return {
         level: isCritical ? 'critical' : 'warning',
@@ -248,6 +264,7 @@ export const JwtInspectorTool: React.FC = () => {
     }
 
     setWarnings(list);
+    setFacts(scanner.facts);
   }, [decoded, signatureSecret, token]);
 
 
@@ -421,31 +438,85 @@ export const JwtInspectorTool: React.FC = () => {
             </div>
           )}
 
-          {/* Security Scanner Panel */}
+          {/* Facts vs Warnings Panel */}
           {decoded && (
-            <div className="p-3 bg-neutral-900/40 border border-neutral-800 rounded-lg space-y-2">
-              <div className="text-xs font-mono font-semibold text-neutral-300 flex items-center gap-1.5">
-                <ShieldCheck className="w-3.5 h-3.5 text-[#1D9BF0]" />
-                <span>JWT Security Scanner</span>
-              </div>
-              {warnings.length === 0 ? (
-                <div className="flex items-center gap-1.5 text-[11px] font-mono text-emerald-400">
-                  <ShieldCheck className="w-3.5 h-3.5" />
-                  <span>No vulnerabilities detected in headers or payloads.</span>
+            <div className="p-3 bg-neutral-900/40 border border-neutral-800 rounded-lg space-y-4">
+              <div>
+                <div className="text-xs font-mono font-semibold text-neutral-300 flex items-center gap-1.5 mb-2">
+                  <Info className="w-3.5 h-3.5 text-[#1D9BF0]" />
+                  <span>Token Facts</span>
                 </div>
-              ) : (
-                <div className="space-y-2 max-h-[160px] overflow-y-auto pr-1">
-                  {warnings.map((w, i) => (
-                    <div key={i} className={`p-2.5 rounded border flex items-start gap-2 text-[11px] font-mono ${
-                      w.level === 'critical' ? 'bg-red-950/20 border-red-900/40 text-red-300' : 'bg-amber-950/15 border-amber-900/30 text-amber-300'
-                    }`}>
-                      <AlertCircle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
-                      <div>
-                        <div className="font-semibold mb-0.5">{w.title}</div>
-                        <div className="text-neutral-400 leading-relaxed">{w.message}</div>
-                      </div>
+                <div className="grid grid-cols-2 gap-2 text-[10px] font-mono">
+                  {facts.map((f, i) => (
+                    <div key={i} className="p-1.5 bg-neutral-950 border border-neutral-800 rounded text-neutral-400">
+                      <span className="font-semibold text-neutral-300 block mb-0.5">{f.title}</span>
+                      {f.message}
                     </div>
                   ))}
+                </div>
+              </div>
+
+              <div>
+                <div className="text-xs font-mono font-semibold text-neutral-300 flex items-center gap-1.5 mb-2">
+                  <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
+                  <span>Security Warnings</span>
+                </div>
+                {warnings.length === 0 ? (
+                  <div className="flex items-center gap-1.5 text-[11px] font-mono text-emerald-400">
+                    <ShieldCheck className="w-3.5 h-3.5" />
+                    <span>No structural vulnerabilities detected.</span>
+                  </div>
+                ) : (
+                  <div className="space-y-2 max-h-[160px] overflow-y-auto pr-1">
+                    {warnings.map((w, i) => (
+                      <div key={i} className={`p-2.5 rounded border flex items-start gap-2 text-[11px] font-mono ${
+                        w.level === 'critical' ? 'bg-red-950/20 border-red-900/40 text-red-300' : 'bg-amber-950/15 border-amber-900/30 text-amber-300'
+                      }`}>
+                        <AlertCircle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
+                        <div>
+                          <div className="font-semibold mb-0.5">{w.title}</div>
+                          <div className="text-neutral-400 leading-relaxed">{w.message}</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Auth Failure Checklist */}
+          {decoded && (
+            <div className="p-3 bg-neutral-900/40 border border-neutral-800 rounded-lg space-y-3">
+              <div className="text-xs font-mono font-semibold text-neutral-300 flex items-center justify-between cursor-pointer" onClick={() => setShowChecklist(!showChecklist)}>
+                <div className="flex items-center gap-1.5">
+                  <HelpCircle className="w-3.5 h-3.5 text-[#1D9BF0]" />
+                  <span>Auth Failure Checklist (Possible causes)</span>
+                </div>
+                {showChecklist ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+              </div>
+              {showChecklist && (
+                <div className="space-y-2 text-[11px] font-mono">
+                  <div className="flex items-center justify-between border-b border-neutral-800 pb-1">
+                    <span className="text-neutral-400">Clock Skew (NTP out of sync)</span>
+                    <span className="text-amber-400">Not Checked</span>
+                  </div>
+                  <div className="flex items-center justify-between border-b border-neutral-800 pb-1">
+                    <span className="text-neutral-400">Issuer (iss) Mismatch</span>
+                    <span className={decoded.payload.iss ? 'text-emerald-400' : 'text-neutral-500'}>{decoded.payload.iss ? 'Checked (Present)' : 'N/A'}</span>
+                  </div>
+                  <div className="flex items-center justify-between border-b border-neutral-800 pb-1">
+                    <span className="text-neutral-400">Audience (aud) Mismatch</span>
+                    <span className={decoded.payload.aud ? 'text-emerald-400' : 'text-neutral-500'}>{decoded.payload.aud ? 'Checked (Present)' : 'N/A'}</span>
+                  </div>
+                  <div className="flex items-center justify-between border-b border-neutral-800 pb-1">
+                    <span className="text-neutral-400">Algorithm Mismatch</span>
+                    <span className="text-emerald-400">Checked ({decoded.header.alg || 'N/A'})</span>
+                  </div>
+                  <div className="flex items-center justify-between pt-1">
+                    <span className="text-neutral-400">Missing Expected Claims</span>
+                    <span className="text-amber-400">Not Checked</span>
+                  </div>
                 </div>
               )}
             </div>
@@ -548,6 +619,7 @@ export const JwtInspectorTool: React.FC = () => {
                 <>
                   <ShieldOff className="w-8 h-8 text-neutral-600" />
                   <p className="text-xs text-neutral-500 font-mono leading-relaxed">{t('tools.jwtInspector.signatureNote')}</p>
+                  <p className="text-[10px] text-amber-400 font-mono mt-1 font-semibold">Signature verification not performed.</p>
                 </>
               )}
               {decoded && token.split('.')[2] && (
