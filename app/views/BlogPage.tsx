@@ -1,25 +1,41 @@
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { Search, Clock, ArrowRight, Share2, Check } from 'lucide-react';
 import { useTranslation } from '../lib/i18n';
-import { BLOG_POSTS } from '../lib/constants';
+import { getPublishedGuides } from '../lib/constants';
 import { SEOHead } from '../components/layout/SEOHead';
 import { Button } from '../components/ui/Button';
 import { Modal } from '../components/ui/Modal';
 import { BlogPost } from '../types';
 import { CTASection } from '../components/sections/CTASection';
 
-export const BlogPage: React.FC = () => {
-  const { t } = useTranslation();
+export const BlogPage: React.FC<{ variant?: 'blog' | 'guides' }> = ({ variant = 'blog' }) => {
+  const { locale, t } = useTranslation();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [activeArticle, setActiveArticle] = useState<BlogPost | null>(null);
   const [copied, setCopied] = useState(false);
 
-  const categories = ['all', 'Engineering', 'AI & Agents', 'Developer Culture', 'TypeScript'];
+  const categories = ['all', 'engineering', 'developerTools', 'aiAgents', 'developerCulture', 'typeScript'];
+  const copy = (key: string, fallback: string) => t(`${variant}.${key}`, fallback);
 
-  const filteredPosts = BLOG_POSTS.filter((post) => {
+  const guides = getPublishedGuides(locale).map((guide) => ({
+    id: guide.id,
+    slug: guide.slug,
+    title: guide.title,
+    excerpt: guide.excerpt,
+    content: guide.content,
+    category: guide.category,
+    author: { name: guide.authorName || '', role: guide.authorRole || '', avatar: '' },
+    publishedAt: guide.publishedAt,
+    readTimeMinutes: guide.readTimeMinutes,
+    tags: guide.tags,
+  }));
+  const posts = variant === 'guides' ? guides : [];
+
+  const filteredPosts = posts.filter((post) => {
     const matchesSearch =
       post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       post.excerpt.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -39,11 +55,13 @@ export const BlogPage: React.FC = () => {
 
   return (
     <>
+      {variant === 'blog' && (
       <SEOHead
         title="Engineering Publication - C³ MindLoop"
         description="Deep-dive technical articles on distributed systems, AI agent design, React performance, and engineering craft by the C³ MindLoop team."
         canonical="/blog"
       />
+      )}
 
       <div className="pt-16 pb-20 relative z-10 bg-app">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
@@ -51,13 +69,13 @@ export const BlogPage: React.FC = () => {
           {/* Header */}
           <div className="text-center max-w-3xl mx-auto space-y-6">
             <span className="text-xs font-mono uppercase tracking-widest text-[#1D9BF0] font-semibold block">
-              {t('blog.kicker', 'Engineering Insights')}
+              {copy('kicker', 'Engineering Insights')}
             </span>
             <h1 className="text-h1 text-theme-main">
-              {t('blog.title', 'Developer Publication & Build Logs')}
+              {copy('title', 'Developer Publication & Build Logs')}
             </h1>
             <p className="text-body-large text-theme-muted max-w-2xl mx-auto">
-              {t('blog.subtitle', 'Deep-dives into distributed systems, AI agent design, React performance, and engineering craft.')}
+              {copy('subtitle', 'Deep-dives into distributed systems, AI agent design, React performance, and engineering craft.')}
             </p>
 
             {/* Search Input */}
@@ -67,7 +85,7 @@ export const BlogPage: React.FC = () => {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder={t('blog.searchPlaceholder', 'Search articles by title, tag, or keyword...')}
+                placeholder={copy('searchPlaceholder', 'Search articles by title, tag, or keyword...')}
                 className="w-full bg-surface border border-theme-subtle rounded-xl pl-12 pr-4 py-3 text-body-small text-theme-main placeholder:text-theme-muted focus:outline-none focus:border-[#1D9BF0]"
               />
             </div>
@@ -83,7 +101,7 @@ export const BlogPage: React.FC = () => {
                     : 'bg-surface border border-theme-subtle text-theme-muted hover:text-theme-main'
                     }`}
                 >
-                  {cat === 'all' ? t('blog.allCategories', 'All Categories') : cat}
+                  {copy(`categories.${cat}`, cat === 'all' ? 'All Categories' : cat)}
                 </button>
               ))}
             </div>
@@ -92,7 +110,7 @@ export const BlogPage: React.FC = () => {
           {/* Posts Grid */}
           {filteredPosts.length === 0 ? (
             <div className="text-center py-16 text-theme-muted font-mono text-xs">
-              {t('blog.noResults', 'No articles found matching your criteria.')}
+              {copy('noResults', 'No articles found matching your criteria.')}
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -100,15 +118,19 @@ export const BlogPage: React.FC = () => {
                 <div key={post.id} className="p-5 sm:p-8 rounded-xl bg-surface border border-theme-subtle flex flex-col justify-between space-y-6 group hover:border-[#1D9BF0]/40 transition-colors">
                   <div>
                     <div className="flex items-center justify-between mb-4 text-xs font-mono text-theme-muted">
-                      <span className="text-[#1D9BF0] font-semibold">{post.category}</span>
+                      <span className="text-[#1D9BF0] font-semibold">{copy(`categories.${post.category}`, post.category)}</span>
                       <span className="flex items-center gap-1">
                         <Clock className="w-3.5 h-3.5" />
-                        {post.readTimeMinutes} {t('blog.readTime', 'min read')}
+                        {post.readTimeMinutes} {copy('readTime', 'min read')}
                       </span>
                     </div>
 
                     <h2 className="text-h3 text-theme-main mb-3 group-hover:text-[#1D9BF0] transition-colors">
-                      {post.title}
+                      {variant === 'guides' ? (
+                        <Link href={`/guides/${post.slug}`} className="hover:underline">
+                          {post.title}
+                        </Link>
+                      ) : post.title}
                     </h2>
 
                     <p className="text-body-small text-theme-muted mb-6">
@@ -126,14 +148,10 @@ export const BlogPage: React.FC = () => {
 
                   <div className="pt-6 border-t border-theme-subtle flex items-center justify-between">
                     <div className="flex items-center gap-2.5">
-                      <img
-                        src={post.author.avatar}
-                        alt={post.author.name}
-                        referrerPolicy="no-referrer"
-                        className="w-8 h-8 rounded-full object-cover border border-theme-subtle"
-                      />
                       <div>
-                        <div className="text-xs font-semibold text-theme-main">{post.author.name}</div>
+                        {post.author.name && (
+                          <div className="text-xs font-semibold text-theme-main">{post.author.name}</div>
+                        )}
                         <div className="text-xs text-theme-muted font-mono">{post.publishedAt}</div>
                       </div>
                     </div>
@@ -144,7 +162,7 @@ export const BlogPage: React.FC = () => {
                       onClick={() => setActiveArticle(post)}
                       icon={<ArrowRight className="w-3.5 h-3.5" />}
                     >
-                      {t('blog.readArticle', 'Read Article')}
+                      {copy('readArticle', 'Read Article')}
                     </Button>
                   </div>
                 </div>
@@ -161,7 +179,7 @@ export const BlogPage: React.FC = () => {
         {activeArticle && (
           <div className="space-y-6">
             <div className="flex items-center justify-between text-xs font-mono text-theme-muted pb-4 border-b border-theme-subtle">
-              <span>{activeArticle.author.name} • {activeArticle.publishedAt}</span>
+              <span>{activeArticle.author.name ? `${activeArticle.author.name} • ${activeArticle.publishedAt}` : activeArticle.publishedAt}</span>
               <button
                 onClick={handleShare}
                 className="flex items-center gap-1 text-[#1D9BF0] hover:underline cursor-pointer"

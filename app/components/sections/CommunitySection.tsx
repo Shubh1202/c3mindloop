@@ -22,7 +22,7 @@ export const CommunitySection: React.FC = () => {
             {t('community.title', 'Where Engineers Connect & Share')}
           </h2>
           <p className="text-body-large text-theme-muted font-normal">
-            {t('community.subtitle', 'A developer-first community sharing honest engineering stories, code reviews, and open-source collaboration.')}
+            A developer-focused space for practical tools, ideas, and engineering discussions.
           </p>
         </div>
 
@@ -37,7 +37,7 @@ export const CommunitySection: React.FC = () => {
                 "Coding. Crashing. Crying."
               </h3>
               <p className="text-sm text-theme-muted font-normal leading-relaxed">
-                {t('community.discordDesc', 'Discussions, code reviews, architecture feedback, and open-source contributions.')}
+                Discussions, code reviews, and architecture feedback.
               </p>
             </div>
 
@@ -94,4 +94,3 @@ export const CommunitySection: React.FC = () => {
     </section>
   );
 };
-

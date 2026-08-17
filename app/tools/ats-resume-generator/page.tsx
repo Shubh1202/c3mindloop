@@ -13,7 +13,7 @@ const atsFaqPageSchema = {
       name: 'Is this ATS Resume Generator really free?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes, fully free — no account, no premium tier, no watermarks, no character limits. Everything runs locally in your browser. You fill in the form, see a live preview, and export to PDF directly from your browser\'s print dialog. There\'s no SaaS subscription hiding behind a free trial. The source code is open and the tool will stay free.',
+        text: 'Yes, fully free — no account, no premium tier, no watermarks, and no character limits. Everything runs locally in your browser. You fill in the form, see a live preview, and export to PDF directly from your browser\'s print dialog.',
       },
     },
     {

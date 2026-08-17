@@ -10,6 +10,9 @@
   },
   "navbar": {
     "home": "Inicio",
+    "tools": "Herramientas",
+    "guides": "Guías",
+    "projects": "Proyectos",
     "about": "Nosotros",
     "products": "Productos",
     "services": "Servicios",
@@ -157,6 +160,16 @@
     "author": "Por",
     "readArticle": "Leer Artículo Completo",
     "noResults": "No se encontraron artículos."
+  },
+  "guides": {
+    "kicker": "Guías prácticas",
+    "title": "Guías de ingeniería",
+    "subtitle": "Notas y referencias prácticas para flujos de trabajo de desarrollo.",
+    "searchPlaceholder": "Buscar guías por título, etiqueta o palabra clave...",
+    "categories": { "all": "Todas las categorías", "engineering": "Ingeniería", "developerTools": "Herramientas para desarrolladores", "aiAgents": "IA y agentes", "developerCulture": "Cultura de desarrollo", "typeScript": "TypeScript" },
+    "readTime": "min de lectura",
+    "readArticle": "Leer guía",
+    "noResults": "Aún no hay guías publicadas."
   },
   "about": {
     "kicker": "Nuestra Historia",

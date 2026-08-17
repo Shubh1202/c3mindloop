@@ -23,24 +23,24 @@ const projectsFaqPageSchema = {
     },
     {
       '@type': 'Question',
-      name: 'Can I list my open-source project on C³ MindLoop?',
+      name: 'What projects and tools are available on C³ MindLoop?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Absolutely! We showcase high-impact, privacy-first developer tools and open-source repositories built by our active developer community.',
+        text: 'C³ MindLoop provides practical, privacy-first developer tools and resources.',
       },
     },
   ],
 };
 
 export const metadata: Metadata = {
-  title: 'Open Source Projects & Code Repositories - C³ MindLoop',
-  description: 'Explore open-source developer projects, production post-mortems, and live engineering workshops at C³ MindLoop. Share your crash stories and build smarter together.',
+  title: 'Developer Projects & Tools - C³ MindLoop',
+  description: 'Explore practical developer tools, project updates, and resources from C³ MindLoop.',
   alternates: {
     canonical: 'https://www.c3mindloop.com/projects',
   },
   openGraph: {
-    title: 'Open Source Projects & Code Repositories | C³ MindLoop',
-    description: 'Explore open-source developer projects, production post-mortems, and live engineering workshops at C³ MindLoop. Share your crash stories and build smarter together.',
+    title: 'Developer Projects & Tools | C³ MindLoop',
+    description: 'Explore practical developer tools, project updates, and resources from C³ MindLoop.',
     url: 'https://www.c3mindloop.com/projects',
   },
 };

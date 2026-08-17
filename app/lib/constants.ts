@@ -1,4 +1,4 @@
-import { Product, ServiceItem, BlogPost, CommunityCrashStory, RoadmapItem, Testimonial, CareerRole } from '../types';
+import { Product, ServiceItem, BlogPost, CommunityCrashStory, RoadmapItem, Testimonial, CareerRole, SupportedLocale } from '../types';
 
 export const PRODUCTS_LIST: Product[] = [
   {
@@ -149,7 +149,7 @@ export const SERVICES_LIST: ServiceItem[] = [
   }
 ];
 
-export const BLOG_POSTS: BlogPost[] = [
+const UNPUBLISHED_GUIDES: BlogPost[] = [
   {
     id: 'b1',
     slug: 'building-resilient-distributed-systems-typescript',
@@ -224,6 +224,125 @@ const tryAcquireLock = async (redis: Redis, lockKey: string, ttlSeconds: number)
     tags: ['Next.js', 'React 19', 'Tailwind', 'Performance']
   }
 ];
+
+// Guides are published only after their authorship and factual claims are verified.
+export const BLOG_POSTS: BlogPost[] = [];
+
+export type GuideCategory = 'engineering' | 'developerTools' | 'aiAgents' | 'developerCulture' | 'typeScript';
+
+export interface LocalizedGuideContent {
+  title: string;
+  excerpt: string;
+  content: string;
+  metaDescription: string;
+  category: GuideCategory;
+  tags: string[];
+  toolPath: string;
+  authorName?: string;
+  authorRole?: string;
+  publishedAt: string;
+  updatedAt?: string;
+  readTimeMinutes: number;
+}
+
+export interface LocalizedGuide {
+  id: string;
+  slug: string;
+  isPublished: boolean;
+  translations: Partial<Record<SupportedLocale, LocalizedGuideContent>>;
+}
+
+// These guides describe only controls and behavior implemented in the linked tools.
+// Legacy articles above remain unpublished until their authorship and claims are verified.
+export const GUIDES: LocalizedGuide[] = [
+  {
+    id: 'guide-json-formatter',
+    slug: 'format-and-validate-json-in-the-browser',
+    isPublished: true,
+    translations: {
+      en: {
+        title: 'How to Format and Validate JSON in the Browser',
+        excerpt: 'Use the JSON Formatter to format valid JSON, check parsing errors, minify output, and copy or download the result.',
+        metaDescription: 'A practical guide to formatting, validating, minifying, copying, and downloading JSON with the C³ MindLoop JSON Formatter.',
+        content: `Open the JSON Formatter and paste a JSON value into the input panel. Select an indentation option, then use Format to parse the input with the browser's JSON parser and display formatted output. If the input is not valid JSON, the tool shows a validation error instead of producing formatted output.
+
+Use Minify when you need the same valid JSON without extra whitespace. The tool also provides copy and download controls for the current output, plus a file picker for loading JSON from a local file. These operations are implemented in the browser: formatting and minifying use JSON.parse and JSON.stringify, and file loading uses the browser FileReader API.
+
+Keep in mind that JSON requires double-quoted property names and string values. If the source is JavaScript object syntax, comments, or otherwise invalid JSON, correct it before formatting.`,
+        category: 'engineering',
+        tags: ['JSON', 'Validation', 'Formatting'],
+        toolPath: '/tools/json-formatter',
+        publishedAt: '2026-08-17',
+        updatedAt: '2026-08-17',
+        readTimeMinutes: 3,
+      },
+    },
+  },
+  {
+    id: 'guide-regex-tester',
+    slug: 'test-regular-expressions-in-the-browser',
+    isPublished: true,
+    translations: {
+      en: {
+        title: 'How to Test Regular Expressions in the Browser',
+        excerpt: 'Use the Regex Tester to try a pattern against sample text, change flags, inspect matches and capture groups, and copy generated code.',
+        metaDescription: 'Learn how to test regular expressions, adjust flags, inspect matches, and copy generated snippets with the C³ MindLoop Regex Tester.',
+        content: `Open the Regex Tester, enter a pattern, and add the text you want to test. The tool evaluates the pattern with the browser's native RegExp implementation and reports syntax errors when the pattern cannot be compiled.
+
+Use the flag controls to change how the expression runs. The tool supports the g, i, m, s, u, and y flags, and includes preset patterns for common inputs such as email addresses, URLs, IP addresses, phone numbers, and passwords. The match panel shows the matched text, capture groups, named groups when present, and match positions when the browser supports match indices.
+
+When the pattern is ready, copy the expression or switch the code output between JavaScript, Python, Go, and PHP snippets. Generated snippets are starting points: test them in the target runtime before relying on them in an application.`,
+        category: 'developerTools',
+        tags: ['Regex', 'JavaScript', 'Testing'],
+        toolPath: '/tools/regex-tester',
+        publishedAt: '2026-08-17',
+        updatedAt: '2026-08-17',
+        readTimeMinutes: 4,
+      },
+    },
+  },
+  {
+    id: 'guide-cron-visualizer',
+    slug: 'check-cron-expressions-before-scheduling',
+    isPublished: true,
+    translations: {
+      en: {
+        title: 'How to Check a Cron Expression Before You Schedule It',
+        excerpt: 'Use the Cron Visualizer to parse Standard or Quartz cron input, build an expression, and review the next scheduled runs.',
+        metaDescription: 'Learn how to parse, build, and review Standard or Quartz cron expressions with the C³ MindLoop Cron Visualizer.',
+        content: `Open the Cron Visualizer and choose the expression style you need: Standard uses five fields, while Quartz uses six fields. Paste an expression into the input tab or use the builder to choose field values. The tool parses the expression and shows a plain-language description when it can interpret the input.
+
+Review the next five calculated runs before using an expression in a scheduler. The visualizer displays each result in local time and UTC, which helps catch timezone assumptions during review. You can also copy the current expression from the tool.
+
+The visualizer is a checking aid, not a replacement for the scheduler that will run your job. Confirm that the target system accepts the selected Standard or Quartz syntax and uses the timezone you expect.`,
+        category: 'developerTools',
+        tags: ['Cron', 'Scheduling', 'Debugging'],
+        toolPath: '/tools/cron-visualizer',
+        publishedAt: '2026-08-17',
+        updatedAt: '2026-08-17',
+        readTimeMinutes: 3,
+      },
+    },
+  },
+];
+
+export type PublishedGuide = LocalizedGuideContent & {
+  id: string;
+  slug: string;
+  usesEnglishFallback: boolean;
+};
+
+export function getPublishedGuides(locale: SupportedLocale): PublishedGuide[] {
+  return GUIDES.flatMap((guide) => {
+    if (!guide.isPublished) return [];
+    const content = guide.translations[locale] ?? guide.translations.en;
+    return content ? [{ ...content, id: guide.id, slug: guide.slug, usesEnglishFallback: !guide.translations[locale] }] : [];
+  });
+}
+
+export function getPublishedEnglishGuide(slug: string): PublishedGuide | undefined {
+  return getPublishedGuides('en').find((guide) => guide.slug === slug);
+}
 
 export const CRASH_STORIES: CommunityCrashStory[] = [
   {

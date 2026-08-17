@@ -9,6 +9,9 @@
     "description": "開発者教育、AI、SaaSプロダクト、自動化、オープンソースの未来のエコシステム。"
   },
   "navbar": {
+    "tools": "ツール",
+    "guides": "ガイド",
+    "projects": "プロジェクト",
     "home": "ホーム",
     "about": "ブランドについて",
     "products": "プロダクト",
@@ -157,6 +160,16 @@
     "author": "著者:",
     "readArticle": "記事全文を読む",
     "noResults": "一致する記事が見つかりませんでした。"
+  },
+  "guides": {
+    "kicker": "実践ガイド",
+    "title": "エンジニアリングガイド",
+    "subtitle": "開発ワークフローのための実用的なノートとリファレンス。",
+    "searchPlaceholder": "タイトル、タグ、キーワードでガイドを検索...",
+    "categories": { "all": "すべてのカテゴリ", "engineering": "エンジニアリング", "developerTools": "開発者ツール", "aiAgents": "AI とエージェント", "developerCulture": "開発者文化", "typeScript": "TypeScript" },
+    "readTime": "分で読める",
+    "readArticle": "ガイドを読む",
+    "noResults": "公開済みのガイドはまだありません。"
   },
   "about": {
     "kicker": "私たちのストーリー",

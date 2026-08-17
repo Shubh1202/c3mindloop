@@ -1,6 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
 import type { SupportedLocale } from '../types';
 
 import en from '../messages/en.json';
@@ -15,6 +16,11 @@ const translations: Record<SupportedLocale, Record<string, any>> = {
   ja
 };
 
+const localeFromPathname = (pathname: string | null): SupportedLocale | undefined => {
+  const match = pathname?.match(/^\/(es|de|ja)(?:\/|$)/);
+  return match?.[1] as SupportedLocale | undefined;
+};
+
 interface I18nContextType {
   locale: SupportedLocale;
   setLocale: (locale: SupportedLocale) => void;
@@ -24,27 +30,36 @@ interface I18nContextType {
 const I18nContext = createContext<I18nContextType | undefined>(undefined);
 
 export const I18nProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [locale, setLocaleState] = useState<SupportedLocale>('en');
+  const pathname = usePathname();
+  const router = useRouter();
+  const routeLocale = localeFromPathname(pathname);
+  const [locale, setLocaleState] = useState<SupportedLocale>(() => routeLocale || 'en');
+  const activeLocale = routeLocale || locale;
 
   useEffect(() => {
+    if (routeLocale) return;
+
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('cmindloop_locale') as SupportedLocale;
       if (saved && translations[saved]) {
         setLocaleState(saved);
       }
     }
-  }, []);
+  }, [routeLocale]);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      localStorage.setItem('cmindloop_locale', locale);
-      document.documentElement.lang = locale;
+      localStorage.setItem('cmindloop_locale', activeLocale);
+      document.documentElement.lang = activeLocale;
     }
-  }, [locale]);
+  }, [activeLocale]);
 
   const setLocale = (newLocale: SupportedLocale) => {
     if (translations[newLocale]) {
       setLocaleState(newLocale);
+      if (pathname === '/guides' || /^\/(es|de|ja)\/guides$/.test(pathname || '')) {
+        router.push(newLocale === 'en' ? '/guides' : `/${newLocale}/guides`);
+      }
     }
   };
 
@@ -52,7 +67,7 @@ export const I18nProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const keys = keyPath.split('.');
     
     // First try active locale
-    let current: any = translations[locale];
+    let current: any = translations[activeLocale];
     for (const k of keys) {
       if (current && typeof current === 'object' && k in current) {
         current = current[k];
@@ -85,7 +100,7 @@ export const I18nProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <I18nContext.Provider value={{ locale, setLocale, t }}>
+    <I18nContext.Provider value={{ locale: activeLocale, setLocale, t }}>
       {children}
     </I18nContext.Provider>
   );

@@ -39,7 +39,6 @@ const orgSchema = {
   url: 'https://www.c3mindloop.com',
   logo: 'https://www.c3mindloop.com/icon.png',
   sameAs: [
-    'https://github.com/Shubh1202/c3mindloop',
   ],
 };
 
@@ -49,7 +48,7 @@ export const metadata: Metadata = {
     'Learn about C³ MindLoop, a modern privacy-first developer utility suite. Engineered for instant, 100% client-side data parsing, formatting, and cryptographic operations with zero server network latency.',
   keywords: [
     'about C³ MindLoop', 'about CCube', 'ccube.dev about', 'c3mindloop mission',
-    'privacy first developer tools', 'open source dev tools',
+    'privacy first developer tools', 'browser-based developer tools',
   ],
   alternates: { canonical: 'https://www.c3mindloop.com/about' },
   openGraph: {

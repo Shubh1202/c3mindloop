@@ -9,8 +9,8 @@ export interface SEOProps {
 }
 
 export const defaultSEO = {
-  title: 'C³ MindLoop - The Ecosystem for Developers, AI & SaaS',
-  description: 'MindLoop represents the continuous loop of learning, problem-solving, innovation and building. The future ecosystem for Developer Education, AI, SaaS Products, Automation, and Open Source.',
+  title: 'C³ MindLoop',
+  description: 'Free browser-based developer tools that process data locally.',
   url: 'https://www.c3mindloop.com',
   ogImage: '/logo.svg',
   siteName: 'C³ MindLoop'
@@ -24,13 +24,10 @@ export function generateOrganizationSchema() {
     url: 'https://www.c3mindloop.com',
     logo: '/logo.svg',
     slogan: 'Coding. Crashing. Crying.',
-    description: 'The ecosystem for Developer Education, AI, SaaS Products, Automation & Open Source.',
+    description: 'Free browser-based developer tools that process data locally.',
     foundingDate: '2025',
     sameAs: [
-      'https://github.com/cmindloop',
-      'https://twitter.com/cmindloop',
-      'https://youtube.com/@cmindloop',
-      'https://discord.gg/cmindloop'
+      'https://twitter.com/c3mindloop'
     ]
   };
 }

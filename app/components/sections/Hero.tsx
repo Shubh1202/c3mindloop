@@ -209,7 +209,7 @@ export const Hero: React.FC = () => {
               transition={{ duration: 0.4, delay: 0.15 }}
               className="text-body-large text-theme-muted font-normal max-w-xl leading-relaxed"
             >
-              {t('hero.description', 'Free, open-source, client-side browser utilities built for daily developer workflows. No tracking, zero server retention - 100% local execution.')}
+              Free, client-side browser utilities built for daily developer workflows. No tracking, zero server retention - 100% local execution.
             </motion.p>
 
             <motion.div

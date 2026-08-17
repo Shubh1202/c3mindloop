@@ -190,7 +190,7 @@ export const ContactPage: React.FC = () => {
                     <div>
                       <span className="text-xs font-mono uppercase font-bold text-theme-muted block">Community Channels</span>
                       <p className="text-body-small text-theme-muted">
-                        Join our <a href="https://github.com/c3mindloop" target="_blank" rel="noopener noreferrer" className="text-[#1D9BF0] hover:underline">developer channels</a> for async discussions, code reviews, and technical feedback.
+                        Contact us for technical questions and feedback.
                       </p>
                     </div>
                   </div>

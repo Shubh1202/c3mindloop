@@ -68,8 +68,8 @@ export const CommunityPage: React.FC = () => {
   return (
     <>
       <SEOHead
-        title="Community & Open Source Projects - C³ MindLoop"
-        description="Explore open-source developer projects, production post-mortems, and live engineering workshops at C³ MindLoop. Share your crash stories and build smarter together."
+        title="Developer Tools & Resources - C³ MindLoop"
+        description="Discover practical developer tools, resources, and ideas from C³ MindLoop."
         canonical="/community"
       />
 
@@ -88,7 +88,7 @@ export const CommunityPage: React.FC = () => {
               {t('community.quoteSub', 'And then, suddenly... compilation succeeds. Welcome home.')}
             </p>
             <p className="text-body-large text-theme-muted max-w-2xl mx-auto">
-              {t('community.subtitle', 'Join 120,000+ developers sharing real stories, debugging late at night, and building open-source together.')}
+              Discover practical developer tools, resources, and ideas from C³ MindLoop.
             </p>
           </div>
 
@@ -97,16 +97,16 @@ export const CommunityPage: React.FC = () => {
             <div className="space-y-6">
               <div className="flex items-center gap-3">
                 <div className="p-2.5 rounded-md bg-[#1D9BF0]/10 text-[#1D9BF0]">
-                  <MessageSquare className="w-5 h-5" />
+                  <Github className="w-5 h-5" />
                 </div>
-                <h2 className="text-h2 text-theme-main">{t('community.discordTitle', 'Official Discord Hub')}</h2>
+                <h2 className="text-h2 text-theme-main">Developer Tools</h2>
               </div>
               <p className="text-body text-theme-muted leading-relaxed">
-                {t('community.discordDesc', '24/7 active voice rooms, code review channels, bug support, and async meme sharing.')}
+                Browse practical browser-based utilities for common developer workflows.
               </p>
-              <a href="https://discord.gg" target="_blank" rel="noreferrer" className="inline-block">
-                <Button size="md" variant="primary" icon={<MessageSquare className="w-4 h-4" />}>
-                  {t('community.joinBtn', 'Join Discord Server')}
+              <a href="/tools" className="inline-block">
+                <Button size="md" variant="primary" icon={<Github className="w-4 h-4" />}>
+                  Browse Tools
                 </Button>
               </a>
             </div>
@@ -136,7 +136,7 @@ export const CommunityPage: React.FC = () => {
           <div className="space-y-6">
             <div className="flex items-center justify-between border-b border-theme-subtle pb-3">
               <h2 className="text-h2 text-theme-main">Featured Developer Projects</h2>
-              <span className="text-xs font-mono text-theme-muted uppercase tracking-wider">Open Source & Extensions</span>
+              <span className="text-xs font-mono text-theme-muted uppercase tracking-wider">Tools & Extensions</span>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -200,15 +200,6 @@ export const CommunityPage: React.FC = () => {
                   >
                     <span>Try Tool</span>
                   </a>
-                  <a
-                    href="https://github.com/Shubh1202/c3mindloop"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-300 border border-neutral-700 font-mono text-[10px] font-bold uppercase transition-all"
-                  >
-                    <Github className="w-3.5 h-3.5" />
-                    <span>GitHub</span>
-                  </a>
                 </div>
               </div>
 
@@ -235,15 +226,6 @@ export const CommunityPage: React.FC = () => {
                   >
                     <span>Try Tool</span>
                   </a>
-                  <a
-                    href="https://github.com/Shubh1202/c3mindloop"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-300 border border-neutral-700 font-mono text-[10px] font-bold uppercase transition-all"
-                  >
-                    <Github className="w-3.5 h-3.5" />
-                    <span>GitHub</span>
-                  </a>
                 </div>
               </div>
             </div>
@@ -265,15 +247,6 @@ export const CommunityPage: React.FC = () => {
                   <div className="md:col-span-9 space-y-4">
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                       <h3 className="text-h3 text-theme-main">{story.title}</h3>
-                      <a
-                        href="https://github.com/Shubh1202/c3mindloop"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded bg-neutral-900 hover:bg-neutral-800 text-neutral-400 border border-neutral-800 text-[10px] font-mono transition-all cursor-pointer w-fit"
-                      >
-                        <Github className="w-3 h-3" />
-                        <span>View Source on GitHub</span>
-                      </a>
                     </div>
                     <p className="text-body text-theme-muted leading-relaxed">{story.story}</p>
 
@@ -362,7 +335,7 @@ export const CommunityPage: React.FC = () => {
                 <p className="text-xs text-theme-muted leading-relaxed">{t('community.faq.a2')}</p>
               </div>
               <div className="p-5 bg-neutral-900/50 border border-theme-subtle rounded-xl space-y-2">
-                <h3 className="text-sm font-semibold text-[#1D9BF0]">{t('community.faq.q3', 'Can I list my open-source project on C³ MindLoop?')}</h3>
+                <h3 className="text-sm font-semibold text-[#1D9BF0]">What resources are available on C³ MindLoop?</h3>
                 <p className="text-xs text-theme-muted leading-relaxed">{t('community.faq.a3')}</p>
               </div>
             </div>

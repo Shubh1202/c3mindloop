@@ -3,7 +3,7 @@ import { LegalPage } from '@/app/views/LegalPage';
 
 export const metadata: Metadata = {
   title: 'Terms of Service - C³ MindLoop',
-  description: 'Terms of service and usage guidelines for C³ MindLoop developer tools, APIs, and open-source platforms.',
+  description: 'Terms of service and usage guidelines for C³ MindLoop developer tools and services.',
   alternates: {
     canonical: 'https://c3mindloop.dev/terms',
   },

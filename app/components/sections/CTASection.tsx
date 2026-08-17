@@ -51,7 +51,7 @@ export const CTASection: React.FC = () => {
 
           <div className="pt-4 flex flex-wrap items-center justify-start sm:justify-center gap-6 text-xs font-mono text-theme-muted">
             <Link to="/projects" className="inline-flex items-center gap-1.5 text-[#1D9BF0] hover:underline">
-              <span>{t('cta.ctaLogs', 'View Open Source Logs')}</span>
+              <span>View Project Updates</span>
               <ArrowRight className="w-3 h-3" />
             </Link>
             <span>•</span>
@@ -64,5 +64,4 @@ export const CTASection: React.FC = () => {
     </section>
   );
 };
-
 

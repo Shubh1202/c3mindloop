@@ -10,6 +10,9 @@
   },
   "navbar": {
     "home": "Startseite",
+    "tools": "Werkzeuge",
+    "guides": "Leitfäden",
+    "projects": "Projekte",
     "about": "Über uns",
     "products": "Produkte",
     "services": "Dienstleistungen",
@@ -157,6 +160,16 @@
     "author": "Von",
     "readArticle": "Vollständigen Artikel lesen",
     "noResults": "Keine Artikel gefunden."
+  },
+  "guides": {
+    "kicker": "Praktische Leitfäden",
+    "title": "Engineering-Leitfäden",
+    "subtitle": "Praktische Notizen und Referenzen für Entwickler-Workflows.",
+    "searchPlaceholder": "Leitfäden nach Titel, Tag oder Stichwort suchen...",
+    "categories": { "all": "Alle Kategorien", "engineering": "Engineering", "developerTools": "Entwicklerwerkzeuge", "aiAgents": "KI und Agenten", "developerCulture": "Entwicklerkultur", "typeScript": "TypeScript" },
+    "readTime": "Min. Lesezeit",
+    "readArticle": "Leitfaden lesen",
+    "noResults": "Es sind noch keine Leitfäden veröffentlicht."
   },
   "about": {
     "kicker": "Unsere Geschichte",

@@ -15,19 +15,19 @@ export const FAQSection: React.FC = () => {
     },
     {
       q: t('faq.q2', 'What kind of tools does C³ MindLoop offer?'),
-      a: t('faq.a2', 'We offer developer tools, AI code assistance, system design guides, open-source packages, and custom engineering services.')
+      a: 'We offer browser-based developer tools and practical resources for common workflows.'
     },
     {
       q: t('faq.q3', 'How can I try MindLoop AI tools?'),
       a: t('faq.a3', 'You can try our browser AI playground directly on the homepage or test code snippets in our Products section.')
     },
     {
-      q: t('faq.q4', 'Are C³ MindLoop open-source projects free to use?'),
-      a: t('faq.a4', 'Yes! All our public repositories are open-source and free to use for personal and commercial projects.')
+      q: 'Are C³ MindLoop developer tools free to use?',
+      a: 'Yes. The browser-based tools are free to use without an account.'
     },
     {
       q: t('faq.q5', 'How can I get involved in the community?'),
-      a: t('faq.a5', 'You can join our developer channels, share crash stories, contribute to open-source projects, or follow our engineering blog.')
+      a: 'You can contact C³ MindLoop with feedback or questions about the available tools and resources.'
     }
   ];
 
@@ -66,4 +66,3 @@ export const FAQSection: React.FC = () => {
     </section>
   );
 };
-

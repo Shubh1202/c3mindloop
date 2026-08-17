@@ -5,7 +5,8 @@ import { Link, useLocation } from '../../lib/router-compat';
 import { motion, AnimatePresence } from 'motion/react';
 import { Menu, X, Command, RotateCcw, Code2, ShieldCheck, Zap, Clock, Terminal, Regex, Database, Hash, FileText, Sparkles } from 'lucide-react';
 import { useTranslation } from '../../lib/i18n';
-import { LanguageSelector } from '../ui/LanguageSelector';
+// Temporarily hidden while incomplete locale coverage is audited and repaired.
+// import { LanguageSelector } from '../ui/LanguageSelector';
 import { ThemeToggle } from '../ui/ThemeToggle';
 import { Button } from '../ui/Button';
 import { Logo } from '../ui/Logo';
@@ -237,7 +238,7 @@ export const Navbar: React.FC<{
 
           <ThemeToggle />
 
-          <LanguageSelector />
+          {/* <LanguageSelector /> */}
         </div>
 
         {/* Mobile & Tablet Controls */}
@@ -253,7 +254,7 @@ export const Navbar: React.FC<{
             </button>
           )}
           <ThemeToggle />
-          <LanguageSelector />
+          {/* <LanguageSelector /> */}
           <button
             type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -315,5 +316,4 @@ export const Navbar: React.FC<{
     </header>
   );
 };
-
 

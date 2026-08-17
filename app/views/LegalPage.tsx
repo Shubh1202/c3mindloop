@@ -36,7 +36,7 @@ export const LegalPage: React.FC = () => {
       <>
         <SEOHead
           title="Terms of Service - C³ MindLoop"
-          description="Terms of service and usage guidelines for C³ MindLoop developer tools and open-source platforms."
+          description="Terms of service and usage guidelines for C³ MindLoop developer tools and services."
           canonical={location.pathname}
         />
         <div className="pt-10 pb-16 bg-app text-theme-main relative z-10">

@@ -29,7 +29,7 @@ export interface BlogPost {
   title: string;
   excerpt: string;
   content: string;
-  category: 'Engineering' | 'Developer Culture' | 'Distributed Systems' | 'AI & Agents' | 'TypeScript' | 'SaaS Architecture' | 'Open Source';
+  category: string;
   author: {
     name: string;
     role: string;

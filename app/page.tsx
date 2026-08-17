@@ -43,10 +43,10 @@ const homepageFaqSchema = {
     },
     {
       '@type': 'Question',
-      name: 'Are C³ MindLoop open-source projects free to use?',
+      name: 'Are C³ MindLoop developer tools free to use?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes — all public repositories are open-source under the MIT license, meaning you can use, fork, modify, and distribute them for personal or commercial projects without restrictions. The browser tools are free with no paywalls or usage limits. The VS Code Office Editor extension is also free on the Visual Studio Marketplace with no premium tier. Browse the GitHub repository for source code, contribution guidelines, and open issues.',
+        text: 'Yes — the browser tools are free to use with no paywalls or usage limits. The Office Editor VS Code extension is also available through the Visual Studio Marketplace.',
       },
     },
     {
@@ -54,7 +54,7 @@ const homepageFaqSchema = {
       name: 'How can I get involved in the community?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'The most direct path is GitHub — open issues, submit pull requests, or explore the source code. The community page lists active discussion channels. If you have had a painful production incident worth sharing, crash story submissions are welcome: real debugging postmortems, not polished case studies. Engineering guides on the site come from actual development work. Reach out through the contact page if you have something worth writing up.',
+        text: 'You can reach out through the contact page with feedback or questions about C³ MindLoop tools and resources.',
       },
     },
   ],

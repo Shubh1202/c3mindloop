@@ -189,6 +189,16 @@
     "readArticle": "Read Full Article",
     "noResults": "No articles found matching your criteria."
   },
+  "guides": {
+    "kicker": "Practical Guides",
+    "title": "Engineering Guides",
+    "subtitle": "Practical notes and references for developer workflows.",
+    "searchPlaceholder": "Search guides by title, tag, or keyword...",
+    "categories": { "all": "All Categories", "engineering": "Engineering", "developerTools": "Developer Tools", "aiAgents": "AI & Agents", "developerCulture": "Developer Culture", "typeScript": "TypeScript" },
+    "readTime": "min read",
+    "readArticle": "Read Guide",
+    "noResults": "No published guides are available yet."
+  },
   "about": {
     "kicker": "Engineered for Privacy",
     "title": "Engineered for Privacy. Built for Developers.",

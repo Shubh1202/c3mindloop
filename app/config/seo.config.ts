@@ -21,7 +21,7 @@ export const seoConfig = {
       'no backend dev tools', 'zero tracking developer tools',
       // Tool categories
       'json formatter', 'jwt decoder', 'base64 encoder', 'developer utility platform',
-      'open source developer tools', 'VS Code extensions',
+      'developer utilities', 'VS Code extensions',
       'json viewer', 
 
       // PDF
@@ -38,7 +38,7 @@ export const seoConfig = {
   },
 
   home: {
-    title: 'C³ MindLoop — Free, Private & Open Source Developer Utilities',
+    title: 'C³ MindLoop — Free & Private Developer Utilities',
     description:
       'Instant browser-based developer tools with zero server processing. Use 100% private JSON Formatter, Base64 Encoder, JWT Inspector, Hash Generator, and ATS Resume Builder.',
     keywords: [
@@ -48,14 +48,14 @@ export const seoConfig = {
     canonical: BASE_URL,
     openGraph: {
       type: 'website' as const,
-      title: 'C³ MindLoop — Free, Private & Open Source Developer Utilities',
+      title: 'C³ MindLoop — Free & Private Developer Utilities',
       description:
         'Instant browser-based developer tools with zero server processing. Use 100% private JSON Formatter, Base64 Encoder, JWT Inspector, Hash Generator, and ATS Resume Builder.',
       url: BASE_URL,
       images: [{ url: defaultOgImage, width: 1200, height: 630, alt: 'C³ MindLoop - Free Developer Tools' }],
     },
     twitter: {
-      title: 'C³ MindLoop — Free, Private & Open Source Developer Utilities',
+      title: 'C³ MindLoop — Free & Private Developer Utilities',
       description:
         'Instant browser-based developer tools with zero server processing. Use 100% private JSON Formatter, Base64 Encoder, JWT Inspector, Hash Generator, and ATS Resume Builder.',
       images: [defaultOgImage],
@@ -387,7 +387,7 @@ export const seoConfig = {
   },
 
   atsResume: {
-    title: 'ATS Resume Generator - Free Online Tool | 100% Private Client-Side | C\u00b3 MindLoop',
+    title: 'ATS Resume Generator - Free Online Tool | 100% Private Client-Side',
     description:
       'Free online ATS compliant resume generator for software developers. 100% Private & Client-Side with zero server upload. Build Workday & Lever parseable PDF resumes instantly.',
     keywords: [
@@ -414,7 +414,7 @@ export const seoConfig = {
     },
   },
   aiPromptBuilder: {
-    title: 'AI Prompt Context Builder - Free Online Tool | 100% Private Client-Side | C\u00b3 MindLoop',
+    title: 'AI Prompt Context Builder - Free Online Tool | 100% Private Client-Side',
     description: 'Sanitize raw technical context (code snippets, database schemas, JSON logs) locally in your browser and format them into optimized system prompts for LLMs (ChatGPT, Claude, Cursor).',
     keywords: [
       'ai prompt builder', 'prompt context builder', 'sanitize code for chatgpt', 'sanitize prompts for claude',
@@ -444,7 +444,6 @@ export const organizationSchema = {
   description: 'Free browser-based developer tools platform. 100% client-side, zero data tracking.',
   foundingDate: '2025',
   sameAs: [
-    'https://github.com/c3mindloop',
     'https://twitter.com/c3mindloop',
   ],
 };
@@ -753,4 +752,3 @@ export const aiPromptBuilderSchema = {
   offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
   publisher: { '@type': 'Organization', name: 'C³ MindLoop', url: BASE_URL },
 };
-
