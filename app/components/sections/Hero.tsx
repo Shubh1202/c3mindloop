@@ -229,6 +229,8 @@ export const Hero: React.FC = () => {
                 <span className="text-amber-300 font-semibold">{t('hero.equationA', 'Client Demand')}</span>
                 <span className="text-sky-300">+</span>
                 <span className="text-amber-300 font-semibold">{t('hero.equationB', 'Boss Pressure')}</span>
+                <span className="text-sky-300">+</span>
+                <span className="text-amber-300 font-semibold">{t('hero.equationC', 'Code Crash')}</span>
                 <span className="text-sky-300">=</span>
                 <span className="text-red-400 font-bold">{t('hero.equationResult', 'Programmers Have No Life')}</span>
               </div>
