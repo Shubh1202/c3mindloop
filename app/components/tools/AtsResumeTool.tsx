@@ -601,7 +601,7 @@ export const AtsResumeTool: React.FC = () => {
       }`}>
 
         {/* ── Edit Panel ─────────────────────────────────────────────────── */}
-        <div className={`border-r border-neutral-800 overflow-y-auto max-h-[80vh] ats-edit-panel ${
+        <div className={`border-r border-neutral-800 overflow-y-auto max-h-[120vh] ats-edit-panel ${
           activeTab === 'preview' ? 'hidden' : ''
         }`}>
           <div className="p-4 space-y-3">
