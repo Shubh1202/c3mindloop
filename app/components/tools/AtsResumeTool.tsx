@@ -561,7 +561,7 @@ export const AtsResumeTool: React.FC = () => {
             title="Save progress as resume-data.json"
             className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono bg-neutral-800 hover:bg-neutral-700 text-neutral-300 hover:text-neutral-100 border border-neutral-700 rounded transition-colors"
           >
-            <Download className="w-3.5 h-3.5" />
+            {/* <Download className="w-3.5 h-3.5" /> */}
             Save JSON
           </button>
 
@@ -571,10 +571,18 @@ export const AtsResumeTool: React.FC = () => {
             title="Restore progress from a saved resume-data.json"
             className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono bg-neutral-800 hover:bg-neutral-700 text-neutral-300 hover:text-neutral-100 border border-neutral-700 rounded transition-colors"
           >
-            <Upload className="w-3.5 h-3.5" />
+            {/* <Upload className="w-3.5 h-3.5" /> */}
             Load JSON
           </button>
 
+          <button
+            id="ats-print-btn"
+            onClick={handlePrint}
+            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono bg-[#1D9BF0]/10 hover:bg-[#1D9BF0]/20 text-[#1D9BF0] border border-[#1D9BF0]/30 rounded transition-colors"
+          >
+            {/* <Printer className="w-3.5 h-3.5" /> */}
+            Export PDF
+          </button>
           <button
             id="ats-fullscreen-btn"
             onClick={toggleFullscreen}
@@ -584,14 +592,6 @@ export const AtsResumeTool: React.FC = () => {
             {isFullscreen
               ? <Minimize2 className="w-3.5 h-3.5" />
               : <Maximize2 className="w-3.5 h-3.5" />}
-          </button>
-          <button
-            id="ats-print-btn"
-            onClick={handlePrint}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono bg-[#1D9BF0]/10 hover:bg-[#1D9BF0]/20 text-[#1D9BF0] border border-[#1D9BF0]/30 rounded transition-colors"
-          >
-            <Printer className="w-3.5 h-3.5" />
-            Export PDF
           </button>
         </div>
       </div>
@@ -797,7 +797,7 @@ export const AtsResumeTool: React.FC = () => {
         </div>
 
         {/* ── Preview Panel ───────────────────────────────────────────────── */}
-        <div className={`overflow-y-auto max-h-[80vh] bg-neutral-800 ats-preview-panel ${activeTab === 'edit' ? 'hidden' : ''}`}>
+        <div className={`overflow-y-auto max-h-[120vh] bg-neutral-800 ats-preview-panel ${activeTab === 'edit' ? 'hidden' : ''}`}>
           <div className="p-4">
             <div className="shadow-2xl rounded overflow-hidden">
               <ResumePreview data={data} />

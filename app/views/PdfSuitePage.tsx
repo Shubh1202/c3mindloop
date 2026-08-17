@@ -25,7 +25,7 @@ export const PdfSuitePage: React.FC = () => {
 
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-0.5">
             <h1 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight text-theme-main">
-              PDF Suite — Compress, Merge &amp; Split
+              PDF Suite - Compress, Merge &amp; Split
             </h1>
             <span className="text-[11px] font-mono text-neutral-400 bg-surface px-2.5 py-1 rounded border border-theme-subtle shrink-0">
               100% Client-Side · Local Browser Processing

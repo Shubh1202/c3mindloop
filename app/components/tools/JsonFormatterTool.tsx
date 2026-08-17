@@ -739,7 +739,7 @@ export const JsonFormatterTool: React.FC = () => {
           <div className={`flex flex-col bg-neutral-950 p-3 sm:p-4 space-y-2 ${isFullScreen ? 'overflow-y-auto' : ''}`}>
             <div className="flex items-center justify-between text-xs font-mono text-neutral-400 pb-1 border-b border-neutral-900">
               <div className="flex items-center gap-3 flex-wrap">
-                <span className="font-semibold text-neutral-300">Formatted Output</span>
+                {/* <span className="font-semibold text-neutral-300">Formatted Output</span> */}
                 {/* View Switcher */}
                 <div className="flex items-center bg-neutral-900 p-0.5 rounded border border-neutral-800 text-[11px]">
                   <button

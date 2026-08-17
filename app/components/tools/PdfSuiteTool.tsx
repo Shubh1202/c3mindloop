@@ -1022,7 +1022,7 @@ export const PdfSuiteTool: React.FC = () => {
               activeTab === 'merge' ? 'bg-[#1D9BF0] text-white shadow-sm' : 'bg-neutral-800 hover:bg-neutral-700 text-neutral-200'
             }`}
           >
-            <Merge className="w-3.5 h-3.5" />
+            {/* <Merge className="w-3.5 h-3.5" /> */}
             <span>Merge PDFs</span>
           </button>
 
@@ -1032,7 +1032,7 @@ export const PdfSuiteTool: React.FC = () => {
               activeTab === 'compress' ? 'bg-[#1D9BF0] text-white shadow-sm' : 'bg-neutral-800 hover:bg-neutral-700 text-neutral-200'
             }`}
           >
-            <CompressIcon className="w-3.5 h-3.5" />
+            {/* <CompressIcon className="w-3.5 h-3.5" /> */}
             <span>Compress PDF</span>
           </button>
 
@@ -1042,8 +1042,8 @@ export const PdfSuiteTool: React.FC = () => {
               activeTab === 'split' ? 'bg-[#1D9BF0] text-white shadow-sm' : 'bg-neutral-800 hover:bg-neutral-700 text-neutral-200'
             }`}
           >
-            <Scissors className="w-3.5 h-3.5" />
-            <span>Split / Extract</span>
+            {/* <Scissors className="w-3.5 h-3.5" /> */}
+            <span>Split</span>
           </button>
         </div>
 
@@ -1212,8 +1212,8 @@ export const PdfSuiteTool: React.FC = () => {
                     disabled={mergeWorking}
                     className="w-full flex items-center justify-center gap-2 px-4 py-2 rounded bg-[#1D9BF0] hover:bg-[#1A8CD8] text-white text-xs font-mono font-semibold transition-all cursor-pointer disabled:opacity-50"
                   >
-                    {mergeWorking ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Download className="w-3.5 h-3.5" />}
-                    <span>{mergeWorking ? 'Merging…' : '📥 Merge & Download PDF'}</span>
+                    {mergeWorking ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : ''}
+                    <span>{mergeWorking ? 'Merging…' : 'Merge & Download PDF'}</span>
                   </button>
                 </div>
               )}
@@ -1338,7 +1338,7 @@ export const PdfSuiteTool: React.FC = () => {
                     className="w-full flex items-center justify-center gap-2 px-4 py-2 rounded bg-[#1D9BF0] hover:bg-[#1A8CD8] text-white text-xs font-mono font-semibold transition-all cursor-pointer disabled:opacity-50"
                   >
                     {compressWorking ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Download className="w-3.5 h-3.5" />}
-                    <span>{compressWorking ? 'Compressing…' : '⚡ Compress & Download PDF'}</span>
+                    <span>{compressWorking ? 'Compressing…' : 'Compress & Download PDF'}</span>
                   </button>
                   {compressResult && (
                     <>
