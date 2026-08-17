@@ -22,6 +22,18 @@ export const seoConfig = {
       // Tool categories
       'json formatter', 'jwt decoder', 'base64 encoder', 'developer utility platform',
       'open source developer tools', 'VS Code extensions',
+      'json viewer', 
+
+      // PDF
+      'ats resume generator', 'private ats cv maker', 'client side resume builder', 'no upload cv creator', 'ats friendly resume builder', 'print to pdf resume online', 'secure resume generator',
+
+      'client side pdf compressor', 'merge pdf offline browser', 'split pdf without upload', 'private pdf suite', 'free secure pdf tools', 'compress pdf locally', 'merge pdf online free',
+
+      'free online developer tools', 'browser-based privacy utilities', 'local first web apps', 'client-side developer utilities', 'free online pdf tools', 'private resume builder',
+
+      // AI Prompt builder
+      'ai prompt context builder', 'private prompt assembler', 'client side prompt optimizer', 'secure context window builder', 'token counter online free', 'private prompt engineering tool', 'llm context aggregator', 'local prompt builder'
+
     ],
   },
 
