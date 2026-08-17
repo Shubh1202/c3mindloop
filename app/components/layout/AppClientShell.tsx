@@ -27,7 +27,7 @@ export function AppClientShell({ children }: { children: React.ReactNode }) {
           <BackgroundWatermark />
 
           {/* Interactive Custom Pointer Overlay */}
-          <CustomCursor />
+          {/* <CustomCursor /> */}
 
           {/* First Load & On-Demand Brand Intro Animation */}
           <BrandIntro
