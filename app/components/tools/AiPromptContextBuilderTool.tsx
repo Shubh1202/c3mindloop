@@ -307,7 +307,7 @@ export const AiPromptContextBuilderTool: React.FC = () => {
 
   const handleLoadSample = () => {
     const sample = [
-      '// SAMPLE — heavily indented with comments and sensitive data',
+      '// SAMPLE - heavily indented with comments and sensitive data',
       'const config = {',
       '  // Primary DB',
       '  dbUri: "mongodb+srv://admin:P@ssword123@cluster0.db.net/prod",',
@@ -390,7 +390,7 @@ export const AiPromptContextBuilderTool: React.FC = () => {
               onClick={() => {
                 const next = !tokenSaverEnabled;
                 setTokenSaverEnabled(next);
-                showToast(next ? 'Token Saver ON — prompt compressed' : 'Token Saver OFF — full template restored');
+                showToast(next ? 'Token Saver ON - prompt compressed' : 'Token Saver OFF - full template restored');
               }}
               className={`px-3 py-1.5 rounded font-semibold transition-colors flex items-center gap-1.5 cursor-pointer ${tokenSaverEnabled
                 ? 'bg-amber-950/40 text-amber-400 border border-amber-800/80 hover:bg-amber-950/60'

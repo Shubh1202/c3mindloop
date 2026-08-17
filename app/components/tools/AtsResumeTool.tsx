@@ -506,7 +506,7 @@ export const AtsResumeTool: React.FC = () => {
           <button
             id="ats-tab-edit"
             onClick={() => setActiveTab('edit')}
-            title="Edit only — focus on the form"
+            title="Edit only - focus on the form"
             className={`px-3 py-1.5 text-xs font-mono rounded transition-colors ${
               activeTab === 'edit'
                 ? 'bg-neutral-700 text-neutral-100 shadow-sm'
@@ -518,7 +518,7 @@ export const AtsResumeTool: React.FC = () => {
           <button
             id="ats-tab-split"
             onClick={() => setActiveTab('split')}
-            title="Split view — edit + live preview side by side"
+            title="Split view - edit + live preview side by side"
             className={`hidden xl:flex px-3 py-1.5 text-xs font-mono rounded transition-colors items-center gap-1.5 ${
               activeTab === 'split'
                 ? 'bg-neutral-700 text-neutral-100 shadow-sm'
@@ -530,7 +530,7 @@ export const AtsResumeTool: React.FC = () => {
           <button
             id="ats-tab-preview"
             onClick={() => setActiveTab('preview')}
-            title="Preview only — see the final resume"
+            title="Preview only - see the final resume"
             className={`px-3 py-1.5 text-xs font-mono rounded transition-colors ${
               activeTab === 'preview'
                 ? 'bg-neutral-700 text-neutral-100 shadow-sm'

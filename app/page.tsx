@@ -22,7 +22,7 @@ const homepageFaqSchema = {
       name: 'What does C³ MindLoop stand for?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'C³ stands for Coding, Crashing, Crying — the actual loop every developer lives through daily. You write code, it breaks, you debug it, you ship. The superscript ³ is the honest shorthand for that cycle. MindLoop is the mental process that never fully switches off — you\'re in the shower thinking about a race condition, or waking up at 3am knowing why the null check failed. This platform is built around that developer reality, not a polished version of it.',
+        text: 'C³ stands for Coding, Crashing, Crying - the actual loop every developer lives through daily. You write code, it breaks, you debug it, you ship. The superscript ³ is the honest shorthand for that cycle. MindLoop is the mental process that never fully switches off - you\'re in the shower thinking about a race condition, or waking up at 3am knowing why the null check failed. This platform is built around that developer reality, not a polished version of it.',
       },
     },
     {
@@ -30,7 +30,7 @@ const homepageFaqSchema = {
       name: 'What kind of tools does C³ MindLoop offer?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'All tools run 100% locally in your browser — no account, no backend, no data collection. The current lineup: JSON Formatter, JWT Inspector, Base64 Encoder, Regex Tester, Cron Visualizer, cURL Converter, SQL to JSON Converter, Hash Generator, and ATS Resume Generator. There\'s also an Office Editor VS Code extension with 14,400+ marketplace installs. Every tool processes your data inside your browser tab. Nothing leaves your machine.',
+        text: 'All tools run 100% locally in your browser - no account, no backend, no data collection. The current lineup: JSON Formatter, JWT Inspector, Base64 Encoder, Regex Tester, Cron Visualizer, cURL Converter, SQL to JSON Converter, Hash Generator, and ATS Resume Generator. There\'s also an Office Editor VS Code extension with 14,400+ marketplace installs. Every tool processes your data inside your browser tab. Nothing leaves your machine.',
       },
     },
     {
@@ -46,7 +46,7 @@ const homepageFaqSchema = {
       name: 'Are C³ MindLoop developer tools free to use?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes — the browser tools are free to use with no paywalls or usage limits. The Office Editor VS Code extension is also available through the Visual Studio Marketplace.',
+        text: 'Yes - the browser tools are free to use with no paywalls or usage limits. The Office Editor VS Code extension is also available through the Visual Studio Marketplace.',
       },
     },
     {

@@ -109,7 +109,7 @@ const ALGO_LABELS: Record<string, string> = {
   sha512: 'SHA-512',
 };
 
-const SAMPLE_TEXT = 'C³ MindLoop — Coding. Crashing. Crying.\nhello@c3mindloop.com | https://www.c3mindloop.com';
+const SAMPLE_TEXT = 'C³ MindLoop - Coding. Crashing. Crying.\nhello@c3mindloop.com | https://www.c3mindloop.com';
 
 type InputMode = 'text' | 'file';
 
@@ -370,7 +370,7 @@ export const HashGeneratorTool: React.FC = () => {
             placeholder="Enter your HMAC secret key to compute HMAC-SHA-256 and HMAC-SHA-512..."
             className="w-full p-2.5 bg-neutral-900 border border-amber-900/50 rounded text-neutral-200 text-xs font-mono focus:outline-none focus:border-amber-500/60 transition-colors"
           />
-          <p className="text-[10px] text-neutral-600 font-sans">Signatures are computed locally via <code className="text-amber-600">crypto.subtle.sign</code> — key never transmitted.</p>
+          <p className="text-[10px] text-neutral-600 font-sans">Signatures are computed locally via <code className="text-amber-600">crypto.subtle.sign</code> - key never transmitted.</p>
         </div>
       )}
 
@@ -403,7 +403,7 @@ export const HashGeneratorTool: React.FC = () => {
               <Upload className="w-10 h-10 text-neutral-600" />
               <p className="text-neutral-500 text-[11px] font-sans text-center px-4">
                 Click to upload a file for SHA-256 / MD5 checksum verification.<br />
-                <span className="text-neutral-600">Files are read locally — never uploaded.</span>
+                <span className="text-neutral-600">Files are read locally - never uploaded.</span>
               </p>
               {fileName && (
                 <div className="mt-2 px-3 py-1.5 bg-neutral-900 border border-neutral-800 rounded text-sky-400 text-[11px]">
@@ -456,7 +456,7 @@ export const HashGeneratorTool: React.FC = () => {
                   </div>
                   <div className={`flex items-start gap-2 p-2.5 rounded border bg-neutral-900/90 transition-colors ${isMatch === true ? 'border-emerald-800/60' : isMatch === false ? 'border-red-900/50' : 'border-neutral-800'}`}>
                     <code className={`flex-1 text-[11px] break-all whitespace-pre-wrap [word-break:break-all] leading-relaxed select-all ${hash ? 'text-sky-300' : 'text-neutral-700 italic'}`}>
-                      {hash || (isComputing ? 'computing...' : '—')}
+                      {hash || (isComputing ? 'computing...' : '-')}
                     </code>
                     {hash && (
                       <button
@@ -499,7 +499,7 @@ export const HashGeneratorTool: React.FC = () => {
                             ? 'Enter a secret key above to compute HMAC...'
                             : isComputingHmac
                               ? 'computing...'
-                              : sig || '—'}
+                              : sig || '-'}
                         </code>
                         {sig && (
                           <button

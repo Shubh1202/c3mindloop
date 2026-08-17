@@ -55,7 +55,7 @@ export const SmartAdUnit: React.FC<{ slot?: string; className?: string }> = ({
         }
       })
       .catch(() => {
-        // silent fail — no deal rendered
+        // silent fail - no deal rendered
       });
   }, [adBlocked]);
 

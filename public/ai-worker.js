@@ -1,5 +1,5 @@
 /**
- * ai-worker.js — C³ MindLoop Local AI Web Worker
+ * ai-worker.js - C³ MindLoop Local AI Web Worker
  *
  * Architecture:
  *  - Runs entirely inside a browser Web Worker (off the main thread).
@@ -21,7 +21,7 @@
  *  { type: 'error', message: string }
  */
 
-// Use ESM import from CDN — avoids bundler complications with Web Workers in Next.js.
+// Use ESM import from CDN - avoids bundler complications with Web Workers in Next.js.
 // The browser caches this after the first load.
 const TRANSFORMERS_CDN = 'https://cdn.jsdelivr.net/npm/@huggingface/transformers@3/dist/transformers.min.js';
 
@@ -55,7 +55,7 @@ function onProgress(progressEvent) {
 }
 
 /**
- * Load the model. We use Xenova/flan-t5-small (quantized int8 ~65 MB) —
+ * Load the model. We use Xenova/flan-t5-small (quantized int8 ~65 MB) -
  * the smallest model that can do useful text2text generation for developer tasks.
  */
 async function loadModel() {
@@ -65,7 +65,7 @@ async function loadModel() {
     // Dynamic ESM import from CDN
     const { pipeline: createPipeline, env } = await import(TRANSFORMERS_CDN);
 
-    // Disable local model cache path — worker doesn't have FS access
+    // Disable local model cache path - worker doesn't have FS access
     env.allowLocalModels = false;
 
     self.postMessage({ type: 'progress', stage: 'Downloading model (first load only, cached after)...', progress: 5 });

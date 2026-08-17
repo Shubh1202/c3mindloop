@@ -13,7 +13,7 @@ const atsFaqPageSchema = {
       name: 'Is this ATS Resume Generator really free?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes, fully free — no account, no premium tier, no watermarks, and no character limits. Everything runs locally in your browser. You fill in the form, see a live preview, and export to PDF directly from your browser\'s print dialog.',
+        text: 'Yes, fully free - no account, no premium tier, no watermarks, and no character limits. Everything runs locally in your browser. You fill in the form, see a live preview, and export to PDF directly from your browser\'s print dialog.',
       },
     },
     {
@@ -29,7 +29,7 @@ const atsFaqPageSchema = {
       name: 'How do I download my resume as a PDF?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Click the \'Export PDF\' button in the top toolbar. This triggers your browser\'s built-in print dialog. In the destination dropdown, choose \'Save as PDF\'. Make sure headers and footers are turned off in the print options — those add browser chrome (URLs, page numbers) that don\'t belong on a resume. The output is a vector PDF, not a screenshot, so text remains selectable and parseable.',
+        text: 'Click the \'Export PDF\' button in the top toolbar. This triggers your browser\'s built-in print dialog. In the destination dropdown, choose \'Save as PDF\'. Make sure headers and footers are turned off in the print options - those add browser chrome (URLs, page numbers) that don\'t belong on a resume. The output is a vector PDF, not a screenshot, so text remains selectable and parseable.',
       },
     },
     {
@@ -37,7 +37,7 @@ const atsFaqPageSchema = {
       name: 'Are my personal details sent to your servers?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Nothing leaves your browser. The entire tool runs as client-side JavaScript — there\'s no backend, no database, and no analytics capturing form input. Your name, email, employment history, and GitHub handle stay inside your browser tab. If you close the page, the data is gone. Use the Save JSON button to download a local backup of your progress that you can reload anytime.',
+        text: 'Nothing leaves your browser. The entire tool runs as client-side JavaScript - there\'s no backend, no database, and no analytics capturing form input. Your name, email, employment history, and GitHub handle stay inside your browser tab. If you close the page, the data is gone. Use the Save JSON button to download a local backup of your progress that you can reload anytime.',
       },
     },
   ],

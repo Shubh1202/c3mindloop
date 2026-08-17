@@ -78,7 +78,7 @@ const formatted = JSON.stringify(JSON.parse(input), null, 2);`
   {
     id: 'ats-resume-generator',
     nameKey: 'ATS Resume Generator',
-    descKey: 'Build ATS-optimised developer resumes in your browser. Live preview, section editor, and one-click PDF export. Zero server upload — 100% client-side.',
+    descKey: 'Build ATS-optimised developer resumes in your browser. Live preview, section editor, and one-click PDF export. Zero server upload - 100% client-side.',
     status: 'live',
     category: 'resume',
     icon: 'FileCode',
@@ -101,6 +101,15 @@ const formatted = JSON.stringify(JSON.parse(input), null, 2);`
     category: 'utilities',
     icon: 'Sparkles',
     techStack: ['Privacy Sanitizer', 'Regex Engine', 'Local Templates']
+  },
+  {
+    id: 'diff-checker',
+    nameKey: 'Diff Checker',
+    descKey: 'Compare two text or code files side by side with line-level and character-level diff highlighting. 100% client-side, zero upload.',
+    status: 'live',
+    category: 'utilities',
+    icon: 'Columns2',
+    techStack: ['Myers Diff', 'LCS Algorithm', 'Local Processing']
   }
 ];
 

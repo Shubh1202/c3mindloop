@@ -38,7 +38,7 @@ export const seoConfig = {
   },
 
   home: {
-    title: 'C³ MindLoop — Free & Private Developer Utilities',
+    title: 'C³ MindLoop - Free & Private Developer Utilities',
     description:
       'Instant browser-based developer tools with zero server processing. Use 100% private JSON Formatter, Base64 Encoder, JWT Inspector, Hash Generator, and ATS Resume Builder.',
     keywords: [
@@ -48,14 +48,14 @@ export const seoConfig = {
     canonical: BASE_URL,
     openGraph: {
       type: 'website' as const,
-      title: 'C³ MindLoop — Free & Private Developer Utilities',
+      title: 'C³ MindLoop - Free & Private Developer Utilities',
       description:
         'Instant browser-based developer tools with zero server processing. Use 100% private JSON Formatter, Base64 Encoder, JWT Inspector, Hash Generator, and ATS Resume Builder.',
       url: BASE_URL,
       images: [{ url: defaultOgImage, width: 1200, height: 630, alt: 'C³ MindLoop - Free Developer Tools' }],
     },
     twitter: {
-      title: 'C³ MindLoop — Free & Private Developer Utilities',
+      title: 'C³ MindLoop - Free & Private Developer Utilities',
       description:
         'Instant browser-based developer tools with zero server processing. Use 100% private JSON Formatter, Base64 Encoder, JWT Inspector, Hash Generator, and ATS Resume Builder.',
       images: [defaultOgImage],
@@ -65,7 +65,7 @@ export const seoConfig = {
   jsonFormatter: {
     title: 'JSON Formatter, Validator & AI Smart Repair - Free Online Tool | 100% Private',
     description:
-      'Free online JSON formatter, validator, beautifier and minifier with built-in AI Smart Repair. Fixes trailing commas, missing brackets, single quotes, and unquoted keys — 100% client-side, zero server upload.',
+      'Free online JSON formatter, validator, beautifier and minifier with built-in AI Smart Repair. Fixes trailing commas, missing brackets, single quotes, and unquoted keys - 100% client-side, zero server upload.',
     keywords: [
       // High-volume primary
       'json formatter', 'json formatter online', 'json beautifier', 'json validator',
@@ -93,14 +93,14 @@ export const seoConfig = {
     ],
     canonical: `${BASE_URL}/tools/json-formatter`,
     openGraph: {
-      title: 'JSON Formatter, Validator & AI Smart Repair — Free | C³ MindLoop',
+      title: 'JSON Formatter, Validator & AI Smart Repair - Free | C³ MindLoop',
       description:
-        'Format, validate, and auto-repair JSON in the browser. Built-in AI Smart Repair fixes trailing commas, missing brackets, and more — 100% Private, zero server upload.',
+        'Format, validate, and auto-repair JSON in the browser. Built-in AI Smart Repair fixes trailing commas, missing brackets, and more - 100% Private, zero server upload.',
       url: `${BASE_URL}/tools/json-formatter`,
       images: [{ url: defaultOgImage, width: 1200, height: 630, alt: 'JSON Formatter Tool - C³ MindLoop' }],
     },
     twitter: {
-      title: 'JSON Formatter + AI Smart Repair — Free | C³ MindLoop',
+      title: 'JSON Formatter + AI Smart Repair - Free | C³ MindLoop',
       description:
         'Format, validate & auto-repair JSON locally. 100% Private, zero server upload. AI Smart Repair runs in-browser.',
       images: [defaultOgImage],
@@ -243,7 +243,7 @@ export const seoConfig = {
   regexTester: {
     title: 'Regex Tester, Debugger & AI Pattern Generator - Free Online Tool | 100% Private',
     description:
-      'Free online Regular Expression tester with live match highlighting, capture groups, code export, and an AI Pattern Generator. Describe a pattern in plain English — the tool writes the regex. 100% Private, zero server upload.',
+      'Free online Regular Expression tester with live match highlighting, capture groups, code export, and an AI Pattern Generator. Describe a pattern in plain English - the tool writes the regex. 100% Private, zero server upload.',
     keywords: [
       // High-volume primary
       'regex tester', 'regex tester online', 'regular expression tester', 'regex debugger',
@@ -272,14 +272,14 @@ export const seoConfig = {
     ],
     canonical: `${BASE_URL}/tools/regex-tester`,
     openGraph: {
-      title: 'Regex Tester, Debugger & AI Generator — Free | C³ MindLoop',
+      title: 'Regex Tester, Debugger & AI Generator - Free | C³ MindLoop',
       description:
-        'Test regex patterns with live highlighting and capture groups. Describe a pattern in plain English — the AI generator writes it for you. 100% Private, zero server upload.',
+        'Test regex patterns with live highlighting and capture groups. Describe a pattern in plain English - the AI generator writes it for you. 100% Private, zero server upload.',
       url: `${BASE_URL}/tools/regex-tester`,
       images: [{ url: defaultOgImage, width: 1200, height: 630, alt: 'Regex Tester Tool - C³ MindLoop' }],
     },
     twitter: {
-      title: 'Regex Tester + AI Pattern Generator — Free | C³ MindLoop',
+      title: 'Regex Tester + AI Pattern Generator - Free | C³ MindLoop',
       description:
         'Live regex testing + AI pattern generator from plain English. 100% Private, zero server upload.',
       images: [defaultOgImage],
@@ -429,6 +429,34 @@ export const seoConfig = {
       type: 'website' as const,
     },
   },
+
+  diffChecker: {
+    title: 'Diff Checker - Compare Text & Code Online | Free, 100% Private | C³ MindLoop',
+    description:
+      'Free online diff checker. Compare two versions of code, JSON, YAML, or plain text side by side with line-level and character-level highlighting. 100% client-side, zero server upload.',
+    keywords: [
+      'diff checker', 'text diff online', 'code diff tool', 'compare two files online',
+      'diff viewer', 'line diff checker', 'code comparison tool', 'unified diff online',
+      'diff tool free', 'online diff checker', 'file diff compare',
+      '100% Private', 'Client-Side Execution', 'No Server Upload', 'GDPR Compliant', 'Free Online Utility',
+      'json diff checker', 'yaml diff tool', 'compare text files online',
+      'character level diff', 'side by side diff', 'inline diff viewer',
+      'C³ MindLoop diff checker', 'ccube diff tool',
+    ],
+    canonical: `${BASE_URL}/tools/diff-checker`,
+    openGraph: {
+      title: 'Diff Checker - Compare Text & Code Online | C³ MindLoop',
+      description:
+        'Side-by-side and inline diff viewer with character-level highlighting. 100% Private, zero server upload.',
+      url: `${BASE_URL}/tools/diff-checker`,
+      images: [{ url: defaultOgImage, width: 1200, height: 630, alt: 'Diff Checker - C³ MindLoop' }],
+    },
+    twitter: {
+      title: 'Diff Checker - Compare Text & Code | C³ MindLoop',
+      description: 'Side-by-side diff with character-level highlighting. 100% Private & Client-Side.',
+      images: [defaultOgImage],
+    },
+  },
 };
 
 // ── JSON-LD Schemas ──────────────────────────────────────────────────────────
@@ -471,7 +499,7 @@ export const webApplicationSchema = {
   operatingSystem: 'All',
   browserRequirements: 'Requires JavaScript',
   offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
-  description: 'Free local-first developer tools with built-in AI assist: JSON formatter with Smart Repair, Regex Tester with AI Pattern Generator, JWT decoder, Base64 encoder — all 100% client-side, zero data transmission.',
+  description: 'Free local-first developer tools with built-in AI assist: JSON formatter with Smart Repair, Regex Tester with AI Pattern Generator, JWT decoder, Base64 encoder - all 100% client-side, zero data transmission.',
   featureList: [
     'JSON Formatter, Validator and Beautifier',
     'JSON AI Smart Repair (fixes trailing commas, missing brackets, unquoted keys)',
@@ -480,7 +508,7 @@ export const webApplicationSchema = {
     'JWT Decoder and Inspector',
     'Base64 Encoder and Decoder',
     'Local AI Assist via in-browser Web Worker (opt-in, zero download until invoked)',
-    '100% client-side processing — zero data transmission',
+    '100% client-side processing - zero data transmission',
     'No login required',
   ],
   publisher: { '@type': 'Organization', name: 'C³ MindLoop', url: BASE_URL },
@@ -594,7 +622,7 @@ export const jsonFormatterSchema = {
     'Convert JSON to CSV',
     'File upload (.json) and file download support',
     'Synchronized side-by-side scroll between input and output',
-    'Zero server upload — fully private and GDPR compliant',
+    'Zero server upload - fully private and GDPR compliant',
   ],
   offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
   publisher: { '@type': 'Organization', name: 'C³ MindLoop', url: BASE_URL },
@@ -629,7 +657,7 @@ export const regexTesterSchema = {
   operatingSystem: 'All',
   browserRequirements: 'Requires JavaScript',
   description:
-    'Free online Regular Expression tester with live match highlighting, flags, capture groups, code export, and an AI Pattern Generator. Describe what you need in plain English — email, UUID, JWT, semver — and get a battle-tested pattern instantly. 100% Private, Client-Side Execution, GDPR Compliant.',
+    'Free online Regular Expression tester with live match highlighting, flags, capture groups, code export, and an AI Pattern Generator. Describe what you need in plain English - email, UUID, JWT, semver - and get a battle-tested pattern instantly. 100% Private, Client-Side Execution, GDPR Compliant.',
   featureList: [
     'Real-time regex pattern matching with live match highlighting',
     'Global, case-insensitive, multiline, sticky, unicode flag toggles',
@@ -639,7 +667,7 @@ export const regexTesterSchema = {
     'Code export: JavaScript, Python, Go, PHP snippets from the current pattern',
     'Built-in presets: Email, URL, IPv4, UUID v4, and more',
     'Inline regex cheatsheet: character classes, quantifiers, anchors, groups',
-    '100% client-side ECMAScript RegExp engine — zero data logging',
+    '100% client-side ECMAScript RegExp engine - zero data logging',
   ],
   offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
   publisher: { '@type': 'Organization', name: 'C³ MindLoop', url: BASE_URL },
@@ -725,7 +753,7 @@ export const pdfSuiteSchema = {
     'Client-side PDF merging with custom file re-ordering',
     'Client-side PDF compression with Basic and Strong presets',
     'Client-side PDF page range splitting and extraction',
-    '100% client-side execution — documents never upload to any server',
+    '100% client-side execution - documents never upload to any server',
     'GDPR compliant and secure document sandbox',
   ],
   offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
@@ -747,7 +775,31 @@ export const aiPromptBuilderSchema = {
     'Automatic redaction of Bearer tokens, DB URIs, IPs, and API secrets',
     'Dynamic LLM template injection for Debugging, Refactoring, Unit Tests, and Schemas',
     'Quick action controls to copy prompts, copy as Markdown, and open directly in ChatGPT/Claude',
-    '100% client-side execution — your data never leaves your device',
+    '100% client-side execution - your data never leaves your device',
+  ],
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+  publisher: { '@type': 'Organization', name: 'C³ MindLoop', url: BASE_URL },
+};
+
+export const diffCheckerSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: 'Diff Checker',
+  url: `${BASE_URL}/tools/diff-checker`,
+  applicationCategory: 'WebApplication',
+  operatingSystem: 'All',
+  browserRequirements: 'Requires JavaScript',
+  description:
+    'Free online diff checker. Compare two versions of code, JSON, YAML, or plain text with line-level and character-level diff highlighting. 100% Private, Client-Side Execution, GDPR Compliant.',
+  featureList: [
+    'Line-level diff using Myers/LCS algorithm',
+    'Character-level intra-line highlighting for changed lines',
+    'Side-by-side split view with synchronized scrolling',
+    'Unified inline view',
+    'File upload for both panels (FileReader API, no server upload)',
+    'Copy unified diff output to clipboard',
+    'Swap, Sample, Clear, and Fullscreen toolbar actions',
+    '100% client-side execution - zero data transmission',
   ],
   offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
   publisher: { '@type': 'Organization', name: 'C³ MindLoop', url: BASE_URL },

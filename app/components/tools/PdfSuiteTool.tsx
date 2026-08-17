@@ -354,7 +354,7 @@ const PdfThumbnail: React.FC<PdfThumbnailProps> = ({ file }) => {
 interface InteractivePreviewProps {
   /** A single source File (compress/split tabs) or a pre-merged Uint8Array (merge tab). */
   pdfSource: File | Uint8Array | null;
-  /** Known total page count — allows the toolbar counter to reflect combined pages instantly. */
+  /** Known total page count - allows the toolbar counter to reflect combined pages instantly. */
   pageCount?: number;
   onDownload?: () => void;
 }
@@ -389,7 +389,7 @@ const InteractivePreview: React.FC<InteractivePreviewProps> = ({ pdfSource, page
 
         let loadingTask;
         if (pdfSource instanceof Uint8Array) {
-          // Slice a copy before passing to pdfjs — the worker transfers (detaches) the
+          // Slice a copy before passing to pdfjs - the worker transfers (detaches) the
           // underlying ArrayBuffer via postMessage, which would corrupt the React state
           // reference on subsequent renders, page turns, and downloads.
           loadingTask = pdfjsLib.getDocument({ data: pdfSource.slice() });
@@ -545,7 +545,7 @@ export const PdfSuiteTool: React.FC = () => {
   const [mergeWorking, setMergeWorking] = useState(false);
   const [mergeError, setMergeError] = useState<string | null>(null);
   const [mergeSuccess, setMergeSuccess] = useState<string | null>(null);
-  /** In-memory merged PDF bytes — auto-updated as the queue changes. Used for live preview. */
+  /** In-memory merged PDF bytes - auto-updated as the queue changes. Used for live preview. */
   const [mergePreviewBuffer, setMergePreviewBuffer] = useState<Uint8Array | null>(null);
   const [mergePreviewBuilding, setMergePreviewBuilding] = useState(false);
 
@@ -1103,7 +1103,7 @@ export const PdfSuiteTool: React.FC = () => {
       {/* Main Dual-Pane Split Workspace Area */}
       <div className={`grid grid-cols-1 lg:grid-cols-12 divide-y lg:divide-y-0 lg:divide-x divide-neutral-800 ${isFullScreen ? 'flex-1 overflow-hidden' : 'min-h-[480px]'}`}>
 
-        {/* Left Column Pane — Control & Input queue */}
+        {/* Left Column Pane - Control & Input queue */}
         <div className={`${activeTab === 'edit' ? 'lg:col-span-3' : 'lg:col-span-5'} p-4 sm:p-5 flex flex-col space-y-4 ${isFullScreen ? 'overflow-y-auto' : ''}`}>
           
           {/* TAB 1: Merge PDFs Queue */}
@@ -1537,7 +1537,7 @@ export const PdfSuiteTool: React.FC = () => {
 
         </div>
 
-        {/* Right Column Pane — High-Resolution Document Interactive Preview Canvas */}
+        {/* Right Column Pane - High-Resolution Document Interactive Preview Canvas */}
         <div className={`${activeTab === 'edit' ? 'lg:col-span-9' : 'lg:col-span-7'} p-4 sm:p-5 flex flex-col justify-between ${isFullScreen ? 'overflow-y-auto' : ''}`}>
           {activeTab === 'edit' ? (
             editFile ? (

@@ -1,7 +1,7 @@
 'use client';
 
 /**
- * LocalAIPanel — Shared, 100% client-side AI assist panel
+ * LocalAIPanel - Shared, 100% client-side AI assist panel
  *
  * Architecture:
  *  - Tier 1: Deterministic rule engines for JSON Smart Repair and Regex Generation.
@@ -81,7 +81,7 @@ export function smartRepairJson(raw: string): { fixed: string; changes: string[]
   try {
     JSON.parse(s);
   } catch {
-    changes.push('⚠️ Partial repair — manual review still required for complex errors');
+    changes.push('⚠️ Partial repair - manual review still required for complex errors');
   }
 
   return { fixed: s, changes };
@@ -390,18 +390,18 @@ export const LocalAIPanel: React.FC<LocalAIPanelProps> = ({
   const [isWorking, setIsWorking] = useState(false);
   const [showTier2, setShowTier2] = useState(false);
 
-  // Tier 1 — JSON repair
+  // Tier 1 - JSON repair
   const [repairResult, setRepairResult] = useState<{ fixed: string; changes: string[] } | null>(null);
   const [repairError, setRepairError] = useState<string | null>(null);
 
-  // Tier 1 — Regex gen
+  // Tier 1 - Regex gen
   const [regexDescription, setRegexDescription] = useState('');
   const [regexResult, setRegexResult] = useState<{
     pattern: string; flags: string; description: string; confidence: 'high' | 'medium' | 'low';
   } | null>(null);
   const [regexError, setRegexError] = useState<string | null>(null);
 
-  // Tier 2 — AI explanation output
+  // Tier 2 - AI explanation output
   const [tier2Output, setTier2Output] = useState<string | null>(null);
   const [tier2Working, setTier2Working] = useState(false);
 
@@ -518,13 +518,13 @@ export const LocalAIPanel: React.FC<LocalAIPanelProps> = ({
             <div className="space-y-1">
               <div className="flex items-center gap-1.5 text-[10px] font-mono text-neutral-500 uppercase tracking-wider">
                 <Zap className="w-3 h-3 text-[#1D9BF0]" />
-                <span>Tier 1 — Instant Rule Engine</span>
+                <span>Tier 1 - Instant Rule Engine</span>
               </div>
 
               {mode === 'json-repair' && (
                 <>
                   <p className="text-[11px] text-neutral-400 font-sans leading-relaxed">
-                    Analyzes your JSON input for common errors: trailing commas, single quotes, JS comments, unquoted keys, and missing closing brackets. All processing runs locally — no data leaves your browser.
+                    Analyzes your JSON input for common errors: trailing commas, single quotes, JS comments, unquoted keys, and missing closing brackets. All processing runs locally - no data leaves your browser.
                   </p>
                   <button
                     onClick={handleRepair}
@@ -582,7 +582,7 @@ export const LocalAIPanel: React.FC<LocalAIPanelProps> = ({
               {mode === 'regex-gen' && (
                 <>
                   <p className="text-[11px] text-neutral-400 font-sans leading-relaxed">
-                    Describe what you want to match in plain English. Maps to a battle-tested pattern from 23+ built-in templates. Runs 100% in your browser — zero data sent anywhere.
+                    Describe what you want to match in plain English. Maps to a battle-tested pattern from 23+ built-in templates. Runs 100% in your browser - zero data sent anywhere.
                   </p>
                   <div className="flex items-center gap-2">
                     <input
@@ -629,7 +629,7 @@ export const LocalAIPanel: React.FC<LocalAIPanelProps> = ({
                         <span className={`font-semibold ${confidenceColor(regexResult.confidence)}`}>
                           {regexResult.confidence.toUpperCase()}
                         </span>
-                        <span className="text-neutral-400">— {regexResult.description}</span>
+                        <span className="text-neutral-400">- {regexResult.description}</span>
                       </div>
                       <div className="rounded border border-neutral-800 overflow-hidden">
                         <div className="px-3 py-1.5 bg-neutral-900 border-b border-neutral-800 text-[10px] font-mono text-neutral-500 uppercase tracking-wider flex items-center justify-between">
@@ -663,7 +663,7 @@ export const LocalAIPanel: React.FC<LocalAIPanelProps> = ({
                 className="flex items-center gap-1.5 text-[10px] font-mono text-neutral-500 hover:text-neutral-300 transition-colors cursor-pointer uppercase tracking-wider"
               >
                 <BrainCircuit className="w-3 h-3 text-neutral-600" />
-                <span>Tier 2 — AI Model (Opt-in, ~65 MB)</span>
+                <span>Tier 2 - AI Model (Opt-in, ~65 MB)</span>
                 <ChevronRight className={`w-3 h-3 transition-transform ${showTier2 ? 'rotate-90' : ''}`} />
               </button>
 
