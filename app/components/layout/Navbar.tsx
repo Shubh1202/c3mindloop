@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from '../../lib/router-compat';
 import { motion, AnimatePresence } from 'motion/react';
-import { Menu, X, Command, RotateCcw, Code2, ShieldCheck, Zap, Clock, Terminal, Regex, Database, Hash, FileText, Sparkles } from 'lucide-react';
+import { Menu, X, Command, RotateCcw, Code2, ShieldCheck, Zap, Clock, Terminal, Regex, Database, Hash, FileText, Sparkles, Columns2 } from 'lucide-react';
 import { useTranslation } from '../../lib/i18n';
 // Temporarily hidden while incomplete locale coverage is audited and repaired.
 // import { LanguageSelector } from '../ui/LanguageSelector';
@@ -42,6 +42,7 @@ export const Navbar: React.FC<{
   const col1Tools = [
     { name: 'JSON Formatter', sub: 'Format & Validate', path: '/tools/json-formatter', icon: Code2 },
     { name: 'Base64 Encoder', sub: 'Encode & Decode', path: '/tools/base64-encoder', icon: Zap },
+    { name: 'Diff Checker', sub: 'Compare & Highlight', path: '/tools/diff-checker', icon: Columns2, isNew: true },
     { name: 'SQL to JSON', sub: 'Convert & Export', path: '/tools/sql-to-json', icon: Database },
     { name: 'cURL Converter', sub: 'Convert to Code', path: '/tools/curl-converter', icon: Terminal },
     { name: 'AI Prompt Builder', sub: 'Sanitize & Optimize', path: '/tools/ai-prompt-builder', icon: Sparkles, isNew: true },
