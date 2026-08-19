@@ -1,25 +1,98 @@
 'use client';
 
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
+import { trackEvent, GA_EVENTS } from '../../lib/analytics';
 import { Copy, Check, Trash2, ShieldCheck, AlertCircle, Info, BookOpen, Maximize2, Minimize2, FileText, Code } from 'lucide-react';
 import { LocalAIPanel } from './LocalAIPanel';
 
 interface MatchGroup {
   index: number;
   match: string;
-  groups: string[];
+  groups: { value: string; start?: number; end?: number }[];
+  namedGroups: Record<string, { value: string; start?: number; end?: number }>;
 }
 
 const PRESETS = [
   { name: 'Email Address', pattern: '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$', flags: 'gm', sample: 'test@example.com\ninvalid-email@\nuser.name+tag@domain.co.uk' },
   { name: 'URL / Domain', pattern: 'https?:\\/\\/(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)', flags: 'gi', sample: 'Visit https://www.c3mindloop.com/tools or http://localhost:3000' },
-  { name: 'IPv4 Address', pattern: '\\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b', flags: 'g', sample: 'Server IP: 192.168.1.1, Gateway: 10.0.0.254, Invalid: 999.999.999.999' },
-  { name: 'UUID v4', pattern: '[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}', flags: 'gi', sample: 'bbf598a6-f221-4406-899e-1336154d8e1c\nnot-a-valid-uuid' },
+  { name: 'IPv4 / IPv6', pattern: '\\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b|([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}', flags: 'gi', sample: 'IPv4: 192.168.1.1\nIPv6: 2001:0db8:85a3:0000:0000:8a2e:0370:7334' },
+  { name: 'Phone Numbers', pattern: '\\+?\\d{1,4}?[-.\\s]?\\(?\\d{1,3}?\\)?[-.\\s]?\\d{1,4}[-.\\s]?\\d{1,4}[-.\\s]?\\d{1,9}', flags: 'g', sample: '+1 (555) 123-4567\n555-987-6543\n+44 20 7123 1234' },
+  { name: 'Strong Password', pattern: '^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[@$!%*?&#])[A-Za-z\\d@$!%*?&#]{8,}$', flags: 'gm', sample: 'Password123! (Valid)\nweakpass (Invalid)\nNoSpecialChar123 (Invalid)' },
 ];
 
 const SAMPLE_PATTERN = '[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}';
 const SAMPLE_TEST_STRING = 'Contact hello@c3mindloop.com or support@example.org for developer inquiries.\nInvalid: notanemail, also-bad@, @nodomain.com';
 const SAMPLE_FLAGS = { g: true, i: true, m: true, s: false, u: false, y: false };
+
+interface RegexStep {
+  token: string;
+  desc: string;
+}
+
+function analyzeRegex(pattern: string) {
+  let isCatastrophic = false;
+  if (/(\([^)]*[*+?]\)[*+?])|(\([^)]*\|[^)]*\)[*+?])/.test(pattern)) {
+    isCatastrophic = true;
+  }
+
+  const steps: RegexStep[] = [];
+  let i = 0;
+  while (i < pattern.length && steps.length < 15) {
+    const c = pattern[i];
+    if (c === '^') { steps.push({ token: '^', desc: 'Start of string/line' }); i++; }
+    else if (c === '$') { steps.push({ token: '$', desc: 'End of string/line' }); i++; }
+    else if (c === '\\') {
+      const next = pattern[i+1];
+      if (next === 'd') steps.push({ token: '\\d', desc: 'Digit [0-9]' });
+      else if (next === 'w') steps.push({ token: '\\w', desc: 'Word char' });
+      else if (next === 's') steps.push({ token: '\\s', desc: 'Whitespace' });
+      else if (next === 'b') steps.push({ token: '\\b', desc: 'Word boundary' });
+      else steps.push({ token: '\\' + next, desc: 'Escaped character' });
+      i += 2;
+    }
+    else if (c === '[') {
+      let j = i + 1;
+      while (j < pattern.length && pattern[j] !== ']') j++;
+      steps.push({ token: pattern.slice(i, j + 1), desc: 'Character class' });
+      i = j + 1;
+    }
+    else if (c === '(') {
+      if (pattern.substring(i, i+3) === '(?:') {
+        steps.push({ token: '(?:', desc: 'Non-capturing start' });
+        i += 3;
+      } else if (pattern.substring(i, i+3) === '(?<') {
+        let j = i + 3;
+        while(j < pattern.length && pattern[j] !== '>') j++;
+        steps.push({ token: pattern.slice(i, j + 1), desc: 'Named group start' });
+        i = j + 1;
+      } else {
+        steps.push({ token: '(', desc: 'Group start' });
+        i++;
+      }
+    }
+    else if (c === ')') { steps.push({ token: ')', desc: 'Group end' }); i++; }
+    else if (c === '*') { steps.push({ token: '*', desc: '0 or more' }); i++; }
+    else if (c === '+') { steps.push({ token: '+', desc: '1 or more' }); i++; }
+    else if (c === '?') { steps.push({ token: '?', desc: '0 or 1' }); i++; }
+    else if (c === '{') {
+      let j = i + 1;
+      while (j < pattern.length && pattern[j] !== '}') j++;
+      steps.push({ token: pattern.slice(i, j + 1), desc: 'Quantifier' });
+      i = j + 1;
+    }
+    else {
+      let j = i + 1;
+      while (j < pattern.length && !'\\^$[]()*+?{}'.includes(pattern[j])) j++;
+      steps.push({ token: pattern.slice(i, j), desc: 'Literal match' });
+      i = j;
+    }
+  }
+  if (i < pattern.length) {
+    steps.push({ token: '...', desc: 'Complex/unsupported construct' });
+  }
+
+  return { isCatastrophic, steps };
+}
 
 export const RegexTesterTool: React.FC = () => {
   const [pattern, setPattern] = useState(SAMPLE_PATTERN);
@@ -63,29 +136,67 @@ export const RegexTesterTool: React.FC = () => {
 
   const regexResult = useMemo(() => {
     if (!pattern) {
-      return { matches: [], error: null, count: 0 };
+      return { matches: [], error: null, count: 0, analysis: null };
     }
     try {
-      const rx = new RegExp(pattern, activeFlagsStr);
+      const analysis = analyzeRegex(pattern);
+      
+      let execFlags = activeFlagsStr;
+      let supportsIndices = false;
+      try {
+        new RegExp('', 'd');
+        if (!execFlags.includes('d')) execFlags += 'd';
+        supportsIndices = true;
+      } catch (e) {}
+
+      const rx = new RegExp(pattern, execFlags);
       const matches: MatchGroup[] = [];
       let match: RegExpExecArray | null;
+
+      const extractGroups = (m: RegExpExecArray) => {
+        const groups = [];
+        for (let i = 1; i < m.length; i++) {
+          const val = m[i];
+          let start, end;
+          if (supportsIndices && (m as any).indices && (m as any).indices[i]) {
+            start = (m as any).indices[i][0];
+            end = (m as any).indices[i][1];
+          }
+          groups.push({ value: val === undefined ? 'Unmatched optional group' : val, start, end });
+        }
+        const namedGroups: Record<string, any> = {};
+        if (m.groups) {
+           for (const key of Object.keys(m.groups)) {
+              const val = m.groups[key];
+              let start, end;
+              if (supportsIndices && (m as any).indices && (m as any).indices.groups && (m as any).indices.groups[key]) {
+                start = (m as any).indices.groups[key][0];
+                end = (m as any).indices.groups[key][1];
+              }
+              namedGroups[key] = { value: val === undefined ? 'Unmatched optional group' : val, start, end };
+           }
+        }
+        return { groups, namedGroups };
+      };
 
       if (activeFlagsStr.includes('g')) {
         let maxSafety = 500;
         while ((match = rx.exec(testString)) !== null && maxSafety > 0) {
           maxSafety--;
-          matches.push({ index: match.index, match: match[0], groups: match.slice(1) });
+          const extracted = extractGroups(match);
+          matches.push({ index: match.index, match: match[0], groups: extracted.groups, namedGroups: extracted.namedGroups });
           if (match[0].length === 0) rx.lastIndex++;
         }
       } else {
         match = rx.exec(testString);
         if (match) {
-          matches.push({ index: match.index, match: match[0], groups: match.slice(1) });
+          const extracted = extractGroups(match);
+          matches.push({ index: match.index, match: match[0], groups: extracted.groups, namedGroups: extracted.namedGroups });
         }
       }
-      return { matches, error: null, count: matches.length };
+      return { matches, error: null, count: matches.length, analysis };
     } catch (err: any) {
-      return { matches: [], error: err.message || 'Invalid Regular Expression syntax', count: 0 };
+      return { matches: [], error: err.message || 'Invalid Regular Expression syntax', count: 0, analysis: null };
     }
   }, [pattern, activeFlagsStr, testString]);
 
@@ -96,6 +207,7 @@ export const RegexTesterTool: React.FC = () => {
   const copyRegex = () => {
     const full = `/${pattern}/${activeFlagsStr}`;
     navigator.clipboard.writeText(full);
+    trackEvent(GA_EVENTS.COPY_OUTPUT, { tool_name: 'regex_tester', type: 'regex_pattern' });
     setCopied(true);
     setTimeout(() => setCopied(false), 1500);
   };
@@ -148,6 +260,7 @@ export const RegexTesterTool: React.FC = () => {
 
   const copyCodeSnippet = () => {
     navigator.clipboard.writeText(generatedCode);
+    trackEvent(GA_EVENTS.COPY_OUTPUT, { tool_name: 'regex_tester', type: 'code_snippet', language: activeLang });
     setCopiedCode(true);
     setTimeout(() => setCopiedCode(false), 1500);
   };
@@ -243,7 +356,7 @@ export const RegexTesterTool: React.FC = () => {
               <li><code className="text-emerald-400">*</code> 0 or more</li>
               <li><code className="text-emerald-400">+</code> 1 or more</li>
               <li><code className="text-emerald-400">?</code> 0 or 1</li>
-              <li><code className="text-emerald-400">{'{n,m}'}</code> Between n and m</li>
+              <li><code className="text-emerald-400">{`{n,m}`}</code> Between n and m</li>
             </ul>
           </div>
           <div>
@@ -351,7 +464,31 @@ export const RegexTesterTool: React.FC = () => {
 
           <div className="flex-1 min-h-[300px] p-3 bg-neutral-900/90 border border-neutral-800 rounded overflow-auto flex flex-col">
             {rightViewMode === 'matches' ? (
-              <div className="space-y-2 flex-1">
+              <div className="space-y-4 flex-1">
+                {regexResult.analysis && regexResult.analysis.isCatastrophic && (
+                   <div className="p-3 bg-amber-950/60 border border-amber-800/80 rounded text-amber-300 text-[11px] flex items-start gap-2">
+                     <AlertCircle className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
+                     <div>
+                       <span className="font-bold block text-amber-500 mb-0.5">⚠️ Potential catastrophic backtracking pattern detected.</span>
+                       This pattern may cause excessive backtracking for certain inputs.
+                     </div>
+                   </div>
+                )}
+                {regexResult.analysis && regexResult.analysis.steps.length > 0 && (
+                   <div className="p-3 bg-neutral-950 border border-neutral-800 rounded">
+                     <span className="text-[10px] uppercase text-neutral-500 font-bold mb-2 block tracking-wider">Expression Breakdown</span>
+                     <div className="flex flex-wrap gap-1.5">
+                       {regexResult.analysis.steps.map((step, i) => (
+                         <div key={i} className="flex items-center gap-1.5 px-2 py-1 bg-neutral-900 border border-neutral-800 rounded text-[10px]">
+                            <code className="text-[#1D9BF0] font-mono">{step.token}</code>
+                            <span className="text-neutral-400 font-sans">{step.desc}</span>
+                         </div>
+                       ))}
+                     </div>
+                   </div>
+                )}
+
+                <div className="space-y-2">
                 {regexResult.error ? (
                   <div className="p-3 bg-red-950/60 border border-red-800/80 rounded text-red-300 text-xs flex items-start gap-2">
                     <AlertCircle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
@@ -371,22 +508,40 @@ export const RegexTesterTool: React.FC = () => {
                       <div className="p-1.5 bg-neutral-900 rounded text-sky-300 font-mono text-xs break-all border border-neutral-800 whitespace-pre-wrap break-words [word-break:break-word] overflow-x-hidden">
                         &quot;{m.match}&quot;
                       </div>
-                      {m.groups.length > 0 && (
-                        <div className="pt-1 space-y-1">
-                          <span className="text-[10px] text-neutral-400 uppercase tracking-wider block">Capture Groups:</span>
-                          <div className="flex flex-wrap gap-1">
-                            {m.groups.map((g, gIdx) => (
-                              <span key={gIdx} className="px-1.5 py-0.5 bg-purple-950/80 border border-purple-800 text-purple-300 text-[10px] rounded">
-                                Group {gIdx + 1}: &quot;{g}&quot;
-                              </span>
-                            ))}
-                          </div>
+                      {(m.groups.length > 0 || Object.keys(m.namedGroups).length > 0) && (
+                        <div className="pt-2">
+                          <table className="w-full text-left text-[10px] border-collapse">
+                            <thead>
+                              <tr className="border-b border-neutral-800">
+                                <th className="py-1 text-neutral-500 font-medium">Group</th>
+                                <th className="py-1 text-neutral-500 font-medium">Value</th>
+                                <th className="py-1 text-neutral-500 font-medium text-right">Indices</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {m.groups.map((g, gIdx) => (
+                                <tr key={`g-${gIdx}`} className="border-b border-neutral-900/50">
+                                  <td className="py-1 text-neutral-400">#{gIdx + 1}</td>
+                                  <td className="py-1 text-purple-300 font-mono">&quot;{g.value}&quot;</td>
+                                  <td className="py-1 text-neutral-500 font-mono text-right">{g.start !== undefined ? `${g.start}-${g.end}` : '-'}</td>
+                                </tr>
+                              ))}
+                              {Object.entries(m.namedGroups).map(([name, g]) => (
+                                <tr key={`n-${name}`} className="border-b border-neutral-900/50">
+                                  <td className="py-1 text-neutral-400">&lt;{name}&gt;</td>
+                                  <td className="py-1 text-emerald-300 font-mono">&quot;{g.value}&quot;</td>
+                                  <td className="py-1 text-neutral-500 font-mono text-right">{g.start !== undefined ? `${g.start}-${g.end}` : '-'}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
                         </div>
                       )}
                     </div>
                   ))
                 )}
               </div>
+            </div>
             ) : (
               <div className="space-y-4 flex-1 flex flex-col">
                 <div className="flex items-center justify-between">
