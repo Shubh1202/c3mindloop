@@ -106,6 +106,7 @@ export const ProductsPage: React.FC = () => {
                   'diff-checker': '/tools/diff-checker',
                   'pdf-suite': '/tools/pdf-suite',
                   'edit-pdf': '/tools/edit-pdf',
+                  'json-graph': '/tools/json-graph',
                 };
                 const toolHref = toolRoutes[prod.id];
 

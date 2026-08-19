@@ -267,7 +267,7 @@ const OverlayElement: React.FC<OverlayProps> = ({
           fontStyle: overlay.italic ? 'italic' : 'normal',
           textDecoration: overlay.underline ? 'underline' : 'none',
           color: overlay.color,
-          // opacity is NOT on the wrapper — it goes only on the text content below
+          // opacity is NOT on the wrapper- it goes only on the text content below
           // so that ContextToolbar and DecorativeHandles are never affected
         }}
         className={`absolute rounded leading-tight ${selectionClass}`}

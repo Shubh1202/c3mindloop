@@ -978,6 +978,54 @@
         "q10": "Can I use the PDF Editor without installing software?",
         "a10": "Yes. The tool runs entirely in your browser using standard web APIs. You do not need to install any application, browser extension, or desktop software. It works in any modern browser on desktop or mobile."
       }
+    },
+    "jsonGraphVisualizer": {
+      "pageTitle": "JSON Graph Visualizer- Interactive Node Graph",
+      "pageBadge": "100% Client-Side • Local Browser Processing",
+      "breadcrumb": "JSON Graph Visualizer",
+      "breadcrumbParent": "Developer Tools",
+      "feat1Title": "Interactive Node Graph",
+      "feat1Desc": "Every JSON object and array becomes a draggable node connected by directed edges. Pan, zoom, and click nodes to expand or collapse nested branches.",
+      "feat2Title": "Hierarchical Left-to-Right Layout",
+      "feat2Desc": "An automatic layout engine positions the root node on the left and arranges child nodes progressively to the right, keeping deeply nested structures readable at a glance.",
+      "feat3Title": "100% Client-Side- Zero Upload",
+      "feat3Desc": "All graph computation, layout, and PNG export happen entirely in your browser. Your JSON data never leaves your device.",
+      "guide": {
+        "title": "How the JSON Graph Visualizer Works",
+        "intro": "The JSON Graph Visualizer converts any valid JSON document into an interactive node graph where you can explore structure visually, collapse deep branches to reduce noise, and export the result as a PNG image. Here is how it works step by step:",
+        "step1": "Paste or Load JSON: Paste raw JSON into the left input panel or click Examples to load a pre-built sample. The graph renders automatically within 600ms of your last keystroke.",
+        "step2": "Explore the Graph: Each JSON object and array becomes a node. Scalar values (strings, numbers, booleans, null) appear as labeled rows inside their parent node. Directed edges connect parent nodes to their child objects and arrays.",
+        "step3": "Expand and Collapse Nodes: Click any node header to collapse its children and reduce visual complexity. Click again to expand. Collapsed nodes display a badge showing the count of hidden children. Leaf nodes (scalars only) do not respond to clicks.",
+        "step4": "Pan and Zoom: Scroll with the mouse wheel to zoom, or click-and-drag on empty canvas space to pan. On touch devices, use a two-finger pinch to zoom. The toolbar at the bottom-left provides Zoom In, Zoom Out, and Fit to Screen buttons.",
+        "step5": "Reset the Layout: Click Reset Layout to restore all nodes to their default collapse state (depth 0 and 1 expanded, depth 2+ collapsed) and re-center the view.",
+        "step6": "Export as PNG: Click the download icon in the toolbar to capture the full graph canvas- including all nodes and edges, not just the visible viewport- and save it as json-graph.png.",
+        "privacyTitle": "Zero Network Requests- Fully Offline",
+        "privacyIntro": "Unlike cloud-based JSON visualization tools that upload your payload to a remote server for rendering, the C³ MindLoop JSON Graph Visualizer runs the entire pipeline inside your browser:",
+        "privacyBullet1": "No Data Transmission: JSON parsing, graph construction, layout computation, and SVG rendering all execute in client-side JavaScript. Your API responses, configuration files, and sensitive data structures never leave your machine.",
+        "privacyBullet2": "Works Offline: Once the page has loaded, the visualizer operates without any internet connection. It is safe to use in air-gapped environments, behind corporate firewalls, or on secured development machines."
+      },
+      "faq": {
+        "q1": "What is a JSON Graph Visualizer?",
+        "a1": "A JSON Graph Visualizer converts a JSON document into an interactive node graph where each object and array is represented as a visual node connected to its children by directed edges. This makes it easy to understand the shape, depth, and relationships within a JSON structure- especially for deeply nested API responses, configuration files, or data schemas- without reading raw text.",
+        "q2": "How is the JSON Graph Visualizer different from a JSON Tree View?",
+        "a2": "A tree view displays JSON as collapsible indented text, which works well for shallow structures but becomes hard to follow in wide, deeply nested payloads. The graph view renders each object and array as a spatially positioned node on a zoomable canvas, so you can see the full hierarchy at once, navigate with pan and zoom, and collapse entire subtrees into compact badges. The C³ MindLoop tool offers both views- switch between Graph and Tree using the toggle at the top.",
+        "q3": "Is my JSON data uploaded to a server?",
+        "a3": "No. All processing- JSON parsing, graph construction, layout computation, and PNG export- runs entirely inside your browser using client-side JavaScript. Nothing is transmitted to any server. You can safely visualize API keys, database schemas, authentication payloads, or any other sensitive JSON without risk of exposure.",
+        "q4": "How do I load data into the visualizer?",
+        "a4": "Paste valid JSON directly into the input panel on the left side of the tool. You can also click the Examples button in the panel header to load one of three pre-built samples: User Profile, API Response, or Config File. The graph or tree renders automatically within 600 milliseconds of your last input change.",
+        "q5": "What happens when I click a node?",
+        "a5": "Clicking a node header toggles its collapsed state. When collapsed, all descendant nodes and edges are hidden and a numeric badge appears showing the count of direct hidden children. Clicking again expands the node and restores its immediate children, which retain their own prior collapse state. Nodes that contain only scalar values (leaf nodes) do not respond to clicks.",
+        "q6": "How large a JSON file can I visualize?",
+        "a6": "The tool displays a performance warning for payloads with more than 500 keys and automatically skips graph construction for payloads exceeding 2000 keys to protect browser performance. Within those limits, the graph renders the first 200 nodes in breadth-first order and shows a notice if the graph has been truncated. For very large payloads, the Tree View mode is more efficient as it renders on demand.",
+        "q7": "How do I export the graph as an image?",
+        "a7": "Click the download icon (Export as PNG) in the graph toolbar at the bottom-left of the canvas. The tool captures the entire graph- all nodes and edges, not just the visible viewport- draws it onto an offscreen canvas with the dark background preserved, and triggers a browser download of json-graph.png. If the canvas is empty, the button is disabled. If export fails due to a browser security restriction, a toast notification will prompt you to use a screenshot instead.",
+        "q8": "Can I use the JSON Graph Visualizer offline?",
+        "a8": "Yes. Once the page has loaded in your browser, the visualizer works completely offline. All parsing, layout, and rendering logic is bundled into the page. There are no external API calls, CDN requests, or runtime dependencies that require an internet connection.",
+        "q9": "What do the colors in the nodes mean?",
+        "a9": "Node rows use color coding to identify value types at a glance: key labels are rendered in sky blue, string values in emerald green, number values in amber, boolean values in purple, and null values in gray italic. Object and array references show the bracket notation (for example, { … } or [ … ]) to indicate a child node exists connected by an edge.",
+        "q10": "What is the difference between Graph View and Tree View?",
+        "a10": "Graph View renders JSON as a zoomable, pannable SVG canvas where objects and arrays are positioned as connected nodes. It is best for exploring structure spatially and understanding relationships between nested objects. Tree View displays the same JSON as a collapsible indented list, similar to a browser DevTools inspector. It is faster for large payloads and better for reading specific values. Both views share the same input panel and respond instantly to changes in the JSON text."
+      }
     }
   }
 }

@@ -96,7 +96,7 @@ const formatted = JSON.stringify(JSON.parse(input), null, 2);`
   {
     id: 'edit-pdf',
     nameKey: 'Edit PDF',
-    descKey: 'Add text, images, signatures and whiteout to any PDF. Fill forms, manage pages, and export — 100% client-side, no upload.',
+    descKey: 'Add text, images, signatures and whiteout to any PDF. Fill forms, manage pages, and export- 100% client-side, no upload.',
     status: 'live',
     category: 'utilities',
     icon: 'FileCode',
@@ -119,6 +119,15 @@ const formatted = JSON.stringify(JSON.parse(input), null, 2);`
     category: 'utilities',
     icon: 'Columns2',
     techStack: ['Myers Diff', 'LCS Algorithm', 'Local Processing']
+  },
+  {
+    id: 'json-graph',
+    nameKey: 'JSON Graph Visualizer',
+    descKey: 'Visualize JSON as an interactive node graph with pan, zoom, expand/collapse, and PNG export. 100% client-side.',
+    status: 'live',
+    category: 'json',
+    icon: 'LayoutGrid',
+    techStack: ['SVG Renderer', 'Custom Layout Engine', 'Local Processing']
   }
 ];
 

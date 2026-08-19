@@ -61,7 +61,7 @@ export const FONT_MAP: Record<FontFamily, (typeof StandardFonts)[keyof typeof St
 
 /**
  * Returns the correct pdf-lib StandardFont for a given family + bold/italic combination.
- * Underline is not a font variant — it is drawn separately as a line.
+ * Underline is not a font variant- it is drawn separately as a line.
  */
 export function resolvePdfFont(
   family: FontFamily,
@@ -80,7 +80,7 @@ export function resolvePdfFont(
     if (italic)         return StandardFonts.TimesRomanItalic;
     return StandardFonts.TimesRoman;
   }
-  // mono — Courier
+  // mono- Courier
   if (bold && italic) return StandardFonts.CourierBoldOblique;
   if (bold)           return StandardFonts.CourierBold;
   if (italic)         return StandardFonts.CourierOblique;

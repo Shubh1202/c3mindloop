@@ -458,6 +458,30 @@ export const seoConfig = {
     },
   },
 
+  jsonGraphVisualizer: {
+    title: 'JSON Graph Visualizer - Interactive Node Graph | Free, 100% Private | C³ MindLoop',
+    description: 'Visualize JSON as an interactive node graph in your browser. Pan, zoom, expand/collapse nodes, export as PNG. 100% client-side, zero server upload.',
+    keywords: [
+      'json graph visualizer', 'json node graph', 'json tree visualizer', 'visualize json structure',
+      'json graph online', 'json crack alternative', 'json visual explorer',
+      'interactive json viewer', 'json relationship graph', 'json to graph',
+      '100% Private', 'Client-Side Execution', 'No Server Upload', 'GDPR Compliant',
+      'C³ MindLoop json graph', 'ccube json visualizer',
+    ],
+    canonical: `${BASE_URL}/tools/json-graph`,
+    openGraph: {
+      title: 'JSON Graph Visualizer - Interactive Node Graph | C³ MindLoop',
+      description: 'Visualize JSON as an interactive node graph. Pan, zoom, collapse nodes, export PNG. 100% client-side.',
+      url: `${BASE_URL}/tools/json-graph`,
+      images: [{ url: defaultOgImage, width: 1200, height: 630, alt: 'JSON Graph Visualizer - C³ MindLoop' }],
+    },
+    twitter: {
+      title: 'JSON Graph Visualizer - Free, 100% Private | C³ MindLoop',
+      description: 'Visualize JSON as interactive node graphs. Pan, zoom, export PNG. Zero server upload.',
+      images: [defaultOgImage],
+    },
+  },
+
   editPdf: {
     title: 'Edit PDF Online Free- Annotate, Add Text, Sign & Fill Forms | C³ MindLoop',
     description:
