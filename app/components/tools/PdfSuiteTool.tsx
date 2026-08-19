@@ -3,56 +3,16 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import {
   FileText, Upload, Trash2, ArrowUp, ArrowDown, Download,
-  Merge, Scissors, Minimize2 as CompressIcon, ShieldCheck,
-  AlertCircle, CheckCircle2, Loader2, Info, X, GripVertical, Eye,
+  AlertCircle, CheckCircle2, Loader2, Info, X, GripVertical,
   Maximize2, Minimize2, ZoomIn, ZoomOut, ChevronLeft, ChevronRight,
-  Pencil, Type, Palette, Undo2, Move,
 } from 'lucide-react';
-import { PDFDocument, StandardFonts, rgb } from 'pdf-lib';
+import { PDFDocument } from 'pdf-lib';
+import { PdfFile } from './editor/editor.types';
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
-interface PdfFile {
-  id: string;
-  file: File;
-  name: string;
-  sizeBytes: number;
-  pageCount: number | null;
-}
-
-type ActiveTab = 'merge' | 'compress' | 'split' | 'edit';
+type ActiveTab = 'merge' | 'compress' | 'split';
 type CompressionPreset = 'basic' | 'strong';
-
-// ── Edit PDF Types ───────────────────────────────────────────────────────────
-
-interface TextOverlay {
-  id: string;
-  text: string;
-  x: number;           // fraction 0-1 of page width
-  y: number;           // fraction 0-1 of page height
-  fontSize: number;
-  fontFamily: 'sans' | 'serif' | 'mono';
-  color: string;       // hex
-  opacity: number;     // 0-1
-  pageIndex: number;   // 0-based
-}
-
-const FONT_FAMILIES = [
-  { id: 'sans' as const, label: 'Sans-serif', css: 'Helvetica, Arial, sans-serif' },
-  { id: 'serif' as const, label: 'Serif', css: 'Times New Roman, serif' },
-  { id: 'mono' as const, label: 'Monospace', css: 'Courier New, monospace' },
-];
-
-const COLOR_PALETTE = [
-  '#000000', '#FFFFFF', '#EF4444', '#F97316', '#EAB308',
-  '#22C55E', '#3B82F6', '#8B5CF6', '#EC4899', '#6B7280',
-];
-
-const FONT_MAP: Record<string, typeof StandardFonts[keyof typeof StandardFonts]> = {
-  sans: StandardFonts.Helvetica,
-  serif: StandardFonts.TimesRoman,
-  mono: StandardFonts.Courier,
-};
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -564,48 +524,6 @@ export const PdfSuiteTool: React.FC = () => {
   const [splitError, setSplitError] = useState<string | null>(null);
   const [splitSuccess, setSplitSuccess] = useState<string | null>(null);
 
-  // ── Edit state ──
-  const [editFile, setEditFile] = useState<PdfFile | null>(null);
-  const [textOverlays, setTextOverlays] = useState<TextOverlay[]>([]);
-  const [selectedOverlayId, setSelectedOverlayId] = useState<string | null>(null);
-  const [editPage, setEditPage] = useState(0); // 0-based
-  const [editZoom, setEditZoom] = useState(1.0);
-  const [editWorking, setEditWorking] = useState(false);
-  const [editError, setEditError] = useState<string | null>(null);
-  const [editSuccess, setEditSuccess] = useState<string | null>(null);
-  const [undoStack, setUndoStack] = useState<TextOverlay[][]>([]);
-  const editCanvasRef = useRef<HTMLCanvasElement>(null);
-  const editContainerRef = useRef<HTMLDivElement>(null);
-  const [editPageDims, setEditPageDims] = useState<{ w: number; h: number } | null>(null);
-  const [editingOverlayId, setEditingOverlayId] = useState<string | null>(null);
-
-  const selectedOverlay = textOverlays.find(o => o.id === selectedOverlayId) ?? null;
-
-  // ── Intermediate buffer states for transfer to edit ──
-  const [lastMergedBytes, setLastMergedBytes] = useState<Uint8Array | null>(null);
-  const [lastCompressedBytes, setLastCompressedBytes] = useState<Uint8Array | null>(null);
-  const [lastSplitBytes, setLastSplitBytes] = useState<Uint8Array | null>(null);
-
-  const transferToEdit = async (bytes: Uint8Array, defaultFilename: string) => {
-    const file = new File([bytes as any], defaultFilename, { type: 'application/pdf' });
-    const entry: PdfFile = {
-      id: uid(),
-      file,
-      name: defaultFilename,
-      sizeBytes: file.size,
-      pageCount: await getPageCount(file),
-    };
-    setEditFile(entry);
-    setSelectedFile(entry);
-    setEditPage(0);
-    setTextOverlays([]);
-    setUndoStack([]);
-    setSelectedOverlayId(null);
-    setEditError(null);
-    setEditSuccess(null);
-    setActiveTab('edit');
-  };
-
   // ── Live merge preview: auto-regenerate in-memory merged buffer on queue changes ──
   useEffect(() => {
     if (mergeFiles.length < 2) {
@@ -638,10 +556,8 @@ export const PdfSuiteTool: React.FC = () => {
       setSelectedFile(compressFile);
     } else if (activeTab === 'split') {
       setSelectedFile(splitFile);
-    } else if (activeTab === 'edit') {
-      setSelectedFile(editFile);
     }
-  }, [activeTab, compressFile, splitFile, editFile]);
+  }, [activeTab, compressFile, splitFile]);
 
   // Full Screen toggle side effect
   useEffect(() => {
@@ -682,7 +598,6 @@ export const PdfSuiteTool: React.FC = () => {
     });
     setMergeError(null);
     setMergeSuccess(null);
-    setLastMergedBytes(null);
   }, [selectedFile]);
 
   const addCompressFile = useCallback(async ([f]: File[]) => {
@@ -694,7 +609,6 @@ export const PdfSuiteTool: React.FC = () => {
     setSelectedFile(entry);
     setCompressResult(null);
     setCompressError(null);
-    setLastCompressedBytes(null);
   }, []);
 
   const addSplitFile = useCallback(async ([f]: File[]) => {
@@ -707,174 +621,9 @@ export const PdfSuiteTool: React.FC = () => {
     setSplitError(null);
     setSplitSuccess(null);
     setSplitRange('');
-    setLastSplitBytes(null);
   }, []);
 
-  const addEditFile = useCallback(async ([f]: File[]) => {
-    const entry: PdfFile = {
-      id: uid(), file: f, name: f.name, sizeBytes: f.size,
-      pageCount: await getPageCount(f),
-    };
-    setEditFile(entry);
-    setSelectedFile(entry);
-    setEditPage(0);
-    setTextOverlays([]);
-    setUndoStack([]);
-    setSelectedOverlayId(null);
-    setEditError(null);
-    setEditSuccess(null);
-  }, []);
-
-  // ── Edit helper operations ──
-  const pushUndo = (currentOverlays: TextOverlay[]) => {
-    setUndoStack(prev => [...prev, currentOverlays]);
-  };
-
-  const addTextOverlay = () => {
-    if (!editFile) return;
-    pushUndo(textOverlays);
-    const newOverlay: TextOverlay = {
-      id: uid(),
-      text: 'Double click to edit',
-      x: 0.3,
-      y: 0.4,
-      fontSize: 16,
-      fontFamily: 'sans',
-      color: '#EFF6FF', // Slate 50-like default text color
-      opacity: 1.0,
-      pageIndex: editPage,
-    };
-    setTextOverlays(prev => [...prev, newOverlay]);
-    setSelectedOverlayId(newOverlay.id);
-  };
-
-  const updateTextOverlay = (id: string, updates: Partial<TextOverlay>) => {
-    pushUndo(textOverlays);
-    setTextOverlays(prev => prev.map(o => o.id === id ? { ...o, ...updates } : o));
-  };
-
-  const deleteTextOverlay = (id: string) => {
-    pushUndo(textOverlays);
-    setTextOverlays(prev => prev.filter(o => o.id !== id));
-    if (selectedOverlayId === id) setSelectedOverlayId(null);
-  };
-
-  const undoEdit = () => {
-    if (undoStack.length === 0) return;
-    const previous = undoStack[undoStack.length - 1];
-    setUndoStack(prev => prev.slice(0, -1));
-    setTextOverlays(previous);
-    setSelectedOverlayId(null);
-  };
-
-  const handleSaveEdit = async () => {
-    if (!editFile) return;
-    setEditWorking(true);
-    setEditError(null);
-    setEditSuccess(null);
-    try {
-      const arrayBuffer = await editFile.file.arrayBuffer();
-      const pdfDoc = await PDFDocument.load(arrayBuffer);
-      
-      const pages = pdfDoc.getPages();
-
-      // Embed text overlays page-by-page
-      for (const overlay of textOverlays) {
-        if (overlay.pageIndex < 0 || overlay.pageIndex >= pages.length) continue;
-        const page = pages[overlay.pageIndex];
-        const { width, height } = page.getSize();
-        
-        // Convert fraction relative coordinates to PDF user space coordinates
-        const pdfX = overlay.x * width;
-        // In PDF user space, (0,0) is bottom-left, but visual canvas is top-left
-        const pdfY = (1 - overlay.y) * height - (overlay.fontSize * 0.8);
-
-        // Load standard font
-        const fontName = FONT_MAP[overlay.fontFamily] || StandardFonts.Helvetica;
-        const font = await pdfDoc.embedFont(fontName);
-
-        // Parse hex color to RGB (0-1)
-        const hex = overlay.color.replace('#', '');
-        const r = parseInt(hex.substring(0, 2), 16) / 255;
-        const g = parseInt(hex.substring(2, 4), 16) / 255;
-        const b = parseInt(hex.substring(4, 6), 16) / 255;
-
-        page.drawText(overlay.text, {
-          x: pdfX,
-          y: pdfY,
-          size: overlay.fontSize,
-          font,
-          color: rgb(r, g, b),
-          opacity: overlay.opacity,
-        });
-      }
-
-      const pdfBytes = await pdfDoc.save();
-      downloadBlob(pdfBytes, `edited-${editFile.name}`);
-      setEditSuccess('PDF successfully annotated and downloaded.');
-    } catch (err: any) {
-      console.error(err);
-      setEditError(`Failed to save edits: ${err.message || 'Unknown error'}`);
-    } finally {
-      setEditWorking(false);
-    }
-  };
-
-  // Render the current edit page onto the canvas in Edit PDF mode
-  useEffect(() => {
-    if (activeTab !== 'edit' || !editFile) return;
-    let active = true;
-
-    const renderEditPage = async () => {
-      const fileUrl = URL.createObjectURL(editFile.file);
-      try {
-        const pdfjsLib = await import('pdfjs-dist');
-        pdfjsLib.GlobalWorkerOptions.workerSrc =
-          `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.mjs`;
-
-        const loadingTask = pdfjsLib.getDocument({ url: fileUrl });
-        const pdfDoc = await loadingTask.promise;
-        
-        const safePageNum = Math.min(Math.max(1, editPage + 1), pdfDoc.numPages || 1);
-        const page = await pdfDoc.getPage(safePageNum);
-
-        if (!active) {
-          URL.revokeObjectURL(fileUrl);
-          return;
-        }
-
-        const canvas = editCanvasRef.current;
-        if (canvas) {
-          const baseViewport = page.getViewport({ scale: 1.0 });
-          // Align size with the general layout fit scaling
-          const fitScale = 480 / baseViewport.width;
-          const viewport = page.getViewport({ scale: fitScale * editZoom });
-
-          canvas.width = Math.floor(viewport.width);
-          canvas.height = Math.floor(viewport.height);
-          setEditPageDims({ w: canvas.width, h: canvas.height });
-
-          const ctx = canvas.getContext('2d')!;
-          await page.render({
-            canvasContext: ctx,
-            canvas,
-            viewport,
-          }).promise;
-        }
-      } catch (err) {
-        console.error(err);
-      } finally {
-        URL.revokeObjectURL(fileUrl);
-      }
-    };
-
-    renderEditPage();
-    return () => {
-      active = false;
-    };
-  }, [activeTab, editFile, editPage, editZoom]);
-
-  // ── Merge reorder ──
+// ── Merge reorder ──
   const dragIndexRef = useRef<number | null>(null);
   const [dropTargetIndex, setDropTargetIndex] = useState<number | null>(null);
 
@@ -943,13 +692,11 @@ export const PdfSuiteTool: React.FC = () => {
     setMergeWorking(true);
     setMergeError(null);
     setMergeSuccess(null);
-    setLastMergedBytes(null);
     try {
       const bytes = mergePreviewBuffer ?? await mergePdfs(mergeFiles);
       downloadBlob(bytes, 'merged-output.pdf');
       setMergePreviewBuffer(bytes);
       setMergeSuccess(`Merged ${mergeFiles.length} files → ${formatBytes(bytes.byteLength)}`);
-      setLastMergedBytes(bytes);
     } catch (err: any) {
       setMergeError(`Merge failed: ${err.message || 'Unknown error'}`);
     } finally {
@@ -963,7 +710,6 @@ export const PdfSuiteTool: React.FC = () => {
     setCompressProgress(0);
     setCompressResult(null);
     setCompressError(null);
-    setLastCompressedBytes(null);
     try {
       let bytes: Uint8Array;
       if (compressPreset === 'basic') {
@@ -973,7 +719,6 @@ export const PdfSuiteTool: React.FC = () => {
       }
       downloadBlob(bytes, `compressed-${compressFile.name}`);
       setCompressResult({ originalBytes: compressFile.sizeBytes, compressedBytes: bytes.byteLength });
-      setLastCompressedBytes(bytes);
     } catch (err: any) {
       setCompressError(`Compression failed: ${err.message || 'Unknown error'}`);
     } finally {
@@ -990,13 +735,11 @@ export const PdfSuiteTool: React.FC = () => {
     setSplitWorking(true);
     setSplitError(null);
     setSplitSuccess(null);
-    setLastSplitBytes(null);
     try {
       const bytes = await splitPdf(splitFile.file, pages);
       const rangeSafe = splitRange.replace(/[^0-9,-]/g, '').slice(0, 20);
       downloadBlob(bytes, `split-pages-${rangeSafe}.pdf`);
       setSplitSuccess(`Extracted ${pages.length} page(s) → ${formatBytes(bytes.byteLength)}`);
-      setLastSplitBytes(bytes);
     } catch (err: any) {
       setSplitError(`Split failed: ${err.message || 'Unknown error'}`);
     } finally {
@@ -1022,7 +765,6 @@ export const PdfSuiteTool: React.FC = () => {
               activeTab === 'merge' ? 'bg-[#1D9BF0] text-white shadow-sm' : 'bg-neutral-800 hover:bg-neutral-700 text-neutral-200'
             }`}
           >
-            {/* <Merge className="w-3.5 h-3.5" /> */}
             <span>Merge PDFs</span>
           </button>
 
@@ -1032,7 +774,6 @@ export const PdfSuiteTool: React.FC = () => {
               activeTab === 'compress' ? 'bg-[#1D9BF0] text-white shadow-sm' : 'bg-neutral-800 hover:bg-neutral-700 text-neutral-200'
             }`}
           >
-            {/* <CompressIcon className="w-3.5 h-3.5" /> */}
             <span>Compress PDF</span>
           </button>
 
@@ -1042,9 +783,16 @@ export const PdfSuiteTool: React.FC = () => {
               activeTab === 'split' ? 'bg-[#1D9BF0] text-white shadow-sm' : 'bg-neutral-800 hover:bg-neutral-700 text-neutral-200'
             }`}
           >
-            {/* <Scissors className="w-3.5 h-3.5" /> */}
             <span>Split</span>
           </button>
+
+          {/* Cross-link to standalone Edit PDF tool */}
+          <a
+            href="/tools/edit-pdf"
+            className="px-3 py-1.5 rounded border border-neutral-700 hover:border-[#1D9BF0]/50 text-neutral-400 hover:text-[#1D9BF0] text-xs font-mono transition-colors flex items-center gap-1.5 cursor-pointer"
+          >
+            <span>Edit a PDF →</span>
+          </a>
         </div>
 
         {/* Right Side Utility Actions */}
@@ -1079,17 +827,7 @@ export const PdfSuiteTool: React.FC = () => {
             </button>
           )}
 
-          {activeTab === 'edit' && editFile && (
-            <button
-              onClick={() => { setEditFile(null); setTextOverlays([]); setUndoStack([]); setSelectedOverlayId(null); setEditError(null); setEditSuccess(null); setSelectedFile(null); }}
-              className="px-2.5 py-1.5 rounded bg-neutral-800/80 hover:bg-red-950 hover:text-red-300 text-neutral-400 transition-colors flex items-center gap-1 cursor-pointer"
-            >
-              <Trash2 className="w-3.5 h-3.5" />
-              <span>Clear File</span>
-            </button>
-          )}
-
-          <button
+<button
             onClick={() => setIsFullScreen(!isFullScreen)}
             title={isFullScreen ? 'Exit Full Screen' : 'Full Screen'}
             className="p-1.5 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-300 flex items-center gap-1 transition-colors cursor-pointer"
@@ -1104,7 +842,7 @@ export const PdfSuiteTool: React.FC = () => {
       <div className={`grid grid-cols-1 lg:grid-cols-12 divide-y lg:divide-y-0 lg:divide-x divide-neutral-800 ${isFullScreen ? 'flex-1 overflow-hidden' : 'min-h-[480px]'}`}>
 
         {/* Left Column Pane - Control & Input queue */}
-        <div className={`${activeTab === 'edit' ? 'lg:col-span-3' : 'lg:col-span-5'} p-4 sm:p-5 flex flex-col space-y-4 ${isFullScreen ? 'overflow-y-auto' : ''}`}>
+        <div className={`lg:col-span-5 p-4 sm:p-5 flex flex-col space-y-4 ${isFullScreen ? 'overflow-y-auto' : ''}`}>
           
           {/* TAB 1: Merge PDFs Queue */}
           {activeTab === 'merge' && (
@@ -1452,373 +1190,18 @@ export const PdfSuiteTool: React.FC = () => {
             </div>
           )}
 
-          {/* TAB 4: Edit PDF Controls */}
-          {activeTab === 'edit' && (
-            <div className="space-y-4 flex-1 flex flex-col justify-between">
-              <div className="space-y-4">
-                {!editFile ? (
-                  <DropZone onFiles={addEditFile} label="Drop a PDF file here to annotate/edit" />
-                ) : (
-                  <div className={`flex items-start gap-3 p-2.5 rounded border ${selectedFile ? 'border-[#1D9BF0] bg-[#1D9BF0]/5' : 'border-neutral-850'}`}>
-                    <PdfThumbnail file={editFile.file} />
-                    <div className="flex-1 min-w-0">
-                      <p className="text-xs font-mono font-bold text-neutral-200 truncate">{editFile.name}</p>
-                      <p className="text-[10px] font-mono text-neutral-500 mt-1">
-                        {formatBytes(editFile.sizeBytes)}
-                        {editFile.pageCount !== null && ` · ${editFile.pageCount} pages`}
-                      </p>
-                    </div>
-                    <button
-                      onClick={() => { setEditFile(null); setTextOverlays([]); setUndoStack([]); setSelectedOverlayId(null); setEditError(null); setEditSuccess(null); setSelectedFile(null); }}
-                      className="p-1 rounded hover:bg-neutral-800 text-neutral-500 hover:text-neutral-300 cursor-pointer"
-                    >
-                      <X className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
-                )}
-
-                {editFile && (
-                  <div className="space-y-4">
-                    <div className="p-3 bg-neutral-900/30 border border-neutral-850 rounded-lg space-y-2">
-                      <p className="text-[10px] font-mono text-neutral-500 uppercase tracking-wider">Canvas Workspace</p>
-                      <p className="text-[11px] font-sans text-neutral-400 leading-relaxed">
-                        Adjust text elements directly on-canvas. Use top toolbar shortcuts to insert components.
-                      </p>
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      <button
-                        onClick={addTextOverlay}
-                        className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded bg-neutral-900 border border-neutral-800 hover:border-neutral-700 text-xs font-mono text-neutral-200 hover:text-white transition-colors cursor-pointer"
-                      >
-                        <Type className="w-3.5 h-3.5 text-[#1D9BF0]" />
-                        <span>Add Text Field</span>
-                      </button>
-                      <button
-                        onClick={undoEdit}
-                        disabled={undoStack.length === 0}
-                        title="Undo"
-                        className="px-3 py-2 rounded bg-neutral-900 border border-neutral-800 hover:border-neutral-700 disabled:opacity-40 text-neutral-300 hover:text-white transition-colors cursor-pointer"
-                      >
-                        <Undo2 className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {editError && (
-                <div className="flex items-start gap-2 p-3 rounded bg-red-950/40 border border-red-900/60 text-xs text-red-300 font-mono">
-                  <AlertCircle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
-                  <span>{editError}</span>
-                </div>
-              )}
-              {editSuccess && (
-                <div className="flex items-start gap-2 p-3 rounded bg-emerald-950/40 border border-emerald-900/50 text-xs text-emerald-300 font-mono">
-                  <CheckCircle2 className="w-3.5 h-3.5 shrink-0 mt-0.5" />
-                  <span>{editSuccess}</span>
-                </div>
-              )}
-
-              {editFile && (
-                <div className="pt-2 border-t border-neutral-900">
-                  <button
-                    onClick={handleSaveEdit}
-                    disabled={editWorking}
-                    className="w-full flex items-center justify-center gap-2 px-4 py-2 rounded bg-[#1D9BF0] hover:bg-[#1A8CD8] text-white text-xs font-mono font-semibold transition-all cursor-pointer disabled:opacity-50"
-                  >
-                    {editWorking ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Download className="w-3.5 h-3.5" />}
-                    <span>{editWorking ? 'Exporting…' : '💾 Save & Export PDF'}</span>
-                  </button>
-                </div>
-              )}
-            </div>
-          )}
+          {/* TAB 3: Split PDF Controls handled above */}
 
         </div>
 
-        {/* Right Column Pane - High-Resolution Document Interactive Preview Canvas */}
-        <div className={`${activeTab === 'edit' ? 'lg:col-span-9' : 'lg:col-span-7'} p-4 sm:p-5 flex flex-col justify-between ${isFullScreen ? 'overflow-y-auto' : ''}`}>
-          {activeTab === 'edit' ? (
-            editFile ? (
-              <div className="flex-1 flex flex-col border border-neutral-800 rounded bg-neutral-950 min-h-[400px] overflow-hidden">
-                {/* Top Edit Control Bar */}
-                <div className="px-3 py-2 bg-neutral-900 border-b border-neutral-800 flex items-center justify-between gap-4 text-xs font-mono">
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => setEditPage(p => Math.max(0, p - 1))}
-                      disabled={editPage === 0}
-                      className="p-1 rounded hover:bg-neutral-800 text-neutral-400 hover:text-neutral-200 disabled:opacity-30 cursor-pointer"
-                    >
-                      <ChevronLeft className="w-4 h-4" />
-                    </button>
-                    <span className="text-neutral-300">
-                      Page {editPage + 1} of {editFile.pageCount || 1}
-                    </span>
-                    <button
-                      onClick={() => setEditPage(p => Math.min((editFile.pageCount || 1) - 1, p + 1))}
-                      disabled={editPage === (editFile.pageCount || 1) - 1}
-                      className="p-1 rounded hover:bg-neutral-800 text-neutral-400 hover:text-neutral-200 disabled:opacity-30 cursor-pointer"
-                    >
-                      <ChevronRight className="w-4 h-4" />
-                    </button>
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => setEditZoom(z => Math.max(0.6, z - 0.2))}
-                      className="p-1 rounded hover:bg-neutral-800 text-neutral-400 hover:text-neutral-200 cursor-pointer"
-                    >
-                      <ZoomOut className="w-4 h-4" />
-                    </button>
-                    <span className="text-neutral-400 w-10 text-center">{Math.round(editZoom * 100)}%</span>
-                    <button
-                      onClick={() => setEditZoom(z => Math.min(2.0, z + 0.2))}
-                      className="p-1 rounded hover:bg-neutral-800 text-neutral-400 hover:text-neutral-200 cursor-pointer"
-                    >
-                      <ZoomIn className="w-4 h-4" />
-                    </button>
-
-                    <span className="w-px h-4 bg-neutral-800 mx-1" />
-                    <button
-                      onClick={handleSaveEdit}
-                      disabled={editWorking}
-                      title="Save & Export PDF"
-                      className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#1D9BF0] hover:bg-[#1A8CD8] text-white transition-colors cursor-pointer text-[10px] font-mono font-semibold disabled:opacity-50"
-                    >
-                      <Download className="w-3.5 h-3.5" />
-                      <span>Export</span>
-                    </button>
-                  </div>
-                </div>
-
-                {/* Secondary Figma/Canva style Annotation Toolbar */}
-                <div className="px-3 py-1.5 bg-neutral-950 border-b border-neutral-800 flex flex-wrap items-center justify-center gap-2 text-xs font-mono select-none">
-                  <button
-                    onClick={addTextOverlay}
-                    className="px-2.5 py-1 rounded bg-[#1D9BF0] hover:bg-[#1A8CD8] text-white flex items-center gap-1.5 cursor-pointer font-semibold shadow-sm text-[11px]"
-                  >
-                    <span>🔤 Add Text</span>
-                  </button>
-                  <button
-                    onClick={() => alert('Signature/Draw tool is ready in memory. Complete local sandbox signature support coming in future updates!')}
-                    className="px-2.5 py-1 rounded bg-neutral-900 border border-neutral-800 hover:border-neutral-700 text-neutral-300 hover:text-white flex items-center gap-1.5 cursor-pointer text-[11px]"
-                  >
-                    <span>🖋️ Signature / Draw</span>
-                  </button>
-                  <button
-                    onClick={() => {
-                      if (!editFile) return;
-                      pushUndo(textOverlays);
-                      const newOverlay: TextOverlay = {
-                        id: uid(),
-                        text: 'HIGHLIGHT',
-                        x: 0.4,
-                        y: 0.4,
-                        fontSize: 24,
-                        fontFamily: 'sans',
-                        color: '#FFFF00',
-                        opacity: 0.45,
-                        pageIndex: editPage,
-                      };
-                      setTextOverlays(prev => [...prev, newOverlay]);
-                      setSelectedOverlayId(newOverlay.id);
-                    }}
-                    className="px-2.5 py-1 rounded bg-neutral-900 border border-neutral-800 hover:border-neutral-700 text-neutral-300 hover:text-white flex items-center gap-1.5 cursor-pointer text-[11px]"
-                  >
-                    <span>🔲 Highlight Box</span>
-                  </button>
-                  <button
-                    onClick={() => alert('Insert Image/Stamp tool is ready in memory. Complete local stamp support coming in future updates!')}
-                    className="px-2.5 py-1 rounded bg-neutral-900 border border-neutral-800 hover:border-neutral-700 text-neutral-300 hover:text-white flex items-center gap-1.5 cursor-pointer text-[11px]"
-                  >
-                    <span>🖼️ Insert Image/Stamp</span>
-                  </button>
-                </div>
-
-                {/* Edit Canvas & Drag overlay workspace container */}
-                <div 
-                  className="flex-1 p-4 overflow-auto flex items-center justify-center relative min-h-[360px] bg-neutral-900/20" 
-                  ref={editContainerRef}
-                  onClick={() => { setSelectedOverlayId(null); setEditingOverlayId(null); }}
-                >
-                  <div className="relative shadow-lg border border-neutral-850 bg-white select-none" onClick={e => e.stopPropagation()}>
-                    <canvas ref={editCanvasRef} className="max-w-full block pointer-events-none" />
-
-                    {/* Draggable Absolute Text Overlay Elements */}
-                    {editPageDims && textOverlays
-                      .filter(o => o.pageIndex === editPage)
-                      .map(o => {
-                        const styleFont = FONT_FAMILIES.find(f => f.id === o.fontFamily)?.css || 'Helvetica, Arial, sans-serif';
-                        const isSelected = selectedOverlayId === o.id;
-                        const isEditing = editingOverlayId === o.id;
-
-                        // Local coordinates computed from layout dimensions
-                        const posX = o.x * editPageDims.w;
-                        const posY = o.y * editPageDims.h;
-
-                        // Drag start helper using mouse events
-                        const handleMouseDown = (e: React.MouseEvent) => {
-                          e.stopPropagation();
-                          setSelectedOverlayId(o.id);
-                          if (isEditing) return; // Typing mode
-
-                          const startX = e.clientX;
-                          const startY = e.clientY;
-                          const startPctX = o.x;
-                          const startPctY = o.y;
-
-                          const handleMouseMove = (moveEvt: MouseEvent) => {
-                            if (!editPageDims) return;
-                            const deltaX = moveEvt.clientX - startX;
-                            const deltaY = moveEvt.clientY - startY;
-
-                            const deltaPctX = deltaX / editPageDims.w;
-                            const deltaPctY = deltaY / editPageDims.h;
-
-                            const nextX = Math.min(Math.max(0, startPctX + deltaPctX), 0.95);
-                            const nextY = Math.min(Math.max(0, startPctY + deltaPctY), 0.95);
-
-                            // Perform update without stack pollution during sliding drag
-                            setTextOverlays(prev => prev.map(item => item.id === o.id ? { ...item, x: nextX, y: nextY } : item));
-                          };
-
-                          const handleMouseUp = () => {
-                            window.removeEventListener('mousemove', handleMouseMove);
-                            window.removeEventListener('mouseup', handleMouseUp);
-                          };
-
-                          window.addEventListener('mousemove', handleMouseMove);
-                          window.addEventListener('mouseup', handleMouseUp);
-                        };
-
-                        return (
-                          <div
-                            key={o.id}
-                            style={{
-                              position: 'absolute',
-                              left: `${posX}px`,
-                              top: `${posY}px`,
-                              fontSize: `${o.fontSize}px`,
-                              fontFamily: styleFont,
-                              color: o.color,
-                              opacity: o.opacity,
-                              transform: 'translate(-50%, -50%)',
-                            }}
-                            className={`absolute cursor-move select-none p-1 border rounded leading-tight transition-shadow ${
-                              isSelected
-                                ? 'border-[#1D9BF0] bg-neutral-950/80 shadow-lg shadow-[#1D9BF0]/10 z-30'
-                                : 'border-transparent hover:border-neutral-400 bg-transparent hover:bg-neutral-950/20 z-20'
-                            }`}
-                            onMouseDown={handleMouseDown}
-                            onDoubleClick={(e) => {
-                              e.stopPropagation();
-                              setEditingOverlayId(o.id);
-                            }}
-                          >
-                            {/* Floating Canva-style Contextual Toolbar directly above selected object */}
-                            {isSelected && (
-                              <div
-                                className="absolute bottom-[calc(100%+12px)] left-1/2 -translate-x-1/2 flex items-center gap-1 p-1 bg-neutral-900 border border-neutral-800 rounded-lg shadow-xl z-40 select-none animate-in fade-in zoom-in-95 duration-100"
-                                onMouseDown={e => e.stopPropagation()} // block dragging on clicks
-                              >
-                                <select
-                                  value={o.fontFamily}
-                                  onChange={e => updateTextOverlay(o.id, { fontFamily: e.target.value as any })}
-                                  className="bg-neutral-950 border border-neutral-800 rounded px-1.5 py-0.5 text-[10px] font-mono text-neutral-300 focus:outline-none"
-                                >
-                                  <option value="sans">Sans</option>
-                                  <option value="serif">Serif</option>
-                                  <option value="mono">Mono</option>
-                                </select>
-
-                                <span className="w-px h-3.5 bg-neutral-800 mx-0.5" />
-
-                                <button
-                                  onClick={() => updateTextOverlay(o.id, { fontSize: Math.max(10, o.fontSize - 2) })}
-                                  className="w-5 h-5 flex items-center justify-center rounded hover:bg-neutral-800 text-neutral-400 hover:text-neutral-200 text-xs font-bold font-mono"
-                                >
-                                  -
-                                </button>
-                                <span className="text-[10px] font-mono text-neutral-350 w-5 text-center">{o.fontSize}</span>
-                                <button
-                                  onClick={() => updateTextOverlay(o.id, { fontSize: Math.min(72, o.fontSize + 2) })}
-                                  className="w-5 h-5 flex items-center justify-center rounded hover:bg-neutral-800 text-neutral-400 hover:text-neutral-200 text-xs font-bold font-mono"
-                                >
-                                  +
-                                </button>
-
-                                <span className="w-px h-3.5 bg-neutral-800 mx-0.5" />
-
-                                <div className="relative w-5 h-5 rounded border border-neutral-800 bg-neutral-950 flex items-center justify-center overflow-hidden cursor-pointer">
-                                  <div className="w-3 h-3 rounded-full border border-neutral-750" style={{ backgroundColor: o.color }} />
-                                  <input
-                                    type="color"
-                                    value={o.color}
-                                    onChange={e => updateTextOverlay(o.id, { color: e.target.value })}
-                                    className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
-                                  />
-                                </div>
-
-                                <span className="w-px h-3.5 bg-neutral-800 mx-0.5" />
-
-                                <button
-                                  onClick={() => deleteTextOverlay(o.id)}
-                                  className="w-5 h-5 flex items-center justify-center rounded hover:bg-red-950/40 text-neutral-400 hover:text-red-400"
-                                >
-                                  <Trash2 className="w-3.5 h-3.5" />
-                                </button>
-                              </div>
-                            )}
-
-                            {isEditing ? (
-                              <input
-                                type="text"
-                                value={o.text}
-                                onChange={e => updateTextOverlay(o.id, { text: e.target.value })}
-                                onBlur={() => setEditingOverlayId(null)}
-                                onKeyDown={e => { if (e.key === 'Enter') setEditingOverlayId(null); }}
-                                onMouseDown={e => e.stopPropagation()} // don't drag while highlighting text
-                                className="bg-transparent border-none outline-none focus:ring-0 p-0 m-0 w-auto min-w-[120px] text-inherit text-center"
-                                autoFocus
-                              />
-                            ) : (
-                              <span className="whitespace-nowrap px-2 block">{o.text}</span>
-                            )}
-
-                            {/* Pro Bounding Box: 8 Selection Handles */}
-                            {isSelected && (
-                              <>
-                                <div className="absolute -top-1 -left-1 w-2 h-2 bg-[#1D9BF0] border border-white rounded-sm pointer-events-none" />
-                                <div className="absolute -top-1 -right-1 w-2 h-2 bg-[#1D9BF0] border border-white rounded-sm pointer-events-none" />
-                                <div className="absolute -bottom-1 -left-1 w-2 h-2 bg-[#1D9BF0] border border-white rounded-sm pointer-events-none" />
-                                <div className="absolute -bottom-1 -right-1 w-2 h-2 bg-[#1D9BF0] border border-white rounded-sm pointer-events-none" />
-                                
-                                <div className="absolute top-1/2 -left-1 -translate-y-1/2 w-2 h-2 bg-[#1D9BF0] border border-white rounded-sm pointer-events-none" />
-                                <div className="absolute top-1/2 -right-1 -translate-y-1/2 w-2 h-2 bg-[#1D9BF0] border border-white rounded-sm pointer-events-none" />
-                                <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-[#1D9BF0] border border-white rounded-sm pointer-events-none" />
-                                <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-[#1D9BF0] border border-white rounded-sm pointer-events-none" />
-                              </>
-                            )}
-                          </div>
-                        );
-                      })}
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <div className="flex-1 flex flex-col items-center justify-center p-8 text-neutral-500 border border-neutral-800 rounded bg-neutral-900/10 min-h-[400px]">
-                <FileText className="w-8 h-8 text-neutral-700 mb-2" />
-                <p className="text-xs font-mono">No document loaded for editing</p>
-                <p className="text-[10px] font-sans text-neutral-600 mt-1">Upload a PDF and switch to Edit PDF mode to append texts and annotations</p>
-              </div>
-            )
-          ) : activeTab === 'merge' ? (
+        {/* Right Column Pane - Interactive Preview Canvas */}
+        <div className={`lg:col-span-7 p-4 sm:p-5 flex flex-col justify-between ${isFullScreen ? 'overflow-y-auto' : ''}`}>
+          {activeTab === 'merge' ? (
             <InteractivePreview
               pdfSource={mergePreviewBuffer}
               pageCount={
                 mergePreviewBuffer
-                  ? undefined // let pdfjs report the real count from the buffer
+                  ? undefined
                   : mergeFiles.reduce((sum, f) => sum + (f.pageCount ?? 0), 0) || undefined
               }
               onDownload={
@@ -1858,7 +1241,7 @@ export const PdfSuiteTool: React.FC = () => {
       {/* Footer Status and Info */}
       <div className="px-4 py-2.5 bg-neutral-900/80 border-t border-neutral-800 flex flex-wrap items-center justify-between gap-2 text-xs font-mono">
         <div className="flex items-center gap-2">
-          {mergeWorking || compressWorking || splitWorking || editWorking || mergePreviewBuilding ? (
+          {mergeWorking || compressWorking || splitWorking || mergePreviewBuilding ? (
             <span className="text-neutral-400 flex items-center gap-1.5 font-medium">
               <span className="w-2 h-2 rounded-full bg-neutral-400 animate-pulse" />
               <span>{mergePreviewBuilding && !mergeWorking ? 'Generating preview…' : 'Processing PDF...'}</span>

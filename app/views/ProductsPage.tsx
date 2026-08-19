@@ -104,6 +104,8 @@ export const ProductsPage: React.FC = () => {
                   'ats-resume-generator': '/tools/ats-resume-generator',
                   'ai-prompt-builder': '/tools/ai-prompt-builder',
                   'diff-checker': '/tools/diff-checker',
+                  'pdf-suite': '/tools/pdf-suite',
+                  'edit-pdf': '/tools/edit-pdf',
                 };
                 const toolHref = toolRoutes[prod.id];
 

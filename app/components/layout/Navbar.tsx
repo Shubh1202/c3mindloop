@@ -55,6 +55,7 @@ export const Navbar: React.FC<{
     { name: 'Cron Visualizer', sub: 'Parse & Schedule', path: '/tools/cron-visualizer', icon: Clock },
     { name: 'Regex Tester', sub: 'Test & Debug', path: '/tools/regex-tester', icon: Regex },
     { name: 'PDF Suite', sub: 'Compress & Merge', path: '/tools/pdf-suite', icon: FileText, isNew: true },
+    { name: 'Edit PDF', sub: 'Annotate & Sign', path: '/tools/edit-pdf', icon: FileText, isNew: true },
   ];
 
   const toolsDropdown = [...col1Tools, ...col2Tools];

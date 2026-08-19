@@ -599,7 +599,7 @@ export const CronVisualizerTool: React.FC = () => {
           {highFreq && (
             <div className="flex items-start gap-2 p-2.5 bg-amber-950/50 border border-amber-800/70 rounded text-xs font-mono text-amber-300">
               <AlertCircle className="w-3.5 h-3.5 shrink-0 mt-0.5 text-amber-500" />
-              <span>⚠️ High Frequency Schedule — this expression runs very frequently and may cause high server load.</span>
+              <span>⚠️ High Frequency Schedule- this expression runs very frequently and may cause high server load.</span>
             </div>
           )}
           {validationErrors.length > 0 && (

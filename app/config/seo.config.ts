@@ -457,6 +457,35 @@ export const seoConfig = {
       images: [defaultOgImage],
     },
   },
+
+  editPdf: {
+    title: 'Edit PDF Online Free- Annotate, Add Text, Sign & Fill Forms | C³ MindLoop',
+    description:
+      'Free browser-based PDF editor. Add text, draw shapes, place images, sign documents, fill forms, manage pages, and download- all processed locally with no file upload required.',
+    keywords: [
+      'edit pdf online', 'pdf editor', 'annotate pdf', 'add text to pdf',
+      'pdf annotation tool', 'edit pdf in browser', 'sign pdf online',
+      'fill pdf form online', 'pdf form filler', 'free pdf editor',
+      'pdf editor no upload', 'client-side pdf editor', 'pdf editor privacy',
+      '100% Private', 'Client-Side Execution', 'No Server Upload', 'GDPR Compliant',
+      'add image to pdf', 'whiteout pdf text', 'pdf page manager',
+      'rotate pdf pages', 'delete pdf pages', 'reorder pdf pages',
+      'C³ MindLoop pdf editor', 'ccube edit pdf',
+    ],
+    canonical: `${BASE_URL}/tools/edit-pdf`,
+    openGraph: {
+      title: 'Edit PDF Online Free- Annotate, Sign & Fill Forms | C³ MindLoop',
+      description:
+        'Add text, images, signatures and form values to any PDF directly in your browser. No upload required.',
+      url: `${BASE_URL}/tools/edit-pdf`,
+      images: [{ url: defaultOgImage, width: 1200, height: 630, alt: 'Edit PDF - C³ MindLoop' }],
+    },
+    twitter: {
+      title: 'Edit PDF Online Free- Annotate, Sign & Fill | C³ MindLoop',
+      description: 'Free browser-based PDF editor. Add text, sign, fill forms. No file upload.',
+      images: [defaultOgImage],
+    },
+  },
 };
 
 // ── JSON-LD Schemas ──────────────────────────────────────────────────────────
@@ -800,6 +829,31 @@ export const diffCheckerSchema = {
     'Copy unified diff output to clipboard',
     'Swap, Sample, Clear, and Fullscreen toolbar actions',
     '100% client-side execution - zero data transmission',
+  ],
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+  publisher: { '@type': 'Organization', name: 'C³ MindLoop', url: BASE_URL },
+};
+
+export const editPdfSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: 'Edit PDF- Online PDF Editor',
+  url: `${BASE_URL}/tools/edit-pdf`,
+  applicationCategory: 'WebApplication',
+  operatingSystem: 'All',
+  browserRequirements: 'Requires JavaScript',
+  description:
+    'Free browser-based PDF editor. Add text overlays, draw whiteout rectangles, place images, draw freehand signatures, manage pages (rotate, delete, reorder), and fill AcroForm fields. All processing runs locally using pdf-lib and pdfjs-dist- no file upload required.',
+  featureList: [
+    'Add and position text overlays on any PDF page',
+    'Whiteout / redact content with white rectangles',
+    'Place images and stamps on PDF pages',
+    'Draw freehand signatures and place them on any page',
+    'Fill AcroForm text fields, checkboxes, and dropdowns',
+    'Rotate, delete, and reorder PDF pages',
+    'Undo / redo full edit history',
+    'Export and download the annotated PDF',
+    'Client-side processing using pdf-lib- no server upload',
   ],
   offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
   publisher: { '@type': 'Organization', name: 'C³ MindLoop', url: BASE_URL },

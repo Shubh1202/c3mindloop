@@ -94,6 +94,15 @@ const formatted = JSON.stringify(JSON.parse(input), null, 2);`
     techStack: ['pdf-lib', 'pdfjs-dist', 'Canvas APIs', 'Local Processing']
   },
   {
+    id: 'edit-pdf',
+    nameKey: 'Edit PDF',
+    descKey: 'Add text, images, signatures and whiteout to any PDF. Fill forms, manage pages, and export — 100% client-side, no upload.',
+    status: 'live',
+    category: 'utilities',
+    icon: 'FileCode',
+    techStack: ['pdf-lib', 'pdfjs-dist', 'Canvas APIs', 'Local Processing']
+  },
+  {
     id: 'ai-prompt-builder',
     nameKey: 'AI Prompt Context Builder',
     descKey: 'Sanitize raw technical context (code, logs, schemas) and generate optimized LLM system prompts locally.',

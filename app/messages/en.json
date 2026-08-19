@@ -930,6 +930,54 @@
         "q10": "Can I load files from my computer instead of pasting text?",
         "a10": "Yes. Each panel has an Upload button that lets you select a plain-text file from your filesystem. The file is read using the browser FileReader API entirely client-side. No file data is transmitted to a server."
       }
+    },
+    "editPdf": {
+      "pageTitle": "Edit PDF Online- Annotate, Sign & Fill Forms",
+      "pageBadge": "100% Client-Side · No Upload Required",
+      "breadcrumb": "Edit PDF",
+      "breadcrumbParent": "Developer Tools",
+      "feat1Title": "Text Overlays & Annotation",
+      "feat1Desc": "Add and position text on any PDF page. Adjust font family, size, colour, and opacity. Double-click any overlay to edit its content inline.",
+      "feat2Title": "Signatures, Images & Whiteout",
+      "feat2Desc": "Draw freehand signatures with the signature pad, place images or stamps, and cover existing content with white rectangles. All elements are fully repositionable.",
+      "feat3Title": "Page Management & Form Filling",
+      "feat3Desc": "Rotate, delete, and reorder pages using the thumbnail panel. Fill AcroForm text fields, checkboxes, and dropdowns detected from the original PDF.",
+      "guide": {
+        "title": "How This Works",
+        "intro": "The PDF Editor lets you annotate, sign, fill forms, and manage pages in any PDF file directly in your browser. Here is the step-by-step workflow:",
+        "step1": "Upload a PDF: Drop a PDF onto the editor area or click to browse and select a file from your device. The file is loaded entirely in your browser- nothing is uploaded to a server.",
+        "step2": "Add Text Overlays: Select the Text tool from the toolbar and click anywhere on the page to place a text element. Double-click the element to edit its content. Use the Properties panel on the right to change font, size, colour, and opacity.",
+        "step3": "Cover Content with Whiteout: Select the Whiteout tool and drag a rectangle over the area you want to cover. This draws an opaque white rectangle that hides underlying content when the PDF is exported.",
+        "step4": "Place Images or Signatures: Use the Image tool to upload an image from your device and place it on any page. Use the Signature tool to open the signature pad, draw your signature, and position it on the page.",
+        "step5": "Manage Pages: Use the page thumbnail panel on the left to navigate pages, change their order by dragging, rotate them 90 degrees, or delete pages you do not need in the final document.",
+        "step6": "Export and Download: Click the Export button in the toolbar to generate the final PDF with all edits embedded using pdf-lib. The file is built in your browser and downloaded directly to your device.",
+        "privacyTitle": "The Privacy & Local Processing Advantage",
+        "privacyIntro": "Uploading sensitive PDF documents to cloud-based editors means your files are transmitted over the network and processed on remote servers. The C³ MindLoop PDF Editor works differently:",
+        "privacyBullet1": "Client-Side Processing: All editing operations- text overlays, whiteout, image placement, signatures, page management, and form filling- are performed inside your browser using pdf-lib and pdfjs-dist. Your PDF data is processed in local memory and is never sent to any C³ MindLoop server.",
+        "privacyBullet2": "Suitable for Sensitive Documents: Because processing happens locally, you can safely edit confidential documents- contracts, legal agreements, medical records, or financial statements- without transmitting their contents over the network to a third-party service."
+      },
+      "faq": {
+        "q1": "What is the PDF Editor?",
+        "a1": "The PDF Editor is a free browser-based tool that lets you annotate, sign, fill forms, and manage pages in any PDF file without installing software. All editing operations run directly in your browser- no file upload to a remote server is required.",
+        "q2": "Is the PDF Editor free to use?",
+        "a2": "Yes, the PDF Editor is completely free. There is no account required, no usage limit, and no paid plan. All features including text overlays, whiteout, image placement, signatures, form filling, and page management are available without restriction.",
+        "q3": "Is my PDF uploaded to a server when I use this tool?",
+        "a3": "No. The PDF Editor runs entirely inside your browser using pdf-lib and pdfjs-dist. Your PDF file is loaded into browser memory and never transmitted to any server. All editing, rendering, and export operations happen locally on your device.",
+        "q4": "What editing operations does the PDF Editor support?",
+        "a4": "The editor supports adding and positioning text overlays with configurable font, size, colour, and opacity; drawing whiteout rectangles to cover existing content; placing images and stamps; drawing freehand signatures; filling AcroForm text fields, checkboxes, and dropdowns; and managing pages by rotating, deleting, or reordering them.",
+        "q5": "Can I fill in PDF form fields?",
+        "a5": "Yes. When you load a PDF that contains AcroForm fields, the Properties panel will display the detected fields. You can fill in text fields, toggle checkboxes, and select dropdown values. These values are written into the PDF when you export.",
+        "q6": "How do I add a signature to a PDF?",
+        "a6": "Click the Signature button in the toolbar to open the signature pad. Draw your signature using your mouse, touchpad, or touchscreen. Click Confirm to place the signature on the current page. You can then reposition and resize it by dragging.",
+        "q7": "Can I delete or reorder pages in a PDF?",
+        "a7": "Yes. The page thumbnail panel on the left side of the editor shows all pages. You can drag thumbnails to reorder pages, click the rotate button to rotate a page, or click the delete button to remove a page from the final document.",
+        "q8": "How do I undo changes?",
+        "a8": "Use Ctrl+Z (or Cmd+Z on Mac) to undo the last action, and Ctrl+Y (or Cmd+Shift+Z on Mac) to redo. The undo and redo buttons are also available in the toolbar.",
+        "q9": "What happens when I export the PDF?",
+        "a9": "Clicking Export generates a new PDF file that embeds all your edits- text overlays, whiteout rectangles, images, signatures, and form values- using pdf-lib. The file is built entirely in your browser and downloaded directly to your device. The original file is not modified.",
+        "q10": "Can I use the PDF Editor without installing software?",
+        "a10": "Yes. The tool runs entirely in your browser using standard web APIs. You do not need to install any application, browser extension, or desktop software. It works in any modern browser on desktop or mobile."
+      }
     }
   }
 }

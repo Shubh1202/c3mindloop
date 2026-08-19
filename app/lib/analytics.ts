@@ -1,4 +1,4 @@
-// GA4 event helper — fires gtag events safely (no-op if gtag not loaded)
+// GA4 event helper- fires gtag events safely (no-op if gtag not loaded)
 declare global {
   interface Window {
     gtag?: (...args: any[]) => void;
@@ -14,7 +14,7 @@ export function trackEvent(
   }
 }
 
-// Canonical key events — mark these as "Key Events" in GA4 dashboard
+// Canonical key events- mark these as "Key Events" in GA4 dashboard
 export const GA_EVENTS = {
   TOOL_USED: 'tool_used',       // fired once per tool session on first meaningful action
   COPY_OUTPUT: 'copy_output',   // fired when user copies tool output
