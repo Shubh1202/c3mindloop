@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useCallback, useEffect, useRef } from 'react';
+import { trackEvent, GA_EVENTS } from '../../lib/analytics';
 import {
   Copy, Check, Trash2, Upload, Download, Info,
   ShieldCheck, Maximize2, Minimize2, FileText, RotateCcw, KeyRound,
@@ -154,6 +155,7 @@ export const HashGeneratorTool: React.FC = () => {
       const result = await computeHashes(text);
       setHashes(result);
       setIsComputing(false);
+      trackEvent(GA_EVENTS.TOOL_USED, { tool_name: 'hash_generator', mode: 'text' });
     }, 200);
     return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
   }, [text, mode]);
@@ -199,6 +201,7 @@ export const HashGeneratorTool: React.FC = () => {
   const handleCopy = (key: string) => {
     if (!hashes[key]) return;
     navigator.clipboard.writeText(hashes[key]);
+    trackEvent(GA_EVENTS.COPY_OUTPUT, { tool_name: 'hash_generator', algorithm: key });
     setCopiedKey(key);
     setTimeout(() => setCopiedKey(null), 1800);
   };

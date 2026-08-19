@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { trackEvent, GA_EVENTS } from '../../lib/analytics';
 import {
   Copy,
   Check,
@@ -332,6 +333,7 @@ export const JsonFormatterTool: React.FC = () => {
   };
 
   const handleFormat = (syncToInput = false) => {
+    trackEvent(GA_EVENTS.TOOL_ACTION, { tool_name: 'json_formatter', action: 'format' });
     if (!rawInput.trim()) {
       setFormattedOutput('');
       setParsedObject(null);
@@ -372,6 +374,7 @@ export const JsonFormatterTool: React.FC = () => {
   };
 
   const handleMinify = () => {
+    trackEvent(GA_EVENTS.TOOL_ACTION, { tool_name: 'json_formatter', action: 'minify' });
     if (!rawInput.trim()) return;
     try {
       const parsed = JSON.parse(rawInput);
@@ -460,6 +463,7 @@ export const JsonFormatterTool: React.FC = () => {
     if (!textToCopy) return;
     navigator.clipboard.writeText(textToCopy);
     setCopied(true);
+    trackEvent(GA_EVENTS.COPY_OUTPUT, { tool_name: 'json_formatter', output_mode: outputMode });
     setTimeout(() => setCopied(false), 2000);
   };
 

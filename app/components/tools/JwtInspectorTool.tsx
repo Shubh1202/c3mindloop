@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useCallback, useEffect } from 'react';
+import { trackEvent, GA_EVENTS } from '../../lib/analytics';
 import { Copy, Check, Trash2, ShieldCheck, ShieldAlert, ShieldOff, Clock, Info, AlertCircle, Maximize2, Minimize2, Columns2, Rows2, Key, HelpCircle, ChevronUp, ChevronDown } from 'lucide-react';
 import { useTranslation } from '../../lib/i18n';
 
@@ -311,10 +312,12 @@ export const JwtInspectorTool: React.FC = () => {
     }
     setDecoded(result);
     setError(null);
+    trackEvent(GA_EVENTS.TOOL_USED, { tool_name: 'jwt_inspector' });
   }, [t]);
 
   const handleCopy = (text: string, type: 'header' | 'payload') => {
     navigator.clipboard.writeText(text);
+    trackEvent(GA_EVENTS.COPY_OUTPUT, { tool_name: 'jwt_inspector', section: type });
     if (type === 'header') {
       setCopiedHeader(true);
       setTimeout(() => setCopiedHeader(false), 2000);

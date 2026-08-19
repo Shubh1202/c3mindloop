@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useCallback, useEffect, useRef, useMemo } from 'react';
+import { trackEvent, GA_EVENTS } from '../../lib/analytics';
 import { Copy, Check, Trash2, Upload, ArrowLeftRight, Info, AlertCircle, Maximize2, Minimize2, Image } from 'lucide-react';
 import { useTranslation } from '../../lib/i18n';
 
@@ -102,6 +103,7 @@ export const Base64Tool: React.FC = () => {
         } else {
           setOutput(decodeBase64(value.trim()));
         }
+        trackEvent(GA_EVENTS.TOOL_USED, { tool_name: 'base64_encoder', mode: currentMode });
       } catch {
         setOutput('');
         setError(t('tools.base64Encoder.errorDecode'));
@@ -148,6 +150,7 @@ export const Base64Tool: React.FC = () => {
   const handleCopy = () => {
     if (!output) return;
     navigator.clipboard.writeText(output);
+    trackEvent(GA_EVENTS.COPY_OUTPUT, { tool_name: 'base64_encoder', mode });
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
