@@ -118,7 +118,9 @@ export default function RootLayout({
       </head>
       <body className="bg-neutral-950 text-neutral-100 antialiased min-h-screen">
         <AppClientShell>{children}</AppClientShell>
-        <GoogleAnalytics gaId="G-6KLCC79WE4" />
+        {process.env.NODE_ENV === 'production' && (
+          <GoogleAnalytics gaId="G-6KLCC79WE4" />
+        )}
       </body>
     </html>
   );
