@@ -225,6 +225,34 @@ function getNextExecutions(parts: CronParts, flavor: 'standard' | 'quartz', coun
   return results;
 }
 
+// ── Validation ──────────────────────────────────────────────────────────────
+
+function validateCronParts(parts: CronParts, flavor: 'standard' | 'quartz'): string[] {
+  const errors: string[] = [];
+  const checkField = (val: string, min: number, max: number, name: string) => {
+    if (val === '*' || val === '?') return;
+    const nums = val.replace(/[*/,\-]/g, ' ').trim().split(/\s+/).map(Number).filter(n => !isNaN(n));
+    for (const n of nums) {
+      if (n < min || n > max) errors.push(`${name}: ${n} is out of range (${min}–${max})`);
+    }
+  };
+  if (flavor === 'quartz' && parts.second) checkField(parts.second, 0, 59, 'Second');
+  checkField(parts.minute, 0, 59, 'Minute');
+  checkField(parts.hour, 0, 23, 'Hour');
+  checkField(parts.dom, 1, 31, 'Day of Month');
+  checkField(parts.month, 1, 12, 'Month');
+  checkField(parts.dow, 0, 7, 'Day of Week');
+  return errors;
+}
+
+function isHighFrequency(parts: CronParts, flavor: 'standard' | 'quartz'): boolean {
+  if (flavor === 'quartz' && parts.second && parts.second === '*') return true;
+  if (parts.minute === '*' && parts.hour === '*') return true;
+  const stepMatch = parts.minute.match(/^\*\/(\d+)$/);
+  if (stepMatch && parseInt(stepMatch[1], 10) <= 5) return true;
+  return false;
+}
+
 // ── Builder state ────────────────────────────────────────────────────────────
 
 interface BuilderState {
@@ -334,7 +362,17 @@ export const CronVisualizerTool: React.FC = () => {
 
   const nextRuns = useMemo(() => {
     if (!parsed) return [];
-    try { return getNextExecutions(parsed, flavor, 5); } catch { return []; }
+    try { return getNextExecutions(parsed, flavor, 10); } catch { return []; }
+  }, [parsed, flavor]);
+
+  const validationErrors = useMemo(() => {
+    if (!parsed) return [];
+    return validateCronParts(parsed, flavor);
+  }, [parsed, flavor]);
+
+  const highFreq = useMemo(() => {
+    if (!parsed) return false;
+    return isHighFrequency(parsed, flavor);
   }, [parsed, flavor]);
 
   const handleCopy = useCallback(() => {
@@ -557,9 +595,27 @@ export const CronVisualizerTool: React.FC = () => {
             </div>
           </div>
 
-          {/* Next 5 executions */}
+          {/* Warnings */}
+          {highFreq && (
+            <div className="flex items-start gap-2 p-2.5 bg-amber-950/50 border border-amber-800/70 rounded text-xs font-mono text-amber-300">
+              <AlertCircle className="w-3.5 h-3.5 shrink-0 mt-0.5 text-amber-500" />
+              <span>⚠️ High Frequency Schedule — this expression runs very frequently and may cause high server load.</span>
+            </div>
+          )}
+          {validationErrors.length > 0 && (
+            <div className="p-2.5 bg-red-950/50 border border-red-800/70 rounded space-y-1">
+              {validationErrors.map((e, i) => (
+                <div key={i} className="flex items-center gap-2 text-xs font-mono text-red-300">
+                  <AlertCircle className="w-3.5 h-3.5 shrink-0 text-red-400" />
+                  <span>{e}</span>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Next 10 executions */}
           <div className="space-y-2">
-            <p className="text-xs font-mono text-neutral-400">{t('tools.cronVisualizer.nextRunsLabel')}</p>
+            <p className="text-xs font-mono text-neutral-400">Next 10 Upcoming Executions (Local &amp; UTC)</p>
             {nextRuns.length > 0 ? (
               <div className="space-y-1.5">
                 {nextRuns.map((run, i) => (
