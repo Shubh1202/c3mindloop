@@ -128,6 +128,15 @@ const formatted = JSON.stringify(JSON.parse(input), null, 2);`
     category: 'json',
     icon: 'LayoutGrid',
     techStack: ['SVG Renderer', 'Custom Layout Engine', 'Local Processing']
+  },
+  {
+    id: 'code-complexity-analyzer',
+    nameKey: 'Code Complexity Analyzer',
+    descKey: 'Analyze cyclomatic and cognitive complexity per function for JS, TS, Python, Java, Go, C, and C++. Get actionable refactor suggestions. 100% client-side.',
+    status: 'live',
+    category: 'utilities',
+    icon: 'GitBranch',
+    techStack: ['Regex Parser', 'Heuristic Analysis', 'Local Processing']
   }
 ];
 

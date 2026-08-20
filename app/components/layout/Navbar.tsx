@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from '../../lib/router-compat';
 import { motion, AnimatePresence } from 'motion/react';
-import { Menu, X, Command, RotateCcw, Code2, ShieldCheck, Zap, Clock, Terminal, Regex, Database, Hash, FileText, Sparkles, Columns2, LayoutGrid } from 'lucide-react';
+import { Menu, X, Command, RotateCcw, Code2, ShieldCheck, Zap, Clock, Terminal, Regex, Database, Hash, FileText, Sparkles, Columns2, LayoutGrid, GitBranch } from 'lucide-react';
 import { useTranslation } from '../../lib/i18n';
 // Temporarily hidden while incomplete locale coverage is audited and repaired.
 // import { LanguageSelector } from '../ui/LanguageSelector';
@@ -55,6 +55,7 @@ export const Navbar: React.FC<{
     { name: 'Hash Generator', sub: 'SHA-256 & MD5', path: '/tools/hash-generator', icon: Hash },
     { name: 'Cron Visualizer', sub: 'Parse & Schedule', path: '/tools/cron-visualizer', icon: Clock },
     { name: 'Regex Tester', sub: 'Test & Debug', path: '/tools/regex-tester', icon: Regex },
+    { name: 'Code Complexity Analyzer', sub: 'Cyclomatic & Cognitive', path: '/tools/code-complexity-analyzer', icon: GitBranch, isNew: true },
     { name: 'PDF Suite', sub: 'Compress & Merge', path: '/tools/pdf-suite', icon: FileText, isNew: true },
     { name: 'Edit PDF', sub: 'Annotate & Sign', path: '/tools/edit-pdf', icon: FileText, isNew: true },
   ];

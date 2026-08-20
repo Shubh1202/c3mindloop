@@ -79,6 +79,7 @@ export const Footer: React.FC<{ onReplayIntro?: () => void }> = ({ onReplayIntro
             </h4>
             <ul className="space-y-2.5 text-sm text-theme-muted">
               <li><Link to="/tools/json-formatter" className="hover:text-[#1D9BF0] transition-colors">{t('footer.toolsJson', 'JSON Utilities')}</Link></li>
+              <li><Link to="/tools/code-complexity-analyzer" className="hover:text-[#1D9BF0] transition-colors">Code Complexity Analyzer</Link></li>
               <li><Link to="/tools/ai-prompt-builder" className="hover:text-[#1D9BF0] transition-colors">AI Prompt Builder</Link></li>
               <li><Link to="/tools/pdf-suite" className="hover:text-[#1D9BF0] transition-colors">PDF Suite</Link></li>
               <li><Link to="/tools" className="hover:text-[#1D9BF0] transition-colors">All Developer Tools</Link></li>

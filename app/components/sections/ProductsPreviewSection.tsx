@@ -70,6 +70,11 @@ export const ProductsPreviewSection: React.FC = () => {
                 'hash-generator': '/tools/hash-generator',
                 'ats-resume-generator': '/tools/ats-resume-generator',
                 'pdf-suite': '/tools/pdf-suite',
+                'edit-pdf': '/tools/edit-pdf',
+                'ai-prompt-builder': '/tools/ai-prompt-builder',
+                'diff-checker': '/tools/diff-checker',
+                'json-graph': '/tools/json-graph',
+                'code-complexity-analyzer': '/tools/code-complexity-analyzer',
               };
               const toolHref = toolRoutes[prod.id];
 

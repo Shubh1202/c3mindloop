@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Cpu, LayoutGrid, CloudLightning, FileCode, Layers, Zap, FlaskConical, ArrowUpRight, Terminal, Code2, ShieldCheck, Database, Sparkles, Columns2 } from 'lucide-react';
+import { Cpu, LayoutGrid, CloudLightning, FileCode, Layers, Zap, FlaskConical, ArrowUpRight, Terminal, Code2, ShieldCheck, Database, Sparkles, Columns2, GitBranch } from 'lucide-react';
 import { useTranslation } from '../lib/i18n';
 import { PRODUCTS_LIST } from '../lib/constants';
 import { SEOHead } from '../components/layout/SEOHead';
@@ -33,6 +33,7 @@ export const ProductsPage: React.FC = () => {
     Database,
     Sparkles,
     Columns2,
+    GitBranch,
   };
 
   const categories = ['all', 'extensions', 'json', 'encoders', 'auth', 'crypto', 'utilities', 'resume'];
@@ -107,6 +108,7 @@ export const ProductsPage: React.FC = () => {
                   'pdf-suite': '/tools/pdf-suite',
                   'edit-pdf': '/tools/edit-pdf',
                   'json-graph': '/tools/json-graph',
+                  'code-complexity-analyzer': '/tools/code-complexity-analyzer',
                 };
                 const toolHref = toolRoutes[prod.id];
 

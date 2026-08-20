@@ -482,6 +482,35 @@ export const seoConfig = {
     },
   },
 
+  codeComplexityAnalyzer: {
+    title: 'Code Complexity Analyzer — Cyclomatic & Cognitive Complexity | Free, 100% Private',
+    description:
+      'Analyze cyclomatic complexity and cognitive complexity per function for JavaScript, TypeScript, Python, Java, Go, C, and C++. Get actionable refactor suggestions. 100% client-side, zero server upload.',
+    keywords: [
+      'code complexity analyzer', 'cyclomatic complexity', 'cognitive complexity',
+      'code quality tool', 'refactor suggestions', 'function complexity checker',
+      'javascript complexity analyzer', 'typescript complexity', 'python complexity',
+      'java complexity checker', 'go complexity', 'c cpp complexity',
+      'code complexity metrics', 'complexity per function', 'code smell detector',
+      '100% Private', 'Client-Side Execution', 'No Server Upload', 'GDPR Compliant', 'Free Online Utility',
+      'free code complexity tool', 'online complexity checker', 'browser complexity analyzer',
+      'C³ MindLoop complexity analyzer', 'ccube complexity tool',
+    ],
+    canonical: `${BASE_URL}/tools/code-complexity-analyzer`,
+    openGraph: {
+      title: 'Code Complexity Analyzer — Free Online Tool | C³ MindLoop',
+      description:
+        'Cyclomatic & cognitive complexity per function, with refactor suggestions. 100% Private, zero server upload.',
+      url: `${BASE_URL}/tools/code-complexity-analyzer`,
+      images: [{ url: defaultOgImage, width: 1200, height: 630, alt: 'Code Complexity Analyzer - C³ MindLoop' }],
+    },
+    twitter: {
+      title: 'Code Complexity Analyzer — Free | C³ MindLoop',
+      description: 'Cyclomatic & cognitive complexity + refactor suggestions. 100% Private & Client-Side.',
+      images: [defaultOgImage],
+    },
+  },
+
   editPdf: {
     title: 'Edit PDF Online Free- Annotate, Add Text, Sign & Fill Forms | C³ MindLoop',
     description:
