@@ -164,8 +164,8 @@ export const Hero: React.FC = () => {
       </div>
 
       {/* Floating cube watermark */}
-      <div className="pointer-events-none absolute top-8 right-8 opacity-[0.07] dark:opacity-[0.12] animate-float" aria-hidden>
-        <img src="/cube.svg" alt="" width={220} height={220} />
+      <div className="pointer-events-none absolute top-8 right-8 opacity-[0.07] dark:opacity-[0.12] animate-float" aria-hidden="true">
+        <img src="/cube.svg" alt="" aria-hidden="true" width={220} height={220} />
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">

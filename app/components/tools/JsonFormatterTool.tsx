@@ -21,8 +21,13 @@ import {
   Zap,
   Activity,
   Layers,
+  Search,
+  ChevronUp,
+  ChevronDown,
+  X,
+  Filter,
 } from 'lucide-react';
-import { JsonTreeView } from './JsonTreeView';
+import { JsonTreeView, SearchTarget } from './JsonTreeView';
 import { LocalAIPanel, smartRepairJson } from './LocalAIPanel';
 
 type IndentOption = '2' | '4' | 'tab';
@@ -225,6 +230,239 @@ function jsonToCSV(val: any): string {
   return csvRows.join('\n');
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Content-aware SyncScroll infrastructure (module-level pure functions)
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** One paired character-offset anchor linking a position in the raw JSON string
+ *  to the structurally equivalent position in the formatted JSON string.
+ *  Both rawStart and fmtStart arrays produced by buildSyncAnchors are strictly
+ *  increasing because the tokenizer walks both strings in a single forward DFS
+ *  pass — this invariant makes binary search valid on both fields. */
+interface SyncAnchor {
+  rawStart: number; // char offset in rawInput where this token begins
+  fmtStart: number; // char offset in formattedOutput where the same token begins
+}
+
+/** Build an array where element i holds the character offset of the start of
+ *  logical line i (0-based, split on \n). Element 0 is always 0. */
+function buildLineStarts(text: string): number[] {
+  const starts: number[] = [0];
+  for (let i = 0; i < text.length; i++) {
+    if (text[i] === '\n') starts.push(i + 1);
+  }
+  return starts;
+}
+
+/** Binary search: return the 0-based index of the logical line whose start
+ *  offset is ≤ charOffset. */
+function charOffsetToLineIndex(offset: number, lineStarts: number[]): number {
+  if (lineStarts.length === 0) return 0;
+  let lo = 0, hi = lineStarts.length - 1;
+  while (lo < hi) {
+    const mid = (lo + hi + 1) >>> 1;
+    if (lineStarts[mid] <= offset) lo = mid;
+    else hi = mid - 1;
+  }
+  return lo;
+}
+
+/**
+ * Walk both JSON strings simultaneously in DFS pre-order, producing a sorted
+ * array of SyncAnchor pairs.
+ *
+ * Structure-aware guarantees:
+ *  - Strings are consumed with full escape handling (\\, \", \uXXXX, etc.) so
+ *    colons inside string values are never mistaken for key separators.
+ *  - Numbers are consumed as complete tokens (optional sign, integer part,
+ *    optional fraction, optional exponent) including all edge cases such as
+ *    negative integers, decimals, and exponent notation.
+ *  - BOTH object keys AND values are anchored. Anchoring keys is critical:
+ *    each formatted line begins with indentation whitespace before the key
+ *    string, so without a key anchor the nearest-anchor lookup would land on
+ *    the previous value instead of the current line.
+ *  - The scanner is strictly forward-only, so duplicate keys in the raw input
+ *    are handled in document order, naturally matching the canonical output
+ *    produced by JSON.stringify (which keeps only the last value per key).
+ *  - Returns partial results rather than throwing on malformed input.
+ */
+function buildSyncAnchors(raw: string, fmt: string): SyncAnchor[] {
+  const anchors: SyncAnchor[] = [];
+  let ri = 0; // raw string cursor
+  let fi = 0; // formatted string cursor
+
+  const skipWs = (s: string, idx: number): number => {
+    while (idx < s.length && (s[idx] === ' ' || s[idx] === '\t' || s[idx] === '\n' || s[idx] === '\r')) idx++;
+    return idx;
+  };
+
+  /** Advance past a complete JSON string token. idx must be at the opening `"`. */
+  const scanStr = (s: string, idx: number): number => {
+    idx++; // skip opening "
+    while (idx < s.length) {
+      if (s[idx] === '\\') { idx += 2; continue; } // escape sequence: skip char + next
+      if (s[idx] === '"') { idx++; break; }          // found closing "
+      idx++;
+    }
+    return idx;
+  };
+
+  /** Advance past a complete JSON number token. idx must be at `-` or a digit. */
+  const scanNum = (s: string, idx: number): number => {
+    if (s[idx] === '-') idx++;
+    while (idx < s.length && s[idx] >= '0' && s[idx] <= '9') idx++;
+    if (idx < s.length && s[idx] === '.') {
+      idx++;
+      while (idx < s.length && s[idx] >= '0' && s[idx] <= '9') idx++;
+    }
+    if (idx < s.length && (s[idx] === 'e' || s[idx] === 'E')) {
+      idx++;
+      if (idx < s.length && (s[idx] === '+' || s[idx] === '-')) idx++;
+      while (idx < s.length && s[idx] >= '0' && s[idx] <= '9') idx++;
+    }
+    return idx;
+  };
+
+  /** Walk one JSON value in both strings in lock-step, recording anchors. */
+  const walk = (): void => {
+    ri = skipWs(raw, ri);
+    fi = skipWs(fmt, fi);
+    if (ri >= raw.length || fi >= fmt.length) return;
+
+    // Anchor this value's position in both strings.
+    anchors.push({ rawStart: ri, fmtStart: fi });
+
+    const rc = raw[ri];
+    const fc = fmt[fi];
+
+    if (rc === '{' && fc === '{') {
+      // ── Object ────────────────────────────────────────────────────────────
+      ri++; fi++;
+      ri = skipWs(raw, ri); fi = skipWs(fmt, fi);
+      // Empty object {}
+      if (ri < raw.length && raw[ri] === '}') {
+        ri++;
+        fi = skipWs(fmt, fi);
+        if (fi < fmt.length && fmt[fi] === '}') fi++;
+        return;
+      }
+      let first = true;
+      while (ri < raw.length && raw[ri] !== '}') {
+        if (!first) {
+          // Skip comma separator between key-value pairs
+          if (ri < raw.length && raw[ri] === ',') ri++;
+          if (fi < fmt.length && fmt[fi] === ',') fi++;
+          ri = skipWs(raw, ri); fi = skipWs(fmt, fi);
+        }
+        first = false;
+
+        // Anchor the KEY position — essential so each formatted line (which
+        // starts with indentation whitespace before the key) has a nearby
+        // anchor, not just the value anchor that comes after the colon.
+        anchors.push({ rawStart: ri, fmtStart: fi });
+
+        // Scan the key string (do not recurse — keys are not JSON values)
+        if (ri < raw.length && raw[ri] === '"') ri = scanStr(raw, ri);
+        if (fi < fmt.length && fmt[fi] === '"') fi = scanStr(fmt, fi);
+        ri = skipWs(raw, ri); fi = skipWs(fmt, fi);
+        // Skip colon
+        if (ri < raw.length && raw[ri] === ':') ri++;
+        if (fi < fmt.length && fmt[fi] === ':') fi++;
+        // Recurse into the value (records a value anchor at the start of walk)
+        walk();
+        ri = skipWs(raw, ri); fi = skipWs(fmt, fi);
+      }
+      if (ri < raw.length && raw[ri] === '}') ri++;
+      if (fi < fmt.length && fmt[fi] === '}') fi++;
+
+    } else if (rc === '[' && fc === '[') {
+      // ── Array ─────────────────────────────────────────────────────────────
+      ri++; fi++;
+      ri = skipWs(raw, ri); fi = skipWs(fmt, fi);
+      // Empty array []
+      if (ri < raw.length && raw[ri] === ']') {
+        ri++;
+        fi = skipWs(fmt, fi);
+        if (fi < fmt.length && fmt[fi] === ']') fi++;
+        return;
+      }
+      let first = true;
+      while (ri < raw.length && raw[ri] !== ']') {
+        if (!first) {
+          if (ri < raw.length && raw[ri] === ',') ri++;
+          if (fi < fmt.length && fmt[fi] === ',') fi++;
+          ri = skipWs(raw, ri); fi = skipWs(fmt, fi);
+        }
+        first = false;
+        walk(); // element anchor is pushed at the top of walk()
+        ri = skipWs(raw, ri); fi = skipWs(fmt, fi);
+      }
+      if (ri < raw.length && raw[ri] === ']') ri++;
+      if (fi < fmt.length && fmt[fi] === ']') fi++;
+
+    } else if (rc === '"' && fc === '"') {
+      ri = scanStr(raw, ri);
+      fi = scanStr(fmt, fi);
+    } else if (rc === 't' && fc === 't') {
+      ri += 4; fi += 4; // true
+    } else if (rc === 'f' && fc === 'f') {
+      ri += 5; fi += 5; // false
+    } else if (rc === 'n' && fc === 'n') {
+      ri += 4; fi += 4; // null
+    } else if ((rc === '-' || (rc >= '0' && rc <= '9')) && (fc === '-' || (fc >= '0' && fc <= '9'))) {
+      ri = scanNum(raw, ri);
+      fi = scanNum(fmt, fi);
+    }
+    // On type mismatch (malformed / duplicate-key-desync): stop — partial
+    // anchors still provide useful synchronization for the rest of the document.
+  };
+
+  try { walk(); } catch { /* return partial results on unexpected errors */ }
+  return anchors;
+}
+
+/**
+ * Find the SyncAnchor nearest to rawOffset (by character distance).
+ * "Nearest" (rather than strictly-before) handles the common case where
+ * rawOffset lands in the indentation whitespace that precedes an object key:
+ * the key anchor that comes slightly after rawOffset is closer than the
+ * value anchor from the preceding line.
+ */
+function findAnchorByRaw(rawOffset: number, anchors: SyncAnchor[]): SyncAnchor | null {
+  if (anchors.length === 0) return null;
+  let lo = 0, hi = anchors.length - 1;
+  while (lo < hi) {
+    const mid = (lo + hi + 1) >>> 1;
+    if (anchors[mid].rawStart <= rawOffset) lo = mid;
+    else hi = mid - 1;
+  }
+  if (lo + 1 < anchors.length) {
+    const dCurr = rawOffset - anchors[lo].rawStart; // may be negative when all anchors are after rawOffset
+    const dNext = anchors[lo + 1].rawStart - rawOffset;
+    if (dNext <= dCurr) return anchors[lo + 1];
+  }
+  return anchors[lo];
+}
+
+/**
+ * Find the SyncAnchor nearest to fmtOffset (by character distance).
+ */
+function findAnchorByFmt(fmtOffset: number, anchors: SyncAnchor[]): SyncAnchor | null {
+  if (anchors.length === 0) return null;
+  let lo = 0, hi = anchors.length - 1;
+  while (lo < hi) {
+    const mid = (lo + hi + 1) >>> 1;
+    if (anchors[mid].fmtStart <= fmtOffset) lo = mid;
+    else hi = mid - 1;
+  }
+  if (lo + 1 < anchors.length) {
+    const dCurr = fmtOffset - anchors[lo].fmtStart;
+    const dNext = anchors[lo + 1].fmtStart - fmtOffset;
+    if (dNext <= dCurr) return anchors[lo + 1];
+  }
+  return anchors[lo];
+}
+
 export const JsonFormatterTool: React.FC = () => {
   const [rawInput, setRawInput] = useState<string>(() => JSON.stringify(SAMPLE_JSON_DATA, null, 2));
   const [formattedOutput, setFormattedOutput] = useState<string>('');
@@ -247,39 +485,197 @@ export const JsonFormatterTool: React.FC = () => {
   const [autoFixProposed, setAutoFixProposed] = useState<{fixed: string, changes: string[]} | null>(null);
   const [showInspector, setShowInspector] = useState(false);
   
+  // Search Functionality States
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [searchTarget, setSearchTarget] = useState<SearchTarget>('all');
+  const [matchCase, setMatchCase] = useState<boolean>(false);
+  const [activeMatchIndex, setActiveMatchIndex] = useState<number>(0);
+  const [showSearchBar, setShowSearchBar] = useState<boolean>(false);
+  const [totalMatchesCount, setTotalMatchesCount] = useState<number>(0);
+  
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const leftPanelRef = useRef<HTMLDivElement>(null);   // outer left-panel div (scroll container in fullscreen)
   const outputContainerRef = useRef<HTMLDivElement>(null);
   const scrollingRef = useRef<'input' | 'output' | null>(null);
+  const syncRafRef = useRef<number | null>(null);       // pending rAF id — cancelled on rapid scroll
 
-  // Sync scrolling logic
+  // Refs for content-aware sync data — rebuilt on every successful parse.
+  const syncAnchorsRef = useRef<SyncAnchor[]>([]);
+  const rawLineStartsRef = useRef<number[]>([]);
+  const fmtLineStartsRef = useRef<number[]>([]);
+
+  // SyncScroll is only meaningful when the right panel shows formatted JSON
+  // in Code View. When the user switches to TypeScript/Go/CSV/Tree/Inspector,
+  // the formatted-output line map no longer corresponds to JSON structure.
+  const isSyncScrollAvailable = outputMode === 'json' && viewMode === 'code' && !showInspector;
+
+  // ── Left panel scroll → sync right panel ──────────────────────────────────
   const handleInputScroll = () => {
-    if (!syncScroll || scrollingRef.current === 'output' || !textareaRef.current || !outputContainerRef.current) return;
-    scrollingRef.current = 'input';
+    if (!syncScroll || !isSyncScrollAvailable || scrollingRef.current === 'output') return;
+
+    // In fullscreen the outer left-panel div is the real scroll container.
+    // In normal mode the textarea scrolls itself.
     const textarea = textareaRef.current;
     const output = outputContainerRef.current;
-    const scrollableHeightTextarea = textarea.scrollHeight - textarea.clientHeight;
-    if (scrollableHeightTextarea > 0) {
-      const ratio = textarea.scrollTop / scrollableHeightTextarea;
-      output.scrollTop = ratio * (output.scrollHeight - output.clientHeight);
-    }
-    setTimeout(() => { scrollingRef.current = null; }, 50);
+    const leftPanel = leftPanelRef.current;
+    if (!textarea || !output) return;
+
+    scrollingRef.current = 'input';
+    if (syncRafRef.current !== null) cancelAnimationFrame(syncRafRef.current);
+
+    // Determine the actual scroll source: prefer the outer panel when it has
+    // scrollable height (fullscreen), otherwise fall back to the textarea.
+    const leftScroller: Element =
+      leftPanel && (leftPanel.scrollHeight - leftPanel.clientHeight) > 0
+        ? leftPanel
+        : textarea;
+
+    syncRafRef.current = requestAnimationFrame(() => {
+      const anchors = syncAnchorsRef.current;
+      const rawLS = rawLineStartsRef.current;
+      const fmtLS = fmtLineStartsRef.current;
+
+      if (anchors.length === 0 || rawLS.length === 0 || fmtLS.length === 0) {
+        // No anchors yet (invalid JSON) — proportional fallback.
+        const scrollable = leftScroller.scrollHeight - leftScroller.clientHeight;
+        if (scrollable > 0) {
+          output.scrollTop =
+            (leftScroller.scrollTop / scrollable) *
+            (output.scrollHeight - output.clientHeight);
+        }
+        scrollingRef.current = null;
+        return;
+      }
+
+      // Use getComputedStyle for line height — reads the actual rendered value.
+      const rawLH = parseFloat(getComputedStyle(textarea).lineHeight) || 20;
+      const isMinified = rawLS.length <= 1;
+      let rawOffset: number;
+
+      if (isMinified) {
+        const rawScrollable = leftScroller.scrollHeight - leftScroller.clientHeight;
+        rawOffset = rawScrollable > 0
+          ? Math.round((leftScroller.scrollTop / rawScrollable) * rawInput.length)
+          : 0;
+      } else {
+        const approxLine = Math.floor(leftScroller.scrollTop / rawLH);
+        rawOffset = rawLS[Math.min(Math.max(0, approxLine), rawLS.length - 1)];
+      }
+
+      const anchor = findAnchorByRaw(rawOffset, anchors);
+      if (!anchor) { scrollingRef.current = null; return; }
+
+      const pre = output.querySelector('pre');
+      const fmtLH = pre ? (parseFloat(getComputedStyle(pre).lineHeight) || rawLH) : rawLH;
+      const prePadTop = pre ? (parseFloat(getComputedStyle(pre).paddingTop) || 0) : 0;
+      const fmtLine = charOffsetToLineIndex(anchor.fmtStart, fmtLS);
+      output.scrollTop = prePadTop + fmtLine * fmtLH;
+
+      syncRafRef.current = null;
+      // Hold mutex one extra frame so the scroll event the browser fires on the
+      // output div does not echo back through handleOutputScroll.
+      requestAnimationFrame(() => { scrollingRef.current = null; });
+    });
   };
 
+  // ── Right panel scroll → sync left panel ──────────────────────────────────
   const handleOutputScroll = () => {
-    if (!syncScroll || scrollingRef.current === 'input' || !textareaRef.current || !outputContainerRef.current) return;
-    scrollingRef.current = 'output';
+    if (!syncScroll || !isSyncScrollAvailable || scrollingRef.current === 'input') return;
+
     const textarea = textareaRef.current;
     const output = outputContainerRef.current;
-    const scrollableHeightOutput = output.scrollHeight - output.clientHeight;
-    if (scrollableHeightOutput > 0) {
-      const ratio = output.scrollTop / scrollableHeightOutput;
-      textarea.scrollTop = ratio * (textarea.scrollHeight - textarea.clientHeight);
-    }
-    setTimeout(() => { scrollingRef.current = null; }, 50);
+    const leftPanel = leftPanelRef.current;
+    if (!textarea || !output) return;
+
+    scrollingRef.current = 'output';
+    if (syncRafRef.current !== null) cancelAnimationFrame(syncRafRef.current);
+
+    // Same logic: prefer the outer panel as the left scroll target in fullscreen.
+    const leftScroller: Element =
+      leftPanel && (leftPanel.scrollHeight - leftPanel.clientHeight) > 0
+        ? leftPanel
+        : textarea;
+
+    syncRafRef.current = requestAnimationFrame(() => {
+      const anchors = syncAnchorsRef.current;
+      const rawLS = rawLineStartsRef.current;
+      const fmtLS = fmtLineStartsRef.current;
+
+      if (anchors.length === 0 || rawLS.length === 0 || fmtLS.length === 0) {
+        const scrollable = output.scrollHeight - output.clientHeight;
+        if (scrollable > 0) {
+          (leftScroller as HTMLElement).scrollTop =
+            (output.scrollTop / scrollable) *
+            (leftScroller.scrollHeight - leftScroller.clientHeight);
+        }
+        scrollingRef.current = null;
+        return;
+      }
+
+      const pre = output.querySelector('pre');
+      const fmtLH = pre ? (parseFloat(getComputedStyle(pre).lineHeight) || 20) : 20;
+      const prePadTop = pre ? (parseFloat(getComputedStyle(pre).paddingTop) || 0) : 0;
+      const approxFmtLine = Math.floor(Math.max(0, output.scrollTop - prePadTop) / fmtLH);
+      const fmtOffset = fmtLS[Math.min(Math.max(0, approxFmtLine), fmtLS.length - 1)];
+
+      const anchor = findAnchorByFmt(fmtOffset, anchors);
+      if (!anchor) { scrollingRef.current = null; return; }
+
+      const rawLH = parseFloat(getComputedStyle(textarea).lineHeight) || fmtLH;
+      const isMinified = rawLS.length <= 1;
+
+      if (isMinified) {
+        const rawScrollable = leftScroller.scrollHeight - leftScroller.clientHeight;
+        (leftScroller as HTMLElement).scrollTop = rawScrollable > 0
+          ? Math.round((anchor.rawStart / rawInput.length) * rawScrollable)
+          : 0;
+      } else {
+        const rawLine = charOffsetToLineIndex(anchor.rawStart, rawLS);
+        (leftScroller as HTMLElement).scrollTop = rawLine * rawLH;
+      }
+
+      syncRafRef.current = null;
+      // Hold mutex one extra frame so the scroll event the browser fires on the
+      // left panel does not echo back through handleInputScroll.
+      requestAnimationFrame(() => { scrollingRef.current = null; });
+    });
   };
+
+  // Keyboard shortcut listener: Ctrl+F or Cmd+F to toggle/focus Search Bar
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'f') {
+        e.preventDefault();
+        setShowSearchBar(true);
+        setTimeout(() => searchInputRef.current?.focus(), 50);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  const handleNextMatch = () => {
+    if (totalMatchesCount === 0) return;
+    setActiveMatchIndex((prev) => (prev + 1) % totalMatchesCount);
+  };
+
+  const handlePrevMatch = () => {
+    if (totalMatchesCount === 0) return;
+    setActiveMatchIndex((prev) => (prev - 1 + totalMatchesCount) % totalMatchesCount);
+  };
+
+  // Auto-scroll output container to currently active search match
+  useEffect(() => {
+    if (!searchQuery.trim() || totalMatchesCount === 0) return;
+    const el = document.getElementById(`json-search-match-${activeMatchIndex}`);
+    if (el && outputContainerRef.current) {
+      el.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    }
+  }, [activeMatchIndex, searchQuery, totalMatchesCount, viewMode]);
 
   const showToast = (message: string) => {
     if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
@@ -430,6 +826,21 @@ export const JsonFormatterTool: React.FC = () => {
     };
   }, [rawInput, indentOption]);
 
+  // Rebuild the content-aware sync anchor table after every successful parse.
+  // Runs synchronously; optimize only if profiling reveals UI blocking on real
+  // large-document workloads.
+  useEffect(() => {
+    if (!parsedObject || !formattedOutput || !rawInput) {
+      syncAnchorsRef.current = [];
+      rawLineStartsRef.current = [];
+      fmtLineStartsRef.current = [];
+      return;
+    }
+    rawLineStartsRef.current = buildLineStarts(rawInput);
+    fmtLineStartsRef.current = buildLineStarts(formattedOutput);
+    syncAnchorsRef.current = buildSyncAnchors(rawInput, formattedOutput);
+  }, [parsedObject, rawInput, formattedOutput]);
+
   const handleClear = () => {
     setRawInput('');
     setFormattedOutput('');
@@ -520,15 +931,45 @@ export const JsonFormatterTool: React.FC = () => {
       .replace(/>/g, '&gt;');
 
     let highlighted = escaped;
+    let matchCounter = 0;
+    const trimmedQuery = searchQuery.trim();
+
+    const highlightMatchesInText = (textChunk: string, isKeyToken: boolean) => {
+      if (!trimmedQuery) return textChunk;
+      const isTargetAllowed =
+        searchTarget === 'all' || (isKeyToken ? searchTarget === 'keys' : searchTarget === 'values');
+
+      if (!isTargetAllowed) return textChunk;
+
+      const flags = matchCase ? 'g' : 'gi';
+      const escapedQuery = trimmedQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      let regex: RegExp;
+      try {
+        regex = new RegExp(`(${escapedQuery})`, flags);
+      } catch {
+        return textChunk;
+      }
+
+      return textChunk.replace(regex, (m) => {
+        const currentIdx = matchCounter++;
+        const isActive = currentIdx === activeMatchIndex;
+        const markCls = isActive
+          ? 'bg-amber-400 text-neutral-950 font-bold outline outline-2 outline-amber-300 shadow-md ring-2 ring-amber-400 z-10'
+          : 'bg-amber-500/40 text-amber-100 font-semibold';
+        return `<mark id="json-search-match-${currentIdx}" class="${markCls} px-0.5 rounded transition-all">${m}</mark>`;
+      });
+    };
 
     if (mode === 'json') {
       highlighted = escaped.replace(
         /("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g,
         (match) => {
           let cls = 'text-amber-400';
+          let isKeyToken = false;
           if (/^"/.test(match)) {
             if (/:$/.test(match)) {
               cls = 'text-sky-400 font-semibold';
+              isKeyToken = true;
             } else {
               cls = 'text-emerald-400';
             }
@@ -537,7 +978,8 @@ export const JsonFormatterTool: React.FC = () => {
           } else if (/null/.test(match)) {
             cls = 'text-neutral-500 italic';
           }
-          return `<span class="${cls}">${match}</span>`;
+          const highlightedMatch = highlightMatchesInText(match, isKeyToken);
+          return `<span class="${cls}">${highlightedMatch}</span>`;
         }
       );
     } else if (mode === 'typescript' || mode === 'go') {
@@ -545,6 +987,13 @@ export const JsonFormatterTool: React.FC = () => {
       highlighted = escaped
         .replace(/\b(interface|type|struct|string|number|int|float64|bool|interface\{\})\b/g, '<span class="text-purple-400 font-semibold">$1</span>')
         .replace(/`json:"[^"]+"`/g, '<span class="text-neutral-500 italic">$1</span>');
+      highlighted = highlightMatchesInText(highlighted, false);
+    } else {
+      highlighted = highlightMatchesInText(escaped, false);
+    }
+
+    if (matchCounter !== totalMatchesCount) {
+      setTimeout(() => setTotalMatchesCount(matchCounter), 0);
     }
 
     return (
@@ -560,11 +1009,11 @@ export const JsonFormatterTool: React.FC = () => {
       <div className={`bg-neutral-950 border border-neutral-800 font-sans text-neutral-100 flex flex-col ${isFullScreen ? 'fixed inset-0 z-[9999] overflow-hidden' : 'w-full rounded-lg shadow-2xl'}`}>
 
         {/* Primary Control Toolbar */}
-        <div className={`px-3 py-2.5 bg-neutral-900 border-b border-neutral-800 flex flex-wrap items-center justify-between gap-2 text-xs font-mono ${isFullScreen ? 'sticky top-0 z-[10000]' : ''}`}>
-          <div className="flex flex-wrap items-center gap-2">
+        <div className={`px-2 py-2.5 bg-neutral-900 border-b border-neutral-800 flex flex-nowrap items-center justify-between text-xs font-mono min-w-0 ${isFullScreen ? 'sticky top-0 z-[10000]' : ''}`}>
+          <div className="flex flex-nowrap items-center gap-1.5 shrink-0">
             <button
               onClick={() => handleFormat(true)}
-              className="px-3 py-1.5 rounded bg-[#1D9BF0] hover:bg-[#1A8CD8] text-white font-semibold transition-colors flex items-center gap-1.5 cursor-pointer shadow-sm"
+              className="px-2.5 py-1.5 rounded bg-[#1D9BF0] hover:bg-[#1A8CD8] text-white font-semibold transition-colors flex items-center gap-1 cursor-pointer shadow-sm"
             >
               <AlignLeft className="w-3.5 h-3.5" />
               <span>Format</span>
@@ -572,7 +1021,7 @@ export const JsonFormatterTool: React.FC = () => {
 
             <button
               onClick={handleMinify}
-              className="px-3 py-1.5 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-200 transition-colors flex items-center gap-1.5 cursor-pointer"
+              className="px-2.5 py-1.5 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-200 transition-colors flex items-center gap-1 cursor-pointer"
             >
               <FileCode className="w-3.5 h-3.5" />
               <span>Minify</span>
@@ -580,7 +1029,7 @@ export const JsonFormatterTool: React.FC = () => {
 
             <button
               onClick={handleValidate}
-              className="px-3 py-1.5 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-200 transition-colors flex items-center gap-1.5 cursor-pointer"
+              className="px-2.5 py-1.5 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-200 transition-colors flex items-center gap-1 cursor-pointer"
             >
               <CheckCircle2 className="w-3.5 h-3.5 text-sky-400" />
               <span>Validate</span>
@@ -588,47 +1037,80 @@ export const JsonFormatterTool: React.FC = () => {
 
             <button
               onClick={handleLoadSample}
-              className="px-2.5 py-1.5 rounded bg-neutral-800/80 hover:bg-neutral-700 text-neutral-300 transition-colors cursor-pointer"
+              className="px-2 py-1.5 rounded bg-neutral-800/80 hover:bg-neutral-700 text-neutral-300 transition-colors cursor-pointer"
             >
-              Sample JSON
+              Sample
             </button>
 
             <button
               onClick={handleClear}
-              className="px-2.5 py-1.5 rounded bg-neutral-800/80 hover:bg-red-950 hover:text-red-300 text-neutral-400 transition-colors flex items-center gap-1 cursor-pointer"
+              className="px-2 py-1.5 rounded bg-neutral-800/80 hover:bg-red-950 hover:text-red-300 text-neutral-400 transition-colors flex items-center gap-1 cursor-pointer"
             >
               <Trash2 className="w-3.5 h-3.5" />
               <span>Clear</span>
             </button>
 
-            {/* Sync Scroll Toggle */}
+            {/* Sync Scroll Toggle — disabled outside JSON › Code View */}
             <button
-              onClick={() => setSyncScroll(!syncScroll)}
-              title="Toggle scroll synchronization between panels"
-              className={`px-2.5 py-1.5 rounded transition-colors flex items-center gap-1 cursor-pointer ${
-                syncScroll ? 'bg-[#1D9BF0]/20 text-[#1D9BF0] border border-[#1D9BF0]/30' : 'bg-neutral-800 text-neutral-400 border border-transparent'
+              onClick={() => { if (isSyncScrollAvailable) setSyncScroll(!syncScroll); }}
+              title={
+                isSyncScrollAvailable
+                  ? 'Content-aware scroll sync — aligns JSON structure between panels, not scroll percentage'
+                  : 'Sync Scroll is only available in JSON › Code View'
+              }
+              disabled={!isSyncScrollAvailable}
+              className={`px-2 py-1.5 rounded transition-colors flex items-center gap-1 ${
+                !isSyncScrollAvailable
+                  ? 'bg-neutral-800/50 text-neutral-600 border border-transparent cursor-not-allowed opacity-50'
+                  : syncScroll
+                    ? 'bg-[#1D9BF0]/20 text-[#1D9BF0] border border-[#1D9BF0]/30 cursor-pointer'
+                    : 'bg-neutral-800 text-neutral-400 border border-transparent cursor-pointer'
               }`}
             >
-              {syncScroll ? <Link2 className="w-3.5 h-3.5 text-[#1D9BF0]" /> : <Link2Off className="w-3.5 h-3.5 text-neutral-500" />}
-              <span>Sync Scroll 🔗</span>
+              {!isSyncScrollAvailable
+                ? <Link2Off className="w-3.5 h-3.5 text-neutral-600" />
+                : syncScroll
+                  ? <Link2 className="w-3.5 h-3.5 text-[#1D9BF0]" />
+                  : <Link2Off className="w-3.5 h-3.5 text-neutral-500" />
+              }
+              <span>Sync</span>
+            </button>
+
+            {/* Search Toggle Button */}
+            <button
+              onClick={() => {
+                setShowSearchBar(!showSearchBar);
+                if (!showSearchBar) {
+                  setTimeout(() => searchInputRef.current?.focus(), 50);
+                }
+              }}
+              title="Search keys or values (Ctrl+F)"
+              className={`px-2 py-1.5 rounded transition-colors flex items-center gap-1 cursor-pointer ${
+                showSearchBar || searchQuery
+                  ? 'bg-[#1D9BF0]/20 text-[#1D9BF0] border border-[#1D9BF0]/30'
+                  : 'bg-neutral-800 text-neutral-400 border border-transparent hover:text-white'
+              }`}
+            >
+              <Search className="w-3.5 h-3.5" />
+              <span>Search</span>
             </button>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-nowrap items-center gap-1.5 shrink-0">
             {/* Indent Selector */}
             <div className="flex items-center bg-neutral-950 p-1 rounded border border-neutral-800 text-xs font-mono">
-              <span className="text-neutral-500 px-2">Spacing:</span>
+              <span className="text-neutral-500 px-1.5">Sp:</span>
               <button
                 onClick={() => setIndentOption('2')}
                 className={`px-2 py-0.5 rounded transition-colors ${indentOption === '2' ? 'bg-[#1D9BF0] text-white font-semibold' : 'text-neutral-400 hover:text-white'}`}
               >
-                2 Sp
+                2
               </button>
               <button
                 onClick={() => setIndentOption('4')}
                 className={`px-2 py-0.5 rounded transition-colors ${indentOption === '4' ? 'bg-[#1D9BF0] text-white font-semibold' : 'text-neutral-400 hover:text-white'}`}
               >
-                4 Sp
+                4
               </button>
               <button
                 onClick={() => setIndentOption('tab')}
@@ -647,7 +1129,7 @@ export const JsonFormatterTool: React.FC = () => {
             />
             <button
               onClick={() => fileInputRef.current?.click()}
-              className="px-2.5 py-1.5 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-300 flex items-center gap-1 transition-colors cursor-pointer"
+              className="px-2 py-1.5 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-300 flex items-center gap-1 transition-colors cursor-pointer"
             >
               <Upload className="w-3.5 h-3.5" />
               <span>Upload</span>
@@ -656,7 +1138,7 @@ export const JsonFormatterTool: React.FC = () => {
             <button
               onClick={handleDownload}
               disabled={!formattedOutput && !rawInput}
-              className="px-2.5 py-1.5 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-300 disabled:opacity-40 flex items-center gap-1 transition-colors cursor-pointer"
+              className="px-2 py-1.5 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-300 disabled:opacity-40 flex items-center gap-1 transition-colors cursor-pointer"
             >
               <Download className="w-3.5 h-3.5" />
               <span>Download</span>
@@ -665,7 +1147,7 @@ export const JsonFormatterTool: React.FC = () => {
             <button
               onClick={handleCopy}
               disabled={!formattedOutput && !rawInput}
-              className="px-3 py-1.5 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-200 disabled:opacity-40 flex items-center gap-1.5 transition-colors cursor-pointer"
+              className="px-2.5 py-1.5 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-200 disabled:opacity-40 flex items-center gap-1 transition-colors cursor-pointer"
             >
               {copied ? <Check className="w-3.5 h-3.5 text-sky-400" /> : <Copy className="w-3.5 h-3.5" />}
               <span>{copied ? 'Copied' : 'Copy'}</span>
@@ -699,6 +1181,132 @@ export const JsonFormatterTool: React.FC = () => {
           </div>
         </div>
 
+        {/* Collapsible Search Controls Bar */}
+        {showSearchBar && (
+          <div className="px-3 py-2 bg-neutral-900 border-b border-neutral-800 flex flex-nowrap items-center justify-between gap-2 text-xs font-mono animate-[searchBarIn_0.18s_ease-out]">
+            <div className="flex flex-nowrap items-center gap-2">
+              {/* Search Input */}
+              <div className="relative flex items-center">
+                <Search className="w-3.5 h-3.5 absolute left-2.5 text-neutral-400 pointer-events-none" />
+                <input
+                  ref={searchInputRef}
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => {
+                    setSearchQuery(e.target.value);
+                    setActiveMatchIndex(0);
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      if (e.shiftKey) {
+                        handlePrevMatch();
+                      } else {
+                        handleNextMatch();
+                      }
+                    } else if (e.key === 'Escape') {
+                      setSearchQuery('');
+                      setShowSearchBar(false);
+                    }
+                  }}
+                  placeholder="Search JSON..."
+                  className="w-48 pl-8 pr-7 py-1 bg-neutral-950 text-neutral-100 border border-neutral-700 rounded focus:border-[#1D9BF0] focus:outline-none text-xs"
+                />
+                {searchQuery && (
+                  <button
+                    onClick={() => {
+                      setSearchQuery('');
+                      setActiveMatchIndex(0);
+                    }}
+                    className="absolute right-2 text-neutral-400 hover:text-white"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                )}
+              </div>
+
+              {/* Target Filter Selector: All | Keys Only | Values Only */}
+              <div className="flex items-center bg-neutral-950 p-0.5 rounded border border-neutral-800 text-[11px]">
+                <button
+                  onClick={() => setSearchTarget('all')}
+                  className={`px-2 py-0.5 rounded transition-colors ${searchTarget === 'all' ? 'bg-[#1D9BF0] text-white font-medium' : 'text-neutral-400 hover:text-white'}`}
+                >
+                  All
+                </button>
+                <button
+                  onClick={() => setSearchTarget('keys')}
+                  className={`px-2 py-0.5 rounded transition-colors ${searchTarget === 'keys' ? 'bg-[#1D9BF0] text-white font-medium' : 'text-neutral-400 hover:text-white'}`}
+                >
+                  Keys
+                </button>
+                <button
+                  onClick={() => setSearchTarget('values')}
+                  className={`px-2 py-0.5 rounded transition-colors ${searchTarget === 'values' ? 'bg-[#1D9BF0] text-white font-medium' : 'text-neutral-400 hover:text-white'}`}
+                >
+                  Values
+                </button>
+              </div>
+
+              {/* Match Case Toggle */}
+              <button
+                onClick={() => setMatchCase(!matchCase)}
+                title="Toggle Case Sensitivity"
+                className={`px-2 py-1 rounded border text-[11px] font-semibold transition-colors ${
+                  matchCase ? 'bg-amber-500/20 text-amber-300 border-amber-500/40' : 'bg-neutral-950 text-neutral-400 border-neutral-800 hover:text-white'
+                }`}
+              >
+                Aa
+              </button>
+            </div>
+
+            <div className="flex items-center gap-2 text-xs shrink-0">
+              {/* Match Counter */}
+              <span className="text-neutral-400 text-[11px] min-w-[60px] text-right">
+                {searchQuery.trim() ? (
+                  totalMatchesCount > 0 ? (
+                    <span className="text-amber-300 font-semibold">{activeMatchIndex + 1}/{totalMatchesCount}</span>
+                  ) : (
+                    <span className="text-red-400">0 found</span>
+                  )
+                ) : (
+                  <span className="text-neutral-500">0 found</span>
+                )}
+              </span>
+
+              {/* Match Navigation Arrows */}
+              <div className="flex items-center gap-0.5 bg-neutral-950 p-0.5 rounded border border-neutral-800">
+                <button
+                  onClick={handlePrevMatch}
+                  disabled={!searchQuery.trim() || totalMatchesCount === 0}
+                  title="Previous Match (Shift+Enter)"
+                  className="p-1 text-neutral-300 hover:text-white disabled:opacity-30 disabled:hover:text-neutral-300"
+                >
+                  <ChevronUp className="w-3.5 h-3.5" />
+                </button>
+                <button
+                  onClick={handleNextMatch}
+                  disabled={!searchQuery.trim() || totalMatchesCount === 0}
+                  title="Next Match (Enter)"
+                  className="p-1 text-neutral-300 hover:text-white disabled:opacity-30 disabled:hover:text-neutral-300"
+                >
+                  <ChevronDown className="w-3.5 h-3.5" />
+                </button>
+              </div>
+
+              <button
+                onClick={() => {
+                  setShowSearchBar(false);
+                  setSearchQuery('');
+                }}
+                className="p-1 text-neutral-400 hover:text-white"
+                title="Close Search (Esc)"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Local AI Assist Panel */}
         <div className="px-3 py-2 bg-neutral-950 border-b border-neutral-800">
           <LocalAIPanel
@@ -716,7 +1324,11 @@ export const JsonFormatterTool: React.FC = () => {
           } ${isFullScreen ? 'flex-1 overflow-hidden' : 'min-h-[480px]'}`}>
 
           {/* Left Pane: Raw JSON Input */}
-          <div className={`flex flex-col bg-neutral-950 p-3 sm:p-4 space-y-2 ${isFullScreen ? 'overflow-y-auto' : ''}`}>
+          <div
+            ref={leftPanelRef}
+            onScroll={handleInputScroll}
+            className={`flex flex-col bg-neutral-950 p-3 sm:p-4 space-y-2 ${isFullScreen ? 'overflow-y-auto' : ''}`}
+          >
             <div className="flex items-center justify-between text-xs font-mono text-neutral-400 pb-1 border-b border-neutral-900">
               <span className="font-semibold text-neutral-300">Raw JSON Input</span>
               <div className="flex items-center gap-3 text-[11px]">
@@ -854,7 +1466,13 @@ export const JsonFormatterTool: React.FC = () => {
                 ) : viewMode === 'code' ? (
                   renderHighlightedCode(getActiveOutputText(), outputMode)
                 ) : (
-                  <JsonTreeView data={parsedObject} initialExpandedDepth={2} />
+                  <JsonTreeView
+                    data={parsedObject}
+                    initialExpandedDepth={2}
+                    searchQuery={searchQuery}
+                    searchTarget={searchTarget}
+                    matchCase={matchCase}
+                  />
                 )
               ) : (
                 <div className="p-6 text-red-400 font-mono text-xs space-y-4">

@@ -14,17 +14,18 @@ export const BackgroundWatermark: React.FC = () => {
       className="fixed inset-0 pointer-events-none z-0 overflow-hidden select-none"
       aria-hidden="true"
     >
-      {/* Parallax Banner Background Image */}
+      {/* Parallax Banner Background Image - CSS background avoids a separate HTML image request */}
       <motion.div
-        style={{ y: bannerY }}
-        className="absolute inset-0 w-full h-full"
-      >
-        <img
-          src="/banner-bg.jpg"
-          alt=""
-          className="w-full h-full object-cover object-center opacity-10 pointer-events-none select-none"
-        />
-      </motion.div>
+        style={{
+          y: bannerY,
+          backgroundImage: "url('/banner-bg.jpg')",
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+          opacity: 0.10,
+        }}
+        className="absolute inset-0 w-full h-full pointer-events-none select-none"
+      />
 
       {/* Dark gradient overlay to keep text readable */}
       <div className="absolute inset-0 bg-gradient-to-b from-[#0e0e0e]/80 via-[#0e0e0e]/60 to-[#0e0e0e]/90 pointer-events-none" />
@@ -43,6 +44,7 @@ export const BackgroundWatermark: React.FC = () => {
         <img
           src="/cube.svg"
           alt=""
+          aria-hidden="true"
           loading="eager"
           className="w-full h-full object-contain animate-[spin_40s_linear_infinite] opacity-10 pointer-events-none"
         />

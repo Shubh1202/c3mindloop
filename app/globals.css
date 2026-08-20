@@ -212,3 +212,15 @@ html.light {
     transform: translate(-50%, 0);
   }
 }
+
+/* Search bar open animation — fade in + drop down from slightly above */
+@keyframes searchBarIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

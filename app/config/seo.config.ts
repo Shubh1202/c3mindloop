@@ -40,7 +40,7 @@ export const seoConfig = {
   home: {
     title: 'C³ MindLoop - Free & Private Developer Utilities',
     description:
-      'Instant browser-based developer tools with zero server processing. Use 100% private JSON Formatter, Base64 Encoder, JWT Inspector, Hash Generator, and ATS Resume Builder.',
+      'Free browser-based developer tools that run 100% locally — JSON Formatter, JWT Inspector, Base64 Encoder, Regex Tester & more. No server. No tracking.',
     keywords: [
       'developer tools', 'json formatter', 'jwt inspector', 'base64 encoder',
       'client-side web tools', 'free online dev utilities', 'ats resume builder'
@@ -50,14 +50,14 @@ export const seoConfig = {
       type: 'website' as const,
       title: 'C³ MindLoop - Free & Private Developer Utilities',
       description:
-        'Instant browser-based developer tools with zero server processing. Use 100% private JSON Formatter, Base64 Encoder, JWT Inspector, Hash Generator, and ATS Resume Builder.',
+        'Free browser-based developer tools that run 100% locally — JSON Formatter, JWT Inspector, Base64 Encoder, Regex Tester & more. No server. No tracking.',
       url: BASE_URL,
       images: [{ url: defaultOgImage, width: 1200, height: 630, alt: 'C³ MindLoop - Free Developer Tools' }],
     },
     twitter: {
       title: 'C³ MindLoop - Free & Private Developer Utilities',
       description:
-        'Instant browser-based developer tools with zero server processing. Use 100% private JSON Formatter, Base64 Encoder, JWT Inspector, Hash Generator, and ATS Resume Builder.',
+        'Free browser-based developer tools that run 100% locally — JSON Formatter, JWT Inspector, Base64 Encoder, Regex Tester & more. No server. No tracking.',
       images: [defaultOgImage],
     },
   },
