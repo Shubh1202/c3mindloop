@@ -4,12 +4,12 @@ import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import { Copy, Check, Trash2, RefreshCw, Info, AlertCircle, Maximize2, Minimize2 } from 'lucide-react';
 import { useTranslation } from '../../lib/i18n';
 
-// ── Cron field metadata ──────────────────────────────────────────────────────
+// â”€â”€ Cron field metadata â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 const DAYS   = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 
-// ── Parser ───────────────────────────────────────────────────────────────────
+// â”€â”€ Parser â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 interface CronParts {
   second?: string;
@@ -36,7 +36,7 @@ function parseCron(expr: string, flavor: 'standard' | 'quartz'): CronParts | nul
   return null;
 }
 
-// ── Human-readable description ───────────────────────────────────────────────
+// â”€â”€ Human-readable description â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function describeField(value: string, type: 'second' | 'minute' | 'hour' | 'dom' | 'month' | 'dow'): string {
   if (value === '*' || value === '?') return null as unknown as string;
@@ -164,7 +164,7 @@ function buildDescription(parts: CronParts, flavor: 'standard' | 'quartz'): stri
   return parts2.join(', ');
 }
 
-// ── Next execution calculator ────────────────────────────────────────────────
+// â”€â”€ Next execution calculator â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function matchesField(value: string, current: number, min: number, max: number): boolean {
   if (value === '*' || value === '?') return true;
@@ -225,7 +225,7 @@ function getNextExecutions(parts: CronParts, flavor: 'standard' | 'quartz', coun
   return results;
 }
 
-// ── Validation ──────────────────────────────────────────────────────────────
+// â”€â”€ Validation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function validateCronParts(parts: CronParts, flavor: 'standard' | 'quartz'): string[] {
   const errors: string[] = [];
@@ -233,7 +233,7 @@ function validateCronParts(parts: CronParts, flavor: 'standard' | 'quartz'): str
     if (val === '*' || val === '?') return;
     const nums = val.replace(/[*/,\-]/g, ' ').trim().split(/\s+/).map(Number).filter(n => !isNaN(n));
     for (const n of nums) {
-      if (n < min || n > max) errors.push(`${name}: ${n} is out of range (${min}–${max})`);
+      if (n < min || n > max) errors.push(`${name}: ${n} is out of range (${min}â€“${max})`);
     }
   };
   if (flavor === 'quartz' && parts.second) checkField(parts.second, 0, 59, 'Second');
@@ -253,7 +253,7 @@ function isHighFrequency(parts: CronParts, flavor: 'standard' | 'quartz'): boole
   return false;
 }
 
-// ── Builder state ────────────────────────────────────────────────────────────
+// â”€â”€ Builder state â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 interface BuilderState {
   second: string;
@@ -273,7 +273,7 @@ function builderToCron(b: BuilderState, flavor: 'standard' | 'quartz'): string {
   return `${b.minute} ${b.hour} ${b.dom} ${b.month} ${b.dow}`;
 }
 
-// ── Sub-components ───────────────────────────────────────────────────────────
+// â”€â”€ Sub-components â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function FieldSelector({
   label,
@@ -305,7 +305,7 @@ function FieldSelector({
   );
 }
 
-// ── Main component ───────────────────────────────────────────────────────────
+// â”€â”€ Main component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const SAMPLE_CRON_STANDARD = '*/15 9-17 * * 1-5';
 const SAMPLE_CRON_QUARTZ   = '0 */15 9-17 * * ?';
@@ -432,7 +432,7 @@ export const CronVisualizerTool: React.FC = () => {
   const isValid = !!parsed;
 
   return (
-    <div className={`bg-neutral-950 border border-neutral-800 font-sans text-neutral-100 flex flex-col ${isFullScreen ? 'fixed inset-0 z-[9999] overflow-hidden' : 'w-full rounded-lg shadow-2xl'}`}>
+    <div className={`developer-tool-container bg-neutral-950 border border-neutral-800 font-sans text-neutral-100 flex flex-col ${isFullScreen ? 'fixed inset-0 z-[9999] overflow-hidden' : 'w-full rounded-lg shadow-2xl'}`}>
 
       {/* Toolbar */}
       <div className={`px-3 py-2.5 bg-neutral-900 border-b border-neutral-800 flex flex-wrap items-center justify-between gap-2 text-xs font-mono ${isFullScreen ? 'sticky top-0 z-[10000]' : 'rounded-t-lg'}`}>
@@ -599,7 +599,7 @@ export const CronVisualizerTool: React.FC = () => {
           {highFreq && (
             <div className="flex items-start gap-2 p-2.5 bg-amber-950/50 border border-amber-800/70 rounded text-xs font-mono text-amber-300">
               <AlertCircle className="w-3.5 h-3.5 shrink-0 mt-0.5 text-amber-500" />
-              <span>⚠️ High Frequency Schedule- this expression runs very frequently and may cause high server load.</span>
+              <span>âš ï¸ High Frequency Schedule- this expression runs very frequently and may cause high server load.</span>
             </div>
           )}
           {validationErrors.length > 0 && (

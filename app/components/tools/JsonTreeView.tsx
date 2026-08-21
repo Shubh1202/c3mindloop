@@ -280,7 +280,7 @@ export const JsonTreeView: React.FC<JsonTreeViewProps> = ({
   }
 
   return (
-    <div className="p-4 bg-neutral-950 font-mono text-xs sm:text-sm overflow-x-auto text-neutral-200">
+    <div className="json-tree-view p-4 bg-neutral-950 font-mono text-xs sm:text-sm overflow-x-auto text-neutral-200">
       <JsonTreeNode
         value={data}
         depth={0}

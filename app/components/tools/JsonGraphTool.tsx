@@ -62,7 +62,7 @@ export const JsonGraphTool: React.FC = () => {
   const layoutTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isFirstRender = useRef(true);
 
-  // ── Fullscreen- mirrors JsonFormatterTool behavior exactly ───────────────
+  // â”€â”€ Fullscreen- mirrors JsonFormatterTool behavior exactly â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && isFullScreen) setIsFullScreen(false);
@@ -83,7 +83,7 @@ export const JsonGraphTool: React.FC = () => {
     };
   }, [isFullScreen]);
 
-  // ── Search ─────────────────────────────────────────────────────────────────
+  // â”€â”€ Search â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const searchMatchIds = useMemo(() => {
     if (!search.debouncedQuery.trim() || nodes.length === 0) return new Set<string>();
     const q = search.debouncedQuery.toLowerCase();
@@ -99,7 +99,7 @@ export const JsonGraphTool: React.FC = () => {
     return result;
   }, [search.debouncedQuery, nodes]);
 
-  // ── Debounced parse ────────────────────────────────────────────────────────
+  // â”€â”€ Debounced parse â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   useEffect(() => {
     if (debounceTimer.current) clearTimeout(debounceTimer.current);
     const kc = countKeys(inputValue);
@@ -126,7 +126,7 @@ export const JsonGraphTool: React.FC = () => {
     return () => { if (debounceTimer.current) clearTimeout(debounceTimer.current); };
   }, [inputValue]);
 
-  // ── Build + layout ─────────────────────────────────────────────────────────
+  // â”€â”€ Build + layout â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   useEffect(() => {
     if (parsedJSON === null || keyCount > 2000) return;
 
@@ -155,7 +155,7 @@ export const JsonGraphTool: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [parsedJSON]);
 
-  // ── Helpers ────────────────────────────────────────────────────────────────
+  // â”€â”€ Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   function getVisibleNodes(
     allNodes: GraphNode[], allEdges: GraphEdge[], collapsed: Set<string>,
   ): GraphNode[] {
@@ -199,7 +199,7 @@ export const JsonGraphTool: React.FC = () => {
     });
   }
 
-  // ── Action handlers ────────────────────────────────────────────────────────
+  // â”€â”€ Action handlers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const handleFitToScreen = useCallback(() => {
     fitToScreen(nodes, collapsedNodes, edges);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -270,7 +270,7 @@ export const JsonGraphTool: React.FC = () => {
     } finally { setIsExporting(false); }
   }, [nodes, edges, collapsedNodes, isExporting]);
 
-  // ── Derived ────────────────────────────────────────────────────────────────
+  // â”€â”€ Derived â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const visibleNodes = useMemo(
     () => getVisibleNodes(nodes, edges, collapsedNodes),
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -282,26 +282,26 @@ export const JsonGraphTool: React.FC = () => {
   const showYellowBanner = keyCount > 500 && keyCount <= 2000 && inputValue.trim() !== '';
   const showRedBanner = keyCount > 2000 && inputValue.trim() !== '';
 
-  // ── Layout
+  // â”€â”€ Layout
   //
-  //  ┌──────────────────────────────────────────────────────────┐
-  //  │  Row 1- Primary toolbar (Graph/Tree + all controls)     │  ← bg-neutral-900 border-b
-  //  ├──────────────────────────────────────────────────────────┤
-  //  │  Row 2- Search bar + live stats                         │  ← bg-neutral-900/40 border-b
-  //  ├──────────────────────────────────────────────────────────┤
-  //  │  Row 3- Optional banners (perf / truncation / error)    │
-  //  ├──────────────────────────────────────────────────────────┤
-  //  │  Row 4- Workspace (fixed height)                        │
-  //  │  ┌───────────────┬──────────────────────────────────┐   │
-  //  │  │  Input panel  │  Graph canvas / Tree view         │   │
-  //  │  │  (280px)      │  (flex-1, overflow-hidden)        │   │
-  //  │  └───────────────┴──────────────────────────────────┘   │
-  //  └──────────────────────────────────────────────────────────┘
+  //  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+  //  â”‚  Row 1- Primary toolbar (Graph/Tree + all controls)     â”‚  â† bg-neutral-900 border-b
+  //  â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+  //  â”‚  Row 2- Search bar + live stats                         â”‚  â† bg-neutral-900/40 border-b
+  //  â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+  //  â”‚  Row 3- Optional banners (perf / truncation / error)    â”‚
+  //  â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+  //  â”‚  Row 4- Workspace (fixed height)                        â”‚
+  //  â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”‚
+  //  â”‚  â”‚  Input panel  â”‚  Graph canvas / Tree view         â”‚   â”‚
+  //  â”‚  â”‚  (280px)      â”‚  (flex-1, overflow-hidden)        â”‚   â”‚
+  //  â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â”‚
+  //  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 
   return (
-    <div className={`flex flex-col w-full border border-neutral-800 bg-neutral-950 overflow-hidden ${isFullScreen ? 'fixed inset-0 z-[9999] rounded-none' : 'rounded-lg'}`}>
+    <div className={`json-graph-tool developer-tool-container flex flex-col w-full border border-neutral-800 bg-neutral-950 overflow-hidden ${isFullScreen ? 'fixed inset-0 z-[9999] rounded-none' : 'rounded-lg'}`}>
 
-      {/* ── Row 1: Primary toolbar ───────────────────────────────────────── */}
+      {/* â”€â”€ Row 1: Primary toolbar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <GraphToolbar
         viewMode={viewMode}
         scale={transform.scale}
@@ -353,7 +353,7 @@ export const JsonGraphTool: React.FC = () => {
         }}
       />
 
-      {/* ── Collapsible search row -  standard pattern (matches JsonFormatter) ── */}
+      {/* â”€â”€ Collapsible search row -  standard pattern (matches JsonFormatter) â”€â”€ */}
       {search.isOpen && (
         <div className="flex items-center gap-2 px-3 py-2 bg-neutral-900 border-b border-neutral-800 shrink-0">
           <X
@@ -366,7 +366,7 @@ export const JsonGraphTool: React.FC = () => {
             value={search.query}
             onChange={e => search.setQuery(e.target.value)}
             onKeyDown={e => { if (e.key === 'Escape') { search.close(); search.clear(); } }}
-            placeholder="Search keys or values…"
+            placeholder="Search keys or valuesâ€¦"
             spellCheck={false}
             autoFocus
             className="flex-1 bg-neutral-800 border border-neutral-700 rounded px-2 py-1 text-xs font-mono text-neutral-200 placeholder-neutral-600 focus:outline-none focus:border-neutral-500 transition-colors"
@@ -388,21 +388,21 @@ export const JsonGraphTool: React.FC = () => {
         </div>
       )}
 
-      {/* ── Stats row ── */}
+      {/* â”€â”€ Stats row â”€â”€ */}
       <GraphInfoBar
         stats={graphStats}
         copiedPath={copiedPath}
       />
 
-      {/* ── Row 3: Banners ───────────────────────────────────────────────── */}
+      {/* â”€â”€ Row 3: Banners â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       {showYellowBanner && (
         <div className="flex items-center gap-2 px-4 py-2 bg-amber-950/40 border-b border-amber-500/30 text-amber-400 text-xs font-mono shrink-0">
-          ⚠ Large payload ({keyCount} keys detected)- performance may be affected
+          âš  Large payload ({keyCount} keys detected)- performance may be affected
         </div>
       )}
       {showRedBanner && (
         <div className="flex items-center gap-2 px-4 py-2 bg-red-950/40 border-b border-red-500/30 text-red-400 text-xs font-mono shrink-0">
-          ✕ Payload too large ({keyCount} keys)- graph rendering skipped
+          âœ• Payload too large ({keyCount} keys)- graph rendering skipped
         </div>
       )}
       {truncatedGraph && !truncatedDismissed && (
@@ -422,7 +422,7 @@ export const JsonGraphTool: React.FC = () => {
         </div>
       )}
 
-      {/* ── Row 4: Workspace ─────────────────────────────────────────────── */}
+      {/* â”€â”€ Row 4: Workspace â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <div className={`flex ${isFullScreen ? 'flex-1 overflow-hidden' : ''}`} style={isFullScreen ? undefined : { height: '560px' }}>
 
         {/* Input panel- fixed 280px */}
@@ -460,7 +460,7 @@ export const JsonGraphTool: React.FC = () => {
                       <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" strokeOpacity="0.3" />
                       <path d="M12 2a10 10 0 0 1 10 10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
                     </svg>
-                    Computing layout…
+                    Computing layoutâ€¦
                   </div>
                 </div>
               )}

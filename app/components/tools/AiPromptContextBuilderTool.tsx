@@ -346,7 +346,7 @@ export const AiPromptContextBuilderTool: React.FC = () => {
 
   return (
     <>
-      <div className={`bg-neutral-950 border border-neutral-800 font-sans text-neutral-100 flex flex-col ${isFullScreen ? 'fixed inset-0 z-[9999] overflow-hidden' : 'w-full rounded-lg shadow-2xl'}`}>
+      <div className={`developer-tool-container bg-neutral-950 border border-neutral-800 font-sans text-neutral-100 flex flex-col ${isFullScreen ? 'fixed inset-0 z-[9999] overflow-hidden' : 'w-full rounded-lg shadow-2xl'}`}>
 
         {/* Preset Pills */}
         <div className="px-3 py-2.5 bg-neutral-900/80 border-b border-neutral-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -450,9 +450,9 @@ export const AiPromptContextBuilderTool: React.FC = () => {
               <span className="font-semibold text-neutral-300">Raw Technical Context</span>
               <div className="flex items-center gap-2 text-[11px]">
                 <span>{lineCount} lines</span>
-                <span>•</span>
+                <span>â€¢</span>
                 <span>{byteCount} bytes</span>
-                <span>•</span>
+                <span>â€¢</span>
                 <span className="text-neutral-400">~{inputTokens} tk</span>
               </div>
             </div>
@@ -477,7 +477,7 @@ export const AiPromptContextBuilderTool: React.FC = () => {
                     <Zap className="w-3 h-3" />
                     <span>~{outputTokens} tokens</span>
                     {tokenSaverEnabled && savedPct > 0 && (
-                      <span className="text-emerald-400 font-semibold ml-0.5">(↓ {savedPct}% saved)</span>
+                      <span className="text-emerald-400 font-semibold ml-0.5">(â†“ {savedPct}% saved)</span>
                     )}
                   </span>
                 )}
@@ -551,8 +551,8 @@ export const AiPromptContextBuilderTool: React.FC = () => {
                 <ShieldCheck className="w-3.5 h-3.5" />
                 <span>
                   Prompt ready
-                  {sanitizerEnabled ? ' • Sensitive data redacted' : ''}
-                  {tokenSaverEnabled ? ' • Token-optimized' : ''}
+                  {sanitizerEnabled ? ' â€¢ Sensitive data redacted' : ''}
+                  {tokenSaverEnabled ? ' â€¢ Token-optimized' : ''}
                 </span>
               </span>
             ) : (
@@ -564,7 +564,7 @@ export const AiPromptContextBuilderTool: React.FC = () => {
           </div>
           <div className="text-neutral-400 text-[11px] flex items-center gap-1.5">
             <Info className="w-3.5 h-3.5 text-neutral-500" />
-            <span>Local browser processing • No data sent to any server</span>
+            <span>Local browser processing â€¢ No data sent to any server</span>
           </div>
         </div>
       </div>
@@ -579,7 +579,7 @@ export const AiPromptContextBuilderTool: React.FC = () => {
               onClick={() => setToastMessage(null)}
               className="ml-2 text-neutral-400 hover:text-neutral-200 transition-colors cursor-pointer"
             >
-              ✕
+              âœ•
             </button>
           </div>
         </div>

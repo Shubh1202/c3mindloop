@@ -266,7 +266,7 @@ export const RegexTesterTool: React.FC = () => {
   };
 
   return (
-    <div className={`bg-neutral-950 border border-neutral-800 font-mono text-xs text-neutral-100 flex flex-col ${isFullScreen ? 'fixed inset-0 z-[9999] overflow-hidden' : 'w-full rounded-lg shadow-2xl'}`}>
+    <div className={`developer-tool-container bg-neutral-950 border border-neutral-800 font-mono text-xs text-neutral-100 flex flex-col ${isFullScreen ? 'fixed inset-0 z-[9999] overflow-hidden' : 'w-full rounded-lg shadow-2xl'}`}>
 
       {/* Action Toolbar */}
       <div className={`px-3 py-2.5 bg-neutral-900 border-b border-neutral-800 flex flex-wrap items-center justify-between gap-2 ${isFullScreen ? 'sticky top-0 z-[10000]' : ''}`}>
@@ -469,7 +469,7 @@ export const RegexTesterTool: React.FC = () => {
                    <div className="p-3 bg-amber-950/60 border border-amber-800/80 rounded text-amber-300 text-[11px] flex items-start gap-2">
                      <AlertCircle className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
                      <div>
-                       <span className="font-bold block text-amber-500 mb-0.5">⚠️ Potential catastrophic backtracking pattern detected.</span>
+                       <span className="font-bold block text-amber-500 mb-0.5">âš ï¸ Potential catastrophic backtracking pattern detected.</span>
                        This pattern may cause excessive backtracking for certain inputs.
                      </div>
                    </div>
@@ -580,7 +580,7 @@ export const RegexTesterTool: React.FC = () => {
       <div className="px-4 py-2 bg-neutral-900/80 border-t border-neutral-800 flex flex-wrap items-center justify-between gap-2 text-[11px] font-mono">
         <div className="flex items-center gap-1.5 text-neutral-400">
           <Info className="w-3.5 h-3.5 text-neutral-500" />
-          <span>Local browser processing • No data sent to any server</span>
+          <span>Local browser processing â€¢ No data sent to any server</span>
         </div>
         <div className="flex items-center gap-1.5 text-neutral-500">
           <ShieldCheck className="w-3.5 h-3.5 text-emerald-500/70" />

@@ -14,7 +14,7 @@ import type {
 } from './complexityAnalyzer/complexityTypes';
 import { trackEvent, GA_EVENTS } from '../../lib/analytics';
 
-// ── Risk badge ────────────────────────────────────────────────────────────────
+// â”€â”€ Risk badge â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function RiskBadge({ riskLevel }: { riskLevel: FunctionResult['riskLevel'] }) {
   const classes = RISK_BADGE_CLASSES[riskLevel];
   if (!classes) {
@@ -27,7 +27,7 @@ function RiskBadge({ riskLevel }: { riskLevel: FunctionResult['riskLevel'] }) {
   );
 }
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
+// â”€â”€ Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function getSummary(results: FunctionResult[]) {
   const counts: Record<FunctionResult['riskLevel'], number> = { Low: 0, Medium: 0, High: 0, Critical: 0 };
   let highestCyclomatic = results[0];
@@ -53,13 +53,13 @@ function getSortedResults(results: FunctionResult[], sortColumn: SortColumn | nu
   });
 }
 
-// ── Sort icon ────────────────────────────────────────────────────────────────
+// â”€â”€ Sort icon â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function SortIcon({ col, sortColumn, sortDirection }: { col: SortColumn; sortColumn: SortColumn | null; sortDirection: SortDirection }) {
   if (sortColumn !== col) return <ArrowUpDown className="w-3 h-3 opacity-40" />;
   return sortDirection === 'asc' ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />;
 }
 
-// ── Main component ─────────────────────────────────────────────────────────────
+// â”€â”€ Main component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export const CodeComplexityAnalyzerTool: React.FC = () => {
   const [code, setCode] = useState('');
   const [language, setLanguage] = useState<SupportedLanguage>('javascript');
@@ -78,7 +78,7 @@ export const CodeComplexityAnalyzerTool: React.FC = () => {
   const [isFullScreen, setIsFullScreen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-  // ── Fullscreen: Escape key + body scroll lock ────────────────────────────────
+  // â”€â”€ Fullscreen: Escape key + body scroll lock â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setIsFullScreen(false); };
     const nav = document.querySelector('header') as HTMLElement | null;
@@ -98,7 +98,7 @@ export const CodeComplexityAnalyzerTool: React.FC = () => {
     };
   }, [isFullScreen]);
 
-  // ── Code change / language detection ────────────────────────────────────────
+  // â”€â”€ Code change / language detection â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const handleCodeChange = (value: string) => {
     setCode(value);
     setUploadError(null);
@@ -109,7 +109,7 @@ export const CodeComplexityAnalyzerTool: React.FC = () => {
     }
   };
 
-  // ── File upload ──────────────────────────────────────────────────────────────
+  // â”€â”€ File upload â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -151,7 +151,7 @@ export const CodeComplexityAnalyzerTool: React.FC = () => {
     reader.readAsText(file);
   };
 
-  // ── Analyze ──────────────────────────────────────────────────────────────────
+  // â”€â”€ Analyze â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const runAnalysis = useCallback((codeInput: string, lang: SupportedLanguage) => {
     setAnalyzing(true);
     setAnalyzeError(null);
@@ -179,7 +179,7 @@ export const CodeComplexityAnalyzerTool: React.FC = () => {
     runAnalysis(code, language);
   }, [code, language, runAnalysis]);
 
-  // ── Language selector ────────────────────────────────────────────────────────
+  // â”€â”€ Language selector â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const handleLanguageChange = (newLang: SupportedLanguage) => {
     setLanguage(newLang);
     setManualLanguage(true);
@@ -189,7 +189,7 @@ export const CodeComplexityAnalyzerTool: React.FC = () => {
     }
   };
 
-  // ── Load Sample ──────────────────────────────────────────────────────────────
+  // â”€â”€ Load Sample â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const handleLoadSample = () => {
     setCode(SAMPLE_CODE);
     setLanguage('javascript');
@@ -203,7 +203,7 @@ export const CodeComplexityAnalyzerTool: React.FC = () => {
     trackEvent(GA_EVENTS.TOOL_ACTION, { tool_name: 'code_complexity_analyzer', action: 'load_sample' });
   };
 
-  // ── Clear ────────────────────────────────────────────────────────────────────
+  // â”€â”€ Clear â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const handleClear = () => {
     setCode('');
     setLanguage('javascript');
@@ -220,7 +220,7 @@ export const CodeComplexityAnalyzerTool: React.FC = () => {
     trackEvent(GA_EVENTS.TOOL_ACTION, { tool_name: 'code_complexity_analyzer', action: 'clear' });
   };
 
-  // ── Sorting ──────────────────────────────────────────────────────────────────
+  // â”€â”€ Sorting â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const handleSort = (col: SortColumn) => {
     if (sortColumn === col) {
       setSortDirection(d => d === 'asc' ? 'desc' : 'asc');
@@ -230,7 +230,7 @@ export const CodeComplexityAnalyzerTool: React.FC = () => {
     }
   };
 
-  // ── Copy JSON ────────────────────────────────────────────────────────────────
+  // â”€â”€ Copy JSON â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const handleCopyJson = async () => {
     if (!analysisResult || analysisResult.results.length === 0) return;
     trackEvent(GA_EVENTS.TOOL_ACTION, { tool_name: 'code_complexity_analyzer', action: 'copy_json' });
@@ -262,7 +262,7 @@ export const CodeComplexityAnalyzerTool: React.FC = () => {
     }
   };
 
-  // ── Download CSV ─────────────────────────────────────────────────────────────
+  // â”€â”€ Download CSV â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const handleDownloadCsv = () => {
     if (!analysisResult || analysisResult.results.length === 0) return;
     trackEvent(GA_EVENTS.TOOL_ACTION, { tool_name: 'code_complexity_analyzer', action: 'download_csv' });
@@ -296,7 +296,7 @@ export const CodeComplexityAnalyzerTool: React.FC = () => {
     URL.revokeObjectURL(url);
   };
 
-  // ── Suggestions toggle ───────────────────────────────────────────────────────
+  // â”€â”€ Suggestions toggle â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const toggleRow = (idx: number) => {
     setExpandedRows(prev => {
       const next = new Set(prev);
@@ -305,24 +305,24 @@ export const CodeComplexityAnalyzerTool: React.FC = () => {
     });
   };
 
-  // ── Derived state ─────────────────────────────────────────────────────────────
+  // â”€â”€ Derived state â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const hasResults = analysisResult !== null;
   const results = analysisResult?.results ?? [];
   const sortedResults = getSortedResults(results, sortColumn, sortDirection);
   const hasNoFunctions = hasResults && results.length === 0;
   const canExport = hasResults && results.length > 0;
 
-  // ── Sort header helper -  component defined above to satisfy lint ─────────────
+  // â”€â”€ Sort header helper -  component defined above to satisfy lint â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
-  // ── Render ────────────────────────────────────────────────────────────────────
+  // â”€â”€ Render â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   return (
-    <div className={`bg-neutral-950 border border-neutral-800 text-neutral-100 flex flex-col ${
+    <div className={`developer-tool-container bg-neutral-950 border border-neutral-800 text-neutral-100 flex flex-col ${
       isFullScreen
         ? 'fixed inset-0 z-[9999] rounded-none overflow-hidden'
         : 'w-full rounded-lg overflow-hidden shadow-xl'
     }`}>
 
-      {/* ── TOOLBAR (FIRST ELEMENT) ── */}
+      {/* â”€â”€ TOOLBAR (FIRST ELEMENT) â”€â”€ */}
       <div className={`px-3 py-2 bg-neutral-900 border-b border-neutral-800 flex flex-wrap items-center gap-2 text-xs font-mono shrink-0 ${
         isFullScreen ? 'sticky top-0 z-[10000]' : ''
       }`}>
@@ -339,7 +339,7 @@ export const CodeComplexityAnalyzerTool: React.FC = () => {
           ) : (
             <Play className="w-3 h-3" />
           )}
-          <span>{analyzing ? 'Analyzing…' : 'Analyze'}</span>
+          <span>{analyzing ? 'Analyzingâ€¦' : 'Analyze'}</span>
         </button>
 
         {/* Language selector */}
@@ -396,7 +396,7 @@ export const CodeComplexityAnalyzerTool: React.FC = () => {
           aria-label="Copy results as JSON"
         >
           {copyState === 'copied' ? (
-            <><Check className="w-3.5 h-3.5 text-emerald-400" /><span className="text-emerald-400">Copied ✓</span></>
+            <><Check className="w-3.5 h-3.5 text-emerald-400" /><span className="text-emerald-400">Copied âœ“</span></>
           ) : (
             <><Copy className="w-3.5 h-3.5" /><span>Copy JSON</span></>
           )}
@@ -433,7 +433,7 @@ export const CodeComplexityAnalyzerTool: React.FC = () => {
         </button>
       </div>
 
-      {/* ── ERRORS ── */}
+      {/* â”€â”€ ERRORS â”€â”€ */}
       {uploadError && (
         <div className="px-4 py-2 bg-red-950 border-b border-red-900 text-red-400 font-mono text-xs">
           {uploadError}
@@ -441,16 +441,16 @@ export const CodeComplexityAnalyzerTool: React.FC = () => {
       )}
       {analyzeError && (
         <div className="px-4 py-2 bg-amber-950 border-b border-amber-900 text-amber-400 font-mono text-xs">
-          ⚠ Partial analysis: {analyzeError}
+          âš  Partial analysis: {analyzeError}
         </div>
       )}
 
-      {/* ── CODE INPUT ── */}
+      {/* â”€â”€ CODE INPUT â”€â”€ */}
       <div className={`border-b border-neutral-800 ${isFullScreen ? 'shrink-0' : ''}`}>
         <textarea
           value={code}
           onChange={(e) => handleCodeChange(e.target.value)}
-          placeholder={`Paste source code here (.js .ts .jsx .tsx .py .java .go .c .cpp .h .hpp) or click Upload…`}
+          placeholder={`Paste source code here (.js .ts .jsx .tsx .py .java .go .c .cpp .h .hpp) or click Uploadâ€¦`}
           spellCheck={false}
           style={{ height: isFullScreen ? '40vh' : '22rem' }}
           className="w-full p-4 font-mono text-xs bg-neutral-950 text-neutral-200 resize-none focus:outline-none placeholder-neutral-700 leading-[1.6]"
@@ -458,7 +458,7 @@ export const CodeComplexityAnalyzerTool: React.FC = () => {
         />
       </div>
 
-      {/* ── RESULTS AREA ── */}
+      {/* â”€â”€ RESULTS AREA â”€â”€ */}
       <div className={`p-4 bg-neutral-950 ${isFullScreen ? 'flex-1 overflow-y-auto' : ''}`}>
 
         {/* State 1: No analysis run yet */}
@@ -473,7 +473,7 @@ export const CodeComplexityAnalyzerTool: React.FC = () => {
           <div className="py-10 text-center">
             <div className="inline-flex items-center gap-2 font-mono text-sm text-neutral-400">
               <span className="animate-spin w-4 h-4 border border-neutral-400 border-t-transparent rounded-full" />
-              Analyzing…
+              Analyzingâ€¦
             </div>
           </div>
         )}
@@ -492,7 +492,7 @@ export const CodeComplexityAnalyzerTool: React.FC = () => {
                       {level}: {counts[level]}
                     </span>
                   ))}
-                  <span className="text-neutral-500">·</span>
+                  <span className="text-neutral-500">Â·</span>
                   <span>Highest: <span className="text-neutral-200">{highestCyclomatic.name}</span> (cyclomatic: <span className="font-mono text-neutral-200">{highestCyclomatic.cyclomatic}</span>)</span>
                 </div>
               );
@@ -555,7 +555,7 @@ export const CodeComplexityAnalyzerTool: React.FC = () => {
                             {result.name}
                           </td>
                           <td className="px-3 py-2 font-mono text-neutral-400">
-                            {result.startLine}–{result.endLine}
+                            {result.startLine}â€“{result.endLine}
                           </td>
                           <td className="px-3 py-2 font-mono text-neutral-200 tabular-nums">
                             {result.cyclomatic}
@@ -589,7 +589,7 @@ export const CodeComplexityAnalyzerTool: React.FC = () => {
                                 <ul className="space-y-1">
                                   {result.suggestions.map((s, si) => (
                                     <li key={si} className="flex items-start gap-2 text-[11px] font-mono text-neutral-300">
-                                      <span className="text-neutral-600 shrink-0">→</span>
+                                      <span className="text-neutral-600 shrink-0">â†’</span>
                                       <span>{s.text}</span>
                                     </li>
                                   ))}
@@ -628,9 +628,9 @@ export const CodeComplexityAnalyzerTool: React.FC = () => {
         )}
       </div>
 
-      {/* ── FOOTER ── */}
+      {/* â”€â”€ FOOTER â”€â”€ */}
       <div className="px-4 py-2 bg-neutral-900 border-t border-neutral-800 flex items-center justify-end">
-        <span className="text-neutral-500 font-mono text-[11px]">Client-Side · No Upload</span>
+        <span className="text-neutral-500 font-mono text-[11px]">Client-Side Â· No Upload</span>
       </div>
 
     </div>

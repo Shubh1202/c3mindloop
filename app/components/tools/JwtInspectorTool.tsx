@@ -339,7 +339,7 @@ export const JwtInspectorTool: React.FC = () => {
   const { icon: StatusIcon, color: statusColor, bg: statusBg, label: statusLabel } = statusConfig[status];
 
   return (
-    <div className={`bg-neutral-950 border border-neutral-800 font-sans text-neutral-100 flex flex-col ${isFullScreen ? 'fixed inset-0 z-[9999] overflow-hidden' : 'w-full rounded-lg shadow-2xl'}`}>
+    <div className={`developer-tool-container bg-neutral-950 border border-neutral-800 font-sans text-neutral-100 flex flex-col ${isFullScreen ? 'fixed inset-0 z-[9999] overflow-hidden' : 'w-full rounded-lg shadow-2xl'}`}>
 
       {/* Toolbar */}
       <div className={`px-3 py-2.5 bg-neutral-900 border-b border-neutral-800 flex flex-wrap items-center justify-between gap-2 text-xs font-mono ${isFullScreen ? 'sticky top-0 z-[10000]' : ''}`}>
@@ -434,7 +434,7 @@ export const JwtInspectorTool: React.FC = () => {
                   <div className={`px-2.5 py-1.5 rounded border text-[11px] font-mono font-bold shrink-0 ${
                     signatureValid ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400' : 'bg-red-500/10 border-red-500/30 text-red-400'
                   }`}>
-                    {signatureValid ? 'Signature Verified ✓' : 'Invalid Signature ✗'}
+                    {signatureValid ? 'Signature Verified âœ“' : 'Invalid Signature âœ—'}
                   </div>
                 )}
               </div>
@@ -610,12 +610,12 @@ export const JwtInspectorTool: React.FC = () => {
                 signatureValid ? (
                   <>
                     <ShieldCheck className="w-8 h-8 text-emerald-400" />
-                    <p className="text-xs font-semibold text-emerald-400 font-mono">HMAC Signature Valid ✓</p>
+                    <p className="text-xs font-semibold text-emerald-400 font-mono">HMAC Signature Valid âœ“</p>
                   </>
                 ) : (
                   <>
                     <ShieldAlert className="w-8 h-8 text-red-400" />
-                    <p className="text-xs font-semibold text-red-400 font-mono">Invalid HMAC Signature ✗</p>
+                    <p className="text-xs font-semibold text-red-400 font-mono">Invalid HMAC Signature âœ—</p>
                   </>
                 )
               ) : (

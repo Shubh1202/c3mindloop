@@ -10,6 +10,14 @@
   --border-active: #1D9BF0;
   --accent-color: #1D9BF0;
   --color-scheme: dark;
+  /* Diff Checker row/char highlight colors */
+  --diff-added-bg:   #0e2318;
+  --diff-removed-bg: #2b0f0f;
+  --diff-empty-bg:   #141414;
+  --diff-added-hl:   #166534;
+  --diff-removed-hl: #7f1d1d;
+  --diff-search-cur: #ca8a04;
+  --diff-search-bg:  #713f12;
 }
 
 html.light {
@@ -22,6 +30,14 @@ html.light {
   --border-active: #1D9BF0;
   --accent-color: #0284C7;
   --color-scheme: light;
+  /* Diff Checker â€” light mode equivalents */
+  --diff-added-bg:   #ecfdf5;
+  --diff-removed-bg: #fef2f2;
+  --diff-empty-bg:   #fafafa;
+  --diff-added-hl:   #a7f3d0;
+  --diff-removed-hl: #fca5a5;
+  --diff-search-cur: #fde047;
+  --diff-search-bg:  #fef08a;
 }
 
 @layer base {
@@ -224,3 +240,485 @@ html.light {
     transform: translateY(0);
   }
 }
+
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   Developer Tool Container â€” Unified Light Mode Overrides
+   Add class "developer-tool-container" to any tool's outer div to opt in.
+   All 14 tools share this single rule-set. Dark mode is completely unaffected.
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+
+/* ── 1. OUTER SHELL ─────────────────────────────────────────────────────── */
+html.light .developer-tool-container {
+  background-color: #FFFFFF !important;
+  border-color: #E4E4E7 !important;
+  color: #1E1E1E !important;
+}
+
+/* ── 2. BORDERS & DIVIDERS ──────────────────────────────────────────────── */
+html.light .developer-tool-container .border-neutral-900,
+html.light .developer-tool-container .border-neutral-800,
+html.light .developer-tool-container .border-neutral-700,
+html.light .developer-tool-container .divide-neutral-900,
+html.light .developer-tool-container .divide-neutral-800 {
+  border-color: #E4E4E7 !important;
+}
+
+/* ── 3. PANEL & CONTAINER BACKGROUNDS ──────────────────────────────────── */
+
+/* Deep dark backgrounds → white */
+html.light .developer-tool-container .bg-neutral-950,
+html.light .developer-tool-container .bg-neutral-950\/80,
+html.light .developer-tool-container .bg-neutral-950\/50,
+html.light .developer-tool-container .bg-neutral-950\/40,
+html.light .developer-tool-container .bg-neutral-950\/30 {
+  background-color: #FFFFFF !important;
+}
+
+/* Panel backgrounds / toolbar backgrounds → light gray */
+html.light .developer-tool-container .bg-neutral-900:not(button):not(a),
+html.light .developer-tool-container .bg-neutral-900\/80:not(button):not(a),
+html.light .developer-tool-container .bg-neutral-900\/50:not(button):not(a),
+html.light .developer-tool-container .bg-neutral-900\/30:not(button):not(a) {
+  background-color: #F4F4F5 !important;
+}
+html.light .developer-tool-container .bg-neutral-800:not(button):not(a),
+html.light .developer-tool-container .bg-neutral-800\/80:not(button):not(a) {
+  background-color: #E4E4E7 !important;
+}
+
+/* ── 4. TEXT COLORS ─────────────────────────────────────────────────────── */
+
+/* Primary text (white/near-white in dark mode) → near-black */
+html.light .developer-tool-container .text-neutral-100,
+html.light .developer-tool-container .text-neutral-200,
+html.light .developer-tool-container .text-neutral-300 {
+  color: #1E1E1E !important;
+}
+
+/* Muted/secondary text → readable muted gray */
+html.light .developer-tool-container .text-neutral-400,
+html.light .developer-tool-container .text-neutral-500,
+html.light .developer-tool-container .text-neutral-600,
+html.light .developer-tool-container .text-neutral-700 {
+  color: #71717A !important;
+}
+
+/* ── 5. BUTTONS ─────────────────────────────────────────────────────────── */
+
+/* Secondary action buttons: Copy, Swap, Upload, Download, Minify, Validate, Sample, Clear */
+html.light .developer-tool-container button.bg-neutral-800,
+html.light .developer-tool-container button.bg-neutral-800\/80 {
+  background-color: #E4E4E7 !important;
+  color: #3F3F46 !important;
+  border-color: #D4D4D8 !important;
+}
+html.light .developer-tool-container button.bg-neutral-800:hover,
+html.light .developer-tool-container button.bg-neutral-800\/80:hover {
+  background-color: #D4D4D8 !important;
+  color: #18181B !important;
+}
+
+/* Inactive tab/toggle buttons with bg-neutral-900 */
+html.light .developer-tool-container button.bg-neutral-900:not(.bg-\[\#1D9BF0\]) {
+  background-color: transparent !important;
+  color: #52525B !important;
+}
+html.light .developer-tool-container button.bg-neutral-900:not(.bg-\[\#1D9BF0\]):hover {
+  color: #18181B !important;
+  background-color: rgba(0,0,0,0.05) !important;
+}
+
+/* Clear/Trash button: red hover */
+html.light .developer-tool-container button.hover\:bg-red-950:hover {
+  background-color: #FEE2E2 !important;
+  color: #B91C1C !important;
+}
+
+/* Active/selected buttons: solid blue — PRESERVE, do not override */
+/* .bg-[#1D9BF0] stays blue with white text — no rule needed */
+
+/* Disabled opacity — keep as-is */
+html.light .developer-tool-container button:disabled {
+  opacity: 0.4;
+}
+
+/* ── 6. INPUTS, TEXTAREAS, SELECTS ──────────────────────────────────────── */
+html.light .developer-tool-container textarea,
+html.light .developer-tool-container input[type="text"],
+html.light .developer-tool-container input[type="number"],
+html.light .developer-tool-container input[type="search"],
+html.light .developer-tool-container select {
+  background-color: #FFFFFF !important;
+  color: #1E1E1E !important;
+  border-color: #D4D4D8 !important;
+}
+html.light .developer-tool-container textarea:focus,
+html.light .developer-tool-container input:focus,
+html.light .developer-tool-container select:focus {
+  border-color: #1D9BF0 !important;
+  outline: none;
+}
+html.light .developer-tool-container textarea::placeholder,
+html.light .developer-tool-container input::placeholder {
+  color: #A1A1AA !important;
+}
+/* Read-only output textareas */
+html.light .developer-tool-container textarea[readonly] {
+  background-color: #F8F9FA !important;
+}
+/* DiffChecker input textareas use bg-[#111] — override */
+html.light .developer-tool-container textarea.bg-\[\#111\] {
+  background-color: #FFFFFF !important;
+  color: #1E1E1E !important;
+}
+
+/* ── 7. CODE OUTPUT PANELS (pre, code blocks) ────────────────────────────── */
+html.light .developer-tool-container pre {
+  background-color: #FFFFFF !important;
+  color: #1E1E1E !important;
+}
+html.light .developer-tool-container pre.text-neutral-200 {
+  color: #1E1E1E !important;
+}
+
+/* ── 8. SYNTAX HIGHLIGHTING SPANS ──────────────────────────────────────── */
+/* Keys / field names */
+html.light .developer-tool-container span.text-sky-400 {
+  color: #1E3A5F !important;
+}
+/* String values */
+html.light .developer-tool-container span.text-emerald-400 {
+  color: #16653A !important;
+}
+/* Numbers */
+html.light .developer-tool-container span.text-amber-400 {
+  color: #9C5700 !important;
+}
+/* Booleans / keywords */
+html.light .developer-tool-container span.text-purple-400 {
+  color: #7C3AED !important;
+}
+/* Null / comments */
+html.light .developer-tool-container span.text-neutral-500 {
+  color: #71717A !important;
+}
+
+/* ── 9. VIEW-SWITCHER / SEGMENTED CONTROLS ──────────────────────────────── */
+/* Tab container capsule */
+html.light .developer-tool-container div.p-0\.5.rounded.border,
+html.light .developer-tool-container div.p-1.rounded.border {
+  background-color: #F4F4F5 !important;
+  border-color: #D4D4D8 !important;
+}
+/* Separator lines inside toolbars */
+html.light .developer-tool-container div.w-px.bg-neutral-800,
+html.light .developer-tool-container div.w-px.bg-neutral-700,
+html.light .developer-tool-container div.h-px.bg-neutral-800,
+html.light .developer-tool-container div.h-px.bg-neutral-700 {
+  background-color: #D4D4D8 !important;
+}
+
+/* ── 10. FOOTER / STATUS BAR ────────────────────────────────────────────── */
+html.light .developer-tool-container div.border-t.border-neutral-800,
+html.light .developer-tool-container div.border-t.border-neutral-900 {
+  background-color: #F4F4F5 !important;
+  border-color: #E4E4E7 !important;
+}
+
+/* ── 11. SEARCH BAR ─────────────────────────────────────────────────────── */
+html.light .developer-tool-container div.bg-neutral-900.border-b.flex {
+  background-color: #F4F4F5 !important;
+  border-color: #E4E4E7 !important;
+}
+html.light .developer-tool-container div.bg-neutral-900.border-b.flex input {
+  background-color: #FFFFFF !important;
+  color: #1E1E1E !important;
+  border-color: #D4D4D8 !important;
+}
+html.light .developer-tool-container div.bg-neutral-900.border-b.flex input::placeholder {
+  color: #A1A1AA !important;
+}
+
+/* ── 12. ERROR / WARNING / SUCCESS BANNERS ──────────────────────────────── */
+html.light .developer-tool-container div.bg-red-950,
+html.light .developer-tool-container div.bg-red-900,
+html.light .developer-tool-container div.bg-red-950\/40,
+html.light .developer-tool-container div.bg-red-900\/40 {
+  background-color: #FEE2E2 !important;
+  border-color: #FECACA !important;
+  color: #991B1B !important;
+}
+html.light .developer-tool-container div.bg-amber-950,
+html.light .developer-tool-container div.bg-amber-900,
+html.light .developer-tool-container div.bg-amber-950\/40,
+html.light .developer-tool-container div.bg-amber-900\/40 {
+  background-color: #FEF3C7 !important;
+  border-color: #F59E0B !important;
+  color: #92400E !important;
+}
+html.light .developer-tool-container div.bg-emerald-950,
+html.light .developer-tool-container div.bg-emerald-900,
+html.light .developer-tool-container div.bg-emerald-950\/40,
+html.light .developer-tool-container div.bg-emerald-900\/40 {
+  background-color: #ECFDF5 !important;
+  border-color: #A7F3D0 !important;
+  color: #065F46 !important;
+}
+html.light .developer-tool-container div.bg-blue-950,
+html.light .developer-tool-container div.bg-blue-900,
+html.light .developer-tool-container div.bg-blue-950\/40,
+html.light .developer-tool-container div.bg-blue-900\/30 {
+  background-color: #E0F2FE !important;
+  border-color: #BAE6FD !important;
+  color: #0369A1 !important;
+}
+
+/* ── 13. RISK / STATUS BADGES (CodeComplexityAnalyzer) ─────────────────── */
+html.light .developer-tool-container span.bg-emerald-950 {
+  background-color: #ECFDF5 !important;
+  color: #047857 !important;
+}
+html.light .developer-tool-container span.bg-amber-950 {
+  background-color: #FEF3C7 !important;
+  color: #D97706 !important;
+}
+html.light .developer-tool-container span.bg-orange-950 {
+  background-color: #FFEDD5 !important;
+  color: #EA580C !important;
+}
+html.light .developer-tool-container span.bg-red-950 {
+  background-color: #FEE2E2 !important;
+  color: #DC2626 !important;
+}
+
+/* ── 14. SCROLLBARS ─────────────────────────────────────────────────────── */
+html.light .developer-tool-container ::-webkit-scrollbar-track {
+  background: #F4F4F5 !important;
+}
+html.light .developer-tool-container ::-webkit-scrollbar-thumb {
+  background: #D4D4D8 !important;
+  border-radius: 4px;
+}
+html.light .developer-tool-container ::-webkit-scrollbar-thumb:hover {
+  background: #A1A1AA !important;
+}
+
+/* ── 15. TABLES (CodeComplexityAnalyzer results) ────────────────────────── */
+html.light .developer-tool-container table {
+  color: #1E1E1E !important;
+}
+html.light .developer-tool-container tr.border-t.bg-neutral-950 {
+  background-color: #FAFAFA !important;
+}
+html.light .developer-tool-container th {
+  color: #52525B !important;
+  border-color: #E4E4E7 !important;
+}
+html.light .developer-tool-container td {
+  border-color: #E4E4E7 !important;
+}
+
+/* ── 16. DROPDOWN / SELECT WRAPPERS ─────────────────────────────────────── */
+html.light .developer-tool-container select.bg-neutral-900,
+html.light .developer-tool-container select.bg-neutral-800 {
+  background-color: #FFFFFF !important;
+  color: #1E1E1E !important;
+  border-color: #D4D4D8 !important;
+}
+
+/* ── 17. EMPTY STATE TEXT ───────────────────────────────────────────────── */
+html.light .developer-tool-container p.text-neutral-600,
+html.light .developer-tool-container p.text-neutral-500 {
+  color: #71717A !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Tree View — shared across JSON Formatter and JSON Graph Visualizer.
+   Scoped under .json-tree-view class (added to JsonTreeView.tsx wrapper div).
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* --- Tree root wrapper --- */
+html.light .json-tree-view {
+  background-color: #FFFFFF !important;
+  color: #1E1E1E !important;
+}
+
+/* Tree keys (deep blue) */
+html.light .json-tree-view span.text-sky-400 {
+  color: #1E3A5F !important;
+}
+
+/* Tree string values (dark green) */
+html.light .json-tree-view span.text-emerald-400 {
+  color: #16653A !important;
+}
+
+/* Tree number values (dark amber) */
+html.light .json-tree-view span.text-amber-400 {
+  color: #9C5700 !important;
+}
+
+/* Tree boolean values (purple) */
+html.light .json-tree-view span.text-purple-400 {
+  color: #7C3AED !important;
+}
+
+/* Tree brackets and punctuation */
+html.light .json-tree-view span.text-neutral-400 {
+  color: #52525B !important;
+}
+
+/* Tree commas */
+html.light .json-tree-view span.text-neutral-600 {
+  color: #A1A1AA !important;
+}
+
+/* Tree hover rows */
+html.light .json-tree-view div.hover\:bg-neutral-900\/60:hover,
+html.light .json-tree-view div.hover\:bg-neutral-900\/80:hover {
+  background-color: rgba(0, 0, 0, 0.04) !important;
+}
+
+/* Tree collapsed item-count badge */
+html.light .json-tree-view span.bg-neutral-900.border-neutral-800.text-neutral-500 {
+  background-color: #F4F4F5 !important;
+  border-color: #D4D4D8 !important;
+  color: #71717A !important;
+}
+
+/* Tree connector lines */
+html.light .json-tree-view div.border-l.border-neutral-800\/80 {
+  border-color: #D4D4D8 !important;
+}
+
+/* Tree chevron icons */
+html.light .json-tree-view span.text-neutral-500.hover\:text-neutral-300 {
+  color: #A1A1AA !important;
+}
+html.light .json-tree-view span.text-neutral-500.hover\:text-neutral-300:hover {
+  color: #52525B !important;
+}
+
+/* ── Data Inspector Cards (JSON Formatter) ── */
+html.light .developer-tool-container div.bg-neutral-900.p-3.rounded {
+  background-color: #F8F9FA !important;
+  border-color: #E4E4E7 !important;
+}
+
+/* Inspector warning banner (duplicate keys) */
+html.light .developer-tool-container div.bg-amber-950\/30 {
+  background-color: #FEF3C7 !important;
+  border-color: #F59E0B !important;
+  color: #92400E !important;
+}
+
+/* Auto-fix / sky-tinted buttons */
+html.light .developer-tool-container button.bg-sky-500\/10 {
+  background-color: rgba(14, 165, 233, 0.08) !important;
+  border-color: rgba(14, 165, 233, 0.25) !important;
+}
+
+/* ── Toast notifications ── */
+html.light div.bg-red-950\/95 {
+  background-color: #FEE2E2 !important;
+  border-color: #FECACA !important;
+  color: #991B1B !important;
+}
+
+/* ── Editing pulse dot ── */
+html.light .developer-tool-container span.bg-neutral-400.animate-pulse {
+  background-color: #A1A1AA !important;
+}
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   JSON Graph Visualizer â€” SVG Canvas & Node Overrides
+   These CANNOT be handled by the general developer-tool-container selectors
+   because SVG fill/stroke attributes need class-based CSS overrides.
+   Scoped under html.light .json-graph-tool.
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+
+/* --- SVG Canvas & Empty States --- */
+html.light .json-graph-tool svg rect[fill="#0a0a0a"] {
+  fill: #F8F9FA !important;
+}
+html.light .json-graph-tool #dot-grid circle {
+  fill: #D4D4D8 !important;
+}
+html.light .json-graph-tool svg text[fill="#404040"] {
+  fill: #71717A !important;
+}
+html.light .json-graph-tool svg text[fill="#2a2a2a"] {
+  fill: #A1A1AA !important;
+}
+
+/* --- SVG Nodes --- */
+html.light .json-graph-tool .graph-node-bg {
+  fill: #FFFFFF !important;
+  stroke: #D4D4D8 !important;
+}
+html.light .json-graph-tool .graph-node-bg[stroke="#525252"],
+html.light .json-graph-tool .graph-node-bg[stroke="#262626"] {
+  stroke: #D4D4D8 !important;
+}
+html.light .json-graph-tool .graph-node-bg[stroke="#1D9BF0"] {
+  stroke: #1D9BF0 !important;
+}
+html.light .json-graph-tool .graph-node-bg[stroke="#f59e0b"] {
+  stroke: #F59E0B !important;
+}
+
+/* Node header */
+html.light .json-graph-tool .graph-node-header-hit,
+html.light .json-graph-tool .graph-node-header-overlay {
+  fill: #F4F4F5 !important;
+}
+html.light .json-graph-tool .graph-node-header-sep {
+  stroke: #E4E4E7 !important;
+}
+html.light .json-graph-tool .graph-node-header-label {
+  fill: #1E1E1E !important;
+}
+html.light .json-graph-tool .graph-node-header-label[fill="#f59e0b"] {
+  fill: #B45309 !important;
+}
+html.light .json-graph-tool .graph-node-type-badge,
+html.light .json-graph-tool .graph-node-chevron {
+  fill: #71717A !important;
+}
+
+/* Node rows */
+html.light .json-graph-tool .graph-node-row-sep {
+  stroke: #F4F4F5 !important;
+}
+html.light .json-graph-tool .graph-node-row-key {
+  fill: #1E3A5F !important;
+}
+html.light .json-graph-tool .graph-node-row-key[fill="#34d399"] {
+  fill: #16653A !important;
+}
+html.light .json-graph-tool .graph-node-row-copied-bg {
+  fill: rgba(22, 101, 58, 0.06) !important;
+}
+
+/* Node row values by type */
+html.light .json-graph-tool .graph-node-row-value.value-string   { fill: #16653A !important; }
+html.light .json-graph-tool .graph-node-row-value.value-number   { fill: #9C5700 !important; }
+html.light .json-graph-tool .graph-node-row-value.value-boolean  { fill: #7C3AED !important; }
+html.light .json-graph-tool .graph-node-row-value.value-null     { fill: #71717A !important; }
+html.light .json-graph-tool .graph-node-row-value.value-object_ref,
+html.light .json-graph-tool .graph-node-row-value.value-array_ref { fill: #52525B !important; }
+html.light .json-graph-tool .graph-node-row-value[fill="#34d399"] { fill: #16653A !important; }
+
+/* --- SVG Edges --- */
+html.light .json-graph-tool .graph-edge-line  { stroke: #A1A1AA !important; }
+html.light .json-graph-tool .graph-edge-arrow { fill: #A1A1AA !important; }
+
+/* --- Layout spinner overlay --- */
+html.light .json-graph-tool div[class*="bg-neutral-950/50"] {
+  background-color: rgba(255, 255, 255, 0.6) !important;
+}
+html.light .json-graph-tool div[class*="bg-neutral-950/50"] div[class*="bg-neutral-900"] {
+  background-color: #FFFFFF !important;
+  border-color: #D4D4D8 !important;
+  color: #3F3F46 !important;
+}
+

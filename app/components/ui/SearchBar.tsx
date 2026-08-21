@@ -19,6 +19,7 @@
 
 import React from 'react';
 import { Search, ArrowLeft, ArrowRight, X } from 'lucide-react';
+import { useTheme } from '../../lib/theme';
 
 export interface SearchBarProps {
   /** Current raw query value */
@@ -52,6 +53,8 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   placeholder = 'Search…',
   className = '',
 }) => {
+  const { isDark } = useTheme();
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
@@ -66,9 +69,21 @@ export const SearchBar: React.FC<SearchBarProps> = ({
 
   const noResults = query.length > 0 && totalMatches === 0;
 
+  const btnClass = isDark
+    ? "p-1 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-300 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition-colors shrink-0"
+    : "p-1 rounded bg-[#E4E4E7] hover:bg-[#D4D4D8] text-[#3F3F46] hover:text-[#18181B] disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition-colors shrink-0";
+
+  const closeBtnClass = isDark
+    ? "p-1 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-400 transition-colors cursor-pointer shrink-0"
+    : "p-1 rounded bg-[#E4E4E7] hover:bg-[#D4D4D8] text-[#71717A] hover:text-[#18181B] transition-colors cursor-pointer shrink-0";
+
   return (
     <div
-      className={`px-3 py-2 bg-neutral-900 border-b border-neutral-800 flex items-center gap-2 text-xs font-mono shrink-0 ${className}`}
+      className={`px-3 py-2 border-b flex items-center gap-2 text-xs font-mono shrink-0 ${
+        isDark
+          ? 'bg-neutral-900 border-neutral-800 text-neutral-400'
+          : 'bg-[#F8F9FA] border-[#E4E4E7] text-[#52525B]'
+      } ${className}`}
     >
       {/* Search icon */}
       <Search className="w-3.5 h-3.5 text-neutral-500 shrink-0" />
@@ -82,10 +97,14 @@ export const SearchBar: React.FC<SearchBarProps> = ({
           onChange={e => onQueryChange(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
-          className={`w-full bg-neutral-800 border rounded px-2 py-1 text-neutral-200 placeholder-neutral-600 focus:outline-none font-mono text-xs transition-colors ${
-            noResults
-              ? 'border-red-800 focus:border-red-600'
-              : 'border-neutral-700 focus:border-neutral-500'
+          className={`w-full border rounded px-2 py-1 focus:outline-none font-mono text-xs transition-colors ${
+            isDark
+              ? `bg-neutral-800 text-neutral-200 placeholder-neutral-600 ${
+                  noResults ? 'border-red-800 focus:border-red-600' : 'border-neutral-700 focus:border-neutral-500'
+                }`
+              : `bg-[#FFFFFF] text-[#111111] placeholder-[#A1A1AA] ${
+                  noResults ? 'border-red-600 focus:border-red-500' : 'border-[#D4D4D8] focus:border-[#1D9BF0]'
+                }`
           }`}
         />
       </div>
@@ -104,7 +123,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
       <button
         onClick={onPrev}
         disabled={totalMatches === 0}
-        className="p-1 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-300 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition-colors shrink-0"
+        className={btnClass}
         title="Previous match (Shift+Enter)"
         aria-label="Previous match"
       >
@@ -115,7 +134,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
       <button
         onClick={onNext}
         disabled={totalMatches === 0}
-        className="p-1 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-300 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition-colors shrink-0"
+        className={btnClass}
         title="Next match (Enter)"
         aria-label="Next match"
       >
@@ -125,7 +144,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
       {/* Close */}
       <button
         onClick={onClose}
-        className="p-1 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-400 transition-colors cursor-pointer shrink-0"
+        className={closeBtnClass}
         title="Close search (Escape)"
         aria-label="Close search"
       >

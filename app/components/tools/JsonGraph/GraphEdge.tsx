@@ -31,12 +31,14 @@ export const GraphEdgeComponent: React.FC<GraphEdgeProps> = ({
   return (
     <g key={edge.id}>
       <path
+        className="graph-edge-line"
         d={`M ${x1} ${y1} C ${cx1} ${cy1} ${cx2} ${cy2} ${x2 - arrowSize} ${y2}`}
         stroke="#404040"
         strokeWidth={1.5}
         fill="none"
       />
       <path
+        className="graph-edge-arrow"
         d={arrowPath}
         fill="#404040"
         stroke="none"

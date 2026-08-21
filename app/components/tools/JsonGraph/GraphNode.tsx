@@ -89,6 +89,7 @@ export const GraphNodeComponent: React.FC<GraphNodeProps> = ({
       {/* Search match outer glow */}
       {isSearchMatch && (
         <rect
+          className="graph-node-glow"
           x={-3} y={-3}
           width={node.width + 6} height={node.height + 6}
           rx={9} ry={9}
@@ -101,6 +102,7 @@ export const GraphNodeComponent: React.FC<GraphNodeProps> = ({
 
       {/* Node background */}
       <rect
+        className="graph-node-bg"
         x={0} y={0}
         width={node.width} height={node.height}
         rx={6} ry={6}
@@ -111,6 +113,7 @@ export const GraphNodeComponent: React.FC<GraphNodeProps> = ({
 
       {/* Header clickable area (expand/collapse) */}
       <rect
+        className="graph-node-header-hit"
         x={0} y={0}
         width={node.width} height={HEADER_HEIGHT}
         rx={6} ry={6}
@@ -123,6 +126,7 @@ export const GraphNodeComponent: React.FC<GraphNodeProps> = ({
       />
       {/* Flatten bottom-corner radius of header overlay */}
       <rect
+        className="graph-node-header-overlay"
         x={0} y={HEADER_HEIGHT / 2}
         width={node.width} height={HEADER_HEIGHT / 2}
         fill="rgba(255,255,255,0.04)"
@@ -131,6 +135,7 @@ export const GraphNodeComponent: React.FC<GraphNodeProps> = ({
 
       {/* Header separator */}
       <line
+        className="graph-node-header-sep"
         x1={0} y1={HEADER_HEIGHT}
         x2={node.width} y2={HEADER_HEIGHT}
         stroke="#262626" strokeWidth={1}
@@ -139,6 +144,7 @@ export const GraphNodeComponent: React.FC<GraphNodeProps> = ({
 
       {/* Header label */}
       <text
+        className="graph-node-header-label"
         x={NODE_PADDING} y={HEADER_HEIGHT / 2 + 5}
         fill={isSearchMatch ? '#f59e0b' : '#f5f5f5'}
         fontSize={12} fontFamily='"JetBrains Mono", monospace'
@@ -150,6 +156,7 @@ export const GraphNodeComponent: React.FC<GraphNodeProps> = ({
 
       {/* Type badge */}
       <text
+        className="graph-node-type-badge"
         x={node.width - NODE_PADDING} y={HEADER_HEIGHT / 2 + 5}
         fill="#404040" fontSize={10}
         fontFamily='"JetBrains Mono", monospace'
@@ -162,6 +169,7 @@ export const GraphNodeComponent: React.FC<GraphNodeProps> = ({
       {/* Expand/collapse chevron on non-leaf nodes */}
       {!isLeaf && (
         <text
+          className="graph-node-chevron"
           x={node.width - NODE_PADDING - (node.type !== 'scalar_container' ? 22 : 0)}
           y={HEADER_HEIGHT / 2 + 5}
           fill="#404040" fontSize={10}
@@ -187,6 +195,7 @@ export const GraphNodeComponent: React.FC<GraphNodeProps> = ({
           >
             {/* Transparent hit area for the full row */}
             <rect
+              className="graph-node-row-hit"
               x={0} y={rowY}
               width={node.width} height={ROW_HEIGHT}
               fill="transparent"
@@ -195,6 +204,7 @@ export const GraphNodeComponent: React.FC<GraphNodeProps> = ({
             {/* Row separator */}
             {i > 0 && (
               <line
+                className="graph-node-row-sep"
                 x1={NODE_PADDING / 2} y1={rowY}
                 x2={node.width - NODE_PADDING / 2} y2={rowY}
                 stroke="#1f1f1f" strokeWidth={0.5}
@@ -205,6 +215,7 @@ export const GraphNodeComponent: React.FC<GraphNodeProps> = ({
             {/* Copied flash background */}
             {isCopied && (
               <rect
+                className="graph-node-row-copied-bg"
                 x={0} y={rowY}
                 width={node.width} height={ROW_HEIGHT}
                 fill="rgba(52,211,153,0.08)"
@@ -215,6 +226,7 @@ export const GraphNodeComponent: React.FC<GraphNodeProps> = ({
             {/* Key label */}
             {row.key !== '' && (
               <text
+                className="graph-node-row-key"
                 x={NODE_PADDING} y={rowCenterY}
                 fill={isCopied ? '#34d399' : '#38bdf8'}
                 fontSize={11}
@@ -228,6 +240,7 @@ export const GraphNodeComponent: React.FC<GraphNodeProps> = ({
 
             {/* Value */}
             <text
+              className={`graph-node-row-value value-${row.valueType}`}
               x={row.key !== '' ? NODE_PADDING + (row.key.length + 2) * 6.5 : NODE_PADDING}
               y={rowCenterY}
               fill={isCopied ? '#34d399' : (VALUE_COLORS[row.valueType] ?? '#f5f5f5')}
@@ -246,6 +259,7 @@ export const GraphNodeComponent: React.FC<GraphNodeProps> = ({
       {/* Collapsed badge -  intercepts clicks to expand (must NOT fall through to rows) */}
       {isCollapsed && node.childEdges.length > 0 && (
         <g
+          className="graph-node-collapsed-badge"
           onClick={handleHeaderClick}
           style={{ cursor: 'pointer' }}
           role="button"

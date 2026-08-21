@@ -9,12 +9,12 @@ import {
 import { PDFDocument } from 'pdf-lib';
 import { PdfFile } from './editor/editor.types';
 
-// ── Types ────────────────────────────────────────────────────────────────────
+// â”€â”€ Types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 type ActiveTab = 'merge' | 'compress' | 'split';
 type CompressionPreset = 'basic' | 'strong';
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
+// â”€â”€ Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function formatBytes(bytes: number): string {
   if (bytes === 0) return '0 B';
@@ -65,7 +65,7 @@ function downloadBlob(bytes: Uint8Array, filename: string) {
   URL.revokeObjectURL(url);
 }
 
-// ── Basic compression: remove metadata, flatten, re-save ──────────────────────
+// â”€â”€ Basic compression: remove metadata, flatten, re-save â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 async function compressBasic(file: File): Promise<Uint8Array> {
   const buf = await file.arrayBuffer();
@@ -81,7 +81,7 @@ async function compressBasic(file: File): Promise<Uint8Array> {
   return srcPdf.save({ useObjectStreams: true, addDefaultPage: false });
 }
 
-// ── Strong compression: rasterize pages at reduced scale via Canvas ───────────
+// â”€â”€ Strong compression: rasterize pages at reduced scale via Canvas â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 async function compressStrong(
   file: File,
@@ -133,7 +133,7 @@ async function compressStrong(
   return outPdf.save({ useObjectStreams: true });
 }
 
-// ── Merge engine ──────────────────────────────────────────────────────────────
+// â”€â”€ Merge engine â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 async function mergePdfs(files: PdfFile[]): Promise<Uint8Array> {
   const merged = await PDFDocument.create();
@@ -147,7 +147,7 @@ async function mergePdfs(files: PdfFile[]): Promise<Uint8Array> {
   return merged.save({ useObjectStreams: true });
 }
 
-// ── Split engine ──────────────────────────────────────────────────────────────
+// â”€â”€ Split engine â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 async function splitPdf(file: File, pages: number[]): Promise<Uint8Array> {
   const buf = await file.arrayBuffer();
@@ -158,7 +158,7 @@ async function splitPdf(file: File, pages: number[]): Promise<Uint8Array> {
   return out.save({ useObjectStreams: true });
 }
 
-// ── DropZone ──────────────────────────────────────────────────────────────────
+// â”€â”€ DropZone â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 interface DropZoneProps {
   onFiles: (files: File[]) => void;
@@ -213,7 +213,7 @@ const DropZone: React.FC<DropZoneProps> = ({ onFiles, multiple = false, label })
   );
 };
 
-// ── Component: PDF Thumbnail with Resilient Timeout Fallback ──────────────────
+// â”€â”€ Component: PDF Thumbnail with Resilient Timeout Fallback â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 interface PdfThumbnailProps {
   file: File;
@@ -309,7 +309,7 @@ const PdfThumbnail: React.FC<PdfThumbnailProps> = ({ file }) => {
   );
 };
 
-// ── Component: Right Panel Interactive Preview ───────────────────────────────
+// â”€â”€ Component: Right Panel Interactive Preview â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 interface InteractivePreviewProps {
   /** A single source File (compress/split tabs) or a pre-merged Uint8Array (merge tab). */
@@ -491,7 +491,7 @@ const InteractivePreview: React.FC<InteractivePreviewProps> = ({ pdfSource, page
   );
 };
 
-// ── Main Component (2-Column Grid Editor View) ───────────────────────────────
+// â”€â”€ Main Component (2-Column Grid Editor View) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export const PdfSuiteTool: React.FC = () => {
   const [activeTab, setActiveTab] = useState<ActiveTab>('merge');
@@ -500,7 +500,7 @@ export const PdfSuiteTool: React.FC = () => {
   // Selected file for interactive preview (compress/split tabs)
   const [selectedFile, setSelectedFile] = useState<PdfFile | null>(null);
 
-  // ── Merge state ──
+  // â”€â”€ Merge state â”€â”€
   const [mergeFiles, setMergeFiles] = useState<PdfFile[]>([]);
   const [mergeWorking, setMergeWorking] = useState(false);
   const [mergeError, setMergeError] = useState<string | null>(null);
@@ -509,7 +509,7 @@ export const PdfSuiteTool: React.FC = () => {
   const [mergePreviewBuffer, setMergePreviewBuffer] = useState<Uint8Array | null>(null);
   const [mergePreviewBuilding, setMergePreviewBuilding] = useState(false);
 
-  // ── Compress state ──
+  // â”€â”€ Compress state â”€â”€
   const [compressFile, setCompressFile] = useState<PdfFile | null>(null);
   const [compressPreset, setCompressPreset] = useState<CompressionPreset>('basic');
   const [compressWorking, setCompressWorking] = useState(false);
@@ -517,14 +517,14 @@ export const PdfSuiteTool: React.FC = () => {
   const [compressResult, setCompressResult] = useState<{ originalBytes: number; compressedBytes: number } | null>(null);
   const [compressError, setCompressError] = useState<string | null>(null);
 
-  // ── Split state ──
+  // â”€â”€ Split state â”€â”€
   const [splitFile, setSplitFile] = useState<PdfFile | null>(null);
   const [splitRange, setSplitRange] = useState('');
   const [splitWorking, setSplitWorking] = useState(false);
   const [splitError, setSplitError] = useState<string | null>(null);
   const [splitSuccess, setSplitSuccess] = useState<string | null>(null);
 
-  // ── Live merge preview: auto-regenerate in-memory merged buffer on queue changes ──
+  // â”€â”€ Live merge preview: auto-regenerate in-memory merged buffer on queue changes â”€â”€
   useEffect(() => {
     if (mergeFiles.length < 2) {
       setMergePreviewBuffer(null);
@@ -580,7 +580,7 @@ export const PdfSuiteTool: React.FC = () => {
     };
   }, [isFullScreen]);
 
-  // ── Add files helpers ──
+  // â”€â”€ Add files helpers â”€â”€
   const addMergeFiles = useCallback(async (files: File[]) => {
     const newEntries: PdfFile[] = await Promise.all(
       files.map(async (f) => ({
@@ -623,7 +623,7 @@ export const PdfSuiteTool: React.FC = () => {
     setSplitRange('');
   }, []);
 
-// ── Merge reorder ──
+// â”€â”€ Merge reorder â”€â”€
   const dragIndexRef = useRef<number | null>(null);
   const [dropTargetIndex, setDropTargetIndex] = useState<number | null>(null);
 
@@ -685,7 +685,7 @@ export const PdfSuiteTool: React.FC = () => {
     setDropTargetIndex(null);
   };
 
-  // ── Actions ──
+  // â”€â”€ Actions â”€â”€
 
   const handleMerge = useCallback(async () => {
     if (mergeFiles.length < 2) { setMergeError('Add at least 2 PDF files to merge.'); return; }
@@ -696,7 +696,7 @@ export const PdfSuiteTool: React.FC = () => {
       const bytes = mergePreviewBuffer ?? await mergePdfs(mergeFiles);
       downloadBlob(bytes, 'merged-output.pdf');
       setMergePreviewBuffer(bytes);
-      setMergeSuccess(`Merged ${mergeFiles.length} files → ${formatBytes(bytes.byteLength)}`);
+      setMergeSuccess(`Merged ${mergeFiles.length} files â†’ ${formatBytes(bytes.byteLength)}`);
     } catch (err: any) {
       setMergeError(`Merge failed: ${err.message || 'Unknown error'}`);
     } finally {
@@ -739,7 +739,7 @@ export const PdfSuiteTool: React.FC = () => {
       const bytes = await splitPdf(splitFile.file, pages);
       const rangeSafe = splitRange.replace(/[^0-9,-]/g, '').slice(0, 20);
       downloadBlob(bytes, `split-pages-${rangeSafe}.pdf`);
-      setSplitSuccess(`Extracted ${pages.length} page(s) → ${formatBytes(bytes.byteLength)}`);
+      setSplitSuccess(`Extracted ${pages.length} page(s) â†’ ${formatBytes(bytes.byteLength)}`);
     } catch (err: any) {
       setSplitError(`Split failed: ${err.message || 'Unknown error'}`);
     } finally {
@@ -752,7 +752,7 @@ export const PdfSuiteTool: React.FC = () => {
     : 0;
 
   return (
-    <div className={`bg-neutral-950 border border-neutral-800 font-sans text-neutral-100 flex flex-col ${isFullScreen ? 'fixed inset-0 z-[9999] overflow-hidden' : 'w-full rounded-lg shadow-2xl'}`}>
+    <div className={`developer-tool-container bg-neutral-950 border border-neutral-800 font-sans text-neutral-100 flex flex-col ${isFullScreen ? 'fixed inset-0 z-[9999] overflow-hidden' : 'w-full rounded-lg shadow-2xl'}`}>
 
       {/* Top Header & Tab Control Bar */}
       <div className={`px-3 py-2.5 bg-neutral-900 border-b border-neutral-800 flex flex-wrap items-center justify-between gap-2 text-xs font-mono ${isFullScreen ? 'sticky top-0 z-[10000]' : ''}`}>
@@ -791,7 +791,7 @@ export const PdfSuiteTool: React.FC = () => {
             href="/tools/edit-pdf"
             className="px-3 py-1.5 rounded border border-neutral-700 hover:border-[#1D9BF0]/50 text-neutral-400 hover:text-[#1D9BF0] text-xs font-mono transition-colors flex items-center gap-1.5 cursor-pointer"
           >
-            <span>Edit a PDF →</span>
+            <span>Edit a PDF â†’</span>
           </a>
         </div>
 
@@ -886,8 +886,8 @@ export const PdfSuiteTool: React.FC = () => {
                               <p className="text-xs font-mono font-bold text-neutral-200 truncate">{f.name}</p>
                               <p className="text-[10px] font-mono text-neutral-500 mt-0.5">
                                 <span className="text-neutral-600 font-bold">#{idx + 1}</span>
-                                {' · '}{formatBytes(f.sizeBytes)}
-                                {f.pageCount !== null && ` · ${f.pageCount} pgs`}
+                                {' Â· '}{formatBytes(f.sizeBytes)}
+                                {f.pageCount !== null && ` Â· ${f.pageCount} pgs`}
                               </p>
                             </div>
                             
@@ -951,7 +951,7 @@ export const PdfSuiteTool: React.FC = () => {
                     className="w-full flex items-center justify-center gap-2 px-4 py-2 rounded bg-[#1D9BF0] hover:bg-[#1A8CD8] text-white text-xs font-mono font-semibold transition-all cursor-pointer disabled:opacity-50"
                   >
                     {mergeWorking ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : ''}
-                    <span>{mergeWorking ? 'Merging…' : 'Merge & Download PDF'}</span>
+                    <span>{mergeWorking ? 'Mergingâ€¦' : 'Merge & Download PDF'}</span>
                   </button>
                 </div>
               )}
@@ -971,7 +971,7 @@ export const PdfSuiteTool: React.FC = () => {
                       <p className="text-xs font-mono font-bold text-neutral-200 truncate">{compressFile.name}</p>
                       <p className="text-[10px] font-mono text-neutral-500 mt-1">
                         {formatBytes(compressFile.sizeBytes)}
-                        {compressFile.pageCount !== null && ` · ${compressFile.pageCount} pages`}
+                        {compressFile.pageCount !== null && ` Â· ${compressFile.pageCount} pages`}
                       </p>
                     </div>
                     <button
@@ -1051,7 +1051,7 @@ export const PdfSuiteTool: React.FC = () => {
                           <div>
                             <p className="text-[9px] font-mono text-neutral-500">Saved</p>
                             <p className={`font-mono font-bold mt-0.5 ${savingPct > 0 ? 'text-emerald-400' : 'text-neutral-500'}`}>
-                              {savingPct > 0 ? `↓ ${savingPct}%` : '0%'}
+                              {savingPct > 0 ? `â†“ ${savingPct}%` : '0%'}
                             </p>
                           </div>
                         </div>
@@ -1076,7 +1076,7 @@ export const PdfSuiteTool: React.FC = () => {
                     className="w-full flex items-center justify-center gap-2 px-4 py-2 rounded bg-[#1D9BF0] hover:bg-[#1A8CD8] text-white text-xs font-mono font-semibold transition-all cursor-pointer disabled:opacity-50"
                   >
                     {compressWorking ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Download className="w-3.5 h-3.5" />}
-                    <span>{compressWorking ? 'Compressing…' : 'Compress & Download PDF'}</span>
+                    <span>{compressWorking ? 'Compressingâ€¦' : 'Compress & Download PDF'}</span>
                   </button>
                   {compressResult && (
                     <>
@@ -1108,7 +1108,7 @@ export const PdfSuiteTool: React.FC = () => {
                       <p className="text-xs font-mono font-bold text-neutral-200 truncate">{splitFile.name}</p>
                       <p className="text-[10px] font-mono text-neutral-500 mt-1">
                         {formatBytes(splitFile.sizeBytes)}
-                        {splitFile.pageCount !== null && ` · ${splitFile.pageCount} pages`}
+                        {splitFile.pageCount !== null && ` Â· ${splitFile.pageCount} pages`}
                       </p>
                     </div>
                     <button
@@ -1183,7 +1183,7 @@ export const PdfSuiteTool: React.FC = () => {
                     className="w-full flex items-center justify-center gap-2 px-4 py-2 rounded bg-[#1D9BF0] hover:bg-[#1A8CD8] text-white text-xs font-mono font-semibold transition-all cursor-pointer disabled:opacity-50"
                   >
                     {splitWorking ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Download className="w-3.5 h-3.5" />}
-                    <span>{splitWorking ? 'Extracting…' : '📥 Extract & Download Pages'}</span>
+                    <span>{splitWorking ? 'Extractingâ€¦' : 'ðŸ“¥ Extract & Download Pages'}</span>
                   </button>
                 </div>
               )}
@@ -1244,7 +1244,7 @@ export const PdfSuiteTool: React.FC = () => {
           {mergeWorking || compressWorking || splitWorking || mergePreviewBuilding ? (
             <span className="text-neutral-400 flex items-center gap-1.5 font-medium">
               <span className="w-2 h-2 rounded-full bg-neutral-400 animate-pulse" />
-              <span>{mergePreviewBuilding && !mergeWorking ? 'Generating preview…' : 'Processing PDF...'}</span>
+              <span>{mergePreviewBuilding && !mergeWorking ? 'Generating previewâ€¦' : 'Processing PDF...'}</span>
             </span>
           ) : (
             <span className="text-sky-400 flex items-center gap-1.5 font-medium">
@@ -1256,7 +1256,7 @@ export const PdfSuiteTool: React.FC = () => {
 
         <div className="text-neutral-400 text-[11px] flex items-center gap-1.5">
           <Info className="w-3.5 h-3.5 text-neutral-500" />
-          <span>Local browser sandbox • No data transmitted to servers</span>
+          <span>Local browser sandbox â€¢ No data transmitted to servers</span>
         </div>
       </div>
 

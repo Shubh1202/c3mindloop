@@ -139,7 +139,7 @@ export const Base64Tool: React.FC = () => {
       setMode('encode');
       setInput('');
       setOutput(dataUri);
-      setFileInfo(`${file.name} • ${(file.size / 1024).toFixed(1)} KB • ${file.type || 'unknown'}`);
+      setFileInfo(`${file.name} â€¢ ${(file.size / 1024).toFixed(1)} KB â€¢ ${file.type || 'unknown'}`);
       setError(null);
       setImgError(false);
     };
@@ -172,7 +172,7 @@ export const Base64Tool: React.FC = () => {
   );
 
   return (
-    <div className={`bg-neutral-950 border border-neutral-800 font-sans text-neutral-100 flex flex-col ${isFullScreen ? 'fixed inset-0 z-[9999] overflow-hidden' : 'w-full rounded-lg shadow-2xl'}`}>
+    <div className={`developer-tool-container bg-neutral-950 border border-neutral-800 font-sans text-neutral-100 flex flex-col ${isFullScreen ? 'fixed inset-0 z-[9999] overflow-hidden' : 'w-full rounded-lg shadow-2xl'}`}>
 
       {/* Toolbar */}
       <div className={`p-3 sm:p-4 border-b border-neutral-800 flex flex-wrap items-center gap-2 ${isFullScreen ? 'sticky top-0 z-[10000] bg-neutral-950' : ''}`}>
@@ -309,7 +309,7 @@ export const Base64Tool: React.FC = () => {
               <div className="px-3 py-2 border-b border-neutral-800 flex items-center gap-1.5 text-[11px] font-mono text-neutral-400">
                 <Image className="w-3.5 h-3.5 text-sky-400" />
                 <span className="text-sky-400 font-semibold">Live Media Preview</span>
-                <span className="ml-auto text-neutral-600">{mediaPreview.type === 'pdf' ? 'PDF' : 'Image'} · Client-Side Render</span>
+                <span className="ml-auto text-neutral-600">{mediaPreview.type === 'pdf' ? 'PDF' : 'Image'} Â· Client-Side Render</span>
               </div>
               <div className="p-3 flex items-center justify-center min-h-[120px] max-h-[360px] overflow-auto bg-neutral-950/60">
                 {mediaPreview.type === 'image' ? (

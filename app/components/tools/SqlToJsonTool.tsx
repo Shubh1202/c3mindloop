@@ -7,7 +7,7 @@ import {
   Code
 } from 'lucide-react';
 
-// ─── SQL Parser ──────────────────────────────────────────────────────────────
+// â”€â”€â”€ SQL Parser â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function parseSql(sql: string): object[] {
   const results: object[] = [];
@@ -60,7 +60,7 @@ function parseSql(sql: string): object[] {
   return results;
 }
 
-// ─── cURL Parser ─────────────────────────────────────────────────────────────
+// â”€â”€â”€ cURL Parser â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 interface CurlResult {
   method: string;
@@ -115,7 +115,7 @@ function parseCurl(curlStr: string): CurlResult {
   return result;
 }
 
-// ─── Reverse JSON-to-SQL Conversion ──────────────────────────────────────────
+// â”€â”€â”€ Reverse JSON-to-SQL Conversion â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function jsonToSqlInsert(jsonStr: string, tableName = 'table_name'): string {
   try {
@@ -147,7 +147,7 @@ function jsonToSqlInsert(jsonStr: string, tableName = 'table_name'): string {
   }
 }
 
-// ─── Sample Data ─────────────────────────────────────────────────────────────
+// â”€â”€â”€ Sample Data â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const SQL_SAMPLE = `INSERT INTO users (id, name, email, active, score)
 VALUES (1, 'Alice Nguyen', 'alice@example.com', true, 98.5),
@@ -282,7 +282,7 @@ export const SqlToJsonTool: React.FC = () => {
   };
 
   return (
-    <div className={`bg-neutral-950 border border-neutral-800 font-mono text-xs text-neutral-100 flex flex-col ${isFullScreen ? 'fixed inset-0 z-[9999] overflow-hidden' : 'w-full rounded-lg shadow-2xl'}`}>
+    <div className={`developer-tool-container bg-neutral-950 border border-neutral-800 font-mono text-xs text-neutral-100 flex flex-col ${isFullScreen ? 'fixed inset-0 z-[9999] overflow-hidden' : 'w-full rounded-lg shadow-2xl'}`}>
 
       {/* Toolbar */}
       <div className={`px-3 py-2.5 bg-neutral-900 border-b border-neutral-800 flex flex-wrap items-center justify-between gap-2 ${isFullScreen ? 'sticky top-0 z-[10000]' : ''}`}>
@@ -295,21 +295,21 @@ export const SqlToJsonTool: React.FC = () => {
               className={`px-3 py-1 rounded flex items-center gap-1.5 transition-colors cursor-pointer ${mode === 'sql' ? 'bg-[#1D9BF0] text-white font-semibold' : 'text-neutral-400 hover:text-white'}`}
             >
               <Database className="w-3 h-3" />
-              <span>SQL → JSON</span>
+              <span>SQL â†’ JSON</span>
             </button>
             <button
               onClick={() => setMode('curl')}
               className={`px-3 py-1 rounded flex items-center gap-1.5 transition-colors cursor-pointer ${mode === 'curl' ? 'bg-[#1D9BF0] text-white font-semibold' : 'text-neutral-400 hover:text-white'}`}
             >
               <Terminal className="w-3 h-3" />
-              <span>cURL → JSON</span>
+              <span>cURL â†’ JSON</span>
             </button>
             <button
               onClick={() => setMode('jsontosql')}
               className={`px-3 py-1 rounded flex items-center gap-1.5 transition-colors cursor-pointer ${mode === 'jsontosql' ? 'bg-[#1D9BF0] text-white font-semibold' : 'text-neutral-400 hover:text-white'}`}
             >
               <Code className="w-3 h-3" />
-              <span>JSON → SQL</span>
+              <span>JSON â†’ SQL</span>
             </button>
           </div>
 
@@ -335,7 +335,7 @@ export const SqlToJsonTool: React.FC = () => {
           <span className="hidden sm:flex items-center gap-1.5 text-[11px] font-sans text-neutral-500">
             <ArrowRightLeft className="w-3 h-3" />
             <span>
-              {mode === 'sql' ? 'SQL → JSON' : mode === 'curl' ? 'cURL → JSON' : 'JSON → SQL'}
+              {mode === 'sql' ? 'SQL â†’ JSON' : mode === 'curl' ? 'cURL â†’ JSON' : 'JSON â†’ SQL'}
             </span>
           </span>
 
@@ -431,7 +431,7 @@ export const SqlToJsonTool: React.FC = () => {
       <div className="px-4 py-2 bg-neutral-900/80 border-t border-neutral-800 flex flex-wrap items-center justify-between gap-2 text-[11px] font-mono">
         <div className="flex items-center gap-1.5 text-neutral-400">
           <Info className="w-3.5 h-3.5 text-neutral-500" />
-          <span>Local browser processing • No data sent to any server</span>
+          <span>Local browser processing â€¢ No data sent to any server</span>
         </div>
         <div className="flex items-center gap-1.5 text-neutral-500">
           <ShieldCheck className="w-3.5 h-3.5 text-emerald-500/70" />

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { trackEvent, GA_EVENTS } from '../../lib/analytics';
+import { useTheme } from '../../lib/theme';
 import {
   Copy,
   Check,
@@ -462,6 +463,11 @@ function findAnchorByFmt(fmtOffset: number, anchors: SyncAnchor[]): SyncAnchor |
 }
 
 export const JsonFormatterTool: React.FC = () => {
+  const { resolvedTheme, isDark } = useTheme();
+  const secondaryBtnClass = isDark
+    ? "bg-neutral-800 hover:bg-neutral-700 text-neutral-200"
+    : "bg-[#E4E4E7] hover:bg-[#D4D4D8] text-[#3F3F46] hover:text-[#18181B]";
+
   const [rawInput, setRawInput] = useState<string>(() => JSON.stringify(SAMPLE_JSON_DATA, null, 2));
   const [formattedOutput, setFormattedOutput] = useState<string>('');
   const [parsedObject, setParsedObject] = useState<any>(null);
@@ -963,7 +969,9 @@ export const JsonFormatterTool: React.FC = () => {
           <div className="px-4 pt-2 text-[11px] text-neutral-500 font-mono">
             Syntax highlighting disabled for large files (&gt;500KB) to prevent browser memory issues.
           </div>
-          <pre className="font-mono text-xs sm:text-sm p-4 text-neutral-200 leading-relaxed whitespace-pre-wrap break-words [word-break:break-word] overflow-x-hidden">
+          <pre className={`font-mono text-xs sm:text-sm p-4 leading-relaxed whitespace-pre-wrap break-words [word-break:break-word] overflow-x-hidden ${
+            isDark ? 'text-neutral-200' : 'text-[#111111]'
+          }`}>
             {code}
           </pre>
         </div>
@@ -1009,19 +1017,19 @@ export const JsonFormatterTool: React.FC = () => {
       highlighted = escaped.replace(
         /("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g,
         (match) => {
-          let cls = 'text-amber-400';
+          let cls = isDark ? 'text-amber-400' : 'text-[#9C5700]';
           let isKeyToken = false;
           if (/^"/.test(match)) {
             if (/:$/.test(match)) {
-              cls = 'text-sky-400 font-semibold';
+              cls = isDark ? 'text-sky-400 font-semibold' : 'text-[#1E3A5F] font-semibold';
               isKeyToken = true;
             } else {
-              cls = 'text-emerald-400';
+              cls = isDark ? 'text-emerald-400' : 'text-[#16653A]';
             }
           } else if (/true|false/.test(match)) {
-            cls = 'text-purple-400 font-semibold';
+            cls = isDark ? 'text-purple-400 font-semibold' : 'text-[#7C3AED] font-semibold';
           } else if (/null/.test(match)) {
-            cls = 'text-neutral-500 italic';
+            cls = isDark ? 'text-neutral-500 italic' : 'text-neutral-400 italic';
           }
           const highlightedMatch = highlightMatchesInText(match, isKeyToken);
           return `<span class="${cls}">${highlightedMatch}</span>`;
@@ -1030,7 +1038,7 @@ export const JsonFormatterTool: React.FC = () => {
     } else if (mode === 'typescript' || mode === 'go') {
       // Basic language highlight for keys
       highlighted = escaped
-        .replace(/\b(interface|type|struct|string|number|int|float64|bool|interface\{\})\b/g, '<span class="text-purple-400 font-semibold">$1</span>')
+        .replace(/\b(interface|type|struct|string|number|int|float64|bool|interface\{\})\b/g, isDark ? '<span class="text-purple-400 font-semibold">$1</span>' : '<span class="text-[#7C3AED] font-semibold">$1</span>')
         .replace(/`json:"[^"]+"`/g, '<span class="text-neutral-500 italic">$1</span>');
       highlighted = highlightMatchesInText(highlighted, false);
     } else {
@@ -1039,7 +1047,9 @@ export const JsonFormatterTool: React.FC = () => {
 
     return (
       <pre
-        className="font-mono text-xs sm:text-sm p-4 text-neutral-200 leading-relaxed whitespace-pre-wrap break-words [word-break:break-word] overflow-x-hidden"
+        className={`font-mono text-xs sm:text-sm p-4 leading-relaxed whitespace-pre-wrap break-words [word-break:break-word] overflow-x-hidden ${
+          isDark ? 'text-neutral-200' : 'text-[#111111]'
+        }`}
         dangerouslySetInnerHTML={{ __html: highlighted }}
       />
     );
@@ -1047,10 +1057,18 @@ export const JsonFormatterTool: React.FC = () => {
 
   return (
     <>
-      <div className={`bg-neutral-950 border border-neutral-800 font-sans text-neutral-100 flex flex-col ${isFullScreen ? 'fixed inset-0 z-[9999] overflow-hidden' : 'w-full rounded-lg shadow-2xl'}`}>
+      <div className={`json-formatter-tool developer-tool-container font-sans flex flex-col ${
+        isDark
+          ? 'bg-neutral-950 border border-neutral-800 text-neutral-100'
+          : 'bg-[#FFFFFF] border border-[#E4E4E7] text-[#111111]'
+      } ${isFullScreen ? 'fixed inset-0 z-[9999] overflow-hidden' : 'w-full rounded-lg shadow-2xl'}`}>
 
         {/* Primary Control Toolbar */}
-        <div className={`px-2 py-2.5 bg-neutral-900 border-b border-neutral-800 flex flex-nowrap items-center justify-between text-xs font-mono min-w-0 ${isFullScreen ? 'sticky top-0 z-[10000]' : ''}`}>
+        <div className={`px-2 py-2.5 border-b flex flex-nowrap items-center justify-between text-xs font-mono min-w-0 ${
+          isDark
+            ? 'bg-neutral-900 border-neutral-800 text-neutral-100'
+            : 'bg-[#F8F9FA] border-[#E4E4E7] text-[#111111]'
+        } ${isFullScreen ? 'sticky top-0 z-[10000]' : ''}`}>
           <div className="flex flex-nowrap items-center gap-1.5 shrink-0">
             <button
               onClick={() => handleFormat(true)}
@@ -1062,7 +1080,7 @@ export const JsonFormatterTool: React.FC = () => {
 
             <button
               onClick={handleMinify}
-              className="px-2.5 py-1.5 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-200 transition-colors flex items-center gap-1 cursor-pointer"
+              className={`px-2.5 py-1.5 rounded transition-colors flex items-center gap-1 cursor-pointer ${secondaryBtnClass}`}
             >
               <FileCode className="w-3.5 h-3.5" />
               <span>Minify</span>
@@ -1070,7 +1088,7 @@ export const JsonFormatterTool: React.FC = () => {
 
             <button
               onClick={handleValidate}
-              className="px-2.5 py-1.5 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-200 transition-colors flex items-center gap-1 cursor-pointer"
+              className={`px-2.5 py-1.5 rounded transition-colors flex items-center gap-1 cursor-pointer ${secondaryBtnClass}`}
             >
               <CheckCircle2 className="w-3.5 h-3.5 text-sky-400" />
               <span>Validate</span>
@@ -1078,14 +1096,18 @@ export const JsonFormatterTool: React.FC = () => {
 
             <button
               onClick={handleLoadSample}
-              className="px-2 py-1.5 rounded bg-neutral-800/80 hover:bg-neutral-700 text-neutral-300 transition-colors cursor-pointer"
+              className={`px-2 py-1.5 rounded transition-colors cursor-pointer ${secondaryBtnClass}`}
             >
               Sample
             </button>
 
             <button
               onClick={handleClear}
-              className="px-2 py-1.5 rounded bg-neutral-800/80 hover:bg-red-950 hover:text-red-300 text-neutral-400 transition-colors flex items-center gap-1 cursor-pointer"
+              className={`px-2 py-1.5 rounded transition-colors flex items-center gap-1 cursor-pointer ${
+                isDark
+                  ? 'bg-neutral-800/80 hover:bg-red-950 hover:text-red-300 text-neutral-400'
+                  : 'bg-[#E4E4E7] hover:bg-red-100 hover:text-red-700 text-[#3F3F46]'
+              }`}
             >
               <Trash2 className="w-3.5 h-3.5" />
               <span>Clear</span>
@@ -1102,17 +1124,21 @@ export const JsonFormatterTool: React.FC = () => {
               disabled={!isSyncScrollAvailable}
               className={`px-2 py-1.5 rounded transition-colors flex items-center gap-1 ${
                 !isSyncScrollAvailable
-                  ? 'bg-neutral-800/50 text-neutral-600 border border-transparent cursor-not-allowed opacity-50'
+                  ? isDark
+                    ? 'bg-neutral-800/50 text-neutral-600 border border-transparent cursor-not-allowed opacity-50'
+                    : 'bg-[#E4E4E7]/50 text-neutral-400 border border-transparent cursor-not-allowed opacity-50'
                   : syncScroll
                     ? 'bg-[#1D9BF0]/20 text-[#1D9BF0] border border-[#1D9BF0]/30 cursor-pointer'
-                    : 'bg-neutral-800 text-neutral-400 border border-transparent cursor-pointer'
+                    : isDark
+                      ? 'bg-neutral-800 text-neutral-400 border border-transparent cursor-pointer'
+                      : 'bg-[#E4E4E7] text-[#3F3F46] border border-transparent cursor-pointer'
               }`}
             >
               {!isSyncScrollAvailable
-                ? <Link2Off className="w-3.5 h-3.5 text-neutral-600" />
+                ? <Link2Off className="w-3.5 h-3.5" />
                 : syncScroll
-                  ? <Link2 className="w-3.5 h-3.5 text-[#1D9BF0]" />
-                  : <Link2Off className="w-3.5 h-3.5 text-neutral-500" />
+                  ? <Link2 className="w-3.5 h-3.5" />
+                  : <Link2Off className="w-3.5 h-3.5" />
               }
               <span>Sync</span>
             </button>
@@ -1124,7 +1150,9 @@ export const JsonFormatterTool: React.FC = () => {
               className={`px-2 py-1.5 rounded transition-colors flex items-center gap-1 cursor-pointer ${
                 search.isOpen || search.query
                   ? 'bg-[#1D9BF0]/20 text-[#1D9BF0] border border-[#1D9BF0]/30'
-                  : 'bg-neutral-800 text-neutral-400 border border-transparent hover:text-white'
+                  : isDark
+                    ? 'bg-neutral-800 text-neutral-400 border border-transparent hover:text-white'
+                    : 'bg-[#E4E4E7] text-[#3F3F46] border border-transparent hover:text-[#18181B]'
               }`}
             >
               <Search className="w-3.5 h-3.5" />
@@ -1134,23 +1162,43 @@ export const JsonFormatterTool: React.FC = () => {
 
           <div className="flex flex-nowrap items-center gap-1.5 shrink-0">
             {/* Indent Selector */}
-            <div className="flex items-center bg-neutral-950 p-1 rounded border border-neutral-800 text-xs font-mono">
-              <span className="text-neutral-500 px-1.5">Sp:</span>
+            <div className={`flex items-center p-1 rounded border text-xs font-mono ${
+              isDark ? 'bg-neutral-950 border-neutral-800' : 'bg-[#E4E4E7]/40 border-[#E4E4E7]'
+            }`}>
+              <span className={isDark ? 'text-neutral-500 px-1.5' : 'text-[#71717A] px-1.5'}>Sp:</span>
               <button
                 onClick={() => setIndentOption('2')}
-                className={`px-2 py-0.5 rounded transition-colors ${indentOption === '2' ? 'bg-[#1D9BF0] text-white font-semibold' : 'text-neutral-400 hover:text-white'}`}
+                className={`px-2 py-0.5 rounded transition-colors cursor-pointer ${
+                  indentOption === '2'
+                    ? 'bg-[#1D9BF0] text-white font-semibold shadow-sm'
+                    : isDark
+                      ? 'text-neutral-400 hover:text-white'
+                      : 'text-[#52525B] hover:text-[#18181B]'
+                }`}
               >
                 2
               </button>
               <button
                 onClick={() => setIndentOption('4')}
-                className={`px-2 py-0.5 rounded transition-colors ${indentOption === '4' ? 'bg-[#1D9BF0] text-white font-semibold' : 'text-neutral-400 hover:text-white'}`}
+                className={`px-2 py-0.5 rounded transition-colors cursor-pointer ${
+                  indentOption === '4'
+                    ? 'bg-[#1D9BF0] text-white font-semibold shadow-sm'
+                    : isDark
+                      ? 'text-neutral-400 hover:text-white'
+                      : 'text-[#52525B] hover:text-[#18181B]'
+                }`}
               >
                 4
               </button>
               <button
                 onClick={() => setIndentOption('tab')}
-                className={`px-2 py-0.5 rounded transition-colors ${indentOption === 'tab' ? 'bg-[#1D9BF0] text-white font-semibold' : 'text-neutral-400 hover:text-white'}`}
+                className={`px-2 py-0.5 rounded transition-colors cursor-pointer ${
+                  indentOption === 'tab'
+                    ? 'bg-[#1D9BF0] text-white font-semibold shadow-sm'
+                    : isDark
+                      ? 'text-neutral-400 hover:text-white'
+                      : 'text-[#52525B] hover:text-[#18181B]'
+                }`}
               >
                 Tab
               </button>
@@ -1165,7 +1213,7 @@ export const JsonFormatterTool: React.FC = () => {
             />
             <button
               onClick={() => fileInputRef.current?.click()}
-              className="px-2 py-1.5 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-300 flex items-center gap-1 transition-colors cursor-pointer"
+              className={`px-2 py-1.5 rounded flex items-center gap-1 transition-colors cursor-pointer ${secondaryBtnClass}`}
             >
               <Upload className="w-3.5 h-3.5" />
               <span>Upload</span>
@@ -1174,7 +1222,7 @@ export const JsonFormatterTool: React.FC = () => {
             <button
               onClick={handleDownload}
               disabled={!formattedOutput && !rawInput}
-              className="px-2 py-1.5 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-300 disabled:opacity-40 flex items-center gap-1 transition-colors cursor-pointer"
+              className={`px-2 py-1.5 rounded disabled:opacity-40 flex items-center gap-1 transition-colors cursor-pointer ${secondaryBtnClass}`}
             >
               <Download className="w-3.5 h-3.5" />
               <span>Download</span>
@@ -1183,25 +1231,39 @@ export const JsonFormatterTool: React.FC = () => {
             <button
               onClick={handleCopy}
               disabled={!formattedOutput && !rawInput}
-              className="px-2.5 py-1.5 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-200 disabled:opacity-40 flex items-center gap-1 transition-colors cursor-pointer"
+              className={`px-2.5 py-1.5 rounded disabled:opacity-40 flex items-center gap-1 transition-colors cursor-pointer ${secondaryBtnClass}`}
             >
               {copied ? <Check className="w-3.5 h-3.5 text-sky-400" /> : <Copy className="w-3.5 h-3.5" />}
               <span>{copied ? 'Copied' : 'Copy'}</span>
             </button>
 
             {/* Layout toggle - desktop only */}
-            <div className="hidden lg:flex items-center bg-neutral-950 p-1 rounded border border-neutral-800">
+            <div className={`hidden lg:flex items-center p-1 rounded border ${
+              isDark ? 'bg-neutral-950 border-neutral-800' : 'bg-[#E4E4E7]/40 border-[#E4E4E7]'
+            }`}>
               <button
                 onClick={() => setIsSideBySide(true)}
                 title="Side-by-Side View"
-                className={`p-1 rounded transition-colors cursor-pointer ${isSideBySide ? 'bg-[#1D9BF0] text-white' : 'text-neutral-400 hover:text-white'}`}
+                className={`p-1 rounded transition-colors cursor-pointer ${
+                  isSideBySide
+                    ? 'bg-[#1D9BF0] text-white font-semibold shadow-sm'
+                    : isDark
+                      ? 'text-neutral-400 hover:text-white'
+                      : 'text-[#52525B] hover:text-[#18181B]'
+                }`}
               >
                 <Columns2 className="w-3.5 h-3.5" />
               </button>
               <button
                 onClick={() => setIsSideBySide(false)}
                 title="Stacked View"
-                className={`p-1 rounded transition-colors cursor-pointer ${!isSideBySide ? 'bg-[#1D9BF0] text-white' : 'text-neutral-400 hover:text-white'}`}
+                className={`p-1 rounded transition-colors cursor-pointer ${
+                  !isSideBySide
+                    ? 'bg-[#1D9BF0] text-white font-semibold shadow-sm'
+                    : isDark
+                      ? 'text-neutral-400 hover:text-white'
+                      : 'text-[#52525B] hover:text-[#18181B]'
+                }`}
               >
                 <Rows2 className="w-3.5 h-3.5" />
               </button>
@@ -1210,7 +1272,7 @@ export const JsonFormatterTool: React.FC = () => {
             <button
               onClick={() => setIsFullScreen(!isFullScreen)}
               title={isFullScreen ? 'Exit Full Screen' : 'Full Screen'}
-              className="p-1.5 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-300 flex items-center gap-1 transition-colors cursor-pointer"
+              className={`p-1.5 rounded flex items-center gap-1 transition-colors cursor-pointer ${secondaryBtnClass}`}
             >
               {isFullScreen ? <Minimize2 className="w-3.5 h-3.5" /> : <Maximize2 className="w-3.5 h-3.5" />}
             </button>
@@ -1233,10 +1295,18 @@ export const JsonFormatterTool: React.FC = () => {
             scopeSelector={
               <div className="flex items-center gap-1.5 shrink-0">
                 {/* Target Filter */}
-                <div className="flex items-center bg-neutral-950 p-0.5 rounded border border-neutral-800 text-[11px]">
+                <div className={`flex items-center p-0.5 rounded border text-[11px] ${
+                  isDark ? 'bg-neutral-950 border-neutral-800' : 'bg-[#E4E4E7]/40 border-[#E4E4E7]'
+                }`}>
                   {(['all', 'keys', 'values'] as const).map(t => (
                     <button key={t} onClick={() => setSearchTarget(t)}
-                      className={`px-2 py-0.5 rounded transition-colors capitalize ${searchTarget === t ? 'bg-[#1D9BF0] text-white font-medium' : 'text-neutral-400 hover:text-white'}`}>
+                      className={`px-2 py-0.5 rounded transition-colors capitalize cursor-pointer ${
+                        searchTarget === t
+                          ? 'bg-[#1D9BF0] text-white font-medium'
+                          : isDark
+                            ? 'text-neutral-400 hover:text-white'
+                            : 'text-[#52525B] hover:text-[#18181B]'
+                      }`}>
                       {t === 'all' ? 'All' : t === 'keys' ? 'Keys' : 'Values'}
                     </button>
                   ))}
@@ -1244,8 +1314,12 @@ export const JsonFormatterTool: React.FC = () => {
                 {/* Match Case */}
                 <button onClick={() => setMatchCase(!matchCase)}
                   title="Toggle Case Sensitivity"
-                  className={`px-2 py-1 rounded border text-[11px] font-semibold transition-colors ${
-                    matchCase ? 'bg-amber-500/20 text-amber-300 border-amber-500/40' : 'bg-neutral-950 text-neutral-400 border-neutral-800 hover:text-white'
+                  className={`px-2 py-1 rounded border text-[11px] font-semibold transition-colors cursor-pointer ${
+                    matchCase
+                      ? 'bg-amber-500/20 text-amber-300 border-amber-500/40'
+                      : isDark
+                        ? 'bg-neutral-950 text-neutral-400 border-neutral-800 hover:text-white'
+                        : 'bg-[#FFFFFF] text-[#52525B] border-[#D4D4D8] hover:text-[#18181B]'
                   }`}>
                   Aa
                 </button>
@@ -1255,7 +1329,7 @@ export const JsonFormatterTool: React.FC = () => {
         )}
 
         {/* Local AI Assist Panel */}
-        <div className="px-3 py-2 bg-neutral-950 border-b border-neutral-800">
+        <div className={`px-3 py-2 border-b ${isDark ? 'bg-neutral-950 border-neutral-800' : 'bg-[#FFFFFF] border-[#E4E4E7]'}`}>
           <LocalAIPanel
             mode="json-repair"
             rawJson={rawInput}
@@ -1265,7 +1339,7 @@ export const JsonFormatterTool: React.FC = () => {
             }}
           />
         </div>
-        <div className={`grid divide-neutral-800 ${isSideBySide
+        <div className={`grid ${isDark ? 'divide-neutral-800' : 'divide-[#E4E4E7]'} ${isSideBySide
           ? 'grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x'
           : 'grid-cols-1 divide-y'
           } ${isFullScreen ? 'flex-1 overflow-hidden' : 'min-h-[480px]'}`}>
@@ -1274,10 +1348,10 @@ export const JsonFormatterTool: React.FC = () => {
           <div
             ref={leftPanelRef}
             onScroll={handleInputScroll}
-            className={`flex flex-col bg-neutral-950 p-3 sm:p-4 space-y-2 ${isFullScreen ? 'overflow-y-auto' : ''}`}
+            className={`flex flex-col p-3 sm:p-4 space-y-2 ${isDark ? 'bg-neutral-950' : 'bg-[#FFFFFF]'} ${isFullScreen ? 'overflow-y-auto' : ''}`}
           >
-            <div className="flex items-center justify-between text-xs font-mono text-neutral-400 pb-1 border-b border-neutral-900">
-              <span className="font-semibold text-neutral-300">Raw JSON Input</span>
+            <div className={`flex items-center justify-between text-xs font-mono pb-1 border-b ${isDark ? 'text-neutral-400 border-neutral-900' : 'text-[#52525B] border-[#F4F4F5]'}`}>
+              <span className={`font-semibold ${isDark ? 'text-neutral-300' : 'text-[#3F3F46]'}`}>Raw JSON Input</span>
               <div className="flex items-center gap-3 text-[11px]">
                 <span>{lineCount} lines</span>
                 <span>•</span>
@@ -1293,28 +1367,43 @@ export const JsonFormatterTool: React.FC = () => {
                 onChange={(e) => setRawInput(e.target.value)}
                 placeholder="Paste raw JSON here..."
                 spellCheck={false}
-                className="w-full h-full min-h-[400px] p-3 font-mono text-xs sm:text-sm bg-neutral-900/90 text-neutral-100 border border-neutral-800 rounded focus:border-[#1D9BF0] focus:outline-none resize-y leading-relaxed transition-colors"
+                className={`w-full h-full min-h-[400px] p-3 font-mono text-xs sm:text-sm border rounded focus:border-[#1D9BF0] focus:outline-none resize-y leading-relaxed transition-colors ${
+                  isDark
+                    ? 'bg-neutral-900/90 text-neutral-100 border-neutral-800 focus:bg-neutral-900/90'
+                    : 'bg-[#FFFFFF] text-[#111111] border-[#E4E4E7] focus:bg-[#FFFFFF]'
+                }`}
               />
             </div>
           </div>
 
           {/* Right Pane: Output (Code or Tree View) */}
-          <div className={`flex flex-col bg-neutral-950 p-3 sm:p-4 space-y-2 ${isFullScreen ? 'overflow-y-auto' : ''}`}>
-            <div className="flex items-center justify-between text-xs font-mono text-neutral-400 pb-1 border-b border-neutral-900">
+          <div className={`flex flex-col p-3 sm:p-4 space-y-2 ${isDark ? 'bg-neutral-950' : 'bg-[#FFFFFF]'} ${isFullScreen ? 'overflow-y-auto' : ''}`}>
+            <div className={`flex items-center justify-between text-xs font-mono pb-1 border-b ${isDark ? 'text-neutral-400 border-neutral-900' : 'text-[#52525B] border-[#F4F4F5]'}`}>
               <div className="flex items-center gap-3 flex-wrap">
-                {/* <span className="font-semibold text-neutral-300">Formatted Output</span> */}
                 {/* View Switcher */}
-                <div className="flex items-center bg-neutral-900 p-0.5 rounded border border-neutral-800 text-[11px]">
+                <div className={`flex items-center p-0.5 rounded border text-[11px] ${isDark ? 'bg-neutral-900 border-neutral-800' : 'bg-[#F4F4F5] border-[#E4E4E7]'}`}>
                   <button
                     onClick={() => { setViewMode('code'); setShowInspector(false); }}
-                    className={`px-2 py-0.5 rounded transition-colors ${viewMode === 'code' && !showInspector ? 'bg-[#1D9BF0] text-white font-medium' : 'text-neutral-400 hover:text-white'}`}
+                    className={`px-2 py-0.5 rounded transition-colors cursor-pointer ${
+                      viewMode === 'code' && !showInspector
+                        ? 'bg-[#1D9BF0] text-white font-medium shadow-sm'
+                        : isDark
+                          ? 'text-neutral-400 hover:text-white'
+                          : 'text-[#52525B] hover:text-[#18181B]'
+                    }`}
                   >
                     Code View
                   </button>
                   <button
                     onClick={() => { setViewMode('tree'); setShowInspector(false); }}
                     disabled={!isValid || !parsedObject}
-                    className={`px-2 py-0.5 rounded transition-colors disabled:opacity-40 flex items-center gap-1 ${viewMode === 'tree' && !showInspector ? 'bg-[#1D9BF0] text-white font-medium' : 'text-neutral-400 hover:text-white'}`}
+                    className={`px-2 py-0.5 rounded transition-colors disabled:opacity-40 flex items-center gap-1 cursor-pointer ${
+                      viewMode === 'tree' && !showInspector
+                        ? 'bg-[#1D9BF0] text-white font-medium shadow-sm'
+                        : isDark
+                          ? 'text-neutral-400 hover:text-white'
+                          : 'text-[#52525B] hover:text-[#18181B]'
+                    }`}
                   >
                     <FolderTree className="w-3 h-3" />
                     <span>Tree View</span>
@@ -1322,7 +1411,13 @@ export const JsonFormatterTool: React.FC = () => {
                   <button
                     onClick={() => setShowInspector(true)}
                     disabled={!isValid || !parsedObject}
-                    className={`px-2 py-0.5 rounded transition-colors disabled:opacity-40 flex items-center gap-1 ${showInspector ? 'bg-[#1D9BF0] text-white font-medium' : 'text-neutral-400 hover:text-white'}`}
+                    className={`px-2 py-0.5 rounded transition-colors disabled:opacity-40 flex items-center gap-1 cursor-pointer ${
+                      showInspector
+                        ? 'bg-[#1D9BF0] text-white font-medium shadow-sm'
+                        : isDark
+                          ? 'text-neutral-400 hover:text-white'
+                          : 'text-[#52525B] hover:text-[#18181B]'
+                    }`}
                   >
                     <Activity className="w-3 h-3" />
                     <span>Data Inspector</span>
@@ -1331,34 +1426,55 @@ export const JsonFormatterTool: React.FC = () => {
 
                 {/* Conversion Tab Selector */}
                 {viewMode === 'code' && !showInspector && (
-                  <div className="flex items-center bg-neutral-900 p-0.5 rounded border border-neutral-800 text-[11px]">
+                  <div className={`flex items-center p-0.5 rounded border text-[11px] ${isDark ? 'bg-neutral-900 border-neutral-800' : 'bg-[#F4F4F5] border-[#E4E4E7]'}`}>
                     <button
                       onClick={() => setOutputMode('json')}
-                      className={`px-1.5 py-0.5 rounded transition-colors ${outputMode === 'json' ? 'bg-neutral-800 text-[#1D9BF0] font-medium' : 'text-neutral-400 hover:text-white'}`}
+                      className={`px-1.5 py-0.5 rounded transition-colors cursor-pointer ${
+                        outputMode === 'json'
+                          ? 'bg-[#1D9BF0] text-white font-medium shadow-sm'
+                          : isDark
+                            ? 'text-neutral-400 hover:text-white'
+                            : 'text-[#52525B] hover:text-[#18181B]'
+                      }`}
                     >
                       JSON
                     </button>
                     <button
                       onClick={() => setOutputMode('typescript')}
                       disabled={!parsedObject}
-                      className="px-1.5 py-0.5 rounded transition-colors disabled:opacity-30 text-neutral-400 hover:text-white"
-                      style={{ color: outputMode === 'typescript' ? '#1D9BF0' : undefined }}
+                      className={`px-1.5 py-0.5 rounded transition-colors disabled:opacity-30 cursor-pointer ${
+                        outputMode === 'typescript'
+                          ? 'bg-[#1D9BF0] text-white font-medium shadow-sm'
+                          : isDark
+                            ? 'text-neutral-400 hover:text-white'
+                            : 'text-[#52525B] hover:text-[#18181B]'
+                      }`}
                     >
                       TS Interface
                     </button>
                     <button
                       onClick={() => setOutputMode('go')}
                       disabled={!parsedObject}
-                      className="px-1.5 py-0.5 rounded transition-colors disabled:opacity-30 text-neutral-400 hover:text-white"
-                      style={{ color: outputMode === 'go' ? '#1D9BF0' : undefined }}
+                      className={`px-1.5 py-0.5 rounded transition-colors disabled:opacity-30 cursor-pointer ${
+                        outputMode === 'go'
+                          ? 'bg-[#1D9BF0] text-white font-medium shadow-sm'
+                          : isDark
+                            ? 'text-neutral-400 hover:text-white'
+                            : 'text-[#52525B] hover:text-[#18181B]'
+                      }`}
                     >
                       Go Struct
                     </button>
                     <button
                       onClick={() => setOutputMode('csv')}
                       disabled={!parsedObject}
-                      className="px-1.5 py-0.5 rounded transition-colors disabled:opacity-30 text-neutral-400 hover:text-white"
-                      style={{ color: outputMode === 'csv' ? '#1D9BF0' : undefined }}
+                      className={`px-1.5 py-0.5 rounded transition-colors disabled:opacity-30 cursor-pointer ${
+                        outputMode === 'csv'
+                          ? 'bg-[#1D9BF0] text-white font-semibold shadow-sm'
+                          : isDark
+                            ? 'text-neutral-400 hover:text-white'
+                            : 'text-[#52525B] hover:text-[#18181B]'
+                      }`}
                     >
                       CSV
                     </button>
@@ -1366,7 +1482,7 @@ export const JsonFormatterTool: React.FC = () => {
                 )}
               </div>
 
-              <div className="flex items-center gap-3 text-[11px] shrink-0">
+              <div className={`flex items-center gap-3 text-[11px] shrink-0 ${isDark ? 'text-neutral-400' : 'text-[#52525B]'}`}>
                 <span>{outputBytes} bytes</span>
               </div>
             </div>
@@ -1375,37 +1491,45 @@ export const JsonFormatterTool: React.FC = () => {
             <div 
               ref={outputContainerRef}
               onScroll={handleOutputScroll}
-              className="flex-1 bg-neutral-900/90 border border-neutral-800 rounded min-h-[400px] overflow-y-auto flex flex-col"
+              className={`flex-1 border rounded min-h-[400px] overflow-y-auto flex flex-col ${
+                isDark
+                  ? 'bg-neutral-900/90 border-neutral-800'
+                  : 'bg-[#FFFFFF] border-[#E4E4E7]'
+              }`}
             >
               {isValid || isTyping ? (
                 showInspector && jsonMetrics ? (
-                  <div className="p-4 sm:p-6 text-sm text-neutral-300 font-mono space-y-4">
+                  <div className={`p-4 sm:p-6 text-sm font-mono space-y-4 ${isDark ? 'text-neutral-300' : 'text-[#3F3F46]'}`}>
                     <div className="flex items-center gap-2 text-sky-400 font-semibold mb-2">
                       <Layers className="w-4 h-4" />
                       <span>Data Inspector Insights</span>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
-                      <div className="bg-neutral-900 p-3 rounded border border-neutral-800">
-                        <div className="text-neutral-500 text-[10px] uppercase mb-1">Total Keys</div>
+                      <div className={`p-3 rounded border ${isDark ? 'bg-neutral-900 border-neutral-800' : 'bg-[#F8F9FA] border-[#E4E4E7]'}`}>
+                        <div className={`text-[10px] uppercase mb-1 ${isDark ? 'text-neutral-500' : 'text-[#71717A]'}`}>Total Keys</div>
                         <div className="text-lg font-semibold">{jsonMetrics.totalKeys}</div>
                       </div>
-                      <div className="bg-neutral-900 p-3 rounded border border-neutral-800">
-                        <div className="text-neutral-500 text-[10px] uppercase mb-1">Max Nesting Depth</div>
+                      <div className={`p-3 rounded border ${isDark ? 'bg-neutral-900 border-neutral-800' : 'bg-[#F8F9FA] border-[#E4E4E7]'}`}>
+                        <div className={`text-[10px] uppercase mb-1 ${isDark ? 'text-neutral-500' : 'text-[#71717A]'}`}>Max Nesting Depth</div>
                         <div className="text-lg font-semibold">{jsonMetrics.maxDepth}</div>
                       </div>
-                      <div className="bg-neutral-900 p-3 rounded border border-neutral-800">
-                        <div className="text-neutral-500 text-[10px] uppercase mb-1">Null / Empty Values</div>
+                      <div className={`p-3 rounded border ${isDark ? 'bg-neutral-900 border-neutral-800' : 'bg-[#F8F9FA] border-[#E4E4E7]'}`}>
+                        <div className={`text-[10px] uppercase mb-1 ${isDark ? 'text-neutral-500' : 'text-[#71717A]'}`}>Null / Empty Values</div>
                         <div className="text-lg font-semibold">{jsonMetrics.nullCount + jsonMetrics.emptyCount}</div>
                       </div>
-                      <div className="bg-neutral-900 p-3 rounded border border-neutral-800">
-                        <div className="text-neutral-500 text-[10px] uppercase mb-1">Potential Duplicate Keys</div>
+                      <div className={`p-3 rounded border ${isDark ? 'bg-neutral-900 border-neutral-800' : 'bg-[#F8F9FA] border-[#E4E4E7]'}`}>
+                        <div className={`text-[10px] uppercase mb-1 ${isDark ? 'text-neutral-500' : 'text-[#71717A]'}`}>Potential Duplicate Keys</div>
                         <div className={`text-lg font-semibold ${jsonMetrics.potentialDuplicates > 0 ? 'text-amber-400' : ''}`}>
                           {jsonMetrics.potentialDuplicates}
                         </div>
                       </div>
                     </div>
                     {jsonMetrics.potentialDuplicates > 0 && (
-                      <div className="mt-4 p-3 bg-amber-950/30 border border-amber-900/50 rounded text-amber-300/90 text-xs">
+                      <div className={`mt-4 p-3 rounded text-xs border ${
+                        isDark
+                          ? 'bg-amber-950/30 border-amber-900/50 text-amber-300/90'
+                          : 'bg-[#FEF3C7] border-[#F59E0B]/30 text-[#92400E]'
+                      }`}>
                         ⚠️ Potential duplicate keys detected. Note that standard JSON parsers will overwrite duplicate keys, keeping only the last occurrence.
                       </div>
                     )}
@@ -1423,37 +1547,45 @@ export const JsonFormatterTool: React.FC = () => {
                 )
               ) : (
                 <div className="p-6 text-red-400 font-mono text-xs space-y-4">
-                  <div className="flex items-center gap-2 text-red-400 font-semibold text-sm">
+                  <div className="flex items-center gap-2 font-semibold text-sm text-red-500">
                     <AlertCircle className="w-4 h-4 shrink-0" />
                     <span>Invalid JSON Syntax</span>
                   </div>
-                  <div className="p-3 bg-red-950/40 border border-red-900/80 rounded text-red-300 leading-relaxed font-mono">
+                  <div className={`p-3 border rounded leading-relaxed font-mono ${
+                    isDark
+                      ? 'bg-red-950/40 border-red-900/80 text-red-300'
+                      : 'bg-[#FEE2E2] border-[#FECACA] text-[#991B1B]'
+                  }`}>
                     {errorMessage}
                   </div>
                   {errorLine && (
-                    <p className="text-neutral-400 text-[11px]">
+                    <p className={isDark ? 'text-neutral-400 text-[11px]' : 'text-[#71717A] text-[11px]'}>
                       📍 Syntax error identified around Line {errorLine}. Please review your brackets, trailing commas, or quotes.
                     </p>
                   )}
                   
                   {!autoFixProposed ? (
-                    <div className="pt-4 border-t border-red-900/30">
+                    <div className={`pt-4 border-t ${isDark ? 'border-red-900/30' : 'border-[#FECACA]/50'}`}>
                       <button
                         onClick={handleAutoFixPreview}
-                        className="px-3 py-1.5 bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 border border-sky-500/30 rounded transition-colors flex items-center gap-2"
+                        className={`px-3 py-1.5 border rounded transition-colors flex items-center gap-2 cursor-pointer ${
+                          isDark
+                            ? 'bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 border-sky-500/30'
+                            : 'bg-sky-50 hover:bg-sky-100 text-sky-700 border-sky-200'
+                        }`}
                       >
                         <Zap className="w-3.5 h-3.5" />
                         <span>Auto-Fix Syntax</span>
                       </button>
-                      <p className="mt-2 text-[10px] text-neutral-500">Detects and fixes trailing commas, missing quotes, and comments.</p>
+                      <p className={`mt-2 text-[10px] ${isDark ? 'text-neutral-500' : 'text-[#71717A]'}`}>Detects and fixes trailing commas, missing quotes, and comments.</p>
                     </div>
                   ) : (
-                    <div className="pt-4 border-t border-red-900/30 space-y-3">
-                      <div className="flex items-center gap-2 text-sky-400 font-semibold text-sm">
+                    <div className={`pt-4 border-t space-y-3 ${isDark ? 'border-red-900/30' : 'border-[#FECACA]/50'}`}>
+                      <div className="flex items-center gap-2 text-sky-500 font-semibold text-sm">
                         <Zap className="w-4 h-4" />
                         <span>Proposed Fixes</span>
                       </div>
-                      <ul className="list-disc pl-4 space-y-1 text-sky-200/80 text-[11px]">
+                      <ul className={`list-disc pl-4 space-y-1 text-[11px] ${isDark ? 'text-sky-200/80' : 'text-sky-900/80'}`}>
                         {autoFixProposed.changes.map((change, idx) => (
                           <li key={idx}>{change}</li>
                         ))}
@@ -1461,13 +1593,13 @@ export const JsonFormatterTool: React.FC = () => {
                       <div className="flex gap-2 pt-2">
                         <button
                           onClick={applyAutoFix}
-                          className="px-3 py-1.5 bg-sky-500 hover:bg-sky-400 text-white rounded font-medium transition-colors"
+                          className="px-3 py-1.5 bg-[#1D9BF0] hover:bg-[#1A8CD8] text-white rounded font-medium transition-colors cursor-pointer"
                         >
                           Accept Fix
                         </button>
                         <button
                           onClick={discardAutoFix}
-                          className="px-3 py-1.5 bg-neutral-800 hover:bg-neutral-700 text-neutral-300 rounded transition-colors"
+                          className={`px-3 py-1.5 rounded transition-colors cursor-pointer ${secondaryBtnClass}`}
                         >
                           Discard
                         </button>
@@ -1481,20 +1613,22 @@ export const JsonFormatterTool: React.FC = () => {
         </div>
 
         {/* Validation Banner / Status Line */}
-        <div className="px-4 py-2 bg-neutral-900/80 border-t border-neutral-800 flex flex-wrap items-center justify-between gap-2 text-xs font-mono">
+        <div className={`px-4 py-2 border-t flex flex-wrap items-center justify-between gap-2 text-xs font-mono ${
+          isDark ? 'bg-neutral-900/80 border-neutral-800 text-neutral-400' : 'bg-[#F8F9FA] border-[#E4E4E7] text-[#52525B]'
+        }`}>
           <div className="flex items-center gap-2">
             {isTyping ? (
-              <span className="text-neutral-400 flex items-center gap-1.5 font-medium">
-                <span className="w-2 h-2 rounded-full bg-neutral-400 animate-pulse" />
+              <span className={`flex items-center gap-1.5 font-medium ${isDark ? 'text-neutral-400' : 'text-[#71717A]'}`}>
+                <span className={`w-2 h-2 rounded-full animate-pulse ${isDark ? 'bg-neutral-400' : 'bg-[#71717A]'}`} />
                 <span>Editing...</span>
               </span>
             ) : isValid ? (
-              <span className="text-sky-400 flex items-center gap-1.5 font-medium">
+              <span className={`flex items-center gap-1.5 font-medium ${isDark ? 'text-sky-400' : 'text-[#0284C7]'}`}>
                 <CheckCircle2 className="w-3.5 h-3.5" />
                 <span>Valid JSON Payload</span>
               </span>
             ) : (
-              <span className="text-red-400 flex items-center gap-1.5 font-medium">
+              <span className={`flex items-center gap-1.5 font-medium ${isDark ? 'text-red-400' : 'text-red-600'}`}>
                 <AlertCircle className="w-3.5 h-3.5" />
                 <span>Syntax Error Detected</span>
               </span>
@@ -1518,7 +1652,7 @@ export const JsonFormatterTool: React.FC = () => {
               onClick={() => setToastMessage(null)}
               className="ml-2 text-red-400 hover:text-red-200 transition-colors cursor-pointer"
             >
-              ✕
+              ✖
             </button>
           </div>
         </div>

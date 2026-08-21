@@ -19,7 +19,7 @@ import {
   Minimize2,
 } from 'lucide-react';
 
-// ─── Types ────────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 interface ContactInfo {
   name: string;
@@ -68,7 +68,7 @@ interface ResumeData {
   projects: ProjectEntry[];
 }
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const uid = () => Math.random().toString(36).slice(2, 9);
 
@@ -126,7 +126,7 @@ const defaultResume: ResumeData = {
   ],
 };
 
-// ─── Section Collapse Wrapper ─────────────────────────────────────────────────
+// â”€â”€â”€ Section Collapse Wrapper â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const Section: React.FC<{
   icon: React.ReactNode;
@@ -152,7 +152,7 @@ const Section: React.FC<{
   );
 };
 
-// ─── Field Components ─────────────────────────────────────────────────────────
+// â”€â”€â”€ Field Components â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const Field: React.FC<{
   label: string;
@@ -199,7 +199,7 @@ const TextArea: React.FC<{
   </div>
 );
 
-// ─── Preview ──────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Preview â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const ResumePreview: React.FC<{ data: ResumeData }> = ({ data }) => {
   const { contact, summary, skills, experience, education, projects } = data;
@@ -222,13 +222,13 @@ const ResumePreview: React.FC<{ data: ResumeData }> = ({ data }) => {
         <h1 className="text-[22px] font-bold uppercase tracking-wide text-neutral-900 m-0">{contact.name}</h1>
         <div className="flex flex-wrap justify-center gap-x-3 gap-y-0.5 mt-1.5 text-[12px] text-neutral-600">
           {contact.email && <span>{contact.email}</span>}
-          {contact.phone && <><span>·</span><span>{contact.phone}</span></>}
-          {contact.location && <><span>·</span><span>{contact.location}</span></>}
+          {contact.phone && <><span>Â·</span><span>{contact.phone}</span></>}
+          {contact.location && <><span>Â·</span><span>{contact.location}</span></>}
         </div>
         <div className="flex flex-wrap justify-center gap-x-3 gap-y-0.5 mt-0.5 text-[12px] text-neutral-600">
           {contact.linkedin && <span>{contact.linkedin}</span>}
-          {contact.github && <><span>·</span><span>{contact.github}</span></>}
-          {contact.portfolio && <><span>·</span><span>{contact.portfolio}</span></>}
+          {contact.github && <><span>Â·</span><span>{contact.github}</span></>}
+          {contact.portfolio && <><span>Â·</span><span>{contact.portfolio}</span></>}
         </div>
       </div>
 
@@ -267,7 +267,7 @@ const ResumePreview: React.FC<{ data: ResumeData }> = ({ data }) => {
               <div className="flex justify-between items-baseline">
                 <span className="font-bold text-[13px] text-neutral-900">{exp.title}</span>
                 <span className="text-[11.5px] text-neutral-600 font-mono shrink-0 ml-2">
-                  {fmtDate(exp.start)} – {exp.current ? 'Present' : fmtDate(exp.end)}
+                  {fmtDate(exp.start)} â€“ {exp.current ? 'Present' : fmtDate(exp.end)}
                 </span>
               </div>
               <div className="text-[12px] text-neutral-700 font-medium mb-1">{exp.company}</div>
@@ -316,11 +316,11 @@ const ResumePreview: React.FC<{ data: ResumeData }> = ({ data }) => {
                 <span className="font-bold text-[12.5px] text-neutral-900">{edu.institution}</span>
                 <span className="text-[12px] text-neutral-700 ml-2">
                   {edu.degree} {edu.field}
-                  {edu.gpa ? ` · GPA: ${edu.gpa}` : ''}
+                  {edu.gpa ? ` Â· GPA: ${edu.gpa}` : ''}
                 </span>
               </div>
               <span className="text-[11.5px] text-neutral-600 font-mono shrink-0 ml-2">
-                {edu.start}{edu.end ? ` – ${edu.end}` : ''}
+                {edu.start}{edu.end ? ` â€“ ${edu.end}` : ''}
               </span>
             </div>
           ))}
@@ -330,7 +330,7 @@ const ResumePreview: React.FC<{ data: ResumeData }> = ({ data }) => {
   );
 };
 
-// ─── Main Tool ────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Main Tool â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export const AtsResumeTool: React.FC = () => {
   const [data, setData] = useState<ResumeData>(defaultResume);
@@ -364,7 +364,7 @@ export const AtsResumeTool: React.FC = () => {
   const setContact = (field: keyof ContactInfo) => (val: string) =>
     setData((d) => ({ ...d, contact: { ...d.contact, [field]: val } }));
 
-  // ── Experience ─────────────────────────────────────────────────────────────
+  // â”€â”€ Experience â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const addExp = () =>
     setData((d) => ({
       ...d,
@@ -405,7 +405,7 @@ export const AtsResumeTool: React.FC = () => {
       ),
     }));
 
-  // ── Education ──────────────────────────────────────────────────────────────
+  // â”€â”€ Education â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const addEdu = () =>
     setData((d) => ({
       ...d,
@@ -424,7 +424,7 @@ export const AtsResumeTool: React.FC = () => {
       education: d.education.map((e) => (e.id === id ? { ...e, [field]: val } : e)),
     }));
 
-  // ── Projects ───────────────────────────────────────────────────────────────
+  // â”€â”€ Projects â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const addProj = () =>
     setData((d) => ({
       ...d,
@@ -462,10 +462,10 @@ export const AtsResumeTool: React.FC = () => {
       ),
     }));
 
-  // ── Print / PDF Export ─────────────────────────────────────────────────────
+  // â”€â”€ Print / PDF Export â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const handlePrint = () => window.print();
 
-  // ── Save Progress as JSON ─────────────────────────────────────────────────
+  // â”€â”€ Save Progress as JSON â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const saveJson = () => {
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
@@ -476,7 +476,7 @@ export const AtsResumeTool: React.FC = () => {
     URL.revokeObjectURL(url);
   };
 
-  // ── Load Progress from JSON ───────────────────────────────────────────────
+  // â”€â”€ Load Progress from JSON â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const loadJson = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -498,7 +498,7 @@ export const AtsResumeTool: React.FC = () => {
   };
 
   return (
-    <div ref={containerRef} className="border border-neutral-800 rounded-xl overflow-hidden bg-neutral-950">
+    <div ref={containerRef} className="developer-tool-container border border-neutral-800 rounded-xl overflow-hidden bg-neutral-950">
 
       {/* Toolbar */}
       <div className="flex items-center justify-between px-4 py-2.5 bg-neutral-900 border-b border-neutral-800">
@@ -542,7 +542,7 @@ export const AtsResumeTool: React.FC = () => {
         </div>
         <div className="flex items-center gap-2">
           <span className="hidden sm:block text-[10px] font-mono text-neutral-500 bg-neutral-900 border border-neutral-800 px-2 py-1 rounded">
-            Client-Side · No Upload
+            Client-Side Â· No Upload
           </span>
 
           {/* Hidden file input for JSON restore */}
@@ -600,7 +600,7 @@ export const AtsResumeTool: React.FC = () => {
         activeTab === 'split' ? 'xl:grid-cols-[480px_1fr]' : ''
       }`}>
 
-        {/* ── Edit Panel ─────────────────────────────────────────────────── */}
+        {/* â”€â”€ Edit Panel â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
         <div className={`border-r border-neutral-800 overflow-y-auto max-h-[120vh] ats-edit-panel ${
           activeTab === 'preview' ? 'hidden' : ''
         }`}>
@@ -621,7 +621,7 @@ export const AtsResumeTool: React.FC = () => {
 
             {/* Summary */}
             <Section icon={<User className="w-4 h-4" />} title="Summary">
-              <TextArea id="summary" label="Professional Summary" value={data.summary} onChange={set('summary')} rows={4} placeholder="2–3 sentence professional summary..." />
+              <TextArea id="summary" label="Professional Summary" value={data.summary} onChange={set('summary')} rows={4} placeholder="2â€“3 sentence professional summary..." />
             </Section>
 
             {/* Skills */}
@@ -796,7 +796,7 @@ export const AtsResumeTool: React.FC = () => {
           </div>
         </div>
 
-        {/* ── Preview Panel ───────────────────────────────────────────────── */}
+        {/* â”€â”€ Preview Panel â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
         <div className={`overflow-y-auto max-h-[120vh] bg-neutral-800 ats-preview-panel ${activeTab === 'edit' ? 'hidden' : ''}`}>
           <div className="p-4">
             <div className="shadow-2xl rounded overflow-hidden">

@@ -4,7 +4,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { Copy, Check, Trash2, AlertCircle, Info, Terminal, Maximize2, Minimize2, Columns2, Rows2, Eye, EyeOff, Lock, ListChecks, AlertTriangle, LayoutList, ChevronDown, ChevronUp, AlignLeft, Code } from 'lucide-react';
 import { useTranslation } from '../../lib/i18n';
 
-// ── Types ────────────────────────────────────────────────────────────────────
+// â”€â”€ Types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 interface ParsedCurl {
   method: string;
@@ -23,14 +23,14 @@ type Language =
   | 'php-curl'
   | 'php-guzzle';
 
-// ── Sample cURL ──────────────────────────────────────────────────────────────
+// â”€â”€ Sample cURL â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const SAMPLE_CURL = `curl -X POST https://api.example.com/v1/users \\
   -H "Content-Type: application/json" \\
   -H "Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.sample" \\
   -d '{"name":"Alex Rivera","email":"alex@example.com"}'`;
 
-// ── Parser ───────────────────────────────────────────────────────────────────
+// â”€â”€ Parser â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function tokenize(raw: string): string[] {
   // Normalize line continuations and collapse whitespace
@@ -96,7 +96,7 @@ function parseCurl(raw: string): ParsedCurl | null {
   return result;
 }
 
-// ── Diagnostics ──────────────────────────────────────────────────────────────
+// â”€â”€ Diagnostics â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 interface Diagnostic {
   type: 'warning' | 'info';
@@ -137,7 +137,7 @@ function escapeArg(arg: string) {
   return `'${arg.replace(/'/g, "'\\''")}'`;
 }
 
-// ── Code Generators ──────────────────────────────────────────────────────────
+// â”€â”€ Code Generators â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function indent(s: string, n = 2): string {
   return s.split('\n').map(l => ' '.repeat(n) + l).join('\n');
@@ -247,7 +247,7 @@ const generators: Record<Language, (p: ParsedCurl) => string> = {
   },
 };
 
-// ── Language Tab Config ──────────────────────────────────────────────────────
+// â”€â”€ Language Tab Config â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const LANGUAGES: { id: Language; label: string }[] = [
   { id: 'js-fetch',    label: 'JS Fetch' },
@@ -259,7 +259,7 @@ const LANGUAGES: { id: Language; label: string }[] = [
   { id: 'php-guzzle',  label: 'PHP Guzzle' },
 ];
 
-// ── Syntax Highlight (minimal token-based) ───────────────────────────────────
+// â”€â”€ Syntax Highlight (minimal token-based) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function highlight(code: string, lang: Language): string {
   const esc = code.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -291,7 +291,7 @@ function highlight(code: string, lang: Language): string {
     .replace(/('(?:[^'\\]|\\.)*')/g, '<span class="text-emerald-400">$1</span>');
 }
 
-// ── Component ────────────────────────────────────────────────────────────────
+// â”€â”€ Component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export const CurlConverterTool: React.FC = () => {
   const { t } = useTranslation();
@@ -365,7 +365,7 @@ export const CurlConverterTool: React.FC = () => {
   const handleClear = () => setInput('');
 
   return (
-    <div className={`bg-neutral-950 border border-neutral-800 font-sans text-neutral-100 flex flex-col ${
+    <div className={`developer-tool-container bg-neutral-950 border border-neutral-800 font-sans text-neutral-100 flex flex-col ${
       isFullScreen ? 'fixed inset-0 z-[9999] overflow-hidden' : 'w-full rounded-lg shadow-2xl'
     }`}>
 
@@ -487,7 +487,7 @@ export const CurlConverterTool: React.FC = () => {
                                 <div className="w-full sm:w-2/3 text-neutral-300 break-all flex items-center justify-between">
                                    {isAuth && !showAuth ? (
                                       <span className="flex items-center gap-1 text-neutral-500 bg-neutral-800/50 px-1.5 py-0.5 rounded cursor-help" title="Token value is hidden to prevent shoulder-surfing. The original value is still preserved for code generation.">
-                                        <Lock className="w-3 h-3" /> [ 🔒 Auth Token Masked ]
+                                        <Lock className="w-3 h-3" /> [ ðŸ”’ Auth Token Masked ]
                                       </span>
                                    ) : (
                                       <span>{v}</span>
@@ -554,7 +554,7 @@ export const CurlConverterTool: React.FC = () => {
                        <div className="space-y-1.5">
                           {diags.map((d, i) => (
                              <div key={i} className="text-[11px] font-mono text-amber-300/80 flex items-start gap-1.5">
-                                <span className="text-amber-500 mt-0.5">•</span>
+                                <span className="text-amber-500 mt-0.5">â€¢</span>
                                 <span>{d.message}</span>
                              </div>
                           ))}

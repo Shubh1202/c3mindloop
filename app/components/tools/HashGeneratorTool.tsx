@@ -7,7 +7,7 @@ import {
   ShieldCheck, Maximize2, Minimize2, FileText, RotateCcw, KeyRound,
 } from 'lucide-react';
 
-// ── Tiny pure-JS MD5 (no external dep needed) ────────────────────────────────
+// â”€â”€ Tiny pure-JS MD5 (no external dep needed) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function md5(input: string): string {
   function safeAdd(x: number, y: number) { const lsw = (x & 0xffff) + (y & 0xffff); return ((x >> 16) + (y >> 16) + (lsw >> 16)) << 16 | lsw & 0xffff; }
   function bitRotateLeft(num: number, cnt: number) { return num << cnt | num >>> 32 - cnt; }
@@ -59,7 +59,7 @@ function md5(input: string): string {
   return hex.join('');
 }
 
-// ── WebCrypto helpers ─────────────────────────────────────────────────────────
+// â”€â”€ WebCrypto helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function sha(algorithm: string, data: BufferSource): Promise<string> {
   const hashBuf = await crypto.subtle.digest(algorithm, data);
   return Array.from(new Uint8Array(hashBuf)).map((b) => b.toString(16).padStart(2, '0')).join('');
@@ -88,7 +88,7 @@ async function computeFileHashes(file: File): Promise<Record<string, string>> {
   return { md5: md5(text), sha1, sha256, sha512 };
 }
 
-// ── HMAC helper ───────────────────────────────────────────────────────────────
+// â”€â”€ HMAC helper â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function generateHMAC(key: string, message: string, algo: 'SHA-256' | 'SHA-512'): Promise<string> {
   const enc = new TextEncoder();
   const cryptoKey = await crypto.subtle.importKey(
@@ -102,7 +102,7 @@ async function generateHMAC(key: string, message: string, algo: 'SHA-256' | 'SHA
   return Array.from(new Uint8Array(signature)).map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
-// ── Component ─────────────────────────────────────────────────────────────────
+// â”€â”€ Component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const ALGO_LABELS: Record<string, string> = {
   md5: 'MD5',
   sha1: 'SHA-1',
@@ -110,7 +110,7 @@ const ALGO_LABELS: Record<string, string> = {
   sha512: 'SHA-512',
 };
 
-const SAMPLE_TEXT = 'C³ MindLoop - Coding. Crashing. Crying.\nhello@c3mindloop.com | https://www.c3mindloop.com';
+const SAMPLE_TEXT = 'CÂ³ MindLoop - Coding. Crashing. Crying.\nhello@c3mindloop.com | https://www.c3mindloop.com';
 
 type InputMode = 'text' | 'file';
 
@@ -264,7 +264,7 @@ export const HashGeneratorTool: React.FC = () => {
     : null;
 
   return (
-    <div className={`bg-neutral-950 border border-neutral-800 font-mono text-xs text-neutral-100 flex flex-col ${isFullScreen ? 'fixed inset-0 z-[9999] overflow-hidden' : 'w-full rounded-lg shadow-2xl'}`}>
+    <div className={`developer-tool-container bg-neutral-950 border border-neutral-800 font-mono text-xs text-neutral-100 flex flex-col ${isFullScreen ? 'fixed inset-0 z-[9999] overflow-hidden' : 'w-full rounded-lg shadow-2xl'}`}>
 
       {/* Toolbar */}
       <div className={`px-3 py-2.5 bg-neutral-900 border-b border-neutral-800 flex flex-wrap items-center justify-between gap-2 ${isFullScreen ? 'sticky top-0 z-[10000]' : ''}`}>
@@ -410,7 +410,7 @@ export const HashGeneratorTool: React.FC = () => {
               </p>
               {fileName && (
                 <div className="mt-2 px-3 py-1.5 bg-neutral-900 border border-neutral-800 rounded text-sky-400 text-[11px]">
-                  ✓ {fileName}
+                  âœ“ {fileName}
                 </div>
               )}
             </div>
@@ -429,7 +429,7 @@ export const HashGeneratorTool: React.FC = () => {
               />
               {compareValue.trim() && compareMatch !== null && (
                 <span className={`absolute right-2.5 top-1/2 -translate-y-1/2 text-[11px] font-semibold font-sans px-2 py-0.5 rounded ${compareMatch ? 'text-emerald-400 bg-emerald-950/60' : 'text-red-400 bg-red-950/60'}`}>
-                  {compareMatch ? '✓ Match' : '✗ No match'}
+                  {compareMatch ? 'âœ“ Match' : 'âœ— No match'}
                 </span>
               )}
             </div>
@@ -454,8 +454,8 @@ export const HashGeneratorTool: React.FC = () => {
                 <div key={key} className="space-y-1">
                   <div className="flex items-center justify-between">
                     <span className="text-[11px] font-sans font-semibold text-neutral-400 uppercase tracking-wider">{label}</span>
-                    {isMatch === true && <span className="text-[10px] text-emerald-400 font-sans font-semibold">✓ Verified</span>}
-                    {isMatch === false && <span className="text-[10px] text-red-400 font-sans">✗ Mismatch</span>}
+                    {isMatch === true && <span className="text-[10px] text-emerald-400 font-sans font-semibold">âœ“ Verified</span>}
+                    {isMatch === false && <span className="text-[10px] text-red-400 font-sans">âœ— Mismatch</span>}
                   </div>
                   <div className={`flex items-start gap-2 p-2.5 rounded border bg-neutral-900/90 transition-colors ${isMatch === true ? 'border-emerald-800/60' : isMatch === false ? 'border-red-900/50' : 'border-neutral-800'}`}>
                     <code className={`flex-1 text-[11px] break-all whitespace-pre-wrap [word-break:break-all] leading-relaxed select-all ${hash ? 'text-sky-300' : 'text-neutral-700 italic'}`}>
@@ -493,8 +493,8 @@ export const HashGeneratorTool: React.FC = () => {
                     <div key={bits} className="space-y-1">
                       <div className="flex items-center justify-between">
                         <span className="text-[11px] font-sans font-semibold text-amber-500/80 uppercase tracking-wider">{label}</span>
-                        {isHmacMatch === true && <span className="text-[10px] text-emerald-400 font-sans font-semibold">✓ Verified</span>}
-                        {isHmacMatch === false && <span className="text-[10px] text-red-400 font-sans">✗ Mismatch</span>}
+                        {isHmacMatch === true && <span className="text-[10px] text-emerald-400 font-sans font-semibold">âœ“ Verified</span>}
+                        {isHmacMatch === false && <span className="text-[10px] text-red-400 font-sans">âœ— Mismatch</span>}
                       </div>
                       <div className={`flex items-start gap-2 p-2.5 rounded border bg-neutral-900/90 transition-colors ${isHmacMatch === true ? 'border-emerald-800/60' : 'border-amber-900/30'}`}>
                         <code className={`flex-1 text-[11px] break-all whitespace-pre-wrap [word-break:break-all] leading-relaxed select-all ${sig ? 'text-amber-300' : 'text-neutral-700 italic'}`}>
@@ -527,7 +527,7 @@ export const HashGeneratorTool: React.FC = () => {
       <div className="px-4 py-2 bg-neutral-900/80 border-t border-neutral-800 flex flex-wrap items-center justify-between gap-2 text-[11px] font-mono">
         <div className="flex items-center gap-1.5 text-neutral-400">
           <Info className="w-3.5 h-3.5 text-neutral-500" />
-          <span>Local browser processing • No data sent to any server</span>
+          <span>Local browser processing â€¢ No data sent to any server</span>
         </div>
         <div className="flex items-center gap-1.5 text-neutral-500">
           <ShieldCheck className="w-3.5 h-3.5 text-emerald-500/70" />
