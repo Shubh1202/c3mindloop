@@ -40,7 +40,7 @@ export const seoConfig = {
   home: {
     title: 'C³ MindLoop - Free & Private Developer Utilities',
     description:
-      'Free browser-based developer tools that run 100% locally — JSON Formatter, JWT Inspector, Base64 Encoder, Regex Tester & more. No server. No tracking.',
+      'Free browser-based developer tools that run 100% locally -  JSON Formatter, JWT Inspector, Base64 Encoder, Regex Tester & more. No server. No tracking.',
     keywords: [
       'developer tools', 'json formatter', 'jwt inspector', 'base64 encoder',
       'client-side web tools', 'free online dev utilities', 'ats resume builder'
@@ -50,14 +50,14 @@ export const seoConfig = {
       type: 'website' as const,
       title: 'C³ MindLoop - Free & Private Developer Utilities',
       description:
-        'Free browser-based developer tools that run 100% locally — JSON Formatter, JWT Inspector, Base64 Encoder, Regex Tester & more. No server. No tracking.',
+        'Free browser-based developer tools that run 100% locally -  JSON Formatter, JWT Inspector, Base64 Encoder, Regex Tester & more. No server. No tracking.',
       url: BASE_URL,
       images: [{ url: defaultOgImage, width: 1200, height: 630, alt: 'C³ MindLoop - Free Developer Tools' }],
     },
     twitter: {
       title: 'C³ MindLoop - Free & Private Developer Utilities',
       description:
-        'Free browser-based developer tools that run 100% locally — JSON Formatter, JWT Inspector, Base64 Encoder, Regex Tester & more. No server. No tracking.',
+        'Free browser-based developer tools that run 100% locally -  JSON Formatter, JWT Inspector, Base64 Encoder, Regex Tester & more. No server. No tracking.',
       images: [defaultOgImage],
     },
   },
@@ -483,7 +483,7 @@ export const seoConfig = {
   },
 
   codeComplexityAnalyzer: {
-    title: 'Code Complexity Analyzer — Cyclomatic & Cognitive Complexity | Free, 100% Private',
+    title: 'Code Complexity Analyzer -  Cyclomatic & Cognitive Complexity | Free, 100% Private',
     description:
       'Analyze cyclomatic complexity and cognitive complexity per function for JavaScript, TypeScript, Python, Java, Go, C, and C++. Get actionable refactor suggestions. 100% client-side, zero server upload.',
     keywords: [
@@ -498,14 +498,14 @@ export const seoConfig = {
     ],
     canonical: `${BASE_URL}/tools/code-complexity-analyzer`,
     openGraph: {
-      title: 'Code Complexity Analyzer — Free Online Tool | C³ MindLoop',
+      title: 'Code Complexity Analyzer -  Free Online Tool | C³ MindLoop',
       description:
         'Cyclomatic & cognitive complexity per function, with refactor suggestions. 100% Private, zero server upload.',
       url: `${BASE_URL}/tools/code-complexity-analyzer`,
       images: [{ url: defaultOgImage, width: 1200, height: 630, alt: 'Code Complexity Analyzer - C³ MindLoop' }],
     },
     twitter: {
-      title: 'Code Complexity Analyzer — Free | C³ MindLoop',
+      title: 'Code Complexity Analyzer -  Free | C³ MindLoop',
       description: 'Cyclomatic & cognitive complexity + refactor suggestions. 100% Private & Client-Side.',
       images: [defaultOgImage],
     },

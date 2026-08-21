@@ -21,7 +21,7 @@ const codeComplexityFaqSchema = {
       name: 'What is cognitive complexity and how is it different from cyclomatic complexity?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Cognitive complexity measures how hard a function is to read and understand, not just how many paths it has. Unlike cyclomatic complexity, it adds a nesting depth penalty — an if statement inside two nested loops scores higher than an if at the top level with the same number of branches. This catches code that is technically not too complex but is genuinely difficult to reason about.',
+        text: 'Cognitive complexity measures how hard a function is to read and understand, not just how many paths it has. Unlike cyclomatic complexity, it adds a nesting depth penalty -  an if statement inside two nested loops scores higher than an if at the top level with the same number of branches. This catches code that is technically not too complex but is genuinely difficult to reason about.',
       },
     },
     {
@@ -29,7 +29,7 @@ const codeComplexityFaqSchema = {
       name: 'Which programming languages are supported?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'The analyzer supports JavaScript, TypeScript, Python, Java, Go, C, and C++. Language detection is automatic — file extension is used when uploading a file, and code heuristics are used when pasting code. You can always override the detected language manually.',
+        text: 'The analyzer supports JavaScript, TypeScript, Python, Java, Go, C, and C++. Language detection is automatic -  file extension is used when uploading a file, and code heuristics are used when pasting code. You can always override the detected language manually.',
       },
     },
     {
@@ -85,7 +85,7 @@ const codeComplexityFaqSchema = {
       name: 'How is this different from linters like ESLint or tools like SonarQube?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Linters enforce code style rules and flag specific patterns. SonarQube requires a build environment and server infrastructure. The C³ MindLoop Code Complexity Analyzer is a lightweight, instant, browser-based tool focused specifically on complexity metrics and refactor guidance — no installation, no configuration, no account, and no data leaving your device.',
+        text: 'Linters enforce code style rules and flag specific patterns. SonarQube requires a build environment and server infrastructure. The C³ MindLoop Code Complexity Analyzer is a lightweight, instant, browser-based tool focused specifically on complexity metrics and refactor guidance -  no installation, no configuration, no account, and no data leaving your device.',
       },
     },
   ],
@@ -110,7 +110,7 @@ const codeComplexityAppSchema = {
     'Auto language detection from file extension or code heuristics',
     'Sortable results table by name, cyclomatic, cognitive, or risk level',
     'Export results as JSON or CSV',
-    '100% client-side — zero server upload, works offline',
+    '100% client-side -  zero server upload, works offline',
   ],
   offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
   publisher: { '@type': 'Organization', name: 'C³ MindLoop', url: BASE_URL },

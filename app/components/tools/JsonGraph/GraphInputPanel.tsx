@@ -1,7 +1,6 @@
 'use client';
 
-import React, { useRef } from 'react';
-import { FlaskConical, Upload } from 'lucide-react';
+import React from 'react';
 import { GRAPH_EXAMPLES } from './graphExamples';
 
 interface GraphInputPanelProps {
@@ -9,6 +8,10 @@ interface GraphInputPanelProps {
   onChange: (value: string) => void;
   hasError: boolean;
   errorMessage: string;
+  /** Whether the example picker dropdown is currently open (controlled by toolbar) */
+  showExamples: boolean;
+  /** Called when user selects an example -  lets parent close the dropdown */
+  onExampleSelect: () => void;
 }
 
 export const GraphInputPanel: React.FC<GraphInputPanelProps> = ({
@@ -16,107 +19,20 @@ export const GraphInputPanel: React.FC<GraphInputPanelProps> = ({
   onChange,
   hasError,
   errorMessage,
+  showExamples,
+  onExampleSelect,
 }) => {
-  const [showExamples, setShowExamples] = React.useState(false);
-  const [uploadError, setUploadError] = React.useState('');
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    // Reset file input so the same file can be re-selected
-    e.target.value = '';
-
-    // Only accept .json and plain text
-    if (!file.name.endsWith('.json') && file.type !== 'application/json' && file.type !== 'text/plain') {
-      setUploadError('Please upload a .json file');
-      setTimeout(() => setUploadError(''), 3000);
-      return;
-    }
-
-    const reader = new FileReader();
-    reader.onload = (ev) => {
-      const content = ev.target?.result as string;
-      if (content) {
-        onChange(content);
-        setUploadError('');
-      }
-    };
-    reader.onerror = () => {
-      setUploadError('Failed to read file');
-      setTimeout(() => setUploadError(''), 3000);
-    };
-    reader.readAsText(file);
-  };
-
   return (
     <div className="flex flex-col h-full">
 
-      {/* ── Header bar ── */}
-      <div className="flex items-center justify-between px-3 py-2 border-b border-neutral-800 bg-neutral-900/50 shrink-0 gap-2">
-        <span className="text-xs font-mono text-neutral-400 uppercase tracking-wider shrink-0">
+      {/* ── Header bar -  label only, actions live in main toolbar ── */}
+      <div className="flex items-center px-3 py-2 border-b border-neutral-800 bg-neutral-900/50 shrink-0">
+        <span className="text-xs font-mono text-neutral-400 uppercase tracking-wider">
           JSON Input
         </span>
-
-        <div className="flex items-center gap-1.5">
-          {/* Upload button */}
-          <button
-            onClick={() => fileInputRef.current?.click()}
-            className="flex items-center gap-1 text-xs font-mono text-neutral-500 hover:text-[#1D9BF0] transition-colors cursor-pointer"
-            aria-label="Upload JSON file"
-            title="Upload .json file"
-          >
-            <Upload className="w-3 h-3" />
-            <span>Upload</span>
-          </button>
-
-          <span className="text-neutral-700">|</span>
-
-          {/* Examples button */}
-          <button
-            onClick={() => setShowExamples((s) => !s)}
-            className="flex items-center gap-1 text-xs font-mono text-neutral-500 hover:text-[#1D9BF0] transition-colors cursor-pointer"
-            aria-label="Load example data"
-            title="Load example"
-          >
-            <FlaskConical className="w-3 h-3" />
-            <span>Examples</span>
-          </button>
-
-          {value.trim() !== '' && (
-            <>
-              <span className="text-neutral-700">|</span>
-              <button
-                onClick={() => onChange('')}
-                className="text-xs font-mono text-neutral-500 hover:text-neutral-300 transition-colors cursor-pointer"
-                aria-label="Clear input"
-              >
-                Clear
-              </button>
-            </>
-          )}
-        </div>
       </div>
 
-      {/* Hidden file input — only .json and text accepted */}
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept=".json,application/json,text/plain"
-        onChange={handleFileUpload}
-        className="hidden"
-        aria-hidden="true"
-      />
-
-      {/* Upload error */}
-      {uploadError && (
-        <div className="shrink-0 px-3 py-1.5 border-b border-red-500/30 bg-red-950/20">
-          <p className="text-xs font-mono text-red-400">{uploadError}</p>
-        </div>
-      )}
-
-      {/* Example picker dropdown */}
+      {/* Example picker dropdown -  toggled from toolbar Examples button */}
       {showExamples && (
         <div className="shrink-0 border-b border-neutral-800 bg-neutral-900/80 px-3 py-2 space-y-1">
           <p className="text-[10px] font-mono text-neutral-500 uppercase tracking-widest mb-1.5">
@@ -127,7 +43,7 @@ export const GraphInputPanel: React.FC<GraphInputPanelProps> = ({
               key={ex.label}
               onClick={() => {
                 onChange(ex.value);
-                setShowExamples(false);
+                onExampleSelect();
               }}
               className="w-full text-left px-2.5 py-1.5 rounded text-xs font-mono text-neutral-300 bg-neutral-800/60 hover:bg-[#1D9BF0]/10 hover:text-[#1D9BF0] border border-neutral-700/50 hover:border-[#1D9BF0]/30 transition-all cursor-pointer"
             >

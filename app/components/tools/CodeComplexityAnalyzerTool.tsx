@@ -130,11 +130,11 @@ export const CodeComplexityAnalyzerTool: React.FC = () => {
     reader.onload = (ev) => {
       const content = ev.target?.result;
       if (typeof content !== 'string') {
-        setUploadError('Cannot read file — binary or unreadable encoding not supported.');
+        setUploadError('Cannot read file -  binary or unreadable encoding not supported.');
         return;
       }
       if (content.includes('\0')) {
-        setUploadError('Cannot read file — binary files are not supported.');
+        setUploadError('Cannot read file -  binary files are not supported.');
         return;
       }
       setCode(content);
@@ -146,7 +146,7 @@ export const CodeComplexityAnalyzerTool: React.FC = () => {
       }
     };
     reader.onerror = () => {
-      setUploadError('Cannot read file — binary or unreadable encoding not supported.');
+      setUploadError('Cannot read file -  binary or unreadable encoding not supported.');
     };
     reader.readAsText(file);
   };
@@ -312,7 +312,7 @@ export const CodeComplexityAnalyzerTool: React.FC = () => {
   const hasNoFunctions = hasResults && results.length === 0;
   const canExport = hasResults && results.length > 0;
 
-  // ── Sort header helper — component defined above to satisfy lint ─────────────
+  // ── Sort header helper -  component defined above to satisfy lint ─────────────
 
   // ── Render ────────────────────────────────────────────────────────────────────
   return (

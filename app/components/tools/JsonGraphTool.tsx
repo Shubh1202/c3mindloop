@@ -12,6 +12,7 @@ import { GraphNode, GraphEdge, GraphTransform, GraphStats } from './JsonGraph/gr
 import { JsonTreeView } from './JsonTreeView';
 import { GRAPH_EXAMPLES } from './JsonGraph/graphExamples';
 import { X, List } from 'lucide-react';
+import { useSearch } from '../../hooks/useSearch';
 
 const DEBOUNCE_MS = 600;
 const MIN_SCALE = 0.1;
@@ -42,7 +43,9 @@ export const JsonGraphTool: React.FC = () => {
   const [truncatedDismissed, setTruncatedDismissed] = useState(false);
   const [graphStats, setGraphStats] = useState<GraphStats | null>(null);
 
-  const [searchQuery, setSearchQuery] = useState('');
+  const search = useSearch({ captureCtrlF: true });
+  const graphFileInputRef = useRef<HTMLInputElement | null>(null);
+  const [showExamples, setShowExamples] = React.useState(false);
   const [copiedPath, setCopiedPath] = useState<string | null>(null);
   const copiedPathTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -82,8 +85,8 @@ export const JsonGraphTool: React.FC = () => {
 
   // ── Search ─────────────────────────────────────────────────────────────────
   const searchMatchIds = useMemo(() => {
-    if (!searchQuery.trim() || nodes.length === 0) return new Set<string>();
-    const q = searchQuery.toLowerCase();
+    if (!search.debouncedQuery.trim() || nodes.length === 0) return new Set<string>();
+    const q = search.debouncedQuery.toLowerCase();
     const result = new Set<string>();
     for (const node of nodes) {
       if (node.label.toLowerCase().includes(q)) { result.add(node.id); continue; }
@@ -94,7 +97,7 @@ export const JsonGraphTool: React.FC = () => {
       }
     }
     return result;
-  }, [searchQuery, nodes]);
+  }, [search.debouncedQuery, nodes]);
 
   // ── Debounced parse ────────────────────────────────────────────────────────
   useEffect(() => {
@@ -317,14 +320,77 @@ export const JsonGraphTool: React.FC = () => {
         onCollapseAll={handleCollapseAll}
         onExport={handleExport}
         onToggleFullScreen={handleToggleFullScreen}
+        searchOpen={search.isOpen}
+        hasSearchQuery={search.query.length > 0}
+        onSearchToggle={search.toggle}
+        hasInput={inputValue.trim() !== ''}
+        onUpload={() => graphFileInputRef.current?.click()}
+        onExamples={() => setShowExamples(s => !s)}
+        onClear={() => {
+          setInputValue('');
+          setShowExamples(false);
+          isFirstRender.current = true;
+        }}
       />
 
-      {/* ── Row 2: Search + live stats ───────────────────────────────────── */}
+      {/* Hidden file input for Upload button in toolbar */}
+      <input
+        ref={graphFileInputRef}
+        type="file"
+        accept=".json,application/json,text/plain"
+        className="hidden"
+        aria-hidden="true"
+        onChange={(e) => {
+          const file = e.target.files?.[0];
+          if (!file) return;
+          e.target.value = '';
+          const reader = new FileReader();
+          reader.onload = (ev) => {
+            const content = ev.target?.result as string;
+            if (content) { setInputValue(content); isFirstRender.current = true; }
+          };
+          reader.readAsText(file);
+        }}
+      />
+
+      {/* ── Collapsible search row -  standard pattern (matches JsonFormatter) ── */}
+      {search.isOpen && (
+        <div className="flex items-center gap-2 px-3 py-2 bg-neutral-900 border-b border-neutral-800 shrink-0">
+          <X
+            className="w-3.5 h-3.5 text-neutral-500 shrink-0 cursor-pointer hover:text-neutral-300 transition-colors"
+            onClick={search.close}
+          />
+          <input
+            ref={search.inputRef}
+            type="text"
+            value={search.query}
+            onChange={e => search.setQuery(e.target.value)}
+            onKeyDown={e => { if (e.key === 'Escape') { search.close(); search.clear(); } }}
+            placeholder="Search keys or values…"
+            spellCheck={false}
+            autoFocus
+            className="flex-1 bg-neutral-800 border border-neutral-700 rounded px-2 py-1 text-xs font-mono text-neutral-200 placeholder-neutral-600 focus:outline-none focus:border-neutral-500 transition-colors"
+          />
+          {search.query && (
+            <span className={`text-[11px] font-mono shrink-0 tabular-nums ${searchMatchIds.size > 0 ? 'text-amber-400' : 'text-neutral-500'}`}>
+              {searchMatchIds.size} {searchMatchIds.size === 1 ? 'match' : 'matches'}
+            </span>
+          )}
+          {search.query && (
+            <button
+              onClick={search.clear}
+              className="p-0.5 text-neutral-500 hover:text-neutral-300 transition-colors cursor-pointer"
+              aria-label="Clear search"
+            >
+              <X className="w-3 h-3" />
+            </button>
+          )}
+        </div>
+      )}
+
+      {/* ── Stats row ── */}
       <GraphInfoBar
         stats={graphStats}
-        searchQuery={searchQuery}
-        searchMatchCount={searchMatchIds.size}
-        onSearchChange={setSearchQuery}
         copiedPath={copiedPath}
       />
 
@@ -366,8 +432,9 @@ export const JsonGraphTool: React.FC = () => {
             onChange={(v) => { setInputValue(v); isFirstRender.current = true; }}
             hasError={!!parseError && inputValue.trim() !== ''}
             errorMessage={parseError}
-          />
-        </div>
+            showExamples={showExamples}
+            onExampleSelect={() => setShowExamples(false)}
+          />        </div>
 
         {/* Graph / tree canvas- fills remaining width and full height */}
         <div className="flex-1 min-w-0 overflow-hidden relative" ref={graphViewRef}>

@@ -106,6 +106,7 @@ export const Footer: React.FC<{ onReplayIntro?: () => void }> = ({ onReplayIntro
             <ul className="space-y-2.5 text-sm text-theme-muted">
               <li><Link to="/about" className="hover:text-[#1D9BF0] transition-colors">{t('footer.platAbout', 'About C³ MindLoop')}</Link></li>
               <li><Link to="/projects" className="hover:text-[#1D9BF0] transition-colors">Projects</Link></li>
+              <li><Link to="/reviews" className="hover:text-[#1D9BF0] transition-colors">Developer Reviews</Link></li>
               <li><Link to="/contact" className="hover:text-[#1D9BF0] transition-colors">{t('footer.platContact', 'Contact')}</Link></li>
               <li><Link to="/privacy-policy" className="hover:text-[#1D9BF0] transition-colors">{t('footer.platPrivacy', 'Privacy Policy')}</Link></li>
               <li><Link to="/terms" className="hover:text-[#1D9BF0] transition-colors">{t('footer.platTerms', 'Terms of Service')}</Link></li>

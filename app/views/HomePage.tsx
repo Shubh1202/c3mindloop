@@ -8,6 +8,7 @@ import { ProductsPreviewSection } from '../components/sections/ProductsPreviewSe
 import { CommunitySection } from '../components/sections/CommunitySection';
 import { RoadmapSection } from '../components/sections/RoadmapSection';
 import { FAQSection } from '../components/sections/FAQSection';
+import { ReviewSection } from '../components/ui/ReviewSection';
 import { CTASection } from '../components/sections/CTASection';
 import { SEOHead } from '../components/layout/SEOHead';
 import { generateOrganizationSchema, generateWebsiteSchema } from '../lib/seo';
@@ -31,6 +32,7 @@ export const HomePage: React.FC = () => {
         <FeaturesSection />
         <ProductsPreviewSection />
         <CommunitySection />
+        <ReviewSection limit={3} showViewAllLink={true} />
         <RoadmapSection />
         <FAQSection />
         <CTASection />

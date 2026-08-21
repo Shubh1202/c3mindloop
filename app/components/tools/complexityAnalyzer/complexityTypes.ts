@@ -8,7 +8,7 @@ export type SortDirection = 'asc' | 'desc';
 export interface RefactorSuggestion {
   /** Plain-English recommendation, max 120 characters */
   text: string;
-  /** Used to order suggestions — higher value appears first */
+  /** Used to order suggestions -  higher value appears first */
   scoreContribution: number;
 }
 

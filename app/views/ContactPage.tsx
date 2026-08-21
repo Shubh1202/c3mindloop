@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Script from 'next/script';
 import { Mail, Send, CheckCircle2, MessageSquare, Terminal } from 'lucide-react';
 import { useTranslation } from '../lib/i18n';
 import { SEOHead } from '../components/layout/SEOHead';
@@ -10,11 +11,13 @@ import { Logo } from '../components/ui/Logo';
 export const ContactPage: React.FC = () => {
   const { t } = useTranslation();
   const [formData, setFormData] = useState({ name: '', email: '', subject: '', message: '' });
+  const [honeypot, setHoneypot] = useState('');
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [serverError, setServerError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     const newErrors: { [key: string]: string } = {};
@@ -32,16 +35,63 @@ export const ContactPage: React.FC = () => {
     }
     
     setErrors({});
-
+    setServerError(null);
     setIsSubmitting(true);
-    setTimeout(() => {
+
+    try {
+      let recaptchaToken = '';
+      const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
+
+      if (siteKey && typeof window !== 'undefined' && (window as any).grecaptcha) {
+        try {
+          recaptchaToken = await new Promise<string>((resolve) => {
+            (window as any).grecaptcha.ready(async () => {
+              const token = await (window as any).grecaptcha.execute(siteKey, { action: 'submit_contact' });
+              resolve(token);
+            });
+          });
+        } catch (recaptchaErr) {
+          console.error('reCAPTCHA execution error:', recaptchaErr);
+        }
+      }
+
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...formData,
+          website_hp: honeypot,
+          recaptchaToken,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        setSubmitted(true);
+        setFormData({ name: '', email: '', subject: '', message: '' });
+        setHoneypot('');
+      } else {
+        setServerError(data.error || 'Failed to submit form. Please try again.');
+      }
+    } catch (err) {
+      console.error('Contact form submission error:', err);
+      setServerError('A network error occurred. Please check your connection and try again.');
+    } finally {
       setIsSubmitting(false);
-      setSubmitted(true);
-    }, 600);
+    }
   };
+
+  const recaptchaSiteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
 
   return (
     <>
+      {recaptchaSiteKey && (
+        <Script
+          src={`https://www.google.com/recaptcha/api.js?render=${recaptchaSiteKey}`}
+          strategy="afterInteractive"
+        />
+      )}
       <SEOHead
         title="Contact Engineering Team - C³ MindLoop"
         description="Get in touch with C³ MindLoop. Project inquiries, SaaS architecture consulting, partnerships, and technical questions."
@@ -80,7 +130,23 @@ export const ContactPage: React.FC = () => {
                   </Button>
                 </div>
               ) : (
-                <form onSubmit={handleSubmit} className="space-y-4">
+                <form noValidate onSubmit={handleSubmit} className="space-y-4">
+                  {/* Honeypot Bot Trap (Invisible to humans) */}
+                  <input
+                    type="text"
+                    name="website_hp"
+                    value={honeypot}
+                    onChange={(e) => setHoneypot(e.target.value)}
+                    style={{ display: 'none' }}
+                    tabIndex={-1}
+                    autoComplete="off"
+                  />
+
+                  {serverError && (
+                    <div className="p-3.5 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 text-xs font-mono">
+                      {serverError}
+                    </div>
+                  )}
                   <div>
                     <label className="block text-xs font-mono font-medium text-theme-muted mb-1.5">
                       {t('contact.nameLabel', 'Your Name')} *

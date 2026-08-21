@@ -16,7 +16,7 @@ export const JsonFormatterPage: React.FC = () => {
     <>
       <SEOHead
         title="JSON Beautifier & Formatter Online – 100% Private"
-        description="Free JSON beautifier, validator & online viewer. Pretty print, minify, lint, and explore JSON as a tree. 100% client-side — zero server upload."
+        description="Free JSON beautifier, validator & online viewer. Pretty print, minify, lint, and explore JSON as a tree. 100% client-side -  zero server upload."
         canonical="/tools/json-formatter"
       />
 
@@ -36,7 +36,7 @@ export const JsonFormatterPage: React.FC = () => {
 
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-0.5">
               <h1 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight text-theme-main">
-                {t('tools.jsonFormatter.pageTitle', 'JSON Formatter, Beautifier & Validator — 100% Client-Side')}
+                {t('tools.jsonFormatter.pageTitle', 'JSON Formatter, Beautifier & Validator -  100% Client-Side')}
               </h1>
               <span className="text-[11px] font-mono text-neutral-400 bg-surface px-2.5 py-1 rounded border border-theme-subtle shrink-0">
                 {t('tools.jsonFormatter.pageBadge', '100% Client-Side • Local Browser Processing')}

@@ -81,11 +81,11 @@ export const MAX_SUGGESTION_LENGTH = 120;
 export const MAX_FILE_SIZE_BYTES = 500 * 1024;
 
 // ---------------------------------------------------------------------------
-// Sample code — payment processor with varying complexity levels
+// Sample code -  payment processor with varying complexity levels
 // Exercises nested control structures, logical operators, multiple branches.
 // ---------------------------------------------------------------------------
 
-export const SAMPLE_CODE = `// Payment processor — demonstrates varying complexity levels
+export const SAMPLE_CODE = `// Payment processor -  demonstrates varying complexity levels
 
 function validatePayment(payment) {
   if (!payment) return false;

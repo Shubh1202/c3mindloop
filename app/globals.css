@@ -213,7 +213,7 @@ html.light {
   }
 }
 
-/* Search bar open animation — fade in + drop down from slightly above */
+/* Search bar open animation -  fade in + drop down from slightly above */
 @keyframes searchBarIn {
   from {
     opacity: 0;

@@ -4,7 +4,8 @@ import React, { useCallback } from 'react';
 import {
   ZoomIn, ZoomOut, Maximize, RotateCcw,
   Download, Loader2, ChevronsDownUp, ChevronsUpDown,
-  GitBranch, List, Maximize2, Minimize2,
+  GitBranch, List, Maximize2, Minimize2, Search,
+  Upload, FlaskConical, Trash2,
 } from 'lucide-react';
 
 export type ViewMode = 'graph' | 'tree';
@@ -27,6 +28,14 @@ interface GraphToolbarProps {
   onExpandAll: () => void;
   onCollapseAll: () => void;
   onToggleFullScreen: () => void;
+  searchOpen: boolean;
+  hasSearchQuery: boolean;
+  onSearchToggle: () => void;
+  // Input panel actions -  moved into toolbar
+  hasInput: boolean;
+  onUpload: () => void;
+  onExamples: () => void;
+  onClear: () => void;
 }
 
 const MIN_SCALE = 0.1;
@@ -111,7 +120,7 @@ const Sep: React.FC = () => (
 );
 
 /**
- * Primary toolbar — full-width, in-flow, top of the workspace.
+ * Primary toolbar -  full-width, in-flow, top of the workspace.
  * Mirrors the JSON Formatter's toolbar position exactly.
  * Never overlaps the graph canvas.
  */
@@ -133,6 +142,13 @@ export const GraphToolbar: React.FC<GraphToolbarProps> = ({
   onExpandAll,
   onCollapseAll,
   onToggleFullScreen,
+  searchOpen,
+  hasSearchQuery,
+  onSearchToggle,
+  hasInput,
+  onUpload,
+  onExamples,
+  onClear,
 }) => {
   const zoomPercent = Math.round(scale * 100);
   const atMin = scale <= MIN_SCALE + 0.001;
@@ -142,7 +158,7 @@ export const GraphToolbar: React.FC<GraphToolbarProps> = ({
   return (
     <div className="flex items-center flex-wrap gap-1 px-3 py-2 bg-neutral-900 border-b border-neutral-800 shrink-0">
 
-      {/* ── View mode toggle — mirrors JSON Formatter's Code/Tree tabs ── */}
+      {/* ── View mode toggle -  mirrors JSON Formatter's Code/Tree tabs ── */}
       <TBtn
         label="Graph view"
         disabled={false}
@@ -206,6 +222,59 @@ export const GraphToolbar: React.FC<GraphToolbarProps> = ({
 
           <Sep />
 
+          {/* Upload / Examples / Clear / Search -  before Export PNG */}
+          <TBtn
+            label="Upload JSON file"
+            disabled={disabled}
+            onClick={onUpload}
+            title="Upload .json file"
+          >
+            <Upload className="w-3.5 h-3.5" />
+            <span>Upload</span>
+          </TBtn>
+
+          <TBtn
+            label="Load example"
+            disabled={disabled}
+            onClick={onExamples}
+            title="Load example JSON"
+          >
+            <FlaskConical className="w-3.5 h-3.5" />
+            <span>Examples</span>
+          </TBtn>
+
+          <button
+            onClick={hasInput ? onClear : undefined}
+            disabled={!hasInput}
+            title="Clear input"
+            aria-label="Clear input"
+            className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded text-xs font-mono transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1D9BF0] ${
+              !hasInput
+                ? 'text-neutral-700 cursor-not-allowed pointer-events-none'
+                : 'text-neutral-400 hover:bg-red-950 hover:text-red-300 cursor-pointer'
+            }`}
+          >
+            <Trash2 className="w-3.5 h-3.5" />
+            <span>Clear</span>
+          </button>
+
+          {/* Search -  positioned here to match JsonFormatter (before Export) */}
+          <button
+            onClick={onSearchToggle}
+            title="Search keys or values (Ctrl+F)"
+            aria-label="Search"
+            className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded text-xs font-mono transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1D9BF0] ${
+              searchOpen || hasSearchQuery
+                ? 'bg-[#1D9BF0]/20 text-[#1D9BF0] border border-[#1D9BF0]/30'
+                : 'text-neutral-400 hover:text-white hover:bg-neutral-800 border border-transparent'
+            }`}
+          >
+            <Search className="w-3.5 h-3.5" />
+            <span>Search</span>
+          </button>
+
+          <Sep />
+
           {/* Export PNG */}
           <TBtn
             label="Export as PNG"
@@ -233,7 +302,7 @@ export const GraphToolbar: React.FC<GraphToolbarProps> = ({
           <Sep />
         )}
 
-        {/* Fullscreen toggle — always visible, matches JSON Formatter */}
+        {/* Fullscreen toggle */}
         <IBtn
           label={isFullScreen ? 'Exit full screen' : 'Full screen'}
           title={isFullScreen ? 'Exit full screen (Esc)' : 'Full screen'}

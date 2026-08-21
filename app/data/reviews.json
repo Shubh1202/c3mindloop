@@ -1,0 +1,29 @@
+[
+  {
+    "id": "rev-1",
+    "name": "Alex Rivers",
+    "country": "🇺🇸 United States",
+    "rating": 5,
+    "comment": "The JSON Formatter and Tree View tools are insanely fast. Client-side execution makes working with sensitive payloads completely worry-free.",
+    "date": "2026-08-15",
+    "verified": true
+  },
+  {
+    "id": "rev-2",
+    "name": "David Chen",
+    "country": "🇺🇸 United States",
+    "rating": 5,
+    "comment": "Clean, minimal developer utilities with zero bloat. Love that all processing happens locally in the browser.",
+    "date": "2026-08-18",
+    "verified": true
+  },
+  {
+    "id": "rev-3",
+    "name": "Lukas Weber",
+    "country": "🇩🇪 Germany",
+    "rating": 5,
+    "comment": "The JWT inspector and JSON tree viewer have become daily essentials for our backend team. Highly recommended!",
+    "date": "2026-08-20",
+    "verified": true
+  }
+]

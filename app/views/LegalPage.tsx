@@ -13,6 +13,8 @@ const privacySections = [
   { title: 'section5Title', body: 'section5Body' },
   { title: 'section6Title', body: 'section6Body' },
   { title: 'section7Title', body: 'section7Body' },
+  { title: 'section8Title', body: 'section8Body' },
+  { title: 'section9Title', body: 'section9Body' },
 ];
 
 const termsSections = [
@@ -24,6 +26,7 @@ const termsSections = [
   { title: 'section6Title', body: 'section6Body' },
   { title: 'section7Title', body: 'section7Body' },
   { title: 'section8Title', body: 'section8Body' },
+  { title: 'section9Title', body: 'section9Body' },
 ];
 
 export const LegalPage: React.FC = () => {

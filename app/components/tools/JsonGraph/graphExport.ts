@@ -16,7 +16,7 @@ const NODE_PADDING = 16;
 const NORMAL_FONT = '11px "JetBrains Mono", monospace';
 const BOLD_FONT = 'bold 12px "JetBrains Mono", monospace';
 
-/** Safe rounded-rect helper — avoids ctx.roundRect browser compatibility issues */
+/** Safe rounded-rect helper -  avoids ctx.roundRect browser compatibility issues */
 function roundRect(
   ctx: CanvasRenderingContext2D,
   x: number, y: number,

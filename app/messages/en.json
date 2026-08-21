@@ -376,6 +376,8 @@
     "section7Body": "Unless otherwise specified, C³ MindLoop codebases and utilities are distributed under the MIT License. You are free to inspect, modify, and contribute via our official GitHub repository.",
     "section8Title": "8. Third-Party Utilities & Extensions",
     "section8Body": "Our platform may showcase or link to third-party tools, IDE extensions (e.g., VS Code extensions), or external resources. We do not maintain or guarantee the functionality, uptime, or security of third-party assets.",
+    "section9Title": "9. User-Generated Content & Community Reviews",
+    "section9Body": "By submitting a public review, rating, or contact inquiry on C³ MindLoop, you grant us a non-exclusive, worldwide, royalty-free license to display, publish, and format your submitted feedback on our platform. You represent that your submission does not contain unlawful, abusive, deceptive, or copyrighted content. We reserve the right to decline, moderate, or remove any submission that violates our community standards or system integrity.",
     "kicker": "Legal",
     "footerStart": "Questions? Reach us at ",
     "footerEmail": "hello@c3mindloop.com",
@@ -399,9 +401,13 @@
     "section6Body": "C³ MindLoop incorporates verified open-source software libraries to handle specific formatting and parsing functions. These libraries run strictly inside your local browser environment and have no network access to external servers. We periodically review open-source components to ensure compliance with security standards and licensing requirements.",
     "section7Title": "7. Policy Updates and Contact",
     "section7Body": "We may update this Privacy Policy from time to time to reflect architecture upgrades or new browser capabilities. Continued use of C³ MindLoop implies acceptance of the current policy. If you have questions about our client-side architecture or want to inspect how the tools work, feel free to reach out or browse our codebase on GitHub.",
+    "section8Title": "8. Voluntary Inquiries and Contact Submissions",
+    "section8Body": "When you voluntarily submit a contact inquiry or request consulting via our Contact page, the information you provide (such as your name, email address, subject, and message) is securely processed via encrypted cloud database infrastructure solely for customer support and responding to your inquiry. We do not sell, rent, or share your contact credentials with any third-party marketing networks.",
+    "section9Title": "9. Public Developer Reviews & Ratings",
+    "section9Body": "When you submit a review or rating for C³ MindLoop developer utilities, the information you provide (such as your name, designation, country, star rating, and review text) is stored in encrypted cloud database infrastructure and displayed publicly on our community platform to assist fellow engineers. You may request modification or deletion of your published review at any time by reaching out to our engineering team.",
     "kicker": "Privacy First",
     "complianceTitle": "GDPR & CCPA Compliance",
-    "complianceBody": "C³ MindLoop operates on a zero-server-retention architecture. Because no personally identifiable information (PII) is stored, tracked, or resold, our platform is fully compliant with EU GDPR and California CCPA guidelines by design.",
+    "complianceBody": "C³ MindLoop operates on a zero-server-retention architecture for all developer tools. Voluntary contact and review submissions are processed in strict compliance with EU GDPR and California CCPA guidelines.",
     "footerStart": "Questions? Reach us at ",
     "footerEmail": "hello@c3mindloop.com",
     "footerEnd": " or inspect our source on GitHub."
@@ -441,12 +447,12 @@
   },
   "tools": {
     "jsonFormatter": {
-      "pageTitle": "JSON Formatter, Beautifier & Validator — 100% Client-Side",
+      "pageTitle": "JSON Formatter, Beautifier & Validator -  100% Client-Side",
       "pageBadge": "100% Client-Side • Local Browser Processing",
       "breadcrumb": "JSON Formatter",
       "breadcrumbParent": "Developer Tools",
       "feat1Title": "JSON Beautifier & Pretty Printer",
-      "feat1Desc": "Instantly pretty print any raw or minified JSON string with configurable indentation. Your data never leaves your device — all formatting runs inside the browser's V8 engine.",
+      "feat1Desc": "Instantly pretty print any raw or minified JSON string with configurable indentation. Your data never leaves your device -  all formatting runs inside the browser's V8 engine.",
       "feat2Title": "Interactive JSON Tree Viewer",
       "feat2Desc": "Switch between the formatted code view and a collapsible JSON explorer tree to inspect, expand, and navigate deeply nested objects and arrays at a glance.",
       "feat3Title": "JSON Lint & Syntax Validation",
@@ -459,7 +465,7 @@
         "step3": "Validation Check: The online JSON validator checks structural integrity. If issues are found, the output panel highlights the exact line location and description of the syntax mismatch.",
         "step4": "Pretty Print & Tree Render: The beautified, pretty-printed result renders immediately in the right panel with your chosen spacing. Switch to the JSON explorer tree view for collapsible node navigation.",
         "privacyTitle": "Why a Private, Client-Side JSON Viewer Matters",
-        "privacyIntro": "Many developers use cloud-based online JSON formatters that silently transmit payloads to remote servers. This creates real security risks. C³ MindLoop is a 100% browser-based JSON viewer — your data never leaves your machine:",
+        "privacyIntro": "Many developers use cloud-based online JSON formatters that silently transmit payloads to remote servers. This creates real security risks. C³ MindLoop is a 100% browser-based JSON viewer -  your data never leaves your machine:",
         "privacyBullet1": "Zero Network Overhead: All JSON beautifying, linting, and minification runs inside your local browser context. It works fully offline once the page loads.",
         "privacyBullet2": "Private Configuration Auditing: Sensitive data like database credentials, REST API tokens, and secret keys stay entirely on your device, eliminating the risk of server-side data leaks or log extraction."
       },
@@ -467,13 +473,13 @@
         "q1": "What is a JSON Formatter and Beautifier?",
         "a1": "A JSON formatter (also called a JSON beautifier or pretty printer) takes raw, minified, or unformatted JSON strings and converts them into human-readable output with proper indentation and line breaks. This online JSON formatter also validates your data against the JSON spec, making it the best JSON validator online for developers who need instant feedback without leaving the browser.",
         "q2": "Is this JSON Formatter safe for sensitive corporate configs and API keys?",
-        "a2": "Yes, 100%. Unlike cloud-based online JSON formatters, C³ MindLoop is a fully client-side JSON viewer — it runs entirely in your browser's V8 engine. No data is ever uploaded, stored, or logged on any server. Your API keys, database credentials, and proprietary payloads stay strictly on your local machine.",
+        "a2": "Yes, 100%. Unlike cloud-based online JSON formatters, C³ MindLoop is a fully client-side JSON viewer -  it runs entirely in your browser's V8 engine. No data is ever uploaded, stored, or logged on any server. Your API keys, database credentials, and proprietary payloads stay strictly on your local machine.",
         "q3": "How does the built-in JSON Lint and syntax validator work?",
-        "a3": "The online JSON parser tokenizes your input in real-time. If it finds a structural error — like a missing bracket, trailing comma, or unexpected token — the JSON lint engine instantly highlights the exact line and describes the issue. It functions as a free JSON lint checker embedded directly in the tool.",
+        "a3": "The online JSON parser tokenizes your input in real-time. If it finds a structural error -  like a missing bracket, trailing comma, or unexpected token -  the JSON lint engine instantly highlights the exact line and describes the issue. It functions as a free JSON lint checker embedded directly in the tool.",
         "q4": "Can I use this JSON tool without an active internet connection?",
         "a4": "Absolutely. Because the JSON beautifier, compressor, minifier, and free JSON tree viewer are all written in native client-side JavaScript, every feature works perfectly offline once the page is loaded in your browser.",
         "q5": "What is the difference between JSON formatting and JSON minifying?",
-        "a5": "JSON formatting (or pretty printing) adds indentation and line breaks to make JSON data readable. JSON minifying (or JSON compression) does the opposite — it strips all whitespace to produce the smallest possible payload for network transmission. This tool supports both modes, switching instantly in your browser without any server roundtrip."
+        "a5": "JSON formatting (or pretty printing) adds indentation and line breaks to make JSON data readable. JSON minifying (or JSON compression) does the opposite -  it strips all whitespace to produce the smallest possible payload for network transmission. This tool supports both modes, switching instantly in your browser without any server roundtrip."
       }
     },
     "base64Encoder": {
@@ -884,12 +890,12 @@
       }
     },
     "codeComplexityAnalyzer": {
-      "pageTitle": "Code Complexity Analyzer — Cyclomatic & Cognitive Complexity",
+      "pageTitle": "Code Complexity Analyzer -  Cyclomatic & Cognitive Complexity",
       "pageBadge": "100% Client-Side · No Upload",
       "breadcrumb": "Code Complexity Analyzer",
       "breadcrumbParent": "Developer Tools",
       "feat1Title": "Cyclomatic & Cognitive Complexity",
-      "feat1Desc": "Computes both cyclomatic complexity (independent execution paths) and cognitive complexity (readability difficulty) for every function in your code — with a single click.",
+      "feat1Desc": "Computes both cyclomatic complexity (independent execution paths) and cognitive complexity (readability difficulty) for every function in your code -  with a single click.",
       "feat2Title": "7 Languages Supported",
       "feat2Desc": "Analyzes JavaScript, TypeScript, Python, Java, Go, C, and C++. Language is auto-detected from the file extension on upload or from code heuristics when pasting.",
       "feat3Title": "Actionable Refactor Suggestions",
@@ -899,9 +905,9 @@
         "intro": "The analyzer parses your source code entirely in your browser, detects every function and method, and computes two industry-standard complexity metrics per function. Here is the step-by-step process:",
         "step1": "Paste or Upload: Paste source code into the input panel or upload a file (.js, .ts, .py, .java, .go, .c, .cpp, .h, .hpp). The language is auto-detected from the file extension or code heuristics.",
         "step2": "Click Analyze: The engine scans your code line by line, identifies function boundaries using language-specific patterns, and isolates each function body for independent analysis.",
-        "step3": "Cyclomatic Complexity: The engine counts every branching construct per function — if, else if, for, while, switch case, catch, &&, ||, and ternary operators. Each adds 1 to the base value of 1.",
+        "step3": "Cyclomatic Complexity: The engine counts every branching construct per function -  if, else if, for, while, switch case, catch, &&, ||, and ternary operators. Each adds 1 to the base value of 1.",
         "step4": "Cognitive Complexity: Structural constructs (if, for, while, switch, catch) increment the score and add a nesting depth penalty. Deeply nested code penalises more than flat code with the same number of branches.",
-        "step5": "Risk Classification: Each function receives a risk label — Low, Medium, High, or Critical — based on both scores. Functions at Medium or above receive specific refactor suggestions.",
+        "step5": "Risk Classification: Each function receives a risk label -  Low, Medium, High, or Critical -  based on both scores. Functions at Medium or above receive specific refactor suggestions.",
         "step6": "Export Results: Copy results as JSON or download a CSV report for use in code reviews, sprint retrospectives, or CI/CD quality gates.",
         "privacyTitle": "The Privacy & Local Processing Advantage",
         "privacyIntro": "Source code often contains proprietary business logic, unreleased algorithms, internal API routes, and secret environment configurations. Uploading it to a cloud-based code analysis service exposes that intellectual property to third-party servers. The C³ MindLoop Code Complexity Analyzer works entirely differently:",
@@ -912,13 +918,13 @@
         "q1": "What is cyclomatic complexity?",
         "a1": "Cyclomatic complexity is a software metric that counts the number of linearly independent paths through a function. It starts at 1 and increments by 1 for each branching construct: if, else if, for, while, switch case, catch, logical AND (&&), logical OR (||), and ternary operators. A score of 1–5 is Low risk; 6–10 is Medium; 11–20 is High; above 20 is Critical.",
         "q2": "What is cognitive complexity and how is it different from cyclomatic complexity?",
-        "a2": "Cognitive complexity measures how hard a function is to read and understand, not just how many paths it has. Unlike cyclomatic complexity, it adds a nesting depth penalty — an if statement inside two nested loops scores higher than an if at the top level with the same number of branches. This catches code that is technically not too complex but is genuinely difficult to reason about.",
+        "a2": "Cognitive complexity measures how hard a function is to read and understand, not just how many paths it has. Unlike cyclomatic complexity, it adds a nesting depth penalty -  an if statement inside two nested loops scores higher than an if at the top level with the same number of branches. This catches code that is technically not too complex but is genuinely difficult to reason about.",
         "q3": "Which programming languages are supported?",
-        "a3": "The analyzer supports JavaScript, TypeScript, Python, Java, Go, C, and C++. Language detection is automatic — file extension is used when uploading a file, and code heuristics (keywords, syntax patterns) are used when pasting code. You can always override the detected language manually.",
+        "a3": "The analyzer supports JavaScript, TypeScript, Python, Java, Go, C, and C++. Language detection is automatic -  file extension is used when uploading a file, and code heuristics (keywords, syntax patterns) are used when pasting code. You can always override the detected language manually.",
         "q4": "Is my source code uploaded to a server?",
         "a4": "No, never. All parsing and metric computation runs entirely inside your browser using JavaScript. Your source code, function names, and analysis results are never transmitted to any server, remote endpoint, or cloud service. The tool works completely offline after the initial page load.",
         "q5": "What do the risk levels mean?",
-        "a5": "Risk levels are derived from both scores using the first matching rule in priority order. Critical means cyclomatic > 20 or cognitive > 24 — the function is extremely complex and should be split. High means cyclomatic > 10 or cognitive > 15 — significant refactoring is recommended. Medium means cyclomatic > 5 or cognitive > 7 — worth reviewing. Low means both scores are within safe bounds.",
+        "a5": "Risk levels are derived from both scores using the first matching rule in priority order. Critical means cyclomatic > 20 or cognitive > 24 -  the function is extremely complex and should be split. High means cyclomatic > 10 or cognitive > 15 -  significant refactoring is recommended. Medium means cyclomatic > 5 or cognitive > 7 -  worth reviewing. Low means both scores are within safe bounds.",
         "q6": "What refactor suggestions are generated?",
         "a6": "Suggestions are pattern-specific, not generic. The engine generates: extract deeply nested blocks into helper functions (nesting depth > 3), replace long if/else chains with a lookup table or strategy pattern (more than 4 branches at the same level), extract boolean expressions into named predicate functions (cognitive score > 15 with multiple logical operator sequences), split large functions by responsibility (more than 50 lines), and add unit tests to cover all independent paths (cyclomatic > 10).",
         "q7": "Can I sort and export the analysis results?",
@@ -928,7 +934,7 @@
         "q9": "What happens if my code has a syntax error?",
         "a9": "The analyzer performs graceful partial analysis. If a syntax error prevents parsing beyond a certain point, results for all successfully parsed functions before the error are still returned and displayed. An inline warning message indicates that the analysis is partial and identifies the error location.",
         "q10": "How is this different from linters like ESLint or SonarQube?",
-        "a10": "Linters enforce code style rules and flag specific patterns. SonarQube performs deep static analysis that requires a build environment and server infrastructure. The C³ MindLoop Code Complexity Analyzer is a lightweight, instant, browser-based tool that focuses specifically on complexity metrics and refactor guidance — no installation, no configuration, no account, and no data leaving your device."
+        "a10": "Linters enforce code style rules and flag specific patterns. SonarQube performs deep static analysis that requires a build environment and server infrastructure. The C³ MindLoop Code Complexity Analyzer is a lightweight, instant, browser-based tool that focuses specifically on complexity metrics and refactor guidance -  no installation, no configuration, no account, and no data leaving your device."
       }
     },
     "diffChecker": {

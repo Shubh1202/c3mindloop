@@ -1,64 +1,24 @@
 'use client';
 
-import React, { useRef } from 'react';
-import { Search, X } from 'lucide-react';
+import React from 'react';
 import { GraphStats } from './graphTypes';
 
 interface GraphInfoBarProps {
   stats: GraphStats | null;
-  searchQuery: string;
-  searchMatchCount: number;
-  onSearchChange: (q: string) => void;
   copiedPath: string | null;
 }
 
-export const GraphInfoBar: React.FC<GraphInfoBarProps> = ({
-  stats,
-  searchQuery,
-  searchMatchCount,
-  onSearchChange,
-  copiedPath,
-}) => {
-  const inputRef = useRef<HTMLInputElement>(null);
+/**
+ * Slim stats bar -  shows live graph metrics and copy-path feedback.
+ * Search has been moved to a collapsible row in JsonGraphTool (standard pattern).
+ */
+export const GraphInfoBar: React.FC<GraphInfoBarProps> = ({ stats, copiedPath }) => {
+  if (!stats && !copiedPath) return null;
 
   return (
-    <div className="flex items-center gap-3 px-3 py-1.5 border-b border-neutral-800 bg-neutral-900/40 shrink-0 flex-wrap">
-
-      {/* Search */}
-      <div className="flex items-center gap-1.5 flex-1 min-w-0 max-w-xs">
-        <Search className="w-3.5 h-3.5 text-neutral-500 shrink-0" />
-        <input
-          ref={inputRef}
-          type="text"
-          value={searchQuery}
-          onChange={(e) => onSearchChange(e.target.value)}
-          placeholder="Search keys or values…"
-          className="flex-1 min-w-0 bg-transparent text-xs font-mono text-neutral-200 placeholder-neutral-600 outline-none border-none"
-          spellCheck={false}
-          aria-label="Search nodes"
-        />
-        {searchQuery && (
-          <button
-            onClick={() => onSearchChange('')}
-            className="text-neutral-600 hover:text-neutral-400 transition-colors cursor-pointer shrink-0"
-            aria-label="Clear search"
-          >
-            <X className="w-3 h-3" />
-          </button>
-        )}
-        {searchQuery && (
-          <span className={`text-[10px] font-mono shrink-0 ${searchMatchCount > 0 ? 'text-amber-400' : 'text-neutral-600'}`}>
-            {searchMatchCount} match{searchMatchCount !== 1 ? 'es' : ''}
-          </span>
-        )}
-      </div>
-
-      {/* Divider */}
-      <div className="w-px h-4 bg-neutral-800 shrink-0 hidden sm:block" />
-
-      {/* Stats */}
+    <div className="flex items-center gap-3 px-3 py-1.5 border-b border-neutral-800 bg-neutral-900/40 shrink-0 flex-wrap text-[10px] font-mono text-neutral-600">
       {stats && (
-        <div className="flex items-center gap-3 text-[10px] font-mono text-neutral-600 flex-wrap">
+        <>
           <span title="Total keys">
             <span className="text-neutral-500">{stats.totalKeys}</span> keys
           </span>
@@ -76,14 +36,13 @@ export const GraphInfoBar: React.FC<GraphInfoBarProps> = ({
               <span className="text-neutral-500">{stats.nullCount}</span> null
             </span>
           )}
-        </div>
+        </>
       )}
 
-      {/* Copy path toast */}
       {copiedPath && (
         <>
-          <div className="w-px h-4 bg-neutral-800 shrink-0 hidden sm:block" />
-          <span className="text-[10px] font-mono text-emerald-500 truncate max-w-[200px]" title={copiedPath}>
+          {stats && <div className="w-px h-4 bg-neutral-800 shrink-0 hidden sm:block" />}
+          <span className="text-emerald-500 truncate max-w-[200px]" title={copiedPath}>
             ✓ {copiedPath}
           </span>
         </>

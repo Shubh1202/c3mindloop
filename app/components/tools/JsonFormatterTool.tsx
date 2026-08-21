@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { trackEvent, GA_EVENTS } from '../../lib/analytics';
 import {
   Copy,
@@ -22,13 +22,11 @@ import {
   Activity,
   Layers,
   Search,
-  ChevronUp,
-  ChevronDown,
-  X,
-  Filter,
 } from 'lucide-react';
 import { JsonTreeView, SearchTarget } from './JsonTreeView';
 import { LocalAIPanel, smartRepairJson } from './LocalAIPanel';
+import { useSearch } from '../../hooks/useSearch';
+import { SearchBar } from '../ui/SearchBar';
 
 type IndentOption = '2' | '4' | 'tab';
 type OutputMode = 'json' | 'typescript' | 'go' | 'csv';
@@ -238,7 +236,7 @@ function jsonToCSV(val: any): string {
  *  to the structurally equivalent position in the formatted JSON string.
  *  Both rawStart and fmtStart arrays produced by buildSyncAnchors are strictly
  *  increasing because the tokenizer walks both strings in a single forward DFS
- *  pass — this invariant makes binary search valid on both fields. */
+ *  pass -  this invariant makes binary search valid on both fields. */
 interface SyncAnchor {
   rawStart: number; // char offset in rawInput where this token begins
   fmtStart: number; // char offset in formattedOutput where the same token begins
@@ -356,12 +354,12 @@ function buildSyncAnchors(raw: string, fmt: string): SyncAnchor[] {
         }
         first = false;
 
-        // Anchor the KEY position — essential so each formatted line (which
+        // Anchor the KEY position -  essential so each formatted line (which
         // starts with indentation whitespace before the key) has a nearby
         // anchor, not just the value anchor that comes after the colon.
         anchors.push({ rawStart: ri, fmtStart: fi });
 
-        // Scan the key string (do not recurse — keys are not JSON values)
+        // Scan the key string (do not recurse -  keys are not JSON values)
         if (ri < raw.length && raw[ri] === '"') ri = scanStr(raw, ri);
         if (fi < fmt.length && fmt[fi] === '"') fi = scanStr(fmt, fi);
         ri = skipWs(raw, ri); fi = skipWs(fmt, fi);
@@ -413,7 +411,7 @@ function buildSyncAnchors(raw: string, fmt: string): SyncAnchor[] {
       ri = scanNum(raw, ri);
       fi = scanNum(fmt, fi);
     }
-    // On type mismatch (malformed / duplicate-key-desync): stop — partial
+    // On type mismatch (malformed / duplicate-key-desync): stop -  partial
     // anchors still provide useful synchronization for the rest of the document.
   };
 
@@ -485,25 +483,24 @@ export const JsonFormatterTool: React.FC = () => {
   const [autoFixProposed, setAutoFixProposed] = useState<{fixed: string, changes: string[]} | null>(null);
   const [showInspector, setShowInspector] = useState(false);
   
-  // Search Functionality States
-  const [searchQuery, setSearchQuery] = useState<string>('');
+  // Search Functionality States -  managed by useSearch hook
+  const search = useSearch({ debounceMs: 0, captureCtrlF: true }); // Ctrl+F captured by hook
+  // JsonFormatter-specific search state (not in the hook)
   const [searchTarget, setSearchTarget] = useState<SearchTarget>('all');
   const [matchCase, setMatchCase] = useState<boolean>(false);
   const [activeMatchIndex, setActiveMatchIndex] = useState<number>(0);
-  const [showSearchBar, setShowSearchBar] = useState<boolean>(false);
   const [totalMatchesCount, setTotalMatchesCount] = useState<number>(0);
   
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const searchInputRef = useRef<HTMLInputElement>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const leftPanelRef = useRef<HTMLDivElement>(null);   // outer left-panel div (scroll container in fullscreen)
   const outputContainerRef = useRef<HTMLDivElement>(null);
   const scrollingRef = useRef<'input' | 'output' | null>(null);
-  const syncRafRef = useRef<number | null>(null);       // pending rAF id — cancelled on rapid scroll
+  const syncRafRef = useRef<number | null>(null);       // pending rAF id -  cancelled on rapid scroll
 
-  // Refs for content-aware sync data — rebuilt on every successful parse.
+  // Refs for content-aware sync data -  rebuilt on every successful parse.
   const syncAnchorsRef = useRef<SyncAnchor[]>([]);
   const rawLineStartsRef = useRef<number[]>([]);
   const fmtLineStartsRef = useRef<number[]>([]);
@@ -540,7 +537,7 @@ export const JsonFormatterTool: React.FC = () => {
       const fmtLS = fmtLineStartsRef.current;
 
       if (anchors.length === 0 || rawLS.length === 0 || fmtLS.length === 0) {
-        // No anchors yet (invalid JSON) — proportional fallback.
+        // No anchors yet (invalid JSON) -  proportional fallback.
         const scrollable = leftScroller.scrollHeight - leftScroller.clientHeight;
         if (scrollable > 0) {
           output.scrollTop =
@@ -551,7 +548,7 @@ export const JsonFormatterTool: React.FC = () => {
         return;
       }
 
-      // Use getComputedStyle for line height — reads the actual rendered value.
+      // Use getComputedStyle for line height -  reads the actual rendered value.
       const rawLH = parseFloat(getComputedStyle(textarea).lineHeight) || 20;
       const isMinified = rawLS.length <= 1;
       let rawOffset: number;
@@ -645,37 +642,28 @@ export const JsonFormatterTool: React.FC = () => {
     });
   };
 
-  // Keyboard shortcut listener: Ctrl+F or Cmd+F to toggle/focus Search Bar
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'f') {
-        e.preventDefault();
-        setShowSearchBar(true);
-        setTimeout(() => searchInputRef.current?.focus(), 50);
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
-
+  // Ctrl+F is now handled by useSearch hook (captureCtrlF: true)
+  // activeMatchIndex is synced from search.matchIdx
   const handleNextMatch = () => {
     if (totalMatchesCount === 0) return;
     setActiveMatchIndex((prev) => (prev + 1) % totalMatchesCount);
+    search.next(totalMatchesCount);
   };
 
   const handlePrevMatch = () => {
     if (totalMatchesCount === 0) return;
     setActiveMatchIndex((prev) => (prev - 1 + totalMatchesCount) % totalMatchesCount);
+    search.prev(totalMatchesCount);
   };
 
   // Auto-scroll output container to currently active search match
   useEffect(() => {
-    if (!searchQuery.trim() || totalMatchesCount === 0) return;
+    if (!search.query.trim() || totalMatchesCount === 0) return;
     const el = document.getElementById(`json-search-match-${activeMatchIndex}`);
     if (el && outputContainerRef.current) {
       el.scrollIntoView({ block: 'center', behavior: 'smooth' });
     }
-  }, [activeMatchIndex, searchQuery, totalMatchesCount, viewMode]);
+  }, [activeMatchIndex, search.query, totalMatchesCount, viewMode]);
 
   const showToast = (message: string) => {
     if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
@@ -827,13 +815,21 @@ export const JsonFormatterTool: React.FC = () => {
   }, [rawInput, indentOption]);
 
   // Rebuild the content-aware sync anchor table after every successful parse.
-  // Runs synchronously; optimize only if profiling reveals UI blocking on real
-  // large-document workloads.
+  // Skips expensive buildSyncAnchors for very large documents to prevent blocking.
+  const SYNC_ANCHOR_SIZE_LIMIT = 200_000; // 200KB
+
   useEffect(() => {
     if (!parsedObject || !formattedOutput || !rawInput) {
       syncAnchorsRef.current = [];
       rawLineStartsRef.current = [];
       fmtLineStartsRef.current = [];
+      return;
+    }
+    // Skip anchor building for very large documents to prevent main thread blocking
+    if (rawInput.length > SYNC_ANCHOR_SIZE_LIMIT) {
+      syncAnchorsRef.current = [];
+      rawLineStartsRef.current = buildLineStarts(rawInput);
+      fmtLineStartsRef.current = buildLineStarts(formattedOutput);
       return;
     }
     rawLineStartsRef.current = buildLineStarts(rawInput);
@@ -869,8 +865,44 @@ export const JsonFormatterTool: React.FC = () => {
     }
   };
 
+  // Memoised active output text -  avoids recomputing on every render
+  const activeOutputText = useMemo(() => getActiveOutputText(), [parsedObject, formattedOutput, rawInput, outputMode]);
+
+  // Memoised byte counts -  avoids allocating Blob objects on every render
+  const rawBytes = useMemo(() => new TextEncoder().encode(rawInput).length, [rawInput]);
+  const outputBytes = useMemo(() => new TextEncoder().encode(activeOutputText).length, [activeOutputText]);
+
+  // Memoised line count -  avoids splitting a potentially huge array on every render
+  const lineCount = useMemo(() => {
+    let count = 1;
+    for (let i = 0; i < rawInput.length; i++) {
+      if (rawInput[i] === '\n') count++;
+    }
+    return count;
+  }, [rawInput]);
+
+  // Count search matches outside the render phase to avoid the infinite-loop
+  // caused by calling setState during render.
+  useEffect(() => {
+    if (!search.debouncedQuery.trim()) {
+      setTotalMatchesCount(0);
+      return;
+    }
+    const text = activeOutputText;
+    if (!text) { setTotalMatchesCount(0); return; }
+    const flags = matchCase ? 'g' : 'gi';
+    const escapedQuery = search.debouncedQuery.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    try {
+      const regex = new RegExp(escapedQuery, flags);
+      const matches = text.match(regex);
+      setTotalMatchesCount(matches ? matches.length : 0);
+    } catch {
+      setTotalMatchesCount(0);
+    }
+  }, [activeOutputText, search.debouncedQuery, matchCase]);
+
   const handleCopy = () => {
-    const textToCopy = getActiveOutputText();
+    const textToCopy = activeOutputText;
     if (!textToCopy) return;
     navigator.clipboard.writeText(textToCopy);
     setCopied(true);
@@ -894,7 +926,7 @@ export const JsonFormatterTool: React.FC = () => {
   };
 
   const handleDownload = () => {
-    const content = getActiveOutputText();
+    const content = activeOutputText;
     if (!content) return;
     
     let mimeType = 'application/json';
@@ -919,12 +951,25 @@ export const JsonFormatterTool: React.FC = () => {
     URL.revokeObjectURL(url);
   };
 
-  const rawBytes = new Blob([rawInput]).size;
-  const outputBytes = new Blob([getActiveOutputText()]).size;
-  const lineCount = rawInput.split('\n').length;
+  const HIGHLIGHT_SIZE_LIMIT = 500_000; // 500KB
 
   const renderHighlightedCode = (code: string, mode: OutputMode) => {
     if (!code) return null;
+
+    // For very large files, skip syntax highlighting to avoid massive DOM
+    if (code.length > HIGHLIGHT_SIZE_LIMIT) {
+      return (
+        <div>
+          <div className="px-4 pt-2 text-[11px] text-neutral-500 font-mono">
+            Syntax highlighting disabled for large files (&gt;500KB) to prevent browser memory issues.
+          </div>
+          <pre className="font-mono text-xs sm:text-sm p-4 text-neutral-200 leading-relaxed whitespace-pre-wrap break-words [word-break:break-word] overflow-x-hidden">
+            {code}
+          </pre>
+        </div>
+      );
+    }
+
     const escaped = code
       .replace(/&/g, '&amp;')
       .replace(/</g, '&lt;')
@@ -932,7 +977,7 @@ export const JsonFormatterTool: React.FC = () => {
 
     let highlighted = escaped;
     let matchCounter = 0;
-    const trimmedQuery = searchQuery.trim();
+    const trimmedQuery = search.query.trim();
 
     const highlightMatchesInText = (textChunk: string, isKeyToken: boolean) => {
       if (!trimmedQuery) return textChunk;
@@ -992,10 +1037,6 @@ export const JsonFormatterTool: React.FC = () => {
       highlighted = highlightMatchesInText(escaped, false);
     }
 
-    if (matchCounter !== totalMatchesCount) {
-      setTimeout(() => setTotalMatchesCount(matchCounter), 0);
-    }
-
     return (
       <pre
         className="font-mono text-xs sm:text-sm p-4 text-neutral-200 leading-relaxed whitespace-pre-wrap break-words [word-break:break-word] overflow-x-hidden"
@@ -1050,12 +1091,12 @@ export const JsonFormatterTool: React.FC = () => {
               <span>Clear</span>
             </button>
 
-            {/* Sync Scroll Toggle — disabled outside JSON › Code View */}
+            {/* Sync Scroll Toggle -  disabled outside JSON › Code View */}
             <button
               onClick={() => { if (isSyncScrollAvailable) setSyncScroll(!syncScroll); }}
               title={
                 isSyncScrollAvailable
-                  ? 'Content-aware scroll sync — aligns JSON structure between panels, not scroll percentage'
+                  ? 'Content-aware scroll sync -  aligns JSON structure between panels, not scroll percentage'
                   : 'Sync Scroll is only available in JSON › Code View'
               }
               disabled={!isSyncScrollAvailable}
@@ -1078,15 +1119,10 @@ export const JsonFormatterTool: React.FC = () => {
 
             {/* Search Toggle Button */}
             <button
-              onClick={() => {
-                setShowSearchBar(!showSearchBar);
-                if (!showSearchBar) {
-                  setTimeout(() => searchInputRef.current?.focus(), 50);
-                }
-              }}
+              onClick={search.toggle}
               title="Search keys or values (Ctrl+F)"
               className={`px-2 py-1.5 rounded transition-colors flex items-center gap-1 cursor-pointer ${
-                showSearchBar || searchQuery
+                search.isOpen || search.query
                   ? 'bg-[#1D9BF0]/20 text-[#1D9BF0] border border-[#1D9BF0]/30'
                   : 'bg-neutral-800 text-neutral-400 border border-transparent hover:text-white'
               }`}
@@ -1182,129 +1218,40 @@ export const JsonFormatterTool: React.FC = () => {
         </div>
 
         {/* Collapsible Search Controls Bar */}
-        {showSearchBar && (
-          <div className="px-3 py-2 bg-neutral-900 border-b border-neutral-800 flex flex-nowrap items-center justify-between gap-2 text-xs font-mono animate-[searchBarIn_0.18s_ease-out]">
-            <div className="flex flex-nowrap items-center gap-2">
-              {/* Search Input */}
-              <div className="relative flex items-center">
-                <Search className="w-3.5 h-3.5 absolute left-2.5 text-neutral-400 pointer-events-none" />
-                <input
-                  ref={searchInputRef}
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => {
-                    setSearchQuery(e.target.value);
-                    setActiveMatchIndex(0);
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      e.preventDefault();
-                      if (e.shiftKey) {
-                        handlePrevMatch();
-                      } else {
-                        handleNextMatch();
-                      }
-                    } else if (e.key === 'Escape') {
-                      setSearchQuery('');
-                      setShowSearchBar(false);
-                    }
-                  }}
-                  placeholder="Search JSON..."
-                  className="w-48 pl-8 pr-7 py-1 bg-neutral-950 text-neutral-100 border border-neutral-700 rounded focus:border-[#1D9BF0] focus:outline-none text-xs"
-                />
-                {searchQuery && (
-                  <button
-                    onClick={() => {
-                      setSearchQuery('');
-                      setActiveMatchIndex(0);
-                    }}
-                    className="absolute right-2 text-neutral-400 hover:text-white"
-                  >
-                    <X className="w-3 h-3" />
-                  </button>
-                )}
-              </div>
-
-              {/* Target Filter Selector: All | Keys Only | Values Only */}
-              <div className="flex items-center bg-neutral-950 p-0.5 rounded border border-neutral-800 text-[11px]">
-                <button
-                  onClick={() => setSearchTarget('all')}
-                  className={`px-2 py-0.5 rounded transition-colors ${searchTarget === 'all' ? 'bg-[#1D9BF0] text-white font-medium' : 'text-neutral-400 hover:text-white'}`}
-                >
-                  All
-                </button>
-                <button
-                  onClick={() => setSearchTarget('keys')}
-                  className={`px-2 py-0.5 rounded transition-colors ${searchTarget === 'keys' ? 'bg-[#1D9BF0] text-white font-medium' : 'text-neutral-400 hover:text-white'}`}
-                >
-                  Keys
-                </button>
-                <button
-                  onClick={() => setSearchTarget('values')}
-                  className={`px-2 py-0.5 rounded transition-colors ${searchTarget === 'values' ? 'bg-[#1D9BF0] text-white font-medium' : 'text-neutral-400 hover:text-white'}`}
-                >
-                  Values
+        {/* Search bar -  powered by useSearch hook + shared SearchBar component */}
+        {search.isOpen && (
+          <SearchBar
+            query={search.query}
+            onQueryChange={(v) => { search.setQuery(v); setActiveMatchIndex(0); }}
+            totalMatches={totalMatchesCount}
+            matchIdx={activeMatchIndex}
+            onNext={handleNextMatch}
+            onPrev={handlePrevMatch}
+            onClose={() => { search.close(); search.clear(); }}
+            inputRef={search.inputRef}
+            placeholder="Search JSON..."
+            scopeSelector={
+              <div className="flex items-center gap-1.5 shrink-0">
+                {/* Target Filter */}
+                <div className="flex items-center bg-neutral-950 p-0.5 rounded border border-neutral-800 text-[11px]">
+                  {(['all', 'keys', 'values'] as const).map(t => (
+                    <button key={t} onClick={() => setSearchTarget(t)}
+                      className={`px-2 py-0.5 rounded transition-colors capitalize ${searchTarget === t ? 'bg-[#1D9BF0] text-white font-medium' : 'text-neutral-400 hover:text-white'}`}>
+                      {t === 'all' ? 'All' : t === 'keys' ? 'Keys' : 'Values'}
+                    </button>
+                  ))}
+                </div>
+                {/* Match Case */}
+                <button onClick={() => setMatchCase(!matchCase)}
+                  title="Toggle Case Sensitivity"
+                  className={`px-2 py-1 rounded border text-[11px] font-semibold transition-colors ${
+                    matchCase ? 'bg-amber-500/20 text-amber-300 border-amber-500/40' : 'bg-neutral-950 text-neutral-400 border-neutral-800 hover:text-white'
+                  }`}>
+                  Aa
                 </button>
               </div>
-
-              {/* Match Case Toggle */}
-              <button
-                onClick={() => setMatchCase(!matchCase)}
-                title="Toggle Case Sensitivity"
-                className={`px-2 py-1 rounded border text-[11px] font-semibold transition-colors ${
-                  matchCase ? 'bg-amber-500/20 text-amber-300 border-amber-500/40' : 'bg-neutral-950 text-neutral-400 border-neutral-800 hover:text-white'
-                }`}
-              >
-                Aa
-              </button>
-            </div>
-
-            <div className="flex items-center gap-2 text-xs shrink-0">
-              {/* Match Counter */}
-              <span className="text-neutral-400 text-[11px] min-w-[60px] text-right">
-                {searchQuery.trim() ? (
-                  totalMatchesCount > 0 ? (
-                    <span className="text-amber-300 font-semibold">{activeMatchIndex + 1}/{totalMatchesCount}</span>
-                  ) : (
-                    <span className="text-red-400">0 found</span>
-                  )
-                ) : (
-                  <span className="text-neutral-500">0 found</span>
-                )}
-              </span>
-
-              {/* Match Navigation Arrows */}
-              <div className="flex items-center gap-0.5 bg-neutral-950 p-0.5 rounded border border-neutral-800">
-                <button
-                  onClick={handlePrevMatch}
-                  disabled={!searchQuery.trim() || totalMatchesCount === 0}
-                  title="Previous Match (Shift+Enter)"
-                  className="p-1 text-neutral-300 hover:text-white disabled:opacity-30 disabled:hover:text-neutral-300"
-                >
-                  <ChevronUp className="w-3.5 h-3.5" />
-                </button>
-                <button
-                  onClick={handleNextMatch}
-                  disabled={!searchQuery.trim() || totalMatchesCount === 0}
-                  title="Next Match (Enter)"
-                  className="p-1 text-neutral-300 hover:text-white disabled:opacity-30 disabled:hover:text-neutral-300"
-                >
-                  <ChevronDown className="w-3.5 h-3.5" />
-                </button>
-              </div>
-
-              <button
-                onClick={() => {
-                  setShowSearchBar(false);
-                  setSearchQuery('');
-                }}
-                className="p-1 text-neutral-400 hover:text-white"
-                title="Close Search (Esc)"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
+            }
+          />
         )}
 
         {/* Local AI Assist Panel */}
@@ -1464,12 +1411,12 @@ export const JsonFormatterTool: React.FC = () => {
                     )}
                   </div>
                 ) : viewMode === 'code' ? (
-                  renderHighlightedCode(getActiveOutputText(), outputMode)
+                  renderHighlightedCode(activeOutputText, outputMode)
                 ) : (
                   <JsonTreeView
                     data={parsedObject}
                     initialExpandedDepth={2}
-                    searchQuery={searchQuery}
+                    searchQuery={search.query}
                     searchTarget={searchTarget}
                     matchCase={matchCase}
                   />

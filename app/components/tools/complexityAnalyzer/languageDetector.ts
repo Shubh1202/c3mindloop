@@ -34,7 +34,7 @@ export function detectFromExtension(filename: string): SupportedLanguage | null 
 }
 
 // ---------------------------------------------------------------------------
-// detectFromCode — signal tables
+// detectFromCode -  signal tables
 // ---------------------------------------------------------------------------
 
 type SignalTable = Record<SupportedLanguage, string[]>;
@@ -179,7 +179,7 @@ export function detectFromCode(code: string): { language: SupportedLanguage; ass
 
   for (const lang of languages) {
     const s = scores[lang];
-    // Strictly greater — ties keep whatever winner we already have.
+    // Strictly greater -  ties keep whatever winner we already have.
     // We seed winner = 'javascript' so ties resolve to JavaScript automatically.
     if (s > maxScore) {
       maxScore = s;

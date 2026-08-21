@@ -1,4 +1,4 @@
-// NOTE: Regex/heuristic analysis — not a full AST parser.
+// NOTE: Regex/heuristic analysis -  not a full AST parser.
 // High accuracy for standard patterns; edge cases (template literals with braces,
 // complex TypeScript generics) may produce minor inaccuracies.
 
@@ -83,7 +83,7 @@ function findOpenBrace(
 }
 
 // ---------------------------------------------------------------------------
-// Part 1: Function Detection — JS/TS
+// Part 1: Function Detection -  JS/TS
 // ---------------------------------------------------------------------------
 
 function detectJsTs(lines: string[]): FunctionBoundary[] {
@@ -105,7 +105,7 @@ function detectJsTs(lines: string[]): FunctionBoundary[] {
   const getterSetter =
     /^\s*(?:(?:public|private|protected|static)\s+)*(?:get|set)\s+(\w+)\s*\(/;
 
-  // Class method: methodName( { — must not be a keyword line
+  // Class method: methodName( { -  must not be a keyword line
   const classMethod =
     /^\s*(?:(?:public|private|protected|static|abstract|override|readonly|async)\s+)*(\w+)\s*\([^)]*\)\s*(?::\s*[\w<>\[\]|&,\s?]+)?\s*\{/;
 
@@ -189,7 +189,7 @@ function detectJsTs(lines: string[]): FunctionBoundary[] {
 }
 
 // ---------------------------------------------------------------------------
-// Part 1: Function Detection — Python (indentation-based)
+// Part 1: Function Detection -  Python (indentation-based)
 // ---------------------------------------------------------------------------
 
 function detectPython(lines: string[]): FunctionBoundary[] {
@@ -220,7 +220,7 @@ function detectPython(lines: string[]): FunctionBoundary[] {
 
         const indent = nextLine.length - trimmed.length;
         if (indent <= baseIndent) {
-          // Back to same or less indentation — function ended on previous line
+          // Back to same or less indentation -  function ended on previous line
           endLine = j; // 1-indexed line number of last body line
           break;
         }
@@ -243,7 +243,7 @@ function detectPython(lines: string[]): FunctionBoundary[] {
 }
 
 // ---------------------------------------------------------------------------
-// Part 1: Function Detection — Java
+// Part 1: Function Detection -  Java
 // ---------------------------------------------------------------------------
 
 function detectJava(lines: string[]): FunctionBoundary[] {
@@ -304,7 +304,7 @@ function detectJava(lines: string[]): FunctionBoundary[] {
 }
 
 // ---------------------------------------------------------------------------
-// Part 1: Function Detection — Go
+// Part 1: Function Detection -  Go
 // ---------------------------------------------------------------------------
 
 function detectGo(lines: string[]): FunctionBoundary[] {
@@ -337,7 +337,7 @@ function detectGo(lines: string[]): FunctionBoundary[] {
 }
 
 // ---------------------------------------------------------------------------
-// Part 1: Function Detection — C / C++
+// Part 1: Function Detection -  C / C++
 // ---------------------------------------------------------------------------
 
 function detectC(lines: string[]): FunctionBoundary[] {
@@ -444,7 +444,7 @@ function cyclomaticIncrementsOnLine(line: string, language: SupportedLanguage): 
   const cleaned = stripStrings(line);
   let count = 0;
 
-  // Each `if` (includes else-if — both count as branch points)
+  // Each `if` (includes else-if -  both count as branch points)
   count += countKeyword(cleaned, 'if');
 
   // Python elif (not caught by `if` above since it's a different word)
@@ -786,14 +786,14 @@ function generateSuggestions(
 
   if (lineCount > 50) {
     suggestions.push({
-      text: 'Split this function by responsibility — it spans too many lines.',
+      text: 'Split this function by responsibility -  it spans too many lines.',
       scoreContribution: Math.floor(lineCount / 10),
     });
   }
 
   if (cyclomatic > 10) {
     suggestions.push({
-      text: 'Add unit tests to cover all independent paths — this function has high cyclomatic complexity.',
+      text: 'Add unit tests to cover all independent paths -  this function has high cyclomatic complexity.',
       scoreContribution: cyclomatic,
     });
   }

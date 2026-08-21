@@ -56,7 +56,7 @@ export const GraphNodeComponent: React.FC<GraphNodeProps> = ({
     setStickyHover(true);
   }, []);
 
-  // Header click — toggles collapse/expand, does NOT fire for leaf nodes
+  // Header click -  toggles collapse/expand, does NOT fire for leaf nodes
   const handleHeaderClick = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
     if (isLeaf) return;
@@ -64,7 +64,7 @@ export const GraphNodeComponent: React.FC<GraphNodeProps> = ({
     setStickyHover(false);
   }, [isLeaf, node.id, onNodeClick]);
 
-  // Row click — copies the row's JSON path to clipboard
+  // Row click -  copies the row's JSON path to clipboard
   const handleRowClick = useCallback((e: React.MouseEvent, path: string) => {
     e.stopPropagation(); // prevent node collapse toggle
     navigator.clipboard.writeText(path).then(() => {
@@ -72,7 +72,7 @@ export const GraphNodeComponent: React.FC<GraphNodeProps> = ({
       onCopyPath?.(path);
       setTimeout(() => setCopiedRowPath(null), 1500);
     }).catch(() => {
-      // Clipboard API unavailable — silently ignore
+      // Clipboard API unavailable -  silently ignore
     });
   }, [onCopyPath]);
 
@@ -118,7 +118,7 @@ export const GraphNodeComponent: React.FC<GraphNodeProps> = ({
         onClick={handleHeaderClick}
         style={{ cursor: isLeaf ? 'default' : 'pointer' }}
         role={isLeaf ? undefined : 'button'}
-        aria-label={isLeaf ? undefined : `${node.label} — ${isCollapsed ? 'expand' : 'collapse'}`}
+        aria-label={isLeaf ? undefined : `${node.label} -  ${isCollapsed ? 'expand' : 'collapse'}`}
         aria-expanded={isLeaf ? undefined : !isCollapsed}
       />
       {/* Flatten bottom-corner radius of header overlay */}
@@ -173,7 +173,7 @@ export const GraphNodeComponent: React.FC<GraphNodeProps> = ({
         </text>
       )}
 
-      {/* Rows — each is clickable for copy-path */}
+      {/* Rows -  each is clickable for copy-path */}
       {node.rows.map((row, i) => {
         const rowY = HEADER_HEIGHT + i * ROW_HEIGHT;
         const rowCenterY = rowY + ROW_HEIGHT / 2;
@@ -243,7 +243,7 @@ export const GraphNodeComponent: React.FC<GraphNodeProps> = ({
         );
       })}
 
-      {/* Collapsed badge — intercepts clicks to expand (must NOT fall through to rows) */}
+      {/* Collapsed badge -  intercepts clicks to expand (must NOT fall through to rows) */}
       {isCollapsed && node.childEdges.length > 0 && (
         <g
           onClick={handleHeaderClick}

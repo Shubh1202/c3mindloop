@@ -50,13 +50,28 @@ export const ProductsPreviewSection: React.FC = () => {
         {/* Featured VS Code Extension Card */}
         <VSCodeExtensionCard />
 
-        {/* Editorial Structural Line List for Browser Tools */}
-        <div className="space-y-4 pt-4">
-          <h3 className="text-xs font-mono font-semibold uppercase tracking-wider text-theme-muted">
-            Browser Utilities Suite
-          </h3>
-          <div className="divide-y divide-theme-subtle border-t border-b border-theme-subtle">
-            {PRODUCTS_LIST.map((prod, idx) => {
+        {/* Browser Utilities Suite - Sleek Card Grid */}
+        <div className="space-y-6 pt-4">
+          <div className="flex items-center justify-between border-b border-theme-subtle pb-3">
+            <div>
+              <h3 className="text-xs font-mono font-semibold uppercase tracking-wider text-[#1D9BF0] flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#1D9BF0]" />
+                Browser Utilities Suite
+              </h3>
+              <p className="text-xs text-theme-muted mt-1">
+                Zero network requests • Processed 100% inside your local browser sandbox
+              </p>
+            </div>
+            <Link
+              to="/tools"
+              className="text-xs font-mono text-theme-muted hover:text-[#1D9BF0] transition-colors hidden sm:flex items-center gap-1"
+            >
+              View all 15+ tools <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+            {PRODUCTS_LIST.map((prod) => {
               const name = t(prod.nameKey, prod.nameKey);
               const desc = t(prod.descKey, prod.descKey);
               const toolRoutes: Record<string, string> = {
@@ -76,46 +91,49 @@ export const ProductsPreviewSection: React.FC = () => {
                 'json-graph': '/tools/json-graph',
                 'code-complexity-analyzer': '/tools/code-complexity-analyzer',
               };
-              const toolHref = toolRoutes[prod.id];
+              const toolHref = toolRoutes[prod.id] || '/tools';
+              const IconComponent = iconMap[prod.icon] || Cpu;
 
               return (
                 <Link
                   key={prod.id}
-                  to={toolHref ?? '/tools'}
-                  onClick={(e: React.MouseEvent<HTMLAnchorElement>) => {
-                    if (!toolHref) {
-                      e.preventDefault();
-                      setSelectedProduct(prod);
-                    }
-                  }}
-                  className="py-6 sm:py-8 flex flex-col md:flex-row md:items-center justify-between gap-6 hover-bg-surface transition-colors cursor-pointer group"
+                  to={toolHref}
+                  className="p-5 rounded-xl bg-neutral-900/60 border border-white/10 hover:border-[#1D9BF0]/40 hover:bg-neutral-900/90 transition-all duration-200 flex flex-col justify-between group shadow-sm hover:shadow-lg relative overflow-hidden"
                 >
-                  {/* Left: Index + Title + Desc */}
-                  <div className="flex items-start gap-6 max-w-3xl">
-                    <span className="text-xs font-mono text-theme-muted pt-1 shrink-0">
-                      0{idx + 1}
-                    </span>
-                    <div>
-                      <h3 className="text-lg font-semibold text-theme-main group-hover:text-[#1D9BF0] transition-colors flex items-center gap-2">
-                        <span>{name}</span>
-                        <ArrowUpRight className="w-4 h-4 text-theme-muted group-hover:text-[#1D9BF0] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
-                      </h3>
-                      <p className="text-xs text-theme-muted font-normal mt-1 leading-relaxed">
-                        {desc}
-                      </p>
+                  <div>
+                    {/* Card Top: Icon + Name */}
+                    <div className="flex items-start justify-between gap-3 mb-3">
+                      <div className="p-2.5 rounded-lg bg-neutral-800/80 text-neutral-300 group-hover:bg-[#1D9BF0]/20 group-hover:text-[#1D9BF0] transition-colors shrink-0">
+                        <IconComponent className="w-4 h-4" />
+                      </div>
+                      <span className="text-[9px] font-mono font-semibold uppercase tracking-wider text-neutral-400 bg-white/5 px-2 py-0.5 rounded border border-white/10 shrink-0">
+                        Client-Side
+                      </span>
                     </div>
+
+                    <h4 className="text-base font-semibold text-white group-hover:text-[#1D9BF0] transition-colors flex items-center justify-between gap-1 leading-snug">
+                      <span>{name}</span>
+                      <ArrowUpRight className="w-4 h-4 text-neutral-500 group-hover:text-[#1D9BF0] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all shrink-0" />
+                    </h4>
+
+                    <p className="text-xs text-neutral-400 group-hover:text-neutral-300 transition-colors mt-2 line-clamp-2 leading-relaxed font-normal">
+                      {desc}
+                    </p>
                   </div>
 
-                  {/* Right: Tech Stack */}
-                  <div className="flex flex-wrap items-center gap-3 md:justify-end shrink-0">
-                    {prod.techStack.map((tech) => (
-                      <span
-                        key={tech}
-                        className="text-xs font-mono text-theme-muted border-l border-theme-subtle pl-2"
-                      >
-                        {tech}
-                      </span>
-                    ))}
+                  <div className="mt-4 pt-3 border-t border-white/5 flex items-center justify-between">
+                    {/* Tech stack badge */}
+                    <div className="flex items-center gap-1.5 overflow-hidden">
+                      {prod.techStack.slice(0, 2).map((tech) => (
+                        <span key={tech} className="text-[10px] font-mono text-neutral-400 bg-white/5 border border-white/10 px-1.5 py-0.5 rounded truncate">
+                          {tech}
+                        </span>
+                      ))}
+                    </div>
+
+                    <span className="text-xs font-mono text-neutral-400 group-hover:text-[#1D9BF0] transition-colors font-medium shrink-0 flex items-center gap-1">
+                      Launch →
+                    </span>
                   </div>
                 </Link>
               );
@@ -124,12 +142,12 @@ export const ProductsPreviewSection: React.FC = () => {
         </div>
 
         {/* Link to Full Suite */}
-        <div className="mt-12 text-left">
+        <div className="mt-10 text-center sm:text-left">
           <Link
             to="/tools"
-            className="inline-flex items-center gap-2 text-sm font-medium text-theme-main hover:text-[#1D9BF0] transition-colors group cursor-pointer"
+            className="inline-flex items-center gap-2.5 px-6 py-3 rounded-lg bg-neutral-900 border border-white/10 hover:border-[#1D9BF0]/40 text-sm font-mono font-medium text-white hover:text-[#1D9BF0] transition-all group cursor-pointer shadow-md hover:shadow-xl"
           >
-            <span>Explore All Developer Utilities</span>
+            <span>Explore All 15+ Developer Utilities</span>
             <ArrowRight className="w-4 h-4 text-[#1D9BF0] group-hover:translate-x-1.5 transition-transform" />
           </Link>
         </div>
