@@ -789,6 +789,38 @@
         "a3": "Yes, you can upload installers, binaries, or archival files locally. The file reader streams your data chunk-by-chunk directly into the local hashing engine to verify integrity against your expected signature values without crashes."
       }
     },
+    "passwordShuffleGenerator": {
+      "pageTitle": "Password & Shuffle Generator",
+      "pageBadge": "100% Client-Side • crypto.getRandomValues",
+      "breadcrumb": "Password & Shuffle Generator",
+      "breadcrumbParent": "Developer Tools",
+      "feat1Title": "Cryptographic Password Generation",
+      "feat1Desc": "Generates passwords using crypto.getRandomValues — the same API browsers use for TLS. Configurable length (8–128), character categories, and ambiguous-character exclusion.",
+      "feat2Title": "Fisher-Yates List Shuffler",
+      "feat2Desc": "Paste any newline-separated list and get it back in a uniformly random order. Single-line input shuffles individual characters. All randomness from crypto.getRandomValues.",
+      "feat3Title": "Entropy & Strength Feedback",
+      "feat3Desc": "Live entropy display in bits with a four-tier strength label (Weak / Fair / Strong / Very Strong) so you can judge password quality before generating.",
+      "guide": {
+        "title": "How the Password & Shuffle Generator Works",
+        "intro": "Both tools use the browser's crypto.getRandomValues API — the same source of randomness used in TLS key generation — so output is suitable for credentials and randomized test data.",
+        "step1": "Choose a mode: Switch between Password and Shuffle using the mode toggle in the toolbar.",
+        "step2": "Configure password options: Set a length from 8 to 128, enable the character categories you need (uppercase, lowercase, digits, symbols), and optionally exclude visually ambiguous characters like 0/O and l/1/I.",
+        "step3": "Generate or shuffle: Click Regenerate to produce a new password, or paste a list into the Shuffle panel and click Shuffle to randomize the order of items.",
+        "step4": "Copy the result: Click the Copy button next to the output. The label changes to Copied! for two seconds and then reverts.",
+        "privacyTitle": "Why Client-Side Matters for Passwords",
+        "privacyIntro": "Generating passwords or shuffling sensitive lists through a remote server means that data crosses a network, passes through server logs, and may be stored. This tool does none of that.",
+        "privacyBullet1": "Zero transmission: crypto.getRandomValues runs inside your browser's JavaScript engine. No password or list item is sent to any C³ MindLoop server.",
+        "privacyBullet2": "No persistence: Nothing is written to localStorage, sessionStorage, or cookies. Closing or refreshing the page clears all state."
+      },
+      "faq": {
+        "q1": "Is crypto.getRandomValues actually cryptographically secure?",
+        "a1": "Yes. crypto.getRandomValues is seeded by the operating system's CSPRNG (e.g., /dev/urandom on Linux, BCryptGenRandom on Windows). It is the same entropy source browsers use when establishing TLS connections. It is suitable for generating passwords, tokens, and nonces.",
+        "q2": "What happens when I shuffle a single line of text?",
+        "a2": "When the input contains only one non-empty line, the tool treats each character as an individual item and shuffles them using Fisher-Yates with crypto.getRandomValues. This lets you randomize short strings or single words character by character.",
+        "q3": "Does the tool store my passwords or shuffled lists?",
+        "a3": "No. All state lives only in React component memory for the duration of your browser session. Nothing is written to localStorage, sessionStorage, IndexedDB, or cookies. Closing or refreshing the page discards everything."
+      }
+    },
     "atsResume": {
       "pageTitle": "ATS Resume Generator",
       "pageBadge": "100% Client-Side • No Upload • Print to PDF",
@@ -1080,6 +1112,18 @@
         "q10": "What is the difference between Graph View and Tree View?",
         "a10": "Graph View renders JSON as a zoomable, pannable SVG canvas where objects and arrays are positioned as connected nodes. It is best for exploring structure spatially and understanding relationships between nested objects. Tree View displays the same JSON as a collapsible indented list, similar to a browser DevTools inspector. It is faster for large payloads and better for reading specific values. Both views share the same input panel and respond instantly to changes in the JSON text."
       }
+    },
+    "pipeline": {
+      "pageTitle": "Tool Pipeline Builder",
+      "pageBadge": "100% Client-Side - Local Browser Processing",
+      "breadcrumb": "Pipeline",
+      "breadcrumbParent": "Developer Tools",
+      "feat1Title": "Sequential Execution",
+      "feat1Desc": "Each step's output is automatically passed as the next step's input. No manual copy-paste between tools.",
+      "feat2Title": "Shareable URL",
+      "feat2Desc": "Pipeline state - steps, config, and input - is encoded into the URL hash. Copy the link and share it with a teammate.",
+      "feat3Title": "Zero Server Contact",
+      "feat3Desc": "All adapters (Base64, JSON, JWT, Regex, Hash, SQL) run entirely in the browser. Nothing leaves your machine."
     }
   }
 }

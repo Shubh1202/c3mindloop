@@ -60,6 +60,7 @@ export const Navbar: React.FC<{
                     key={link.path}
                     type="button"
                     onClick={() => setToolsHubOpen(true)}
+                    suppressHydrationWarning
                     className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all flex items-center gap-1.5 cursor-pointer ${
                       isActive
                         ? 'bg-[#1D9BF0]/15 text-[#1D9BF0] font-semibold border border-[#1D9BF0]/30'
@@ -96,6 +97,7 @@ export const Navbar: React.FC<{
               <button
                 type="button"
                 onClick={onReplayIntro}
+                suppressHydrationWarning
                 className="h-9 w-9 p-2 rounded-lg bg-neutral-900 border border-white/10 text-neutral-300 hover:text-[#1D9BF0] hover:bg-neutral-800 transition-colors cursor-pointer pointer-events-auto flex items-center justify-center shrink-0"
                 title="Replay Brand Intro Animation"
               >
@@ -114,6 +116,7 @@ export const Navbar: React.FC<{
               <button
                 type="button"
                 onClick={onReplayIntro}
+                suppressHydrationWarning
                 className="h-9 w-9 p-2 rounded-lg bg-neutral-900 border border-white/10 text-neutral-300 hover:text-[#1D9BF0] hover:bg-neutral-800 transition-colors cursor-pointer pointer-events-auto flex items-center justify-center shrink-0"
                 title="Replay Brand Intro Animation"
               >
@@ -125,6 +128,7 @@ export const Navbar: React.FC<{
             <button
               type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              suppressHydrationWarning
               className="p-2 rounded-lg bg-surface border border-theme-subtle text-theme-muted hover:text-theme-main cursor-pointer pointer-events-auto"
               aria-label="Toggle Menu"
             >
@@ -153,13 +157,14 @@ export const Navbar: React.FC<{
                           setMobileMenuOpen(false);
                           setToolsHubOpen(true);
                         }}
+                        suppressHydrationWarning
                         className="w-full text-left flex items-center justify-between px-4 py-2.5 rounded-lg text-sm font-medium transition-colors bg-[#1D9BF0]/10 text-[#1D9BF0] border border-[#1D9BF0]/30 font-semibold"
                       >
                         <span className="flex items-center gap-2">
                           {link.name} Hub
                         </span>
                         <span className="text-xs font-mono bg-[#1D9BF0]/20 px-2 py-0.5 rounded text-[#1D9BF0]">
-                          15 Tools
+                          16 Tools
                         </span>
                       </button>
                     );

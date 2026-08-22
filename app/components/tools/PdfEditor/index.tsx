@@ -23,6 +23,22 @@ export const PdfEditor: React.FC<Props> = ({ isFullScreen: isFullScreenProp }) =
   const fileInputRef = useRef<HTMLInputElement>(null);
   const replaceInputRef = useRef<HTMLInputElement>(null);
 
+  // ── PDF page sizes (derived at file-load via pdf-lib, for PDF-space coordinate conversion) ──
+  const [pagePdfSizes, setPagePdfSizes] = useState<Array<{ width: number; height: number }>>([]);
+
+  useEffect(() => {
+    if (!state.file) { setPagePdfSizes([]); return; }
+    (async () => {
+      const { PDFDocument } = await import('pdf-lib');
+      const buf = await state.file!.file.arrayBuffer();
+      const doc = await PDFDocument.load(buf, { ignoreEncryption: true });
+      setPagePdfSizes(doc.getPages().map(p => p.getSize()));
+    })();
+  }, [state.file]);
+
+  const activeOriginalIndex = state.pageMetas[state.activePage]?.originalIndex ?? state.activePage;
+  const pagePdfSize = pagePdfSizes[activeOriginalIndex] ?? { width: 595, height: 842 }; // A4 fallback
+
   // Fullscreen side-effects: hide navbar, lock scroll, Esc to exit
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
@@ -227,8 +243,8 @@ export const PdfEditor: React.FC<Props> = ({ isFullScreen: isFullScreenProp }) =
       {/* Main 3-column workspace */}
       <div className={`flex flex-1 divide-x divide-neutral-800 overflow-hidden ${isFullScreen ? 'min-h-0' : ''}`}>
 
-        {/* Left: Page thumbnails */}
-        <div className="w-[88px] shrink-0 bg-neutral-950 overflow-y-auto">
+        {/* Left: Page thumbnails — widened to 116px for readability */}
+        <div className="w-[116px] shrink-0 bg-neutral-950 overflow-y-auto">
           <PdfEditorPageThumbnails
             file={state.file}
             pageMetas={state.pageMetas}
@@ -240,8 +256,8 @@ export const PdfEditor: React.FC<Props> = ({ isFullScreen: isFullScreenProp }) =
           />
         </div>
 
-        {/* Center: Canvas */}
-        <div className="flex-1 flex flex-col overflow-hidden">
+        {/* Center: Canvas (relative parent for the absolute properties floating panel) */}
+        <div className="flex-1 flex flex-col overflow-hidden relative">
           {/* Page nav bar */}
           <div className="px-3 py-1.5 bg-neutral-900/60 border-b border-neutral-800 flex items-center justify-between text-[10px] font-mono text-neutral-400">
             <div className="flex items-center gap-1.5">
@@ -270,11 +286,13 @@ export const PdfEditor: React.FC<Props> = ({ isFullScreen: isFullScreenProp }) =
             file={state.file}
             activePage={state.activePage}
             activeOriginalIndex={state.pageMetas[state.activePage]?.originalIndex ?? state.activePage}
+            pageRotation={state.pageMetas[state.activePage]?.rotation ?? 0}
             zoom={state.zoom}
             overlays={state.overlays}
             selectedId={state.selectedId}
             editingId={state.editingId}
             toolMode={state.toolMode}
+            formFields={state.formFields}
             onSelectOverlay={editor.selectOverlay}
             onStartEditing={editor.startEditing}
             onStopEditing={editor.stopEditing}
@@ -287,20 +305,34 @@ export const PdfEditor: React.FC<Props> = ({ isFullScreen: isFullScreenProp }) =
             onCaptureSnapshot={editor.captureSnapshot}
             onDeleteOverlay={editor.deleteOverlay}
             onWhiteoutDrawn={editor.addWhiteout}
+            onCutoutDrawn={(x, y, w, h, srcPdfX, srcPdfY, srcPdfW, srcPdfH, previewDataUrl) =>
+              editor.addCutout(x, y, w, h, srcPdfX, srcPdfY, srcPdfW, srcPdfH, previewDataUrl)
+            }
             onCanvasClick={handleCanvasClick}
-          />
-        </div>
-
-        {/* Right: Properties panel */}
-        <div className="w-[180px] shrink-0 bg-neutral-950 overflow-y-auto">
-          <PdfEditorProperties
-            selectedOverlay={selectedOverlay}
-            formFields={state.formFields}
-            onUpdateOverlay={(id, patch) => editor.updateOverlay(id, patch as any)}
-            onUpdateOverlaySilent={(id, patch) => editor.updateOverlaySilent(id, patch as any)}
-            onCaptureSnapshot={editor.captureSnapshot}
             onUpdateFormField={editor.updateFormField}
+            pagePdfSize={pagePdfSize}
           />
+
+          {/* ── Floating Properties Panel ────────────────────────────────────────
+               Absolutely positioned over the canvas — zero layout shift.
+               Fades in/out with opacity + scale transition.                    */}
+          <div
+            className={`absolute bottom-4 right-4 z-[200] transition-all duration-200 pointer-events-none ${
+              selectedOverlay
+                ? 'opacity-100 scale-100 pointer-events-auto'
+                : 'opacity-0 scale-95'
+            }`}
+          >
+            <PdfEditorProperties
+              selectedOverlay={selectedOverlay}
+              formFields={state.formFields}
+              onUpdateOverlay={(id, patch) => editor.updateOverlay(id, patch as any)}
+              onUpdateOverlaySilent={(id, patch) => editor.updateOverlaySilent(id, patch as any)}
+              onCaptureSnapshot={editor.captureSnapshot}
+              onUpdateFormField={editor.updateFormField}
+              onClose={() => editor.selectOverlay(null)}
+            />
+          </div>
         </div>
       </div>
 

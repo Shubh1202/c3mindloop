@@ -425,6 +425,52 @@ html.light .developer-tool-container div.border-t.border-neutral-900 {
   border-color: #E4E4E7 !important;
 }
 
+/* ── Password & Shuffle Generator: char-toggle buttons (bg-neutral-800/60) */
+html.light .developer-tool-container button.bg-neutral-800\/60 {
+  background-color: #E4E4E7 !important;
+  color: #3F3F46 !important;
+  border-color: #D4D4D8 !important;
+}
+html.light .developer-tool-container button.bg-neutral-800\/60:hover {
+  background-color: #D4D4D8 !important;
+  color: #18181B !important;
+}
+
+/* Inactive mode-toggle buttons: fix hover:text-white in light mode */
+html.light .developer-tool-container button.hover\:text-white:not(.bg-\[\#1D9BF0\]) {
+  color: #52525B !important;
+}
+html.light .developer-tool-container button.hover\:text-white:not(.bg-\[\#1D9BF0\]):hover {
+  color: #18181B !important;
+  background-color: rgba(0,0,0,0.05) !important;
+}
+
+/* Range slider track in light mode */
+html.light .developer-tool-container input[type="range"] {
+  background-color: #D4D4D8 !important;
+}
+html.light .developer-tool-container input[type="range"]::-webkit-slider-thumb {
+  border-color: #FFFFFF !important;
+  box-shadow: 0 0 0 1px #D4D4D8;
+}
+
+/* Password output readonly input: ensure text is readable */
+html.light .developer-tool-container input[readonly] {
+  background-color: #F8F9FA !important;
+  color: #0369A1 !important;
+  border-color: #D4D4D8 !important;
+}
+
+/* Entropy value text */
+html.light .developer-tool-container span.text-neutral-200 {
+  color: #1E1E1E !important;
+}
+
+/* Shuffle output textarea text-emerald-300 → readable dark green */
+html.light .developer-tool-container textarea.text-emerald-300 {
+  color: #15803D !important;
+}
+
 /* ── 11. SEARCH BAR ─────────────────────────────────────────────────────── */
 html.light .developer-tool-container div.bg-neutral-900.border-b.flex {
   background-color: #F4F4F5 !important;

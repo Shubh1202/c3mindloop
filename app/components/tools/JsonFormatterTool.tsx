@@ -28,6 +28,7 @@ import { JsonTreeView, SearchTarget } from './JsonTreeView';
 import { LocalAIPanel, smartRepairJson } from './LocalAIPanel';
 import { useSearch } from '../../hooks/useSearch';
 import { SearchBar } from '../ui/SearchBar';
+import { Toolbar } from '../ui/Toolbar';
 
 type IndentOption = '2' | '4' | 'tab';
 type OutputMode = 'json' | 'typescript' | 'go' | 'csv';
@@ -497,9 +498,14 @@ export const JsonFormatterTool: React.FC = () => {
   const [activeMatchIndex, setActiveMatchIndex] = useState<number>(0);
   const [totalMatchesCount, setTotalMatchesCount] = useState<number>(0);
   
+  const [isMinified, setIsMinified] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // When handleMinify sets rawInput we must NOT let the debounce effect
+  // re-format (and un-minify) that value. Setting this flag to true skips
+  // exactly one debounce cycle.
+  const skipNextDebounceRef = useRef<boolean>(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const leftPanelRef = useRef<HTMLDivElement>(null);   // outer left-panel div (scroll container in fullscreen)
   const outputContainerRef = useRef<HTMLDivElement>(null);
@@ -771,6 +777,10 @@ export const JsonFormatterTool: React.FC = () => {
       const minified = JSON.stringify(parsed);
       setParsedObject(parsed);
       setFormattedOutput(minified);
+      // Skip the debounce-triggered handleFormat so it doesn't re-pretty-print
+      // the minified value and overwrite formattedOutput.
+      skipNextDebounceRef.current = true;
+      setIsMinified(true);
       setRawInput(minified);
       setIsValid(true);
       setErrorMessage(null);
@@ -813,6 +823,13 @@ export const JsonFormatterTool: React.FC = () => {
     setIsTyping(true);
     debounceRef.current = setTimeout(() => {
       setIsTyping(false);
+      if (skipNextDebounceRef.current) {
+        // handleMinify already set the output — don't overwrite it.
+        skipNextDebounceRef.current = false;
+        return;
+      }
+      // Any manual edit after minify exits minified mode.
+      setIsMinified(false);
       handleFormat();
     }, 400);
     return () => {
@@ -1064,105 +1081,78 @@ export const JsonFormatterTool: React.FC = () => {
       } ${isFullScreen ? 'fixed inset-0 z-[9999] overflow-hidden' : 'w-full rounded-lg shadow-2xl'}`}>
 
         {/* Primary Control Toolbar */}
-        <div className={`px-2 py-2.5 border-b flex flex-nowrap items-center justify-between text-xs font-mono min-w-0 ${
-          isDark
-            ? 'bg-neutral-900 border-neutral-800 text-neutral-100'
-            : 'bg-[#F8F9FA] border-[#E4E4E7] text-[#111111]'
-        } ${isFullScreen ? 'sticky top-0 z-[10000]' : ''}`}>
-          <div className="flex flex-nowrap items-center gap-1.5 shrink-0">
-            <button
-              onClick={() => handleFormat(true)}
-              className="px-2.5 py-1.5 rounded bg-[#1D9BF0] hover:bg-[#1A8CD8] text-white font-semibold transition-colors flex items-center gap-1 cursor-pointer shadow-sm"
-            >
-              <AlignLeft className="w-3.5 h-3.5" />
-              <span>Format</span>
-            </button>
+        <Toolbar.Root isDark={isDark} isFullScreen={isFullScreen}>
+          <Toolbar.Group>
+            <Toolbar.Button
+              onClick={() => { setIsMinified(false); handleFormat(true); }}
+              active={!isMinified}
+              variant="primary"
+              isDark={isDark}
+              icon={AlignLeft}
+              label="Format"
+            />
 
-            <button
+            <Toolbar.Button
               onClick={handleMinify}
-              className={`px-2.5 py-1.5 rounded transition-colors flex items-center gap-1 cursor-pointer ${secondaryBtnClass}`}
-            >
-              <FileCode className="w-3.5 h-3.5" />
-              <span>Minify</span>
-            </button>
+              active={isMinified}
+              variant="secondary"
+              isDark={isDark}
+              icon={FileCode}
+              label="Minify"
+            />
 
-            <button
+            <Toolbar.Button
               onClick={handleValidate}
-              className={`px-2.5 py-1.5 rounded transition-colors flex items-center gap-1 cursor-pointer ${secondaryBtnClass}`}
-            >
-              <CheckCircle2 className="w-3.5 h-3.5 text-sky-400" />
-              <span>Validate</span>
-            </button>
+              isDark={isDark}
+              icon={CheckCircle2}
+              label="Validate"
+            />
 
-            <button
+            <Toolbar.Button
               onClick={handleLoadSample}
-              className={`px-2 py-1.5 rounded transition-colors cursor-pointer ${secondaryBtnClass}`}
-            >
-              Sample
-            </button>
+              isDark={isDark}
+              icon={Layers}
+              label="Sample"
+            />
 
-            <button
+            <Toolbar.Button
               onClick={handleClear}
-              className={`px-2 py-1.5 rounded transition-colors flex items-center gap-1 cursor-pointer ${
-                isDark
-                  ? 'bg-neutral-800/80 hover:bg-red-950 hover:text-red-300 text-neutral-400'
-                  : 'bg-[#E4E4E7] hover:bg-red-100 hover:text-red-700 text-[#3F3F46]'
-              }`}
-            >
-              <Trash2 className="w-3.5 h-3.5" />
-              <span>Clear</span>
-            </button>
+              variant="danger"
+              isDark={isDark}
+              icon={Trash2}
+              label="Clear"
+            />
 
-            {/* Sync Scroll Toggle -  disabled outside JSON › Code View */}
-            <button
+            {/* Sync Scroll Toggle - disabled outside JSON › Code View */}
+            <Toolbar.Button
               onClick={() => { if (isSyncScrollAvailable) setSyncScroll(!syncScroll); }}
               title={
                 isSyncScrollAvailable
-                  ? 'Content-aware scroll sync -  aligns JSON structure between panels, not scroll percentage'
+                  ? 'Content-aware scroll sync - aligns JSON structure between panels, not scroll percentage'
                   : 'Sync Scroll is only available in JSON › Code View'
               }
               disabled={!isSyncScrollAvailable}
-              className={`px-2 py-1.5 rounded transition-colors flex items-center gap-1 ${
-                !isSyncScrollAvailable
-                  ? isDark
-                    ? 'bg-neutral-800/50 text-neutral-600 border border-transparent cursor-not-allowed opacity-50'
-                    : 'bg-[#E4E4E7]/50 text-neutral-400 border border-transparent cursor-not-allowed opacity-50'
-                  : syncScroll
-                    ? 'bg-[#1D9BF0]/20 text-[#1D9BF0] border border-[#1D9BF0]/30 cursor-pointer'
-                    : isDark
-                      ? 'bg-neutral-800 text-neutral-400 border border-transparent cursor-pointer'
-                      : 'bg-[#E4E4E7] text-[#3F3F46] border border-transparent cursor-pointer'
-              }`}
-            >
-              {!isSyncScrollAvailable
-                ? <Link2Off className="w-3.5 h-3.5" />
-                : syncScroll
-                  ? <Link2 className="w-3.5 h-3.5" />
-                  : <Link2Off className="w-3.5 h-3.5" />
-              }
-              <span>Sync</span>
-            </button>
+              active={syncScroll && isSyncScrollAvailable}
+              isDark={isDark}
+              icon={!isSyncScrollAvailable ? Link2Off : syncScroll ? Link2 : Link2Off}
+              label="Sync"
+            />
 
             {/* Search Toggle Button */}
-            <button
+            <Toolbar.Button
               onClick={search.toggle}
               title="Search keys or values (Ctrl+F)"
-              className={`px-2 py-1.5 rounded transition-colors flex items-center gap-1 cursor-pointer ${
-                search.isOpen || search.query
-                  ? 'bg-[#1D9BF0]/20 text-[#1D9BF0] border border-[#1D9BF0]/30'
-                  : isDark
-                    ? 'bg-neutral-800 text-neutral-400 border border-transparent hover:text-white'
-                    : 'bg-[#E4E4E7] text-[#3F3F46] border border-transparent hover:text-[#18181B]'
-              }`}
-            >
-              <Search className="w-3.5 h-3.5" />
-              <span>Search</span>
-            </button>
-          </div>
+              active={!!(search.isOpen || search.query)}
+              variant="ghost"
+              isDark={isDark}
+              icon={Search}
+              label="Search"
+            />
+          </Toolbar.Group>
 
-          <div className="flex flex-nowrap items-center gap-1.5 shrink-0">
-            {/* Indent Selector */}
-            <div className={`flex items-center p-1 rounded border text-xs font-mono ${
+          <Toolbar.Group align="right">
+            {/* Indent Selector - hidden on mobile */}
+            <div className={`hidden sm:flex items-center p-1 rounded border text-xs font-mono ${
               isDark ? 'bg-neutral-950 border-neutral-800' : 'bg-[#E4E4E7]/40 border-[#E4E4E7]'
             }`}>
               <span className={isDark ? 'text-neutral-500 px-1.5' : 'text-[#71717A] px-1.5'}>Sp:</span>
@@ -1211,31 +1201,32 @@ export const JsonFormatterTool: React.FC = () => {
               accept=".json,application/json,text/plain"
               className="hidden"
             />
-            <button
+            {/* Upload - hidden on mobile */}
+            <Toolbar.Button
               onClick={() => fileInputRef.current?.click()}
-              className={`px-2 py-1.5 rounded flex items-center gap-1 transition-colors cursor-pointer ${secondaryBtnClass}`}
-            >
-              <Upload className="w-3.5 h-3.5" />
-              <span>Upload</span>
-            </button>
+              className="hidden sm:flex"
+              isDark={isDark}
+              icon={Upload}
+              label="Upload"
+            />
 
-            <button
+            {/* Download - hidden on mobile */}
+            <Toolbar.Button
               onClick={handleDownload}
               disabled={!formattedOutput && !rawInput}
-              className={`px-2 py-1.5 rounded disabled:opacity-40 flex items-center gap-1 transition-colors cursor-pointer ${secondaryBtnClass}`}
-            >
-              <Download className="w-3.5 h-3.5" />
-              <span>Download</span>
-            </button>
+              className="hidden sm:flex"
+              isDark={isDark}
+              icon={Download}
+              label="Download"
+            />
 
-            <button
+            <Toolbar.Button
               onClick={handleCopy}
               disabled={!formattedOutput && !rawInput}
-              className={`px-2.5 py-1.5 rounded disabled:opacity-40 flex items-center gap-1 transition-colors cursor-pointer ${secondaryBtnClass}`}
-            >
-              {copied ? <Check className="w-3.5 h-3.5 text-sky-400" /> : <Copy className="w-3.5 h-3.5" />}
-              <span>{copied ? 'Copied' : 'Copy'}</span>
-            </button>
+              isDark={isDark}
+              icon={copied ? Check : Copy}
+              label={copied ? 'Copied' : 'Copy'}
+            />
 
             {/* Layout toggle - desktop only */}
             <div className={`hidden lg:flex items-center p-1 rounded border ${
@@ -1269,15 +1260,14 @@ export const JsonFormatterTool: React.FC = () => {
               </button>
             </div>
 
-            <button
+            <Toolbar.Button
               onClick={() => setIsFullScreen(!isFullScreen)}
               title={isFullScreen ? 'Exit Full Screen' : 'Full Screen'}
-              className={`p-1.5 rounded flex items-center gap-1 transition-colors cursor-pointer ${secondaryBtnClass}`}
-            >
-              {isFullScreen ? <Minimize2 className="w-3.5 h-3.5" /> : <Maximize2 className="w-3.5 h-3.5" />}
-            </button>
-          </div>
-        </div>
+              isDark={isDark}
+              icon={isFullScreen ? Minimize2 : Maximize2}
+            />
+          </Toolbar.Group>
+        </Toolbar.Root>
 
         {/* Collapsible Search Controls Bar */}
         {/* Search bar -  powered by useSearch hook + shared SearchBar component */}

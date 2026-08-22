@@ -34,8 +34,10 @@ export async function makePdfFile(file: File): Promise<PdfFile> {
   };
 }
 
-/** Build default PageMeta array for a freshly loaded PDF */
-export function buildPageMetas(pageCount: number): PageMeta[] {
+/** Build default PageMeta array for a freshly loaded PDF.
+ *  rotation starts at 0 — it stores only the USER's additional rotation delta.
+ *  The page's native /Rotate is handled automatically in renderPageToCanvas via page.rotate. */
+export async function buildPageMetas(file: File, pageCount: number): Promise<PageMeta[]> {
   return Array.from({ length: pageCount }, (_, i) => ({
     originalIndex: i,
     rotation: 0 as RotationDeg,
@@ -110,6 +112,7 @@ export async function renderPageToCanvas(
   canvas: HTMLCanvasElement,
   zoom: number,
   fitWidth = 480,
+  userRotation = 0,   // user-applied rotation, added on top of PDF's native /Rotate
 ): Promise<{ w: number; h: number }> {
   const pdfjsLib = await import('pdfjs-dist');
   pdfjsLib.GlobalWorkerOptions.workerSrc =
@@ -130,15 +133,25 @@ export async function renderPageToCanvas(
     const safeNum = Math.min(Math.max(1, pageIndex + 1), pdfDoc.numPages);
     const page = await pdfDoc.getPage(safeNum);
 
-    const baseViewport = page.getViewport({ scale: 1.0 });
+    // Always combine the page's native /Rotate with the user-applied rotation delta.
+    // PageMeta.rotation stores ONLY the user's additional rotation (starts at 0).
+    // page.rotate is the PDF's native rotation. Adding them gives the correct total.
+    const totalRotation = ((page.rotate ?? 0) + userRotation) % 360;
+    console.debug(`[renderPageToCanvas] page ${pageIndex}: page.rotate=${page.rotate}, userRotation=${userRotation}, totalRotation=${totalRotation}`);
+
+    const baseViewport = page.getViewport({ scale: 1.0, rotation: totalRotation });
     const fitScale = fitWidth / baseViewport.width;
-    const viewport = page.getViewport({ scale: fitScale * zoom });
+    const viewport = page.getViewport({ scale: fitScale * zoom, rotation: totalRotation });
 
     canvas.width = Math.floor(viewport.width);
     canvas.height = Math.floor(viewport.height);
 
+    // pdfjs-dist v6 preferred API: pass `canvas` directly.
+    // If using `canvasContext`, canvas must be null — passing both the element
+    // and the context simultaneously causes incorrect / mirrored rendering.
     const ctx = canvas.getContext('2d')!;
-    await page.render({ canvasContext: ctx, canvas, viewport }).promise;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    await page.render({ canvas, viewport }).promise;
 
     return { w: canvas.width, h: canvas.height };
   } finally {
@@ -151,6 +164,7 @@ export async function renderPageThumbnail(
   file: File,
   pageIndex: number,
   thumbWidth = 80,
+  userRotation = 0,
 ): Promise<string | null> {
   try {
     const pdfjsLib = await import('pdfjs-dist');
@@ -162,14 +176,19 @@ export async function renderPageThumbnail(
       const pdfDoc = await pdfjsLib.getDocument({ url: fileUrl }).promise;
       const safeNum = Math.min(Math.max(1, pageIndex + 1), pdfDoc.numPages);
       const page = await pdfDoc.getPage(safeNum);
-      const base = page.getViewport({ scale: 1.0 });
+      // Combine PDF native /Rotate with user delta (same logic as renderPageToCanvas)
+      const rotation = ((page.rotate ?? 0) + userRotation) % 360;
+      const base = page.getViewport({ scale: 1.0, rotation });
       const scale = thumbWidth / base.width;
-      const vp = page.getViewport({ scale });
+      const vp = page.getViewport({ scale, rotation });
 
       const canvas = document.createElement('canvas');
       canvas.width = Math.floor(vp.width);
       canvas.height = Math.floor(vp.height);
-      await page.render({ canvasContext: canvas.getContext('2d')!, canvas, viewport: vp }).promise;
+      // pdfjs-dist v6 preferred API: pass `canvas` directly (no canvasContext).
+      const ctx2d = canvas.getContext('2d')!;
+      ctx2d.clearRect(0, 0, canvas.width, canvas.height);
+      await page.render({ canvas, viewport: vp }).promise;
       return canvas.toDataURL('image/jpeg', 0.7);
     } finally {
       URL.revokeObjectURL(fileUrl);

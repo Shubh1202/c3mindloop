@@ -40,6 +40,15 @@ const formatted = JSON.stringify(JSON.parse(input), null, 2);`
     techStack: ['Web Crypto API', 'SubtleCrypto', 'Zero Server Logs']
   },
   {
+    id: 'password-shuffle-generator',
+    nameKey: 'Password & Shuffle Generator',
+    descKey: 'Generate cryptographically secure passwords and shuffle any list or string. 100% client-side via crypto.getRandomValues.',
+    status: 'live',
+    category: 'crypto',
+    icon: 'KeyRound',
+    techStack: ['crypto.getRandomValues', 'Fisher-Yates Shuffle', 'Local Processing']
+  },
+  {
     id: 'curl-converter',
     nameKey: 'cURL to Code Converter',
     descKey: 'Convert cURL commands to JavaScript Fetch, Axios, Node.js, Python requests, Go, and PHP snippets instantly in your browser.',
@@ -137,6 +146,15 @@ const formatted = JSON.stringify(JSON.parse(input), null, 2);`
     category: 'utilities',
     icon: 'GitBranch',
     techStack: ['Regex Parser', 'Heuristic Analysis', 'Local Processing']
+  },
+  {
+    id: 'pipeline',
+    nameKey: 'Tool Pipeline Builder',
+    descKey: 'Chain developer tools in sequence. Base64 decode → JSON format → JWT inspect → Regex filter. Each step feeds the next. 100% client-side, shareable via URL.',
+    status: 'live',
+    category: 'utilities',
+    icon: 'Layers',
+    techStack: ['Pipeline Engine', 'URL Hash State', 'Local Processing']
   }
 ];
 

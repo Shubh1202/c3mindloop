@@ -6,6 +6,7 @@ import {
   Terminal, AlertCircle, Info, ShieldCheck, Maximize2, Minimize2, ArrowRightLeft,
   Code
 } from 'lucide-react';
+import { Toolbar } from '../ui/Toolbar';
 
 // â”€â”€â”€ SQL Parser â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
@@ -285,9 +286,8 @@ export const SqlToJsonTool: React.FC = () => {
     <div className={`developer-tool-container bg-neutral-950 border border-neutral-800 font-mono text-xs text-neutral-100 flex flex-col ${isFullScreen ? 'fixed inset-0 z-[9999] overflow-hidden' : 'w-full rounded-lg shadow-2xl'}`}>
 
       {/* Toolbar */}
-      <div className={`px-3 py-2.5 bg-neutral-900 border-b border-neutral-800 flex flex-wrap items-center justify-between gap-2 ${isFullScreen ? 'sticky top-0 z-[10000]' : ''}`}>
-        {/* Left: Mode Toggle + Sample + Clear */}
-        <div className="flex items-center gap-2 flex-wrap">
+      <Toolbar.Root isDark={true} isFullScreen={isFullScreen}>
+        <Toolbar.Group>
           {/* Mode switcher */}
           <div className="flex items-center bg-neutral-950 p-1 rounded border border-neutral-800 text-[11px] font-sans">
             <button
@@ -295,77 +295,74 @@ export const SqlToJsonTool: React.FC = () => {
               className={`px-3 py-1 rounded flex items-center gap-1.5 transition-colors cursor-pointer ${mode === 'sql' ? 'bg-[#1D9BF0] text-white font-semibold' : 'text-neutral-400 hover:text-white'}`}
             >
               <Database className="w-3 h-3" />
-              <span>SQL â†’ JSON</span>
+              <span>SQL → JSON</span>
             </button>
             <button
               onClick={() => setMode('curl')}
               className={`px-3 py-1 rounded flex items-center gap-1.5 transition-colors cursor-pointer ${mode === 'curl' ? 'bg-[#1D9BF0] text-white font-semibold' : 'text-neutral-400 hover:text-white'}`}
             >
               <Terminal className="w-3 h-3" />
-              <span>cURL â†’ JSON</span>
+              <span>cURL → JSON</span>
             </button>
             <button
               onClick={() => setMode('jsontosql')}
               className={`px-3 py-1 rounded flex items-center gap-1.5 transition-colors cursor-pointer ${mode === 'jsontosql' ? 'bg-[#1D9BF0] text-white font-semibold' : 'text-neutral-400 hover:text-white'}`}
             >
               <Code className="w-3 h-3" />
-              <span>JSON â†’ SQL</span>
+              <span>JSON → SQL</span>
             </button>
           </div>
 
-          <button
+          <Toolbar.Button
             onClick={handleLoadSample}
-            className="px-2.5 py-1.5 rounded bg-neutral-800/80 hover:bg-neutral-700 text-neutral-300 text-[11px] font-sans flex items-center gap-1 transition-colors cursor-pointer"
-          >
-            <FileText className="w-3.5 h-3.5" />
-            <span>Load Sample</span>
-          </button>
+            isDark={true}
+            icon={FileText}
+            label="Load Sample"
+            className="hidden sm:flex"
+          />
 
-          <button
+          <Toolbar.Button
             onClick={handleClear}
-            className="px-2.5 py-1.5 rounded bg-neutral-800/80 hover:bg-red-950 hover:text-red-300 text-neutral-400 text-[11px] font-sans flex items-center gap-1 transition-colors cursor-pointer"
-          >
-            <Trash2 className="w-3.5 h-3.5" />
-            <span>Clear</span>
-          </button>
-        </div>
+            variant="danger"
+            isDark={true}
+            icon={Trash2}
+            label="Clear"
+          />
+        </Toolbar.Group>
 
-        {/* Right: Convert indicator + Copy + Download + Fullscreen */}
-        <div className="flex items-center gap-2">
-          <span className="hidden sm:flex items-center gap-1.5 text-[11px] font-sans text-neutral-500">
+        <Toolbar.Group align="right">
+          <span className="hidden sm:flex items-center gap-1.5 text-[11px] font-sans text-neutral-500 mr-1.5">
             <ArrowRightLeft className="w-3 h-3" />
             <span>
-              {mode === 'sql' ? 'SQL â†’ JSON' : mode === 'curl' ? 'cURL â†’ JSON' : 'JSON â†’ SQL'}
+              {mode === 'sql' ? 'SQL → JSON' : mode === 'curl' ? 'cURL → JSON' : 'JSON → SQL'}
             </span>
           </span>
 
-          <button
+          <Toolbar.Button
             onClick={handleCopy}
             disabled={!outputText}
-            className="px-2.5 py-1.5 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-200 text-[11px] font-sans font-medium flex items-center gap-1.5 disabled:opacity-40 transition-colors cursor-pointer"
-          >
-            {copied ? <Check className="w-3.5 h-3.5 text-sky-400" /> : <Copy className="w-3.5 h-3.5" />}
-            <span>{copied ? 'Copied!' : mode === 'jsontosql' ? 'Copy SQL' : 'Copy JSON'}</span>
-          </button>
+            isDark={true}
+            icon={copied ? Check : Copy}
+            label={copied ? 'Copied!' : mode === 'jsontosql' ? 'Copy SQL' : 'Copy JSON'}
+          />
 
-          <button
+          <Toolbar.Button
             onClick={handleDownload}
             disabled={!outputText}
-            className="px-2.5 py-1.5 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-300 text-[11px] font-sans flex items-center gap-1 disabled:opacity-40 transition-colors cursor-pointer"
-          >
-            <Download className="w-3.5 h-3.5" />
-            <span>Download</span>
-          </button>
+            isDark={true}
+            icon={Download}
+            label="Download"
+            className="hidden sm:flex"
+          />
 
-          <button
+          <Toolbar.Button
             onClick={() => setIsFullScreen(!isFullScreen)}
             title={isFullScreen ? 'Exit Full Screen' : 'Full Screen'}
-            className="p-1.5 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-300 flex items-center transition-colors cursor-pointer"
-          >
-            {isFullScreen ? <Minimize2 className="w-3.5 h-3.5" /> : <Maximize2 className="w-3.5 h-3.5" />}
-          </button>
-        </div>
-      </div>
+            isDark={true}
+            icon={isFullScreen ? Minimize2 : Maximize2}
+          />
+        </Toolbar.Group>
+      </Toolbar.Root>
 
       {/* Main Split Pane */}
       <div className={`grid grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-neutral-800 ${isFullScreen ? 'flex-1 overflow-hidden' : 'min-h-[440px]'}`}>

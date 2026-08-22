@@ -11,6 +11,8 @@ import { toUnifiedDiff, type DiffResult, type DiffLine, type CharSpan } from './
 import { smartDiff, type SmartDiffResult } from './smartDiff';
 import { useSearch } from '../../hooks/useSearch';
 import { SearchBar } from '../ui/SearchBar';
+import { Toolbar } from '../ui/Toolbar';
+import { useTheme } from '../../lib/theme';
 
 type ViewMode = 'split' | 'inline';
 type CompareMode = 'smart' | 'text';
@@ -572,6 +574,7 @@ const SplitView: React.FC<SplitViewProps> = ({
 
 // Ã¢â€â‚¬Ã¢â€â‚¬ Main component Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
 export const DiffCheckerTool: React.FC = () => {
+  const { isDark } = useTheme();
   const [original, setOriginalState]      = useState('');
   const [modified, setModifiedState]      = useState('');
   const [diffResult, setDiffResult]       = useState<SmartDiffResult | null>(null);
@@ -955,98 +958,152 @@ export const DiffCheckerTool: React.FC = () => {
   const noChange = hasDiff && diffResult.addedCount === 0 && diffResult.removedCount === 0 && !isEmpty;
 
   // Ã¢â€â‚¬Ã¢â€â‚¬ Render Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
+  const borderClass = isDark ? 'border-neutral-700' : 'border-[#E4E4E7]';
+  const inactiveBtnClass = isDark
+    ? 'bg-neutral-900 text-neutral-400 hover:text-neutral-200'
+    : 'bg-[#E4E4E7]/40 text-[#3F3F46] hover:bg-[#D4D4D8] hover:text-[#18181B]';
+
   return (
     <div className={`developer-tool-container bg-neutral-950 border border-neutral-800 text-neutral-100 flex flex-col ${
       isFullScreen ? 'fixed inset-0 z-[9999]' : 'w-full rounded-lg overflow-hidden shadow-xl'
     }`}>
 
       {/* Toolbar */}
-      <div className={`px-3 py-2 bg-neutral-900 border-b border-neutral-800 flex flex-wrap items-center gap-2 text-xs font-mono shrink-0 ${
-        isFullScreen ? 'sticky top-0 z-[10000]' : ''
-      }`}>
-        {/* Edit / Compare */}
-        <div className="flex items-center rounded border border-neutral-700 overflow-hidden shrink-0">
-          <button onClick={() => setMode('input')}
-            className={`px-3 py-1.5 transition-colors cursor-pointer ${mode === 'input' ? 'bg-[#1D9BF0] text-white font-semibold' : 'bg-neutral-900 text-neutral-400 hover:text-neutral-200'}`}>
-            Edit
-          </button>
-          <button onClick={handleCompare}
-            className={`px-3 py-1.5 transition-colors cursor-pointer ${mode === 'diff' ? 'bg-[#1D9BF0] text-white font-semibold' : 'bg-neutral-900 text-neutral-400 hover:text-neutral-200'}`}>
-            Compare
-          </button>
-        </div>
-
-        {/* Split / Inline */}
-        {mode === 'diff' && (
-          <div className="flex items-center rounded border border-neutral-700 overflow-hidden shrink-0">
-            <button onClick={() => { setViewMode('split'); setActiveHunk(0); }}
-              className={`px-2.5 py-1.5 flex items-center gap-1 transition-colors cursor-pointer ${viewMode === 'split' ? 'bg-[#1D9BF0]/20 text-[#1D9BF0]' : 'bg-neutral-900 text-neutral-400 hover:text-neutral-200'}`}>
-              <Columns2 className="w-3.5 h-3.5" /><span>Split</span>
+      <Toolbar.Root isDark={isDark} isFullScreen={isFullScreen}>
+        <Toolbar.Group>
+          {/* Edit / Compare Mode Switcher */}
+          <div className={`flex items-center rounded border ${borderClass} overflow-hidden shrink-0`}>
+            <button
+              onClick={() => setMode('input')}
+              className={`px-3 py-1.5 transition-colors cursor-pointer ${mode === 'input' ? 'bg-[#1D9BF0] text-white font-semibold' : inactiveBtnClass}`}
+            >
+              Edit
             </button>
-            <button onClick={() => { setViewMode('inline'); setActiveHunk(0); }}
-              className={`px-2.5 py-1.5 flex items-center gap-1 transition-colors cursor-pointer ${viewMode === 'inline' ? 'bg-[#1D9BF0]/20 text-[#1D9BF0]' : 'bg-neutral-900 text-neutral-400 hover:text-neutral-200'}`}>
-              <AlignLeft className="w-3.5 h-3.5" /><span>Inline</span>
+            <button
+              onClick={handleCompare}
+              className={`px-3 py-1.5 transition-colors cursor-pointer ${mode === 'diff' ? 'bg-[#1D9BF0] text-white font-semibold' : inactiveBtnClass}`}
+            >
+              Compare
             </button>
           </div>
-        )}
 
-        {/* Smart / Text mode toggle */}
-        <div className="flex items-center rounded border border-neutral-700 overflow-hidden shrink-0" title="Smart: auto-detects content type. Text: forces plain line diff.">
-          <button onClick={() => setCompareMode('smart')}
-            className={`px-2.5 py-1.5 transition-colors cursor-pointer text-xs ${compareMode === 'smart' ? 'bg-neutral-700 text-neutral-100 font-semibold' : 'bg-neutral-900 text-neutral-500 hover:text-neutral-300'}`}>
-            Smart
-          </button>
-          <button onClick={() => setCompareMode('text')}
-            className={`px-2.5 py-1.5 transition-colors cursor-pointer text-xs ${compareMode === 'text' ? 'bg-neutral-700 text-neutral-100 font-semibold' : 'bg-neutral-900 text-neutral-500 hover:text-neutral-300'}`}>
-            Text
-          </button>
-        </div>
+          {/* Split / Inline View Switcher */}
+          {mode === 'diff' && (
+            <div className={`flex items-center rounded border ${borderClass} overflow-hidden shrink-0`}>
+              <button
+                onClick={() => { setViewMode('split'); setActiveHunk(0); }}
+                className={`px-2.5 py-1.5 flex items-center gap-1 transition-colors cursor-pointer ${viewMode === 'split' ? 'bg-[#1D9BF0]/20 text-[#1D9BF0]' : inactiveBtnClass}`}
+              >
+                <Columns2 className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">Split</span>
+              </button>
+              <button
+                onClick={() => { setViewMode('inline'); setActiveHunk(0); }}
+                className={`px-2.5 py-1.5 flex items-center gap-1 transition-colors cursor-pointer ${viewMode === 'inline' ? 'bg-[#1D9BF0]/20 text-[#1D9BF0]' : inactiveBtnClass}`}
+              >
+                <AlignLeft className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">Inline</span>
+              </button>
+            </div>
+          )}
 
-        <button onClick={handleSwap} disabled={isEmpty}
-          className="px-2.5 py-1.5 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-300 flex items-center gap-1.5 transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed">
-          <ArrowLeftRight className="w-3.5 h-3.5" /><span>Swap</span>
-        </button>
-        <button onClick={handleLoadSample}
-          className="px-2.5 py-1.5 rounded bg-neutral-800/80 hover:bg-neutral-700 text-neutral-300 cursor-pointer transition-colors">
-          Sample
-        </button>
-        <button onClick={handleClear} disabled={isEmpty}
-          className="px-2.5 py-1.5 rounded bg-neutral-800/80 hover:bg-red-950 hover:text-red-300 text-neutral-400 flex items-center gap-1 transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed">
-          <Trash2 className="w-3.5 h-3.5" /><span>Clear</span>
-        </button>
+          {/* Smart / Text comparison toggle */}
+          <div className={`flex items-center rounded border ${borderClass} overflow-hidden shrink-0`} title="Smart: auto-detects content type. Text: forces plain line diff.">
+            <button
+              onClick={() => setCompareMode('smart')}
+              className={`px-2.5 py-1.5 transition-colors cursor-pointer text-xs ${
+                compareMode === 'smart'
+                  ? isDark
+                    ? 'bg-neutral-700 text-neutral-100 font-semibold'
+                    : 'bg-[#1D9BF0] text-white font-semibold'
+                  : inactiveBtnClass
+              }`}
+            >
+              Smart
+            </button>
+            <button
+              onClick={() => setCompareMode('text')}
+              className={`px-2.5 py-1.5 transition-colors cursor-pointer text-xs ${
+                compareMode === 'text'
+                  ? isDark
+                    ? 'bg-neutral-700 text-neutral-100 font-semibold'
+                    : 'bg-[#1D9BF0] text-white font-semibold'
+                  : inactiveBtnClass
+              }`}
+            >
+              Text
+            </button>
+          </div>
 
-        {/* Undo / Redo */}
-        {undoStack.length > 0 && (
-          <button onClick={handleUndo} title="Undo (Ctrl+Z)"
-            className="p-1.5 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-300 transition-colors cursor-pointer">
-            <RotateCcw className="w-3.5 h-3.5" />
-          </button>
-        )}
-        {redoStack.length > 0 && (
-          <button onClick={handleRedo} title="Redo (Ctrl+Shift+Z)"
-            className="p-1.5 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-300 transition-colors cursor-pointer">
-            <RotateCw className="w-3.5 h-3.5" />
-          </button>
-        )}
+          <Toolbar.Button
+            onClick={handleSwap}
+            disabled={isEmpty}
+            isDark={isDark}
+            icon={ArrowLeftRight}
+            label="Swap"
+            className="hidden sm:flex"
+          />
 
-        {/* Search toggle */}
-        {mode === 'diff' && (
-          <button onClick={search.toggle}
-            className={`p-1.5 rounded transition-colors cursor-pointer ${search.isOpen ? 'bg-[#1D9BF0]/20 text-[#1D9BF0]' : 'bg-neutral-800 hover:bg-neutral-700 text-neutral-300'}`}
-            title="Search (Ctrl+F)">
-            <Search className="w-3.5 h-3.5" />
-          </button>
-        )}
+          <Toolbar.Button
+            onClick={handleLoadSample}
+            isDark={isDark}
+            label="Sample"
+            className="hidden sm:flex"
+          />
 
-        {/* Right cluster */}
-        <div className="ml-auto flex items-center gap-2 flex-wrap">
+          <Toolbar.Button
+            onClick={handleClear}
+            disabled={isEmpty}
+            variant="danger"
+            isDark={isDark}
+            icon={Trash2}
+            label="Clear"
+          />
+
+          {/* Undo / Redo */}
+          {undoStack.length > 0 && (
+            <Toolbar.Button
+              onClick={handleUndo}
+              title="Undo (Ctrl+Z)"
+              isDark={isDark}
+              icon={RotateCcw}
+            />
+          )}
+
+          {redoStack.length > 0 && (
+            <Toolbar.Button
+              onClick={handleRedo}
+              title="Redo (Ctrl+Shift+Z)"
+              isDark={isDark}
+              icon={RotateCw}
+            />
+          )}
+
+          {/* Search Toggle */}
+          {mode === 'diff' && (
+            <Toolbar.Button
+              onClick={search.toggle}
+              active={search.isOpen}
+              title="Search (Ctrl+F)"
+              isDark={isDark}
+              icon={Search}
+            />
+          )}
+        </Toolbar.Group>
+
+        <Toolbar.Group align="right">
           {mode === 'diff' && !noChange && hunks.length > 0 && (
             <HunkNav total={hunks.length} current={activeHunk + 1} onPrev={handlePrevHunk} onNext={handleNextHunk} />
           )}
+
           {hasDiff && !isEmpty && (
-            <div className="flex items-center gap-1 font-mono text-[11px] px-2 py-1 rounded bg-neutral-800/60 border border-neutral-700/50 select-none">
+            <div className={`flex items-center gap-1 font-mono text-[11px] px-2 py-1.5 rounded select-none border ${
+              isDark
+                ? 'bg-neutral-800/60 border-neutral-700/50 text-neutral-300'
+                : 'bg-neutral-200/50 border-neutral-300 text-neutral-700'
+            }`}>
               {diffResult?.smartSummary ? (
-                <span className="text-neutral-300">{diffResult.smartSummary.text}</span>
+                <span>{diffResult.smartSummary.text}</span>
               ) : (
                 <>
                   <span className="text-emerald-400 font-semibold">+{diffResult.addedCount}</span>
@@ -1057,21 +1114,23 @@ export const DiffCheckerTool: React.FC = () => {
               {noChange && <span className="text-neutral-500 ml-1.5">identical</span>}
             </div>
           )}
-          <button onClick={handleCopyDiff} disabled={!hasDiff || isEmpty}
-            className="px-2.5 py-1.5 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-300 flex items-center gap-1.5 transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed">
-            {copied
-              ? <><Check className="w-3.5 h-3.5 text-emerald-400" /><span className="text-emerald-400">Copied!</span></>
-              : copyError
-              ? <><AlertCircle className="w-3.5 h-3.5 text-red-400" /><span className="text-red-400">Error</span></>
-              : <><Copy className="w-3.5 h-3.5" /><span>Copy Diff</span></>}
-          </button>
-          <button onClick={() => setIsFullScreen(!isFullScreen)}
-            className="p-1.5 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-300 transition-colors cursor-pointer"
-            title={isFullScreen ? 'Exit full screen' : 'Full screen'}>
-            {isFullScreen ? <Minimize2 className="w-3.5 h-3.5" /> : <Maximize2 className="w-3.5 h-3.5" />}
-          </button>
-        </div>
-      </div>
+
+          <Toolbar.Button
+            onClick={handleCopyDiff}
+            disabled={!hasDiff || isEmpty}
+            isDark={isDark}
+            icon={copied ? Check : Copy}
+            label={copied ? 'Copied!' : 'Copy Diff'}
+          />
+
+          <Toolbar.Button
+            onClick={() => setIsFullScreen(!isFullScreen)}
+            title={isFullScreen ? 'Exit full screen' : 'Full screen'}
+            isDark={isDark}
+            icon={isFullScreen ? Minimize2 : Maximize2}
+          />
+        </Toolbar.Group>
+      </Toolbar.Root>
 
       {/* Search bar */}
       {search.isOpen && mode === 'diff' && (

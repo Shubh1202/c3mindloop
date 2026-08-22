@@ -107,6 +107,31 @@ export const seoConfig = {
     },
   },
 
+  pipeline: {
+    title: 'Tool Pipeline Builder - Chain Developer Tools | C³ MindLoop',
+    description:
+      'Chain multiple developer tools in sequence: Base64 decode, JSON format, JWT inspect, regex filter and more. Each step feeds the next. 100% client-side, zero server upload.',
+    keywords: [
+      'tool pipeline', 'developer tool chain', 'pipe developer tools', 'chain tools online',
+      'base64 to json pipeline', 'jwt decode json format', 'tool automation browser',
+      'client-side pipeline', 'local tool pipeline', 'no server tool chain',
+      'C³ MindLoop pipeline', 'ccube pipeline tool', 'developer workflow tools',
+    ],
+    canonical: `${BASE_URL}/tools/pipeline`,
+    openGraph: {
+      title: 'Tool Pipeline Builder - Chain Developer Tools | C³ MindLoop',
+      description:
+        'Chain Base64, JSON, JWT, Regex and Hash tools in sequence. Each step feeds the next. 100% client-side.',
+      url: `${BASE_URL}/tools/pipeline`,
+      images: [{ url: defaultOgImage, width: 1200, height: 630, alt: 'Tool Pipeline Builder - C³ MindLoop' }],
+    },
+    twitter: {
+      title: 'Tool Pipeline Builder | C³ MindLoop',
+      description: 'Chain developer tools in sequence. Base64 → JSON → JWT → Regex. 100% client-side.',
+      images: [defaultOgImage],
+    },
+  },
+
   base64Encoder: {
     title: 'Base64 Encoder & Decoder - Free Online Tool | 100% Private Client-Side | C³ MindLoop',
     description:
@@ -335,6 +360,58 @@ export const seoConfig = {
     twitter: {
       title: 'Hash Generator & Checksum Calculator - Free | C³ MindLoop',
       description: 'SHA-256, SHA-512, MD5 hash generator. 100% Private & Client-Side, zero server upload.',
+      images: [defaultOgImage],
+    },
+  },
+  passwordShuffleGenerator: {
+    title: 'Password Generator & List Randomizer - Free Online Tool | 100% Private | C³ MindLoop',
+    description:
+      'Free online password generator and shuffle/randomizer. Generate cryptographically secure passwords with configurable length, character sets, and entropy display. Shuffle any list or string. 100% client-side via crypto.getRandomValues, zero server upload, GDPR compliant.',
+    keywords: [
+      // High-volume primary — password
+      'password generator', 'random password generator', 'secure password generator',
+      'password generator online', 'strong password generator', 'password creator',
+      'free password generator', 'password generator no login', 'password maker online',
+      'complex password generator', 'safe password generator', 'password generator tool',
+      // Character set & options long-tail
+      'password generator with symbols', 'password generator with numbers',
+      'uppercase lowercase password generator', 'exclude ambiguous characters password',
+      'password length generator', 'custom password generator',
+      'password generator 16 characters', 'password generator 32 characters',
+      'password generator 64 characters', 'alphanumeric password generator',
+      // Entropy / strength
+      'password strength checker', 'password entropy calculator', 'entropy bits password',
+      'how strong is my password', 'password security checker', 'password complexity tool',
+      // List randomizer / shuffle
+      'list randomizer', 'shuffle list online', 'text shuffler', 'random list generator',
+      'randomize list online', 'item shuffler', 'word randomizer', 'list shuffler',
+      'shuffle words online', 'random order generator', 'shuffle text online',
+      'randomize order of items', 'team randomizer', 'name picker random',
+      // Fisher-Yates & crypto
+      'fisher yates shuffle', 'crypto.getRandomValues', 'cryptographic password',
+      'cryptographically secure password', 'CSPRNG password generator',
+      // Privacy & client-side
+      '100% Private', 'Client-Side Execution', 'No Server Upload', 'GDPR Compliant', 'Free Online Utility',
+      'offline password generator', 'password generator no account',
+      'private password generator', 'password generator no data collection',
+      'password generator browser only', 'password generator without registration',
+      // Competitor alternatives
+      'lastpass password generator alternative', 'bitwarden password generator alternative',
+      '1password generator alternative', 'dashlane password generator alternative',
+      // Brand
+      'C³ MindLoop password tool', 'ccube password generator', 'c3mindloop shuffle tool',
+    ],
+    canonical: `${BASE_URL}/tools/password-shuffle-generator`,
+    openGraph: {
+      title: 'Password Generator & List Randomizer - Free | C³ MindLoop',
+      description:
+        'Generate cryptographically secure passwords and shuffle any list. Configurable length, character sets, entropy display. 100% Private, zero server upload.',
+      url: `${BASE_URL}/tools/password-shuffle-generator`,
+      images: [{ url: defaultOgImage, width: 1200, height: 630, alt: 'Password & Shuffle Generator - C³ MindLoop' }],
+    },
+    twitter: {
+      title: 'Password Generator & List Randomizer - Free | C³ MindLoop',
+      description: 'Cryptographically secure passwords + list shuffler. Entropy display, 100% Private & Client-Side.',
       images: [defaultOgImage],
     },
   },
@@ -907,6 +984,58 @@ export const editPdfSchema = {
     'Undo / redo full edit history',
     'Export and download the annotated PDF',
     'Client-side processing using pdf-lib- no server upload',
+  ],
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+  publisher: { '@type': 'Organization', name: 'C³ MindLoop', url: BASE_URL },
+};
+
+export const passwordShuffleGeneratorSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: 'Password Generator & List Randomizer',
+  url: `${BASE_URL}/tools/password-shuffle-generator`,
+  applicationCategory: 'WebApplication',
+  operatingSystem: 'All',
+  browserRequirements: 'Requires JavaScript',
+  description:
+    'Free online password generator and list randomizer. Generate cryptographically secure passwords with configurable length (8–128), character sets, ambiguous character exclusion, and live entropy display. Shuffle any newline-separated list or string using Fisher-Yates with crypto.getRandomValues. 100% Private, Client-Side Execution, GDPR Compliant, zero server upload.',
+  featureList: [
+    'Cryptographically secure password generation via crypto.getRandomValues (CSPRNG)',
+    'Configurable password length from 8 to 128 characters',
+    'Four independent character set toggles: Uppercase, Lowercase, Digits, Symbols',
+    'Exclude visually ambiguous characters (0, O, l, 1, I) with one click',
+    'Live entropy display in bits with four-tier strength label (Weak / Fair / Strong / Very Strong)',
+    'Guaranteed character-category inclusion — every enabled type appears in the output',
+    'Fisher-Yates list shuffler with crypto.getRandomValues — uniform random order',
+    'Single-line input shuffles individual characters; multi-line input shuffles items',
+    'One-click Copy to clipboard with 2-second confirmation feedback',
+    'Load Sample presets for instant demo in both modes',
+    'Full-screen mode with Escape-key exit',
+    '100% client-side — no passwords or list data ever leave the browser',
+    'Zero persistence — nothing written to localStorage, sessionStorage, or cookies',
+    'GDPR compliant, zero server upload',
+  ],
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+  publisher: { '@type': 'Organization', name: 'C³ MindLoop', url: BASE_URL },
+};
+
+export const pipelineSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: 'Tool Pipeline Builder',
+  url: `${BASE_URL}/tools/pipeline`,
+  applicationCategory: 'WebApplication',
+  operatingSystem: 'All Web Browsers',
+  description:
+    'Chain multiple developer tools together in a visual pipeline. Base64 decode, JSON format, JWT inspect, regex filter - each step feeds the next. 100% client-side, zero server upload.',
+  featureList: [
+    'Chain up to 8 tool adapters in sequence',
+    'Drag-and-drop step reordering',
+    'Auto-run with 350ms debounce',
+    'Shareable pipeline URL via URL hash encoding',
+    'Per-step output preview and error display',
+    'Download final output as plain text',
+    '100% client-side - no data leaves the browser',
   ],
   offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
   publisher: { '@type': 'Organization', name: 'C³ MindLoop', url: BASE_URL },

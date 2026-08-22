@@ -333,6 +333,18 @@
       "feat2Desc": "Calcula las proximas 5 ejecuciones desde el momento actual, en hora local y UTC.",
       "feat3Title": "Constructor Visual Interactivo",
       "feat3Desc": "Selecciona campos visualmente para Minuto, Hora, Dia, Mes y Dia de Semana y genera una expresion Cron valida."
+    },
+    "pipeline": {
+      "pageTitle": "Constructor de Pipeline de Herramientas",
+      "pageBadge": "100% Client-Side - Procesamiento Local en el Navegador",
+      "breadcrumb": "Pipeline",
+      "breadcrumbParent": "Herramientas para Desarrolladores",
+      "feat1Title": "Ejecucion Secuencial",
+      "feat1Desc": "La salida de cada paso se pasa automaticamente como entrada del siguiente paso.",
+      "feat2Title": "URL Compartible",
+      "feat2Desc": "El estado del pipeline se codifica en el hash de la URL. Copia el enlace y compartelo con tu equipo.",
+      "feat3Title": "Sin Contacto con Servidor",
+      "feat3Desc": "Todos los adaptadores se ejecutan en el navegador. Ningun dato sale de tu maquina."
     }
   },
   "footer": {

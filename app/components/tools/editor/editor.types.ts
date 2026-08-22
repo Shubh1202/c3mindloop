@@ -15,7 +15,8 @@ export type ToolMode =
   | 'text'        // place a new text overlay
   | 'whiteout'    // draw a white rectangle (cover existing content)
   | 'image'       // place an image / stamp
-  | 'signature';  // freehand draw signature
+  | 'signature'   // freehand draw signature
+  | 'cutout';     // cut and move content
 
 // ── Overlay element types ─────────────────────────────────────────────────────
 
@@ -75,11 +76,37 @@ export interface SignatureOverlay extends BaseOverlay {
   opacity: number;
 }
 
+export interface CutoutOverlay extends BaseOverlay {
+  kind: 'cutout';
+
+  /** Source region in PDF-space (points, bottom-up Y origin, immutable after creation) */
+  srcPdfX: number;
+  srcPdfY: number;
+  srcPdfW: number;
+  srcPdfH: number;
+
+  /** originalIndex of the source page (stable through reorder/delete) */
+  srcPageIndex: number;
+
+  /** Destination size in canvas-fraction space (0–1) */
+  width: number;
+  height: number;
+
+  /**
+   * Raster preview for drag UI only.
+   * MUST NEVER be read by buildEditedPdf or any export path.
+   */
+  previewDataUrl: string;
+
+  opacity: number;
+}
+
 export type Overlay =
   | TextOverlay
   | WhiteoutOverlay
   | ImageOverlay
-  | SignatureOverlay;
+  | SignatureOverlay
+  | CutoutOverlay;
 
 // ── Page management ───────────────────────────────────────────────────────────
 

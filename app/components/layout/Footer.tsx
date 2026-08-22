@@ -114,6 +114,7 @@ export const Footer: React.FC<{ onReplayIntro?: () => void }> = ({ onReplayIntro
                 <li className="pt-1">
                   <button
                     onClick={onReplayIntro}
+                    suppressHydrationWarning
                     className="hover:text-[#1D9BF0] text-[#1D9BF0] transition-colors font-semibold cursor-pointer text-left text-xs"
                   >
                     {t('footer.platReplayIntro', 'Replay Intro')}

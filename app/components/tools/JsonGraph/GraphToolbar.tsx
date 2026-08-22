@@ -1,12 +1,14 @@
 'use client';
 
-import React, { useCallback } from 'react';
+import React from 'react';
 import {
   ZoomIn, ZoomOut, Maximize, RotateCcw,
   Download, Loader2, ChevronsDownUp, ChevronsUpDown,
   GitBranch, List, Maximize2, Minimize2, Search,
   Upload, FlaskConical, Trash2,
 } from 'lucide-react';
+import { Toolbar } from '../../ui/Toolbar';
+
 
 export type ViewMode = 'graph' | 'tree';
 
@@ -38,86 +40,7 @@ interface GraphToolbarProps {
   onClear: () => void;
 }
 
-const MIN_SCALE = 0.1;
-const MAX_SCALE = 3.0;
-
-interface TBtnProps {
-  label: string;
-  disabled: boolean;
-  onClick: () => void;
-  children: React.ReactNode;
-  title?: string;
-  /** render with text label beside icon */
-  text?: string;
-  /** highlight as active/primary */
-  active?: boolean;
-}
-
-const TBtn: React.FC<TBtnProps> = ({ label, disabled, onClick, children, title, text, active }) => {
-  const handleKeyDown = useCallback(
-    (e: React.KeyboardEvent<HTMLButtonElement>) => {
-      if (disabled) return;
-      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClick(); }
-    },
-    [disabled, onClick],
-  );
-
-  return (
-    <button
-      aria-label={label}
-      title={title ?? label}
-      aria-disabled={disabled ? 'true' : undefined}
-      tabIndex={disabled ? -1 : 0}
-      onClick={disabled ? undefined : onClick}
-      onKeyDown={handleKeyDown}
-      disabled={disabled}
-      className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded text-xs font-mono transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1D9BF0] ${
-        disabled
-          ? 'text-neutral-700 cursor-not-allowed pointer-events-none'
-          : active
-          ? 'bg-[#1D9BF0] text-white cursor-pointer'
-          : 'text-neutral-300 hover:text-white hover:bg-neutral-800 cursor-pointer'
-      }`}
-    >
-      {children}
-      {text && <span>{text}</span>}
-    </button>
-  );
-};
-
-/** Icon-only square button (no text label) */
-const IBtn: React.FC<Omit<TBtnProps, 'text' | 'active'>> = ({ label, disabled, onClick, children, title }) => {
-  const handleKeyDown = useCallback(
-    (e: React.KeyboardEvent<HTMLButtonElement>) => {
-      if (disabled) return;
-      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClick(); }
-    },
-    [disabled, onClick],
-  );
-
-  return (
-    <button
-      aria-label={label}
-      title={title ?? label}
-      aria-disabled={disabled ? 'true' : undefined}
-      tabIndex={disabled ? -1 : 0}
-      onClick={disabled ? undefined : onClick}
-      onKeyDown={handleKeyDown}
-      disabled={disabled}
-      className={`flex items-center justify-center w-8 h-8 rounded transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1D9BF0] ${
-        disabled
-          ? 'text-neutral-700 cursor-not-allowed pointer-events-none'
-          : 'text-neutral-400 hover:text-neutral-100 hover:bg-neutral-800 cursor-pointer'
-      }`}
-    >
-      {children}
-    </button>
-  );
-};
-
-const Sep: React.FC = () => (
-  <div className="w-px h-5 bg-neutral-800 mx-0.5 shrink-0" />
-);
+// Helpers removed, standard Toolbar components are used directly instead.
 
 /**
  * Primary toolbar -  full-width, in-flow, top of the workspace.
@@ -151,147 +74,173 @@ export const GraphToolbar: React.FC<GraphToolbarProps> = ({
   onClear,
 }) => {
   const zoomPercent = Math.round(scale * 100);
-  const atMin = scale <= MIN_SCALE + 0.001;
-  const atMax = scale >= MAX_SCALE - 0.001;
   const isGraph = viewMode === 'graph';
 
+  const zoomOutDisabled = disabled || scale <= 0.101;
+  const zoomInDisabled = disabled || scale >= 2.999;
+
   return (
-    <div className="flex items-center flex-wrap gap-1 px-3 py-2 bg-neutral-900 border-b border-neutral-800 shrink-0">
+    <Toolbar.Root isDark={true} isFullScreen={isFullScreen}>
+      <Toolbar.Group>
+        <Toolbar.Button
+          onClick={() => onViewModeChange('graph')}
+          active={isGraph}
+          variant="primary"
+          isDark={true}
+          icon={GitBranch}
+          label="Graph"
+        />
 
-      {/* ── View mode toggle -  mirrors JSON Formatter's Code/Tree tabs ── */}
-      <TBtn
-        label="Graph view"
-        disabled={false}
-        onClick={() => onViewModeChange('graph')}
-        active={isGraph}
-      >
-        <GitBranch className="w-3.5 h-3.5" />
-        <span>Graph</span>
-      </TBtn>
+        <Toolbar.Button
+          onClick={() => onViewModeChange('tree')}
+          active={!isGraph}
+          variant="primary"
+          isDark={true}
+          icon={List}
+          label="Tree"
+        />
 
-      <TBtn
-        label="Tree view"
-        disabled={false}
-        onClick={() => onViewModeChange('tree')}
-        active={!isGraph}
-      >
-        <List className="w-3.5 h-3.5" />
-        <span>Tree</span>
-      </TBtn>
+        <Toolbar.Separator />
 
-      <Sep />
+        {/* ── Zoom controls (graph mode only) ── */}
+        {isGraph && (
+          <>
+            <Toolbar.Button
+              onClick={onZoomOut}
+              disabled={zoomOutDisabled}
+              title="Zoom out"
+              aria-label="Zoom out"
+              isDark={true}
+              icon={ZoomOut}
+              className="w-8 h-8 p-0 justify-center"
+            />
 
-      {/* ── Zoom controls (graph mode only) ── */}
-      {isGraph && (
-        <>
-          <IBtn label="Zoom out" disabled={disabled || atMin} onClick={onZoomOut}>
-            <ZoomOut className="w-4 h-4" />
-          </IBtn>
+            <span
+              className="min-w-[40px] text-center text-xs font-mono text-neutral-500 select-none"
+              aria-live="polite"
+              aria-label={`Current zoom: ${zoomPercent}%`}
+            >
+              {zoomPercent}%
+            </span>
 
-          <span
-            className="min-w-[40px] text-center text-xs font-mono text-neutral-500 select-none"
-            aria-live="polite"
-            aria-label={`Current zoom: ${zoomPercent}%`}
-          >
-            {zoomPercent}%
-          </span>
+            <Toolbar.Button
+              onClick={onZoomIn}
+              disabled={zoomInDisabled}
+              title="Zoom in"
+              aria-label="Zoom in"
+              isDark={true}
+              icon={ZoomIn}
+              className="w-8 h-8 p-0 justify-center"
+            />
 
-          <IBtn label="Zoom in" disabled={disabled || atMax} onClick={onZoomIn}>
-            <ZoomIn className="w-4 h-4" />
-          </IBtn>
+            <Toolbar.Separator />
 
-          <Sep />
+            <Toolbar.Button
+              onClick={onFitToScreen}
+              disabled={disabled}
+              title="Fit to screen"
+              aria-label="Fit to screen"
+              isDark={true}
+              icon={Maximize}
+              className="w-8 h-8 p-0 justify-center"
+            />
 
-          <IBtn label="Fit to screen" disabled={disabled} onClick={onFitToScreen} title="Fit to screen">
-            <Maximize className="w-4 h-4" />
-          </IBtn>
+            <Toolbar.Button
+              onClick={onResetLayout}
+              disabled={disabled}
+              title="Reset layout"
+              aria-label="Reset layout"
+              isDark={true}
+              icon={RotateCcw}
+              className="w-8 h-8 p-0 justify-center"
+            />
 
-          <IBtn label="Reset layout" disabled={disabled} onClick={onResetLayout} title="Reset layout">
-            <RotateCcw className="w-4 h-4" />
-          </IBtn>
+            <Toolbar.Separator />
 
-          <Sep />
+            <Toolbar.Button
+              onClick={onExpandAll}
+              disabled={disabled || !canExport}
+              title="Expand all"
+              aria-label="Expand all nodes"
+              isDark={true}
+              icon={ChevronsUpDown}
+              className="w-8 h-8 p-0 justify-center"
+            />
 
-          <IBtn label="Expand all nodes" disabled={disabled || !canExport} onClick={onExpandAll} title="Expand all">
-            <ChevronsUpDown className="w-4 h-4" />
-          </IBtn>
+            <Toolbar.Button
+              onClick={onCollapseAll}
+              disabled={disabled || !canExport}
+              title="Collapse all"
+              aria-label="Collapse all nodes"
+              isDark={true}
+              icon={ChevronsDownUp}
+              className="w-8 h-8 p-0 justify-center"
+            />
 
-          <IBtn label="Collapse all nodes" disabled={disabled || !canExport} onClick={onCollapseAll} title="Collapse all">
-            <ChevronsDownUp className="w-4 h-4" />
-          </IBtn>
+            <Toolbar.Separator />
 
-          <Sep />
+            {/* Upload / Examples / Clear / Search - before Export PNG */}
+            <Toolbar.Button
+              onClick={onUpload}
+              disabled={disabled}
+              title="Upload .json file"
+              isDark={true}
+              icon={Upload}
+              label="Upload"
+              className="hidden sm:flex"
+            />
 
-          {/* Upload / Examples / Clear / Search -  before Export PNG */}
-          <TBtn
-            label="Upload JSON file"
-            disabled={disabled}
-            onClick={onUpload}
-            title="Upload .json file"
-          >
-            <Upload className="w-3.5 h-3.5" />
-            <span>Upload</span>
-          </TBtn>
+            <Toolbar.Button
+              onClick={onExamples}
+              disabled={disabled}
+              title="Load example JSON"
+              isDark={true}
+              icon={FlaskConical}
+              label="Examples"
+              className="hidden sm:flex"
+            />
 
-          <TBtn
-            label="Load example"
-            disabled={disabled}
-            onClick={onExamples}
-            title="Load example JSON"
-          >
-            <FlaskConical className="w-3.5 h-3.5" />
-            <span>Examples</span>
-          </TBtn>
+            <Toolbar.Button
+              onClick={onClear}
+              disabled={!hasInput}
+              title="Clear input"
+              aria-label="Clear input"
+              variant="danger"
+              isDark={true}
+              icon={Trash2}
+              label="Clear"
+            />
 
-          <button
-            onClick={hasInput ? onClear : undefined}
-            disabled={!hasInput}
-            title="Clear input"
-            aria-label="Clear input"
-            className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded text-xs font-mono transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1D9BF0] ${
-              !hasInput
-                ? 'text-neutral-700 cursor-not-allowed pointer-events-none'
-                : 'text-neutral-400 hover:bg-red-950 hover:text-red-300 cursor-pointer'
-            }`}
-          >
-            <Trash2 className="w-3.5 h-3.5" />
-            <span>Clear</span>
-          </button>
+            {/* Search - positioned here to match JsonFormatter (before Export) */}
+            <Toolbar.Button
+              onClick={onSearchToggle}
+              title="Search keys or values (Ctrl+F)"
+              aria-label="Search"
+              active={searchOpen || hasSearchQuery}
+              variant="ghost"
+              isDark={true}
+              icon={Search}
+              label="Search"
+            />
 
-          {/* Search -  positioned here to match JsonFormatter (before Export) */}
-          <button
-            onClick={onSearchToggle}
-            title="Search keys or values (Ctrl+F)"
-            aria-label="Search"
-            className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded text-xs font-mono transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1D9BF0] ${
-              searchOpen || hasSearchQuery
-                ? 'bg-[#1D9BF0]/20 text-[#1D9BF0] border border-[#1D9BF0]/30'
-                : 'text-neutral-400 hover:text-white hover:bg-neutral-800 border border-transparent'
-            }`}
-          >
-            <Search className="w-3.5 h-3.5" />
-            <span>Search</span>
-          </button>
+            <Toolbar.Separator />
 
-          <Sep />
-
-          {/* Export PNG */}
-          <TBtn
-            label="Export as PNG"
-            disabled={disabled || !canExport || isExporting}
-            onClick={onExport}
-            title="Export as PNG"
-          >
-            {isExporting
-              ? <Loader2 className="w-3.5 h-3.5 animate-spin" />
-              : <Download className="w-3.5 h-3.5" />}
-            <span>{isExporting ? 'Exporting…' : 'Export PNG'}</span>
-          </TBtn>
-        </>
-      )}
+            {/* Export PNG */}
+            <Toolbar.Button
+              onClick={onExport}
+              disabled={disabled || !canExport || isExporting}
+              title="Export as PNG"
+              isDark={true}
+              icon={isExporting ? Loader2 : Download}
+              iconClassName={isExporting ? "animate-spin" : ""}
+              label={isExporting ? 'Exporting…' : 'Export PNG'}
+            />
+          </>
+        )}
+      </Toolbar.Group>
 
       {/* ── Right side: node count + fullscreen ── */}
-      <div className="ml-auto flex items-center gap-1">
+      <Toolbar.Group align="right">
         {isGraph && totalNodeCount > 0 && (
           <span className="text-[10px] font-mono text-neutral-600 select-none whitespace-nowrap px-1 hidden sm:inline">
             {visibleNodeCount}/{totalNodeCount} nodes
@@ -299,21 +248,18 @@ export const GraphToolbar: React.FC<GraphToolbarProps> = ({
         )}
 
         {isGraph && totalNodeCount > 0 && (
-          <Sep />
+          <Toolbar.Separator />
         )}
 
         {/* Fullscreen toggle */}
-        <IBtn
-          label={isFullScreen ? 'Exit full screen' : 'Full screen'}
-          title={isFullScreen ? 'Exit full screen (Esc)' : 'Full screen'}
-          disabled={false}
+        <Toolbar.Button
           onClick={onToggleFullScreen}
-        >
-          {isFullScreen
-            ? <Minimize2 className="w-3.5 h-3.5" />
-            : <Maximize2 className="w-3.5 h-3.5" />}
-        </IBtn>
-      </div>
-    </div>
+          title={isFullScreen ? 'Exit full screen (Esc)' : 'Full screen'}
+          isDark={true}
+          icon={isFullScreen ? Minimize2 : Maximize2}
+          className="w-8 h-8 p-0 justify-center"
+        />
+      </Toolbar.Group>
+    </Toolbar.Root>
   );
 };

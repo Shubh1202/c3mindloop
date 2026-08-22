@@ -21,6 +21,7 @@ export const AccordionItem: React.FC<AccordionItemProps> = ({
     <div className="border-b border-theme-subtle last:border-0 py-4">
       <button
         onClick={onToggle}
+        suppressHydrationWarning
         className="w-full flex items-center justify-between text-left font-semibold text-theme-main hover:text-[#1D9BF0] transition-colors py-2 gap-4 cursor-pointer focus:outline-none"
       >
         <span className="text-base sm:text-lg">{title}</span>

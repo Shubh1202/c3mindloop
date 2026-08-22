@@ -107,13 +107,10 @@ async function compressStrong(
     const canvas = document.createElement('canvas');
     canvas.width = Math.floor(viewport.width);
     canvas.height = Math.floor(viewport.height);
+    // pdfjs-dist v6 preferred API: pass `canvas` directly (not canvasContext alongside canvas)
     const ctx = canvas.getContext('2d')!;
-
-    await page.render({
-      canvasContext: ctx,
-      canvas: canvas,
-      viewport
-    }).promise;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    await page.render({ canvas, viewport }).promise;
 
     const jpegDataUrl = canvas.toDataURL('image/jpeg', 0.72);
     const jpegBase64 = jpegDataUrl.split(',')[1];
@@ -260,13 +257,10 @@ const PdfThumbnail: React.FC<PdfThumbnailProps> = ({ file }) => {
 
           canvas.width = Math.floor(viewport.width);
           canvas.height = Math.floor(viewport.height);
+          // pdfjs-dist v6 preferred API: pass `canvas` directly (not canvasContext alongside canvas)
           const ctx = canvas.getContext('2d')!;
-
-          await page.render({
-            canvasContext: ctx,
-            canvas: canvas,
-            viewport,
-          }).promise;
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          await page.render({ canvas, viewport }).promise;
           if (active) {
             setLoading(false);
             clearTimeout(timeoutId);
@@ -375,13 +369,10 @@ const InteractivePreview: React.FC<InteractivePreviewProps> = ({ pdfSource, page
 
           canvas.width = Math.floor(viewport.width);
           canvas.height = Math.floor(viewport.height);
+          // pdfjs-dist v6 preferred API: pass `canvas` directly (not canvasContext alongside canvas)
           const ctx = canvas.getContext('2d')!;
-
-          await page.render({
-            canvasContext: ctx,
-            canvas,
-            viewport,
-          }).promise;
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          await page.render({ canvas, viewport }).promise;
         }
       } catch (err) {
         console.error(err);

@@ -91,7 +91,7 @@ export const ProductsPage: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
               {filteredProducts.map((prod, idx) => {
                 const Icon = iconMap[prod.icon] || Cpu;
-                const name = t(prod.nameKey, prod.id);
+                const name = t(prod.nameKey, prod.nameKey);
                 const desc = t(prod.descKey, '');
                 const toolRoutes: Record<string, string> = {
                   'json-formatter': '/tools/json-formatter',
@@ -109,6 +109,7 @@ export const ProductsPage: React.FC = () => {
                   'edit-pdf': '/tools/edit-pdf',
                   'json-graph': '/tools/json-graph',
                   'code-complexity-analyzer': '/tools/code-complexity-analyzer',
+                  'pipeline': '/tools/pipeline',
                 };
                 const toolHref = toolRoutes[prod.id];
 

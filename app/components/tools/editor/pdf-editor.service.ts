@@ -1,6 +1,21 @@
 import { PDFDocument, rgb, degrees } from 'pdf-lib';
-import type { Overlay, PageMeta, FormField } from './editor.types';
+import type { PDFPage } from 'pdf-lib';
+import type { Overlay, PageMeta, FormField, CutoutOverlay } from './editor.types';
 import { hexToRgb01, FONT_MAP, resolvePdfFont, downloadBlob } from './editor.utils';
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+
+function applyCoverRect(page: PDFPage, overlay: CutoutOverlay): void {
+  // v1: draws a solid white rectangle over the source region.
+  page.drawRectangle({
+    x:      overlay.srcPdfX,
+    y:      overlay.srcPdfY,
+    width:  overlay.srcPdfW,
+    height: overlay.srcPdfH,
+    color:  rgb(1, 1, 1),
+    opacity: 1,
+  });
+}
 
 /**
  * Applies all overlays + page mutations to the source PDF and returns the
@@ -118,6 +133,44 @@ export async function buildEditedPdf(
         opacity: overlay.opacity,
       });
     }
+
+    if (overlay.kind === 'cutout') {
+      try {
+        const srcPage  = pages[overlay.srcPageIndex];
+        const destPage = pages[overlay.pageIndex];
+        if (!srcPage || !destPage) continue;
+
+        const { width: dw, height: dh } = destPage.getSize();
+
+        const boundingBox = {
+          left:   overlay.srcPdfX,
+          bottom: overlay.srcPdfY,
+          right:  overlay.srcPdfX + overlay.srcPdfW,
+          top:    overlay.srcPdfY + overlay.srcPdfH,
+        };
+
+        // embedPage copies the page content stream into a Form XObject — no rasterization
+        const xobj = await pdfDoc.embedPage(srcPage, boundingBox);
+
+        // Destination rect: canvas-fraction → PDF-points, Y axis flipped
+        const dx  =  overlay.x * dw;
+        const dy  = (1 - overlay.y - overlay.height) * dh;
+        const dw2 =  overlay.width  * dw;
+        const dh2 =  overlay.height * dh;
+
+        // Cover the source region BEFORE stamping the destination
+        applyCoverRect(destPage, overlay);
+
+        // drawPage writes a cm (transformation matrix) operator — no rasterization
+        destPage.drawPage(xobj, { x: dx, y: dy, width: dw2, height: dh2, opacity: overlay.opacity });
+      } catch (err: any) {
+        throw new Error(
+          `Cut & Move export failed: the source region could not be embedded as vector content. ` +
+          `Try redrawing the selection. (${err?.message ?? 'unknown error'})`,
+        );
+      }
+      continue;
+    }
   }
 
   // ── 3. Apply page-level mutations (rotation, deletion, reorder) ───────────
@@ -144,10 +197,10 @@ export async function buildEditedPdf(
 
   copiedPages.forEach((p, i) => {
     outDoc.addPage(p);
-    const rot = activeMetas[i].rotation;
-    if (rot !== 0) {
-      p.setRotation(degrees(rot));
-    }
+    const userRot = activeMetas[i].rotation;
+    const nativeRot = p.getRotation().angle;
+    const totalRot = (nativeRot + userRot) % 360;
+    p.setRotation(degrees(totalRot));
   });
 
   return outDoc.save({ useObjectStreams: true });

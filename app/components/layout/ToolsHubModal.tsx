@@ -25,6 +25,7 @@ import {
   ArrowRight,
   SlidersHorizontal,
   Braces,
+  KeyRound,
 } from 'lucide-react';
 import { Logo } from '../ui/Logo';
 
@@ -135,6 +136,16 @@ export const ALL_TOOLS: ToolItem[] = [
     icon: Hash,
     categories: ['Security & Auth'],
     keywords: ['hash', 'md5', 'sha256', 'sha512', 'crypto', 'hmac'],
+  },
+  {
+    id: 'password-shuffle-generator',
+    name: 'Password & Shuffle Generator',
+    sub: 'Generate cryptographically secure passwords and shuffle any list — 100% local',
+    path: '/tools/password-shuffle-generator',
+    icon: KeyRound,
+    categories: ['Security & Auth', 'Utilities'],
+    isNew: true,
+    keywords: ['password', 'generator', 'shuffle', 'randomize', 'crypto', 'entropy', 'list'],
   },
 
   // PDF & Documents
@@ -320,7 +331,7 @@ export const ToolsHubModal: React.FC<{
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search 15+ local tools (e.g. json, pdf, jwt, regex, diff)..."
+                  placeholder="Search 16+ local tools (e.g. json, pdf, jwt, regex, diff)..."
                   className="w-full bg-zinc-900/90 border border-zinc-700/80 text-xs text-zinc-100 placeholder-zinc-500 rounded-xl pl-9 pr-8 py-2 focus:outline-none focus:border-[#1D9BF0] focus:ring-1 focus:ring-[#1D9BF0]/40 transition-colors shadow-inner"
                 />
                 {searchQuery && (

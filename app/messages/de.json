@@ -333,6 +333,18 @@
       "feat2Desc": "Berechnet die naechsten 5 geplanten Laufzeiten in lokaler Browserzeit und UTC.",
       "feat3Title": "Interaktiver Visueller Builder",
       "feat3Desc": "Felder visuell auswaehlen und sofort einen gueltigen Cron-Ausdruck generieren."
+    },
+    "pipeline": {
+      "pageTitle": "Tool-Pipeline-Builder",
+      "pageBadge": "100% Client-Side - Lokale Browser-Verarbeitung",
+      "breadcrumb": "Pipeline",
+      "breadcrumbParent": "Entwickler-Tools",
+      "feat1Title": "Sequenzielle Ausfuehrung",
+      "feat1Desc": "Die Ausgabe jedes Schritts wird automatisch als Eingabe des naechsten Schritts verwendet.",
+      "feat2Title": "Teilbare URL",
+      "feat2Desc": "Pipeline-Status wird in den URL-Hash kodiert. Link kopieren und mit dem Team teilen.",
+      "feat3Title": "Kein Server-Kontakt",
+      "feat3Desc": "Alle Adapter laufen vollstaendig im Browser. Keine Daten verlassen deinen Rechner."
     }
   },
   "footer": {

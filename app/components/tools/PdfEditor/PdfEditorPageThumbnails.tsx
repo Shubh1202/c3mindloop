@@ -39,7 +39,7 @@ export const PdfEditorPageThumbnails: React.FC<Props> = ({
     let cancelled = false;
     pageMetas.forEach((meta, i) => {
       if (meta.deleted) return;
-      renderPageThumbnail(file.file, meta.originalIndex, 80).then(url => {
+      renderPageThumbnail(file.file, meta.originalIndex, 100, meta.rotation).then(url => {
         if (cancelled) return;
         setThumbs(prev => {
           const next = [...prev];
@@ -92,7 +92,7 @@ export const PdfEditorPageThumbnails: React.FC<Props> = ({
 
             {/* Thumbnail */}
             <div
-              className="w-[64px] h-[82px] bg-white border border-neutral-700 rounded overflow-hidden flex items-center justify-center shrink-0"
+              className="w-[84px] h-[108px] bg-white border border-neutral-700 rounded overflow-hidden flex items-center justify-center shrink-0"
               style={{ transform: `rotate(${meta.rotation}deg)` }}
             >
               {!thumb || thumb.loading ? (

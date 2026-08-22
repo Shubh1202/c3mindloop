@@ -4,6 +4,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { trackEvent, GA_EVENTS } from '../../lib/analytics';
 import { Copy, Check, Trash2, ShieldCheck, ShieldAlert, ShieldOff, Clock, Info, AlertCircle, Maximize2, Minimize2, Columns2, Rows2, Key, HelpCircle, ChevronUp, ChevronDown } from 'lucide-react';
 import { useTranslation } from '../../lib/i18n';
+import { Toolbar } from '../ui/Toolbar';
 
 const SAMPLE_JWT =
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c3JfMTIzNDU2IiwibmFtZSI6IkFsZXggUml2ZXJhIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzAwMDAwMDAwLCJleHAiOjk5OTk5OTk5OTl9.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c';
@@ -342,21 +343,40 @@ export const JwtInspectorTool: React.FC = () => {
     <div className={`developer-tool-container bg-neutral-950 border border-neutral-800 font-sans text-neutral-100 flex flex-col ${isFullScreen ? 'fixed inset-0 z-[9999] overflow-hidden' : 'w-full rounded-lg shadow-2xl'}`}>
 
       {/* Toolbar */}
-      <div className={`px-3 py-2.5 bg-neutral-900 border-b border-neutral-800 flex flex-wrap items-center justify-between gap-2 text-xs font-mono ${isFullScreen ? 'sticky top-0 z-[10000]' : ''}`}>
-        <span className="font-semibold text-neutral-300">{t('tools.jwtInspector.inputLabel')}</span>
-        <div className="flex items-center gap-2">
-          <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded border text-[11px] font-mono font-semibold ${statusBg} ${statusColor}`}>
+      <Toolbar.Root isDark={true} isFullScreen={isFullScreen}>
+        <Toolbar.Group>
+          <span className="hidden sm:inline font-semibold text-neutral-300 mr-1">
+            {t('tools.jwtInspector.inputLabel')}
+          </span>
+
+          <div className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded border text-[11px] font-mono font-semibold ${statusBg} ${statusColor}`}>
             <StatusIcon className="w-3 h-3" />
             <span>{statusLabel}</span>
           </div>
-          <button onClick={() => handleDecode(SAMPLE_JWT)} className="px-2.5 py-1.5 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-300 transition-colors cursor-pointer">
-            {t('tools.jwtInspector.inputSample')}
-          </button>
-          <button onClick={() => { setToken(''); setDecoded(null); setError(null); setSignatureValid(null); setSignatureSecret(''); }} className="px-2.5 py-1.5 rounded bg-neutral-800 hover:bg-red-950 hover:text-red-300 text-neutral-400 transition-colors flex items-center gap-1 cursor-pointer">
-            <Trash2 className="w-3 h-3" />
-            {t('tools.jwtInspector.inputClear')}
-          </button>
 
+          <Toolbar.Button
+            onClick={() => handleDecode(SAMPLE_JWT)}
+            isDark={true}
+            label={t('tools.jwtInspector.inputSample')}
+            className="hidden sm:flex"
+          />
+
+          <Toolbar.Button
+            onClick={() => {
+              setToken('');
+              setDecoded(null);
+              setError(null);
+              setSignatureValid(null);
+              setSignatureSecret('');
+            }}
+            variant="danger"
+            isDark={true}
+            icon={Trash2}
+            label={t('tools.jwtInspector.inputClear')}
+          />
+        </Toolbar.Group>
+
+        <Toolbar.Group align="right">
           {/* Layout toggle - desktop only */}
           <div className="hidden lg:flex items-center bg-neutral-950 p-1 rounded border border-neutral-800">
             <button
@@ -375,15 +395,14 @@ export const JwtInspectorTool: React.FC = () => {
             </button>
           </div>
 
-          <button
+          <Toolbar.Button
             onClick={() => setIsFullScreen(!isFullScreen)}
             title={isFullScreen ? 'Exit Full Screen' : 'Full Screen'}
-            className="p-1.5 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-300 transition-colors cursor-pointer"
-          >
-            {isFullScreen ? <Minimize2 className="w-3 h-3" /> : <Maximize2 className="w-3 h-3" />}
-          </button>
-        </div>
-      </div>
+            isDark={true}
+            icon={isFullScreen ? Minimize2 : Maximize2}
+          />
+        </Toolbar.Group>
+      </Toolbar.Root>
 
       {/* Main layout: side-by-side or stacked */}
       <div className={`${isSideBySide

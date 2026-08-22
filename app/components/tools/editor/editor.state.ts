@@ -3,7 +3,7 @@
 import { useState, useCallback, useRef } from 'react';
 import type {
   EditorState, Overlay, ToolMode, PageMeta, FormField, PdfFile,
-  TextOverlay, WhiteoutOverlay, ImageOverlay, SignatureOverlay, RotationDeg,
+  TextOverlay, WhiteoutOverlay, ImageOverlay, SignatureOverlay, CutoutOverlay, RotationDeg,
 } from './editor.types';
 import { useEditorHistory } from './editor.history';
 import { uid, buildPageMetas, makePdfFile } from './editor.utils';
@@ -46,7 +46,7 @@ export function useEditorState() {
 
   const loadFile = useCallback(async (file: File) => {
     const pdfFile = await makePdfFile(file);
-    const metas = buildPageMetas(pdfFile.pageCount ?? 1);
+    const metas = await buildPageMetas(file, pdfFile.pageCount ?? 1);
 
     let formFields: FormField[] = [];
     try {
@@ -323,6 +323,28 @@ export function useEditorState() {
     set({ toolMode: 'select' });
   }, [state.file, state.activePage, state.pageMetas, addOverlay, set]);
 
+  const addCutout = useCallback((
+    x: number, y: number, w: number, h: number,
+    srcPdfX: number, srcPdfY: number, srcPdfW: number, srcPdfH: number,
+    previewDataUrl: string,
+  ) => {
+    if (!state.file) return;
+    const pageIdx = state.pageMetas[state.activePage]?.originalIndex ?? state.activePage;
+    const overlay: CutoutOverlay = {
+      id: uid(), kind: 'cutout',
+      pageIndex: pageIdx,
+      x, y, width: w, height: h,
+      srcPdfX, srcPdfY, srcPdfW, srcPdfH,
+      srcPageIndex: pageIdx,
+      previewDataUrl,
+      opacity: 1.0,
+    };
+    setState(prev => {
+      history.push(snapshot(prev));
+      return { ...prev, overlays: [...prev.overlays, overlay], selectedId: overlay.id, toolMode: 'select' };
+    });
+  }, [state.file, state.activePage, state.pageMetas, history]);
+
   return {
     state,
     // file
@@ -367,6 +389,7 @@ export function useEditorState() {
     addWhiteout,
     addImage,
     addSignature,
+    addCutout,
   };
 }
 

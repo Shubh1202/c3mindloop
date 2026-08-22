@@ -4,6 +4,8 @@ import React, { useState, useCallback, useEffect, useRef, useMemo } from 'react'
 import { trackEvent, GA_EVENTS } from '../../lib/analytics';
 import { Copy, Check, Trash2, Upload, ArrowLeftRight, Info, AlertCircle, Maximize2, Minimize2, Image } from 'lucide-react';
 import { useTranslation } from '../../lib/i18n';
+import { useTheme } from '../../lib/theme';
+import { Toolbar } from '../ui/Toolbar';
 
 type Mode = 'encode' | 'decode';
 
@@ -112,6 +114,8 @@ export const Base64Tool: React.FC = () => {
     [t]
   );
 
+  const { isDark } = useTheme();
+
   const handleInput = (val: string) => {
     setInput(val);
     process(val, mode, urlSafe);
@@ -175,93 +179,100 @@ export const Base64Tool: React.FC = () => {
     <div className={`developer-tool-container bg-neutral-950 border border-neutral-800 font-sans text-neutral-100 flex flex-col ${isFullScreen ? 'fixed inset-0 z-[9999] overflow-hidden' : 'w-full rounded-lg shadow-2xl'}`}>
 
       {/* Toolbar */}
-      <div className={`p-3 sm:p-4 border-b border-neutral-800 flex flex-wrap items-center gap-2 ${isFullScreen ? 'sticky top-0 z-[10000] bg-neutral-950' : ''}`}>
-        {/* Mode toggle */}
-        <div className="flex items-center rounded-md border border-neutral-700 overflow-hidden text-xs font-mono shrink-0">
-          <button
-            onClick={() => { setMode('encode'); process(input, 'encode', urlSafe); }}
-            className={`px-3 py-1.5 transition-colors cursor-pointer ${mode === 'encode' ? 'bg-[#1D9BF0] text-white' : 'bg-neutral-900 text-neutral-400 hover:text-neutral-200'}`}
-          >
-            {t('tools.base64Encoder.modeEncode')}
-          </button>
-          <button
-            onClick={() => { setMode('decode'); process(input, 'decode', urlSafe); }}
-            className={`px-3 py-1.5 transition-colors cursor-pointer ${mode === 'decode' ? 'bg-[#1D9BF0] text-white' : 'bg-neutral-900 text-neutral-400 hover:text-neutral-200'}`}
-          >
-            {t('tools.base64Encoder.modeDecode')}
-          </button>
-        </div>
+      <Toolbar.Root isDark={isDark} isFullScreen={isFullScreen}>
+        <Toolbar.Group>
+          {/* Mode switcher */}
+          <div className={`flex items-center rounded border overflow-hidden shrink-0 ${isDark ? 'border-neutral-700' : 'border-[#E4E4E7]'}`}>
+            <button
+              onClick={() => { setMode('encode'); process(input, 'encode', urlSafe); }}
+              className={`px-3 py-1.5 transition-colors cursor-pointer text-xs font-mono font-semibold ${
+                mode === 'encode'
+                  ? 'bg-[#1D9BF0] text-white'
+                  : isDark
+                  ? 'bg-neutral-900 text-neutral-400 hover:text-neutral-200'
+                  : 'bg-[#E4E4E7]/40 text-[#3F3F46] hover:bg-[#D4D4D8]'
+              }`}
+            >
+              {t('tools.base64Encoder.modeEncode')}
+            </button>
+            <button
+              onClick={() => { setMode('decode'); process(input, 'decode', urlSafe); }}
+              className={`px-3 py-1.5 transition-colors cursor-pointer text-xs font-mono font-semibold ${
+                mode === 'decode'
+                  ? 'bg-[#1D9BF0] text-white'
+                  : isDark
+                  ? 'bg-neutral-900 text-neutral-400 hover:text-neutral-200'
+                  : 'bg-[#E4E4E7]/40 text-[#3F3F46] hover:bg-[#D4D4D8]'
+              }`}
+            >
+              {t('tools.base64Encoder.modeDecode')}
+            </button>
+          </div>
 
-        {/* URL-Safe toggle */}
-        <label className="flex items-center gap-1.5 text-xs font-mono text-neutral-400 cursor-pointer select-none shrink-0">
-          <input
-            type="checkbox"
-            checked={urlSafe}
-            onChange={(e) => handleUrlSafe(e.target.checked)}
-            className="accent-[#1D9BF0] cursor-pointer"
+          {/* URL-Safe Toggle */}
+          <label className={`flex items-center gap-1.5 text-xs font-mono cursor-pointer select-none shrink-0 ${isDark ? 'text-neutral-400' : 'text-neutral-600'}`}>
+            <input
+              type="checkbox"
+              checked={urlSafe}
+              onChange={(e) => handleUrlSafe(e.target.checked)}
+              className="accent-[#1D9BF0] cursor-pointer"
+            />
+            {t('tools.base64Encoder.urlSafe')}
+          </label>
+
+          <Toolbar.Button
+            onClick={handleModeSwitch}
+            disabled={!output}
+            title={t('tools.base64Encoder.swap')}
+            isDark={isDark}
+            icon={ArrowLeftRight}
+            label={t('tools.base64Encoder.swap')}
+            className="hidden sm:flex"
           />
-          {t('tools.base64Encoder.urlSafe')}
-        </label>
 
-        <div className="flex-1" />
+          {/* File Upload - hidden on mobile */}
+          <Toolbar.Button
+            onClick={() => fileRef.current?.click()}
+            className="hidden sm:flex"
+            isDark={isDark}
+            icon={Upload}
+            label={t('tools.base64Encoder.fileUpload')}
+          />
+          <input ref={fileRef} type="file" className="hidden" onChange={handleFile} />
 
-        {/* Swap */}
-        <button
-          onClick={handleModeSwitch}
-          disabled={!output}
-          title={t('tools.base64Encoder.swap')}
-          className="px-2.5 py-1.5 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-300 transition-colors flex items-center gap-1.5 text-xs font-mono disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
-        >
-          <ArrowLeftRight className="w-3.5 h-3.5" />
-          {t('tools.base64Encoder.swap')}
-        </button>
+          <Toolbar.Button
+            onClick={handleSample}
+            isDark={isDark}
+            label={t('tools.base64Encoder.sampleData')}
+            className="hidden sm:flex"
+          />
 
-        {/* File upload */}
-        <button
-          onClick={() => fileRef.current?.click()}
-          className="px-2.5 py-1.5 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-300 transition-colors flex items-center gap-1.5 text-xs font-mono cursor-pointer"
-        >
-          <Upload className="w-3.5 h-3.5" />
-          {t('tools.base64Encoder.fileUpload')}
-        </button>
-        <input ref={fileRef} type="file" className="hidden" onChange={handleFile} />
+          <Toolbar.Button
+            onClick={handleClear}
+            variant="danger"
+            isDark={isDark}
+            icon={Trash2}
+            label={t('tools.base64Encoder.clear')}
+          />
+        </Toolbar.Group>
 
-        {/* Copy */}
-        <button
-          onClick={handleCopy}
-          disabled={!output}
-          className="px-2.5 py-1.5 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-300 transition-colors flex items-center gap-1.5 text-xs font-mono disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
-        >
-          {copied ? <Check className="w-3.5 h-3.5 text-sky-400" /> : <Copy className="w-3.5 h-3.5" />}
-          {copied ? t('tools.base64Encoder.copied') : t('tools.base64Encoder.copy')}
-        </button>
+        <Toolbar.Group align="right">
+          <Toolbar.Button
+            onClick={handleCopy}
+            disabled={!output}
+            isDark={isDark}
+            icon={copied ? Check : Copy}
+            label={copied ? t('tools.base64Encoder.copied') : t('tools.base64Encoder.copy')}
+          />
 
-        {/* Sample Data */}
-        <button
-          onClick={handleSample}
-          className="px-2.5 py-1.5 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-300 transition-colors text-xs font-mono cursor-pointer"
-        >
-          {t('tools.base64Encoder.sampleData')}
-        </button>
-
-        {/* Clear */}
-        <button
-          onClick={handleClear}
-          className="px-2.5 py-1.5 rounded bg-neutral-800 hover:bg-red-950 hover:text-red-300 text-neutral-400 transition-colors flex items-center gap-1.5 text-xs font-mono cursor-pointer"
-        >
-          <Trash2 className="w-3.5 h-3.5" />
-          {t('tools.base64Encoder.clear')}
-        </button>
-
-        {/* Fullscreen */}
-        <button
-          onClick={() => setIsFullScreen(!isFullScreen)}
-          title={isFullScreen ? 'Exit Full Screen' : 'Full Screen'}
-          className="p-1.5 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-300 transition-colors cursor-pointer"
-        >
-          {isFullScreen ? <Minimize2 className="w-3.5 h-3.5" /> : <Maximize2 className="w-3.5 h-3.5" />}
-        </button>
-      </div>
+          <Toolbar.Button
+            onClick={() => setIsFullScreen(!isFullScreen)}
+            title={isFullScreen ? 'Exit Full Screen' : 'Full Screen'}
+            isDark={isDark}
+            icon={isFullScreen ? Minimize2 : Maximize2}
+          />
+        </Toolbar.Group>
+      </Toolbar.Root>
 
       {/* Panels */}
       <div className={`grid grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-neutral-800 ${isFullScreen ? 'flex-1 overflow-hidden' : ''}`}>
