@@ -222,13 +222,13 @@ const ResumePreview: React.FC<{ data: ResumeData }> = ({ data }) => {
         <h1 className="text-[22px] font-bold uppercase tracking-wide text-neutral-900 m-0">{contact.name}</h1>
         <div className="flex flex-wrap justify-center gap-x-3 gap-y-0.5 mt-1.5 text-[12px] text-neutral-600">
           {contact.email && <span>{contact.email}</span>}
-          {contact.phone && <><span>Â·</span><span>{contact.phone}</span></>}
-          {contact.location && <><span>Â·</span><span>{contact.location}</span></>}
+          {contact.phone && <><span>{" • "}</span><span>{contact.phone}</span></>}
+          {contact.location && <><span>{" • "}</span><span>{contact.location}</span></>}
         </div>
         <div className="flex flex-wrap justify-center gap-x-3 gap-y-0.5 mt-0.5 text-[12px] text-neutral-600">
           {contact.linkedin && <span>{contact.linkedin}</span>}
-          {contact.github && <><span>Â·</span><span>{contact.github}</span></>}
-          {contact.portfolio && <><span>Â·</span><span>{contact.portfolio}</span></>}
+          {contact.github && <><span>{" • "}</span><span>{contact.github}</span></>}
+          {contact.portfolio && <><span>{" • "}</span><span>{contact.portfolio}</span></>}
         </div>
       </div>
 
@@ -267,7 +267,7 @@ const ResumePreview: React.FC<{ data: ResumeData }> = ({ data }) => {
               <div className="flex justify-between items-baseline">
                 <span className="font-bold text-[13px] text-neutral-900">{exp.title}</span>
                 <span className="text-[11.5px] text-neutral-600 font-mono shrink-0 ml-2">
-                  {fmtDate(exp.start)} â€“ {exp.current ? 'Present' : fmtDate(exp.end)}
+                  {fmtDate(exp.start)} - {exp.current ? 'Present' : fmtDate(exp.end)}
                 </span>
               </div>
               <div className="text-[12px] text-neutral-700 font-medium mb-1">{exp.company}</div>
@@ -311,18 +311,18 @@ const ResumePreview: React.FC<{ data: ResumeData }> = ({ data }) => {
             Education
           </h2>
           {education.map((edu) => (
-            <div key={edu.id} className="flex justify-between items-baseline">
-              <div>
-                <span className="font-bold text-[12.5px] text-neutral-900">{edu.institution}</span>
-                <span className="text-[12px] text-neutral-700 ml-2">
-                  {edu.degree} {edu.field}
-                  {edu.gpa ? ` Â· GPA: ${edu.gpa}` : ''}
-                </span>
-              </div>
-              <span className="text-[11.5px] text-neutral-600 font-mono shrink-0 ml-2">
-                {edu.start}{edu.end ? ` â€“ ${edu.end}` : ''}
+          <div key={edu.id} className="flex justify-between items-baseline">
+            <div>
+              <span className="font-bold text-[12.5px] text-neutral-900">{edu.institution}</span>
+              <span className="text-[12px] text-neutral-700 ml-2">
+                {edu.degree} {edu.field}
+                {edu.gpa ? ` - GPA: ${edu.gpa}` : ''}
               </span>
             </div>
+            <span className="text-[11.5px] text-neutral-600 font-mono shrink-0 ml-2">
+              {edu.start}{edu.end ? ` – ${edu.end}` : ''}
+            </span>
+          </div>
           ))}
         </section>
       )}
@@ -542,7 +542,7 @@ export const AtsResumeTool: React.FC = () => {
         </div>
         <div className="flex items-center gap-2">
           <span className="hidden sm:block text-[10px] font-mono text-neutral-500 bg-neutral-900 border border-neutral-800 px-2 py-1 rounded">
-            Client-Side Â· No Upload
+            Client-Side {" • "} No Upload
           </span>
 
           {/* Hidden file input for JSON restore */}
@@ -621,7 +621,7 @@ export const AtsResumeTool: React.FC = () => {
 
             {/* Summary */}
             <Section icon={<User className="w-4 h-4" />} title="Summary">
-              <TextArea id="summary" label="Professional Summary" value={data.summary} onChange={set('summary')} rows={4} placeholder="2â€“3 sentence professional summary..." />
+              <TextArea id="summary" label="Professional Summary" value={data.summary} onChange={set('summary')} rows={4} placeholder="2-3 sentence professional summary..." />
             </Section>
 
             {/* Skills */}

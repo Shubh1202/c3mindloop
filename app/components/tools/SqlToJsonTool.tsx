@@ -125,10 +125,10 @@ function jsonToSqlInsert(jsonStr: string, tableName = 'table_name'): string {
     if (records.length === 0 || typeof records[0] !== 'object' || records[0] === null) {
       throw new Error('JSON must contain at least one non-empty object or array of objects.');
     }
-    
+
     const columns = Array.from(new Set(records.flatMap(r => Object.keys(r))));
     if (columns.length === 0) return '';
-    
+
     const colList = columns.join(', ');
     const valuesList = records.map(r => {
       const valRow = columns.map(col => {
@@ -141,7 +141,7 @@ function jsonToSqlInsert(jsonStr: string, tableName = 'table_name'): string {
       }).join(', ');
       return `(${valRow})`;
     }).join(',\n       ');
-    
+
     return `INSERT INTO ${tableName} (${colList})\nVALUES ${valuesList};`;
   } catch (e: any) {
     throw new Error('Invalid JSON input: ' + e.message);
@@ -232,7 +232,7 @@ export const SqlToJsonTool: React.FC = () => {
   const renderHighlightedOutput = (text: string) => {
     if (!text) return null;
     const escaped = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    
+
     let highlighted = escaped;
     if (mode !== 'jsontosql') {
       highlighted = escaped.replace(
@@ -252,7 +252,7 @@ export const SqlToJsonTool: React.FC = () => {
     } else {
       highlighted = escaped.replace(/\b(INSERT INTO|VALUES|NULL|true|false)\b/g, '<span class="text-purple-400 font-semibold">$1</span>');
     }
-    
+
     return <pre className="font-mono text-xs p-4 overflow-y-auto leading-relaxed text-neutral-200 whitespace-pre-wrap break-words [word-break:break-word] overflow-x-hidden" dangerouslySetInnerHTML={{ __html: highlighted }} />;
   };
 
