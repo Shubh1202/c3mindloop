@@ -115,6 +115,11 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(webApplicationSchema) }}
         />
+
+        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"></link>
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png"></link>
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"></link>
+        <link rel="manifest" href="/site.webmanifest"></link>
       </head>
       <body className="bg-neutral-950 text-neutral-100 antialiased min-h-screen">
         <AppClientShell>{children}</AppClientShell>
