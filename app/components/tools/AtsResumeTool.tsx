@@ -72,6 +72,31 @@ interface ResumeData {
 
 const uid = () => Math.random().toString(36).slice(2, 9);
 
+const cleanUrl = (url: string) => {
+  if (!url) return '';
+  return url.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '');
+};
+
+const formatUrlHref = (url: string) => {
+  if (!url) return '';
+  if (/^(https?:\/\/|mailto:|tel:)/i.test(url)) return url;
+  return `https://${url}`;
+};
+
+const fmtDate = (d: string) => {
+  if (!d) return '';
+  const trimmed = d.trim();
+  if (!trimmed) return '';
+  if (/^\d{4}-\d{2}$/.test(trimmed)) {
+    const [year, month] = trimmed.split('-');
+    const date = new Date(Number(year), Number(month) - 1, 1);
+    if (!isNaN(date.getTime())) {
+      return date.toLocaleString('en-US', { month: 'short', year: 'numeric' });
+    }
+  }
+  return trimmed;
+};
+
 const defaultResume: ResumeData = {
   contact: {
     name: 'Your Name',
@@ -126,7 +151,7 @@ const defaultResume: ResumeData = {
   ],
 };
 
-// â”€â”€â”€ Section Collapse Wrapper â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// Section Collapse Wrapper
 
 const Section: React.FC<{
   icon: React.ReactNode;
@@ -152,7 +177,7 @@ const Section: React.FC<{
   );
 };
 
-// â”€â”€â”€ Field Components â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// Field Components
 
 const Field: React.FC<{
   label: string;
@@ -199,131 +224,304 @@ const TextArea: React.FC<{
   </div>
 );
 
-// â”€â”€â”€ Preview â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// Preview Component
 
-const ResumePreview: React.FC<{ data: ResumeData }> = ({ data }) => {
+const ResumePreview: React.FC<{ data: ResumeData; isPrint?: boolean }> = ({ data, isPrint = false }) => {
   const { contact, summary, skills, experience, education, projects } = data;
 
-  const fmtDate = (d: string) => {
-    if (!d) return '';
-    const [year, month] = d.split('-');
-    if (!month) return year;
-    return new Date(Number(year), Number(month) - 1).toLocaleString('en-US', { month: 'short', year: 'numeric' });
-  };
+  const contactItems: React.ReactNode[] = [];
+  if (contact.email) {
+    contactItems.push(
+      <a
+        key="email"
+        href={`mailto:${contact.email}`}
+        className="text-neutral-800 hover:text-black no-underline"
+      >
+        {contact.email}
+      </a>
+    );
+  }
+  if (contact.phone) {
+    contactItems.push(
+      <a
+        key="phone"
+        href={`tel:${contact.phone.replace(/[\s()-]/g, '')}`}
+        className="text-neutral-800 hover:text-black no-underline"
+      >
+        {contact.phone}
+      </a>
+    );
+  }
+  if (contact.location) {
+    contactItems.push(
+      <span key="location" className="text-neutral-800">
+        {contact.location}
+      </span>
+    );
+  }
+
+  const linkItems: React.ReactNode[] = [];
+  if (contact.linkedin) {
+    linkItems.push(
+      <a
+        key="linkedin"
+        href={formatUrlHref(contact.linkedin)}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-neutral-800 hover:text-black no-underline"
+      >
+        {cleanUrl(contact.linkedin)}
+      </a>
+    );
+  }
+  if (contact.github) {
+    linkItems.push(
+      <a
+        key="github"
+        href={formatUrlHref(contact.github)}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-neutral-800 hover:text-black no-underline"
+      >
+        {cleanUrl(contact.github)}
+      </a>
+    );
+  }
+  if (contact.portfolio) {
+    linkItems.push(
+      <a
+        key="portfolio"
+        href={formatUrlHref(contact.portfolio)}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-neutral-800 hover:text-black no-underline"
+      >
+        {cleanUrl(contact.portfolio)}
+      </a>
+    );
+  }
+
+  const renderSeparated = (items: React.ReactNode[]) =>
+    items.map((item, idx) => (
+      <React.Fragment key={idx}>
+        {idx > 0 && <span className="text-neutral-400 select-none">{" • "}</span>}
+        {item}
+      </React.Fragment>
+    ));
 
   return (
     <div
-      id="ats-resume-preview"
-      className="bg-white text-neutral-900 font-sans text-[13px] leading-[1.4] p-[36px] min-h-[900px] print:p-[36px] print:min-h-0"
-      style={{ fontFamily: 'Arial, Helvetica, sans-serif', lineHeight: 1.4 }}
+      className={`bg-white text-neutral-900 font-sans ${
+        isPrint
+          ? 'w-full p-0 m-0 min-h-0'
+          : 'p-8 sm:p-10 min-h-[900px] w-full max-w-[794px] mx-auto'
+      }`}
+      style={{
+        fontFamily: 'Arial, Helvetica, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+        lineHeight: 1.35,
+        color: '#111111',
+      }}
     >
       {/* Header */}
-      <div className="text-center mb-4 border-b border-neutral-300 pb-4">
-        <h1 className="text-[22px] font-bold uppercase tracking-wide text-neutral-900 m-0">{contact.name}</h1>
-        <div className="flex flex-wrap justify-center gap-x-3 gap-y-0.5 mt-1.5 text-[12px] text-neutral-600">
-          {contact.email && <span>{contact.email}</span>}
-          {contact.phone && <><span>{" • "}</span><span>{contact.phone}</span></>}
-          {contact.location && <><span>{" • "}</span><span>{contact.location}</span></>}
-        </div>
-        <div className="flex flex-wrap justify-center gap-x-3 gap-y-0.5 mt-0.5 text-[12px] text-neutral-600">
-          {contact.linkedin && <span>{contact.linkedin}</span>}
-          {contact.github && <><span>{" • "}</span><span>{contact.github}</span></>}
-          {contact.portfolio && <><span>{" • "}</span><span>{contact.portfolio}</span></>}
-        </div>
-      </div>
+      <header className="ats-resume-header text-center mb-3 pb-2.5 border-b border-neutral-400">
+        <h1 className="text-[20px] sm:text-[22px] font-bold uppercase tracking-wider text-black m-0 leading-tight">
+          {contact.name || 'Your Name'}
+        </h1>
+        {contactItems.length > 0 && (
+          <div className="flex flex-wrap justify-center items-center gap-x-2 gap-y-0.5 mt-1.5 text-[11.5px] text-neutral-800">
+            {renderSeparated(contactItems)}
+          </div>
+        )}
+        {linkItems.length > 0 && (
+          <div className="flex flex-wrap justify-center items-center gap-x-2 gap-y-0.5 mt-0.5 text-[11.5px] text-neutral-800">
+            {renderSeparated(linkItems)}
+          </div>
+        )}
+      </header>
 
       {/* Summary */}
-      {summary && (
-        <section className="mb-3">
-          <h2 className="text-[13px] font-bold uppercase tracking-[0.08em] border-b border-neutral-400 pb-0.5 mb-1.5 text-neutral-900">
+      {summary && summary.trim() && (
+        <section className="ats-section mb-3">
+          <h2 className="ats-section-title text-[12px] font-bold uppercase tracking-[0.08em] border-b border-neutral-900 pb-0.5 mb-1 text-black leading-normal">
             Summary
           </h2>
-          <p className="text-[12.5px] text-neutral-800">{summary}</p>
+          <p className="text-[11.5px] text-neutral-800 leading-[1.4] text-justify">
+            {summary}
+          </p>
         </section>
       )}
 
-      {/* Skills */}
-      {skills && (
-        <section className="mb-3">
-          <h2 className="text-[13px] font-bold uppercase tracking-[0.08em] border-b border-neutral-400 pb-0.5 mb-1.5 text-neutral-900">
+      {/* Technical Skills */}
+      {skills && skills.trim() && (
+        <section className="ats-section mb-3">
+          <h2 className="ats-section-title text-[12px] font-bold uppercase tracking-[0.08em] border-b border-neutral-900 pb-0.5 mb-1 text-black leading-normal">
             Technical Skills
           </h2>
-          {skills.split('\n').map((line, i) => (
-            <p key={i} className="text-[12.5px] text-neutral-800 leading-[1.5]">
-              {line}
-            </p>
-          ))}
+          <div className="space-y-0.5">
+            {skills.split('\n').filter(Boolean).map((line, i) => {
+              const colonIdx = line.indexOf(':');
+              if (colonIdx > 0) {
+                const category = line.slice(0, colonIdx + 1);
+                const list = line.slice(colonIdx + 1);
+                return (
+                  <p key={i} className="text-[11.5px] text-neutral-800 leading-[1.4]">
+                    <strong className="font-semibold text-black">{category}</strong>
+                    {list}
+                  </p>
+                );
+              }
+              return (
+                <p key={i} className="text-[11.5px] text-neutral-800 leading-[1.4]">
+                  {line}
+                </p>
+              );
+            })}
+          </div>
         </section>
       )}
 
       {/* Experience */}
-      {experience.length > 0 && (
-        <section className="mb-3">
-          <h2 className="text-[13px] font-bold uppercase tracking-[0.08em] border-b border-neutral-400 pb-0.5 mb-2 text-neutral-900">
+      {experience.filter((e) => e.company || e.title || e.bullets.some(Boolean)).length > 0 && (
+        <section className="ats-section mb-3">
+          <h2 className="ats-section-title text-[12px] font-bold uppercase tracking-[0.08em] border-b border-neutral-900 pb-0.5 mb-1.5 text-black leading-normal">
             Experience
           </h2>
-          {experience.map((exp) => (
-            <div key={exp.id} className="mb-3">
-              <div className="flex justify-between items-baseline">
-                <span className="font-bold text-[13px] text-neutral-900">{exp.title}</span>
-                <span className="text-[11.5px] text-neutral-600 font-mono shrink-0 ml-2">
-                  {fmtDate(exp.start)} - {exp.current ? 'Present' : fmtDate(exp.end)}
-                </span>
-              </div>
-              <div className="text-[12px] text-neutral-700 font-medium mb-1">{exp.company}</div>
-              <ul className="list-disc ml-4 space-y-0.5">
-                {exp.bullets.filter(Boolean).map((b, i) => (
-                  <li key={i} className="text-[12px] text-neutral-800">{b}</li>
-                ))}
-              </ul>
-            </div>
-          ))}
+          <div className="space-y-2.5">
+            {experience.map((exp) => {
+              const hasContent = exp.company || exp.title || exp.bullets.some(Boolean);
+              if (!hasContent) return null;
+              const validBullets = exp.bullets.filter((b) => b && b.trim().length > 0);
+              const dateStr = [
+                fmtDate(exp.start),
+                exp.current ? 'Present' : fmtDate(exp.end),
+              ].filter(Boolean).join(' – ');
+
+              return (
+                <div key={exp.id} className="ats-entry">
+                  <div className="flex justify-between items-baseline gap-2 leading-tight">
+                    <span className="font-bold text-[12.5px] text-black">
+                      {exp.title}
+                    </span>
+                    {dateStr && (
+                      <span className="text-[11px] text-neutral-700 font-mono shrink-0">
+                        {dateStr}
+                      </span>
+                    )}
+                  </div>
+                  {exp.company && (
+                    <div className="text-[11.5px] text-neutral-800 font-medium leading-tight mt-0.5">
+                      {exp.company}
+                    </div>
+                  )}
+                  {validBullets.length > 0 && (
+                    <ul className="list-disc ml-4 space-y-0.5 mt-1">
+                      {validBullets.map((b, i) => (
+                        <li key={i} className="ats-bullet text-[11.5px] leading-[1.38] text-neutral-800">
+                          {b}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              );
+            })}
+          </div>
         </section>
       )}
 
       {/* Projects */}
-      {projects.length > 0 && (
-        <section className="mb-3">
-          <h2 className="text-[13px] font-bold uppercase tracking-[0.08em] border-b border-neutral-400 pb-0.5 mb-2 text-neutral-900">
+      {projects.filter((p) => p.name || p.bullets.some(Boolean)).length > 0 && (
+        <section className="ats-section mb-3">
+          <h2 className="ats-section-title text-[12px] font-bold uppercase tracking-[0.08em] border-b border-neutral-900 pb-0.5 mb-1.5 text-black leading-normal">
             Projects
           </h2>
-          {projects.map((proj) => (
-            <div key={proj.id} className="mb-2.5">
-              <div className="flex flex-wrap items-baseline gap-x-2">
-                <span className="font-bold text-[12.5px] text-neutral-900">{proj.name}</span>
-                {proj.tech && <span className="text-[11.5px] text-neutral-600">| {proj.tech}</span>}
-                {proj.url && <span className="text-[11.5px] text-neutral-600 font-mono">{proj.url}</span>}
-              </div>
-              <ul className="list-disc ml-4 space-y-0.5 mt-0.5">
-                {proj.bullets.filter(Boolean).map((b, i) => (
-                  <li key={i} className="text-[12px] text-neutral-800">{b}</li>
-                ))}
-              </ul>
-            </div>
-          ))}
+          <div className="space-y-2.5">
+            {projects.map((proj) => {
+              const hasContent = proj.name || proj.tech || proj.bullets.some(Boolean);
+              if (!hasContent) return null;
+              const validBullets = proj.bullets.filter((b) => b && b.trim().length > 0);
+
+              return (
+                <div key={proj.id} className="ats-entry">
+                  <div className="flex justify-between items-baseline gap-2 leading-tight">
+                    <div className="flex flex-wrap items-baseline gap-x-2">
+                      {proj.name && (
+                        <span className="font-bold text-[12px] text-black">
+                          {proj.name}
+                        </span>
+                      )}
+                      {proj.tech && (
+                        <span className="text-[11px] text-neutral-600">
+                          — <span className="italic">{proj.tech}</span>
+                        </span>
+                      )}
+                    </div>
+                    {proj.url && (
+                      <a
+                        href={formatUrlHref(proj.url)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[11px] text-neutral-700 font-mono no-underline hover:underline hover:text-black shrink-0"
+                      >
+                        {cleanUrl(proj.url)}
+                      </a>
+                    )}
+                  </div>
+                  {validBullets.length > 0 && (
+                    <ul className="list-disc ml-4 space-y-0.5 mt-1">
+                      {validBullets.map((b, i) => (
+                        <li key={i} className="ats-bullet text-[11.5px] leading-[1.38] text-neutral-800">
+                          {b}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              );
+            })}
+          </div>
         </section>
       )}
 
       {/* Education */}
-      {education.length > 0 && (
-        <section className="mb-3">
-          <h2 className="text-[13px] font-bold uppercase tracking-[0.08em] border-b border-neutral-400 pb-0.5 mb-2 text-neutral-900">
+      {education.filter((e) => e.institution || e.degree || e.field).length > 0 && (
+        <section className="ats-section mb-3">
+          <h2 className="ats-section-title text-[12px] font-bold uppercase tracking-[0.08em] border-b border-neutral-900 pb-0.5 mb-1.5 text-black leading-normal">
             Education
           </h2>
-          {education.map((edu) => (
-          <div key={edu.id} className="flex justify-between items-baseline">
-            <div>
-              <span className="font-bold text-[12.5px] text-neutral-900">{edu.institution}</span>
-              <span className="text-[12px] text-neutral-700 ml-2">
-                {edu.degree} {edu.field}
-                {edu.gpa ? ` - GPA: ${edu.gpa}` : ''}
-              </span>
-            </div>
-            <span className="text-[11.5px] text-neutral-600 font-mono shrink-0 ml-2">
-              {edu.start}{edu.end ? ` – ${edu.end}` : ''}
-            </span>
+          <div className="space-y-1.5">
+            {education.map((edu) => {
+              const hasContent = edu.institution || edu.degree || edu.field;
+              if (!hasContent) return null;
+              const dateStr = [edu.start, edu.end].filter(Boolean).join(' – ');
+              const degreeField = [edu.degree, edu.field].filter(Boolean).join(' in ');
+
+              return (
+                <div key={edu.id} className="ats-entry flex justify-between items-baseline gap-2 leading-tight">
+                  <div>
+                    <span className="font-bold text-[12px] text-black">
+                      {edu.institution}
+                    </span>
+                    {degreeField && (
+                      <span className="text-[11.5px] text-neutral-800 ml-2 font-medium">
+                        • {degreeField}
+                      </span>
+                    )}
+                    {edu.gpa && (
+                      <span className="text-[11px] text-neutral-600 ml-2">
+                        (GPA: {edu.gpa})
+                      </span>
+                    )}
+                  </div>
+                  {dateStr && (
+                    <span className="text-[11px] text-neutral-700 font-mono shrink-0">
+                      {dateStr}
+                    </span>
+                  )}
+                </div>
+              );
+            })}
           </div>
-          ))}
         </section>
       )}
     </div>
@@ -462,8 +660,29 @@ export const AtsResumeTool: React.FC = () => {
       ),
     }));
 
-  // â”€â”€ Print / PDF Export â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-  const handlePrint = () => window.print();
+  // Print / PDF Export
+  const handlePrint = () => {
+    const htmlEl = document.documentElement;
+    const wasDark = htmlEl.classList.contains('dark');
+
+    // Force light mode so browser print preview draws pure white margins
+    if (wasDark) {
+      htmlEl.classList.remove('dark');
+      htmlEl.classList.add('light');
+    }
+
+    window.print();
+
+    if (wasDark) {
+      const restoreDark = () => {
+        htmlEl.classList.remove('light');
+        htmlEl.classList.add('dark');
+        window.removeEventListener('afterprint', restoreDark);
+      };
+      window.addEventListener('afterprint', restoreDark, { once: true });
+      setTimeout(restoreDark, 2000);
+    }
+  };
 
   // â”€â”€ Save Progress as JSON â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const saveJson = () => {
@@ -501,7 +720,7 @@ export const AtsResumeTool: React.FC = () => {
     <div ref={containerRef} className="developer-tool-container border border-neutral-800 rounded-xl overflow-hidden bg-neutral-950">
 
       {/* Toolbar */}
-      <div className="flex items-center justify-between px-4 py-2.5 bg-neutral-900 border-b border-neutral-800">
+      <div className="flex items-center justify-between px-4 py-2.5 bg-neutral-900 border-b border-neutral-800 no-print ats-screen-ui">
         <div className="flex items-center gap-0.5 bg-neutral-800 rounded-md p-0.5">
           <button
             id="ats-tab-edit"
@@ -596,7 +815,7 @@ export const AtsResumeTool: React.FC = () => {
         </div>
       </div>
 
-      <div className={`grid grid-cols-1 ${
+      <div className={`grid grid-cols-1 no-print ats-screen-ui ${
         activeTab === 'split' ? 'xl:grid-cols-[480px_1fr]' : ''
       }`}>
 
@@ -797,10 +1016,10 @@ export const AtsResumeTool: React.FC = () => {
         </div>
 
         {/* â”€â”€ Preview Panel â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
-        <div className={`overflow-y-auto max-h-[120vh] bg-neutral-800 ats-preview-panel ${activeTab === 'edit' ? 'hidden' : ''}`}>
-          <div className="p-4">
-            <div className="shadow-2xl rounded overflow-hidden">
-              <ResumePreview data={data} />
+        <div className={`overflow-y-auto max-h-[120vh] bg-neutral-800 p-4 ats-preview-panel ${activeTab === 'edit' ? 'hidden' : ''}`}>
+          <div className="flex justify-center">
+            <div className="shadow-2xl rounded overflow-hidden w-full max-w-[794px]">
+              <ResumePreview data={data} isPrint={false} />
             </div>
           </div>
         </div>
@@ -812,20 +1031,15 @@ export const AtsResumeTool: React.FC = () => {
         regardless of which tab is active. Hidden on screen via CSS,
         made the only visible element during print.
       */}
-      <div id="ats-print-zone" aria-hidden="true">
-        <ResumePreview data={data} />
+      <div id="ats-resume-print-root" aria-hidden="true">
+        <ResumePreview data={data} isPrint={true} />
       </div>
 
       {/* Print + screen + fullscreen styles */}
       <style>{`
-        /* Keep print zone off-screen on all screen sizes */
-        #ats-print-zone {
-          position: absolute;
-          left: -9999px;
-          top: 0;
-          width: 794px;
-          background: white;
-          pointer-events: none;
+        /* Screen: hide print-only container */
+        #ats-resume-print-root {
+          display: none;
         }
 
         /* Fullscreen layout overrides */
@@ -846,25 +1060,129 @@ export const AtsResumeTool: React.FC = () => {
           overflow: auto;
         }
 
+        /* Print Stylesheet */
+        @page {
+          size: A4 portrait;
+          margin: 12mm 15mm;
+        }
+
         @media print {
-          /* Hide the entire page */
-          body * { visibility: hidden !important; }
-
-          /* Reveal only the print zone and its children */
-          #ats-print-zone,
-          #ats-print-zone * { visibility: visible !important; }
-
-          /* Position it at the top-left of the printed page */
-          #ats-print-zone {
-            position: fixed !important;
-            left: 0 !important;
-            top: 0 !important;
-            width: 100% !important;
-            background: white !important;
+          *,
+          *::before,
+          *::after {
+            color-scheme: light !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            text-shadow: none !important;
+            filter: none !important;
           }
 
-          /* Remove page margins so the resume fills the sheet */
-          @page { margin: 0; }
+          /* Hide all non-printable website elements */
+          nav,
+          header:not(.ats-resume-header),
+          footer,
+          aside,
+          .no-print,
+          [data-no-print],
+          .ats-screen-ui {
+            display: none !important;
+            visibility: hidden !important;
+          }
+
+          /* Force document root and body to clean printable canvas */
+          :root,
+          html,
+          html.dark,
+          html.light,
+          body {
+            color-scheme: light !important;
+            background: #ffffff !important;
+            background-color: #ffffff !important;
+            color: #111827 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100% !important;
+            height: auto !important;
+            min-height: 0 !important;
+            max-height: none !important;
+            overflow: visible !important;
+          }
+
+          /* Reset all parent containers to avoid scrolling / pagination bugs */
+          body > div,
+          #main-content,
+          .developer-tool-container,
+          main,
+          div {
+            background: #ffffff !important;
+            background-color: #ffffff !important;
+            border: none !important;
+            box-shadow: none !important;
+            border-radius: 0 !important;
+            max-height: none !important;
+            height: auto !important;
+            min-height: 0 !important;
+            overflow: visible !important;
+          }
+
+          .developer-tool-container {
+            background: transparent !important;
+            padding: 0 !important;
+            margin: 0 !important;
+          }
+
+          /* Screen UI hidden during print */
+          .ats-edit-panel,
+          .ats-preview-panel,
+          .ats-screen-ui {
+            display: none !important;
+          }
+
+          /* Print root becomes visible in normal block document flow */
+          #ats-resume-print-root {
+            display: block !important;
+            position: static !important;
+            width: 100% !important;
+            max-width: none !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            background: #ffffff !important;
+            color: #111827 !important;
+          }
+
+          /* Page break controls */
+          .ats-resume-header {
+            break-after: avoid !important;
+            page-break-after: avoid !important;
+          }
+
+          .ats-section {
+            break-inside: auto !important;
+            page-break-inside: auto !important;
+            margin-bottom: 10px !important;
+          }
+
+          .ats-section-title {
+            break-after: avoid !important;
+            page-break-after: avoid !important;
+            break-inside: avoid !important;
+            page-break-inside: avoid !important;
+          }
+
+          .ats-entry {
+            break-inside: avoid !important;
+            page-break-inside: avoid !important;
+          }
+
+          .ats-bullet {
+            break-inside: avoid !important;
+            page-break-inside: avoid !important;
+          }
+
+          p, li {
+            orphans: 3;
+            widows: 3;
+          }
         }
       `}</style>
     </div>

@@ -10,11 +10,11 @@ import { ToolSeoWrapper } from '../components/seo/ToolSeoWrapper';
 
 export const AtsResumePage: React.FC = () => {
   return (
-    <div className="pt-4 sm:pt-6 pb-16 bg-app text-theme-main relative z-10">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
+    <div className="pt-4 sm:pt-6 pb-16 bg-app text-theme-main relative z-10 print:p-0 print:m-0 print:bg-white print:text-neutral-900">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4 print:p-0 print:m-0 print:max-w-none print:space-y-0">
 
         {/* Breadcrumb Navigation & Title (Single H1 – per brand rule) */}
-        <div className="space-y-1 border-b border-theme-subtle pb-2">
+        <div className="space-y-1 border-b border-theme-subtle pb-2 no-print print:hidden">
           <div className="flex items-center gap-2 text-xs font-mono text-theme-muted">
             <Link to="/tools" className="hover:text-theme-main transition-colors flex items-center gap-1">
               <ArrowLeft className="w-3.5 h-3.5" />
@@ -44,12 +44,18 @@ export const AtsResumePage: React.FC = () => {
         <AtsResumeTool />
 
         {/* Reusable SEO Layout Wrapper (FAQ, How-to, Privacy) */}
-        <ToolSeoWrapper toolKey="atsResume" />
+        <div className="no-print print:hidden">
+          <ToolSeoWrapper toolKey="atsResume" />
+        </div>
 
         {/* Monetisation unit – below the tool so it doesn't push the editor away from the header */}
-        <SmartAdUnit slot="3456789012" className="max-w-2xl" />
+        <div className="no-print print:hidden">
+          <SmartAdUnit slot="3456789012" className="max-w-2xl" />
+        </div>
 
-        <CTASection />
+        <div className="no-print print:hidden">
+          <CTASection />
+        </div>
       </div>
     </div>
   );

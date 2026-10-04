@@ -768,3 +768,68 @@ html.light .json-graph-tool div[class*="bg-neutral-950/50"] div[class*="bg-neutr
   color: #3F3F46 !important;
 }
 
+/* ═══════════════════════════════════════════════════════════════════════════
+   Universal Print Utilities & Page Geometry
+   ═══════════════════════════════════════════════════════════════════════════ */
+@page {
+  size: A4 portrait;
+  margin: 12mm 15mm;
+}
+
+@media print {
+  *,
+  *::before,
+  *::after {
+    color-scheme: light !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    text-shadow: none !important;
+    filter: none !important;
+  }
+
+  :root,
+  html,
+  html.dark,
+  html.light,
+  body {
+    color-scheme: light !important;
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    color: #111827 !important;
+    border: none !important;
+    box-shadow: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  #main-content,
+  .bg-app,
+  .developer-tool-container {
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    color: #111827 !important;
+    border: none !important;
+    box-shadow: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  .no-print,
+  [data-no-print],
+  header:not(.ats-resume-header),
+  footer,
+  nav,
+  aside {
+    display: none !important;
+    visibility: hidden !important;
+  }
+}
+

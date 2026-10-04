@@ -15,6 +15,8 @@ import { smartDiff }     from '../smartDiff';
 import { computeDiff }   from '../diffEngine';
 
 // ── Mini test runner ──────────────────────────────────────────────────────────
+export {};
+
 let passed = 0;
 let failed = 0;
 
