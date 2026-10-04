@@ -1,5 +1,7 @@
-// diffEngine.ts - Pure TypeScript diff engine. No React, no DOM, no side effects.
-// Uses the Myers O(ND) algorithm for both line-level and character-level diffing.
+// diffEngine.ts - Industry-Standard Diff Engine powered by 'diff' (jsdiff).
+// Pure TypeScript engine: 100% client-side, zero server dependencies.
+
+import * as Diff from 'diff';
 
 export type DiffLineType = 'added' | 'removed' | 'unchanged';
 
@@ -16,14 +18,11 @@ export interface DiffLine {
   /** Modified file line number (1-based). null for pure 'removed' lines. */
   modLineNo: number | null;
   /**
-   * Char-level spans for the REMOVED side of a pair.
-   * Present on BOTH the 'removed' and 'added' lines of a paired hunk so
-   * each side can render its own changed characters.
+   * Inline highlight spans for the REMOVED side of a modified pair.
    */
   origCharSpans?: CharSpan[];
   /**
-   * Char-level spans for the ADDED side of a pair.
-   * Present on BOTH the 'removed' and 'added' lines of a paired hunk.
+   * Inline highlight spans for the ADDED side of a modified pair.
    */
   modCharSpans?: CharSpan[];
 }
@@ -32,118 +31,45 @@ export interface DiffResult {
   lines: DiffLine[];
   addedCount: number;
   removedCount: number;
+  unchangedCount?: number;
 }
 
-// ── Myers O(ND) diff ─────────────────────────────────────────────────────────
-
-interface EditOp {
-  op: 'equal' | 'insert' | 'delete';
-  aIdx: number;
-  bIdx: number;
+export interface DiffOptions {
+  ignoreWhitespace?: boolean;
+  ignoreCase?: boolean;
+  granularity?: 'chars' | 'words' | 'lines';
 }
 
-function myersDiff<T>(
-  a: T[],
-  b: T[],
-  eq: (x: T, y: T) => boolean = (x, y) => x === y
-): EditOp[] {
-  const n = a.length;
-  const m = b.length;
-
-  if (n === 0 && m === 0) return [];
-  if (n === 0) return b.map((_, i) => ({ op: 'insert' as const, aIdx: 0, bIdx: i }));
-  if (m === 0) return a.map((_, i) => ({ op: 'delete' as const, aIdx: i, bIdx: 0 }));
-
-  const max = n + m;
-  const V: number[] = new Array(2 * max + 1).fill(0);
-  const trace: number[][] = [];
-
-  outer: for (let d = 0; d <= max; d++) {
-    trace.push([...V]);
-    for (let k = -d; k <= d; k += 2) {
-      const ki = k + max;
-      let x: number;
-      if (k === -d || (k !== d && V[ki - 1] < V[ki + 1])) {
-        x = V[ki + 1];
-      } else {
-        x = V[ki - 1] + 1;
-      }
-      let y = x - k;
-      while (x < n && y < m && eq(a[x], b[y])) { x++; y++; }
-      V[ki] = x;
-      if (x >= n && y >= m) break outer;
-    }
+// ── Inline span highlighter (Word or Char level) ──────────────────────────────
+export function computeInlineSpans(
+  a: string,
+  b: string,
+  granularity: 'chars' | 'words' | 'lines' = 'words',
+  ignoreCase = false
+): { aSpans: CharSpan[]; bSpans: CharSpan[] } {
+  if (granularity === 'lines' || a === b) {
+    return {
+      aSpans: [{ text: a, changed: false }],
+      bSpans: [{ text: b, changed: false }],
+    };
   }
 
-  const ops: EditOp[] = [];
-  let x = n;
-  let y = m;
-
-  for (let d = trace.length - 1; d > 0; d--) {
-    const prevV = trace[d - 1];
-    const k = x - y;
-    const ki = k + max;
-
-    let prevK: number;
-    if (k === -d || (k !== d && prevV[ki - 1] < prevV[ki + 1])) {
-      prevK = k + 1;
-    } else {
-      prevK = k - 1;
-    }
-
-    const prevX = prevV[prevK + max];
-    const prevY = prevX - prevK;
-
-    while (x > prevX + (prevK === k - 1 ? 1 : 0) && y > prevY + (prevK === k + 1 ? 1 : 0)) {
-      x--; y--;
-      ops.push({ op: 'equal', aIdx: x, bIdx: y });
-    }
-
-    if (d > 0) {
-      if (prevK === k - 1) {
-        ops.push({ op: 'delete', aIdx: prevX, bIdx: prevY });
-      } else {
-        ops.push({ op: 'insert', aIdx: prevX, bIdx: prevY });
-      }
-      x = prevX;
-      y = prevY;
-    }
-  }
-
-  while (x > 0 && y > 0) { x--; y--; ops.push({ op: 'equal', aIdx: x, bIdx: y }); }
-
-  return ops.reverse();
-}
-
-// ── Character-level diff ─────────────────────────────────────────────────────
-
-function charDiff(a: string, b: string): { aSpans: CharSpan[]; bSpans: CharSpan[] } {
-  const aChars = [...a];
-  const bChars = [...b];
-  const script = myersDiff(aChars, bChars);
+  const diffParts: Diff.Change[] =
+    (granularity === 'chars'
+      ? Diff.diffChars(a, b, { ignoreCase })
+      : Diff.diffWordsWithSpace(a, b, { ignoreCase })) ?? [];
 
   const aSpans: CharSpan[] = [];
   const bSpans: CharSpan[] = [];
 
-  const pushA = (ch: string, changed: boolean) => {
-    const last = aSpans[aSpans.length - 1];
-    if (last && last.changed === changed) last.text += ch;
-    else aSpans.push({ text: ch, changed });
-  };
-  const pushB = (ch: string, changed: boolean) => {
-    const last = bSpans[bSpans.length - 1];
-    if (last && last.changed === changed) last.text += ch;
-    else bSpans.push({ text: ch, changed });
-  };
-
-  for (const op of script) {
-    if (op.op === 'equal') {
-      pushA(aChars[op.aIdx], false);
-      pushB(bChars[op.bIdx], false);
-    } else if (op.op === 'delete') {
-      pushA(aChars[op.aIdx], true);
+  for (const part of diffParts) {
+    if (part.added) {
+      bSpans.push({ text: part.value, changed: true });
+    } else if (part.removed) {
+      aSpans.push({ text: part.value, changed: true });
     } else {
-      pushB(bChars[op.bIdx], true);
+      aSpans.push({ text: part.value, changed: false });
+      bSpans.push({ text: part.value, changed: false });
     }
   }
 
@@ -151,164 +77,138 @@ function charDiff(a: string, b: string): { aSpans: CharSpan[]; bSpans: CharSpan[
 }
 
 // ── Main computeDiff ─────────────────────────────────────────────────────────
+export function computeDiff(
+  original: string,
+  modified: string,
+  options: DiffOptions = {}
+): DiffResult {
+  const { ignoreWhitespace = false, ignoreCase = false, granularity = 'words' } = options;
 
-export function computeDiff(original: string, modified: string): DiffResult {
   if (original === '' && modified === '') {
-    return { lines: [], addedCount: 0, removedCount: 0 };
+    return { lines: [], addedCount: 0, removedCount: 0, unchangedCount: 0 };
   }
 
-  const origLines = original === '' ? [] : original.split('\n');
-  const modLines  = modified  === '' ? [] : modified.split('\n');
-
-  const script = myersDiff(origLines, modLines);
+  // Use jsdiff line-based diffing with industry-standard options
+  const diffChanges: Diff.Change[] = Diff.diffLines(original, modified, {
+    ignoreWhitespace,
+  }) ?? [];
 
   const lines: DiffLine[] = [];
   let origCounter = 1;
-  let modCounter  = 1;
-  let addedCount  = 0;
+  let modCounter = 1;
+  let addedCount = 0;
   let removedCount = 0;
+  let unchangedCount = 0;
 
   let i = 0;
-  while (i < script.length) {
-    const op = script[i];
+  while (i < diffChanges.length) {
+    const change = diffChanges[i];
 
-    if (op.op === 'equal') {
-      lines.push({
-        type: 'unchanged',
-        text: origLines[op.aIdx],
-        origLineNo: origCounter++,
-        modLineNo:  modCounter++,
-      });
+    // Split value into lines, stripping the single trailing newline from diffLines chunk if present
+    let rawLines = change.value.split('\n');
+    if (rawLines.length > 0 && rawLines[rawLines.length - 1] === '') {
+      rawLines.pop();
+    }
+
+    if (!change.added && !change.removed) {
+      // Unchanged lines
+      for (const text of rawLines) {
+        lines.push({
+          type: 'unchanged',
+          text,
+          origLineNo: origCounter++,
+          modLineNo: modCounter++,
+        });
+        unchangedCount++;
+      }
       i++;
       continue;
     }
 
-    // Collect the full contiguous hunk of deletes + inserts
+    // Contiguous hunk of added/removed changes
     const deletedTexts: string[] = [];
     const insertedTexts: string[] = [];
 
-    while (i < script.length && script[i].op !== 'equal') {
-      if (script[i].op === 'delete') deletedTexts.push(origLines[script[i].aIdx]);
-      else                           insertedTexts.push(modLines[script[i].bIdx]);
+    while (i < diffChanges.length && (diffChanges[i].added || diffChanges[i].removed)) {
+      const currentChange = diffChanges[i];
+      let hunkLines = currentChange.value.split('\n');
+      if (hunkLines.length > 0 && hunkLines[hunkLines.length - 1] === '') {
+        hunkLines.pop();
+      }
+
+      if (currentChange.removed) {
+        deletedTexts.push(...hunkLines);
+      } else if (currentChange.added) {
+        insertedTexts.push(...hunkLines);
+      }
       i++;
     }
 
-    // ── Pair lines for character-level diff ──────────────────────────────
-    // Compute spans for all pairs up-front, BEFORE pushing to lines[].
-    // This avoids the back-reference index bug in the previous version.
+    // Pair corresponding lines for character/word-level highlight
     const pairCount = Math.min(deletedTexts.length, insertedTexts.length);
-
-    // Precompute all span pairs
     const spanPairs: Array<{ aSpans: CharSpan[]; bSpans: CharSpan[] }> = [];
+
     for (let p = 0; p < pairCount; p++) {
-      spanPairs.push(charDiff(deletedTexts[p], insertedTexts[p]));
+      spanPairs.push(computeInlineSpans(deletedTexts[p], insertedTexts[p], granularity, ignoreCase));
     }
 
-    // Emit removed lines (paired first, then unpaired)
+    // Emit removed lines
     for (let p = 0; p < deletedTexts.length; p++) {
-      const pair = spanPairs[p]; // undefined for unpaired
+      const pair = spanPairs[p];
       lines.push({
         type: 'removed',
         text: deletedTexts[p],
         origLineNo: origCounter++,
         modLineNo: null,
         origCharSpans: pair?.aSpans,
-        modCharSpans:  pair?.bSpans,
+        modCharSpans: pair?.bSpans,
       });
       removedCount++;
     }
 
-    // Emit added lines (paired first, then unpaired)
+    // Emit added lines
     for (let p = 0; p < insertedTexts.length; p++) {
-      const pair = spanPairs[p]; // undefined for unpaired
+      const pair = spanPairs[p];
       lines.push({
         type: 'added',
         text: insertedTexts[p],
         origLineNo: null,
         modLineNo: modCounter++,
         origCharSpans: pair?.aSpans,
-        modCharSpans:  pair?.bSpans,
+        modCharSpans: pair?.bSpans,
       });
       addedCount++;
     }
   }
 
-  return { lines, addedCount, removedCount };
+  return { lines, addedCount, removedCount, unchangedCount };
 }
 
-// ── applyPatch - used for round-trip testing ─────────────────────────────────
-
+// ── Apply patch (for verification or merge) ──────────────────────────────────
 export function applyPatch(original: string, result: DiffResult): string {
   return result.lines
-    .filter(l => l.type !== 'removed')
-    .map(l => l.text)
+    .filter((l) => l.type !== 'removed')
+    .map((l) => l.text)
     .join('\n');
 }
 
-// ── toUnifiedDiff ────────────────────────────────────────────────────────────
-
+// ── Standard Unified Diff (.patch / .diff format) ────────────────────────────
 export function toUnifiedDiff(
   original: string,
   modified: string,
-  result: DiffResult
+  result?: DiffResult,
+  origFileName = 'a/original',
+  modFileName = 'b/modified'
 ): string {
-  if (result.lines.length === 0) return '';
+  if (!original && !modified) return '';
 
-  const CONTEXT = 3;
-  const lines = result.lines;
-
-  const changedIndices = new Set<number>();
-  lines.forEach((l, idx) => { if (l.type !== 'unchanged') changedIndices.add(idx); });
-  if (changedIndices.size === 0) return '';
-
-  const inContext = new Set<number>();
-  changedIndices.forEach(ci => {
-    for (let c = Math.max(0, ci - CONTEXT); c <= Math.min(lines.length - 1, ci + CONTEXT); c++) {
-      inContext.add(c);
-    }
-  });
-
-  let output = '--- a\n+++ b\n';
-  let rangeLines: string[] = [];
-  let origLine = 1;
-  let modLine  = 1;
-  let prevInContext = false;
-
-  const flushRange = () => {
-    if (rangeLines.length === 0) return;
-    output += rangeLines.join('\n') + '\n';
-    rangeLines = [];
-  };
-
-  for (let idx = 0; idx < lines.length; idx++) {
-    const inCtx = inContext.has(idx);
-    const line  = lines[idx];
-
-    if (!inCtx) {
-      if (prevInContext) flushRange();
-      if (line.origLineNo !== null) origLine++;
-      if (line.modLineNo  !== null) modLine++;
-      prevInContext = false;
-      continue;
-    }
-
-    if (!prevInContext) {
-      const hunkOrigStart = line.origLineNo ?? origLine;
-      const hunkModStart  = line.modLineNo  ?? modLine;
-      rangeLines.push(`@@ -${hunkOrigStart} +${hunkModStart} @@`);
-    }
-
-    if (line.type === 'removed') {
-      rangeLines.push(`-${line.text}`); origLine++;
-    } else if (line.type === 'added') {
-      rangeLines.push(`+${line.text}`); modLine++;
-    } else {
-      rangeLines.push(` ${line.text}`); origLine++; modLine++;
-    }
-
-    prevInContext = true;
-  }
-
-  flushRange();
-  return output;
+  return Diff.createTwoFilesPatch(
+    origFileName,
+    modFileName,
+    original,
+    modified,
+    '',
+    '',
+    { context: 3 }
+  );
 }

@@ -4,12 +4,9 @@
  * Orchestrates content detection → strategy selection → diff computation.
  * Returns a SmartDiffResult that extends DiffResult with detection metadata
  * and an optional semantic summary.
- *
- * The existing UI only needs to read the base DiffResult fields (lines,
- * addedCount, removedCount) -  the extra fields are opt-in for enhanced display.
  */
 
-import { computeDiff, type DiffResult } from './diffEngine';
+import { computeDiff, type DiffResult, type DiffOptions } from './diffEngine';
 import { detectContent, type DetectionResult, type ContentType } from './diffDetector';
 import { jsonDiff, type JsonDiffSummary } from './diffStrategies/jsonStrategy';
 import { csvDiff, type CsvDiffSummary } from './diffStrategies/csvStrategy';
@@ -41,6 +38,7 @@ function applyStrategy(
   original: string,
   modified: string,
   type: ContentType,
+  options?: DiffOptions,
 ): { result: DiffResult; jsonSummary?: JsonDiffSummary; csvSummary?: CsvDiffSummary } {
   switch (type) {
     case 'json': {
@@ -61,7 +59,7 @@ function applyStrategy(
       break;
   }
   // Generic text diff for all other types (YAML, XML, Markdown, code, plain text)
-  return { result: computeDiff(original, modified) };
+  return { result: computeDiff(original, modified, options) };
 }
 
 function buildSmartSummary(
@@ -103,7 +101,7 @@ function buildSmartSummary(
 // ── Public API ────────────────────────────────────────────────────────────────
 
 /**
- * Smart diff -  detects content type and applies the best comparison strategy.
+ * Smart diff - detects content type and applies the best comparison strategy.
  * Fully backward-compatible: the returned object is a valid DiffResult.
  *
  * @param original    Left-side text
@@ -111,6 +109,7 @@ function buildSmartSummary(
  * @param forceText   When true, skips detection and uses plain text diff (user override)
  * @param origExt     File extension hint for original (e.g. 'json')
  * @param modExt      File extension hint for modified
+ * @param options     Diff options (ignoreWhitespace, ignoreCase, granularity)
  */
 export function smartDiff(
   original: string,
@@ -118,17 +117,18 @@ export function smartDiff(
   forceText = false,
   origExt?: string,
   modExt?: string,
+  options?: DiffOptions,
 ): SmartDiffResult {
   if (original === '' && modified === '') {
     const detection = detectContent('', '', origExt, modExt);
-    return { lines: [], addedCount: 0, removedCount: 0, detection };
+    return { lines: [], addedCount: 0, removedCount: 0, unchangedCount: 0, detection };
   }
 
   const detection = detectContent(original, modified, origExt, modExt);
 
   const effectiveType: ContentType = forceText ? 'text' : detection.type;
 
-  const { result, jsonSummary, csvSummary } = applyStrategy(original, modified, effectiveType);
+  const { result, jsonSummary, csvSummary } = applyStrategy(original, modified, effectiveType, options);
 
   const smartSummary = buildSmartSummary(result, jsonSummary, csvSummary);
 

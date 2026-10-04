@@ -2,12 +2,12 @@
 
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import {
-  Copy, Check, Trash2, Upload, ArrowLeftRight,
+  Copy, Check, Trash2, Upload, Download, ArrowLeftRight,
   Info, AlertCircle, Maximize2, Minimize2, Columns2,
   AlignLeft, ChevronUp, ChevronDown, Search,
-  RotateCcw, RotateCw,
+  RotateCcw, RotateCw, FileCode, SlidersHorizontal, WrapText,
 } from 'lucide-react';
-import { toUnifiedDiff, type DiffResult, type DiffLine, type CharSpan } from './diffEngine';
+import { toUnifiedDiff, type DiffResult, type DiffLine, type CharSpan, type DiffOptions } from './diffEngine';
 import { smartDiff, type SmartDiffResult } from './smartDiff';
 import { useSearch } from '../../hooks/useSearch';
 import { SearchBar } from '../ui/SearchBar';
@@ -16,14 +16,18 @@ import { useTheme } from '../../lib/theme';
 
 type ViewMode = 'split' | 'inline';
 type CompareMode = 'smart' | 'text';
+type Granularity = 'words' | 'chars' | 'lines';
 
-// Ã¢â€â‚¬Ã¢â€â‚¬ Resize constants Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
+// ── Resize constants ────────────────────────────────────────────────────────
 const MIN_H = 300;
 const MAX_H_VH = 0.88;
 const DEFAULT_H_VH = 0.65;
 
-// Ã¢â€â‚¬Ã¢â€â‚¬ Samples Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
-const SAMPLE_ORIGINAL = `function fetchUser(id) {
+// ── Sample Presets ──────────────────────────────────────────────────────────
+const SAMPLES = {
+  code: {
+    label: 'Code (TypeScript)',
+    original: `function fetchUser(id: string) {
   const url = '/api/user/' + id;
   return fetch(url)
     .then(res => res.json())
@@ -33,20 +37,75 @@ const SAMPLE_ORIGINAL = `function fetchUser(id) {
     });
 }
 
-const MAX_RETRIES = 3;`;
-
-const SAMPLE_MODIFIED = `async function fetchUser(id, options = {}) {
+const MAX_RETRIES = 3;`,
+    modified: `async function fetchUser(id: string, options: RequestInit = {}) {
   const url = \`/api/user/\${id}\`;
   const res = await fetch(url, options);
-  if (!res.ok) throw new Error(\`HTTP \${res.status}\`);
+  if (!res.ok) {
+    throw new Error(\`HTTP error \${res.status}: Failed to fetch user records with id \${id}\`);
+  }
   const data = await res.json();
   return data;
 }
 
 const MAX_RETRIES = 5;
-const DEFAULT_TIMEOUT = 3000;`;
+const DEFAULT_TIMEOUT_MS = 3000;`,
+  },
+  json: {
+    label: 'JSON Data',
+    original: `{
+  "name": "c3mindloop",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Developer utility suite for client-side local browser workflows",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "features": [
+    "json-formatter",
+    "diff-checker"
+  ]
+}`,
+    modified: `{
+  "name": "c3mindloop",
+  "version": "1.1.0",
+  "private": true,
+  "description": "Developer utility platform with integrated local browser engines",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "features": [
+    "json-formatter",
+    "diff-checker",
+    "jwt-inspector",
+    "ats-resume"
+  ]
+}`,
+  },
+  csv: {
+    label: 'CSV Data',
+    original: `id,username,role,status,notes
+1,alice,admin,active,Core maintainer of repositories
+2,bob,developer,active,Frontend engineer working on diff tools
+3,charlie,designer,pending,Awaiting onboarding verification`,
+    modified: `id,username,role,status,notes
+1,alice,superadmin,active,Core maintainer and security lead
+2,bob,lead_developer,active,Frontend engineer working on diff tools and split viewers
+3,charlie,designer,active,Onboarding complete
+4,david,security_engineer,active,Infra security audits`,
+  },
+  text: {
+    label: 'Plain Text',
+    original: `The quick brown fox jumps over the lazy dog.
+Antigravity IDE provides fast AI assisted tools for local development.
+Client side computation ensures private data stays local without transmitting across any networks.`,
+    modified: `The quick brown fox leaps over the sleeping dog with incredible agility.
+Antigravity IDE provides high-speed AI assisted tools for modern web applications.
+Client-side computation ensures all private developer data stays 100% local on user machines without transmitting across any networks.`,
+  },
+};
 
-// Ã¢â€â‚¬Ã¢â€â‚¬ Visual constants Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
+// ── Visual constants ────────────────────────────────────────────────────────
 const ROW_BG = {
   added:     'var(--diff-added-bg)',
   removed:   'var(--diff-removed-bg)',
@@ -68,11 +127,8 @@ const GUTTER_CLS = {
 
 const TEXT_DIM  = 'text-neutral-400';
 const TEXT_FULL = 'text-neutral-100';
-const ROW_H     = 22; // px - every row is exactly this height
-const ROW_H_CLS = 'h-[22px]';
-const LEAD_CLS  = 'leading-[22px]';
 
-// Ã¢â€â‚¬Ã¢â€â‚¬ Types Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
+// ── Types ───────────────────────────────────────────────────────────────────
 interface SplitRow {
   origLineNo: number | null;
   origGutter: '+' | '-' | ' ' | '';
@@ -95,12 +151,7 @@ interface SearchMatch {
   endChar: number;
 }
 
-interface ScrollAnchor {
-  origPx: number;
-  modPx: number;
-}
-
-// Ã¢â€â‚¬Ã¢â€â‚¬ Span renderer Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
+// ── Span renderer ───────────────────────────────────────────────────────────
 function renderSpans(spans: CharSpan[], side: 'added' | 'removed'): React.ReactNode {
   const color = CHAR_HL[side];
   return spans.map((span, i) =>
@@ -110,7 +161,7 @@ function renderSpans(spans: CharSpan[], side: 'added' | 'removed'): React.ReactN
   );
 }
 
-// Ã¢â€â‚¬Ã¢â€â‚¬ Hunk helpers Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
+// ── Hunk helpers ────────────────────────────────────────────────────────────
 function findHunkStarts(splitRows: SplitRow[]): HunkIndex[] {
   const hunks: HunkIndex[] = [];
   let inHunk = false;
@@ -133,7 +184,7 @@ function findInlineHunkStarts(lines: DiffLine[]): HunkIndex[] {
   return hunks;
 }
 
-// Ã¢â€â‚¬Ã¢â€â‚¬ Split row builder Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
+// ── Split row builder ───────────────────────────────────────────────────────
 function buildSplitRows(diffLines: DiffLine[]): SplitRow[] {
   const rows: SplitRow[] = [];
   let i = 0;
@@ -162,12 +213,12 @@ function buildSplitRows(diffLines: DiffLine[]): SplitRow[] {
           origGutter: rem ? '-' : '',
           origText:   rem ? rem.text : '',
           origType:   rem ? 'removed' : 'empty',
-          origSpans:  rem?.origCharSpans,
+          origSpans:  rem ? rem.origCharSpans : undefined,
           modLineNo:  add ? add.modLineNo : null,
           modGutter:  add ? '+' : '',
           modText:    add ? add.text : '',
           modType:    add ? 'added' : 'empty',
-          modSpans:   add?.modCharSpans,
+          modSpans:   add ? add.modCharSpans : undefined,
         });
       }
     }
@@ -175,224 +226,292 @@ function buildSplitRows(diffLines: DiffLine[]): SplitRow[] {
   return rows;
 }
 
-// Ã¢â€â‚¬Ã¢â€â‚¬ Build scroll anchors from split rows Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
-function buildScrollAnchors(splitRows: SplitRow[]): ScrollAnchor[] {
-  const anchors: ScrollAnchor[] = [];
-  for (let i = 0; i < splitRows.length; i++) {
-    const row = splitRows[i];
-    // Use unchanged rows as anchors -  both sides have content at the same row
-    if (row.origType === 'unchanged' && row.modType === 'unchanged') {
-      anchors.push({ origPx: i * ROW_H, modPx: i * ROW_H });
-    }
-  }
-  // Always add start and end anchors
-  if (anchors.length === 0 || anchors[0].origPx !== 0) {
-    anchors.unshift({ origPx: 0, modPx: 0 });
-  }
-  const totalPx = splitRows.length * ROW_H;
-  if (anchors[anchors.length - 1].origPx < totalPx) {
-    anchors.push({ origPx: totalPx, modPx: totalPx });
-  }
-  return anchors;
-}
+// ── Sub-components ──────────────────────────────────────────────────────────
 
-function interpolateScroll(anchors: ScrollAnchor[], srcPx: number, fromSide: 'orig' | 'mod'): number {
-  if (anchors.length === 0) return srcPx;
-  // Find surrounding anchors
-  let lo = anchors[0];
-  let hi = anchors[anchors.length - 1];
-  for (let i = 0; i < anchors.length - 1; i++) {
-    const a = anchors[i];
-    const b = anchors[i + 1];
-    const aSrc = fromSide === 'orig' ? a.origPx : a.modPx;
-    const bSrc = fromSide === 'orig' ? b.origPx : b.modPx;
-    if (srcPx >= aSrc && srcPx <= bSrc) { lo = a; hi = b; break; }
-  }
-  const loSrc = fromSide === 'orig' ? lo.origPx : lo.modPx;
-  const hiSrc = fromSide === 'orig' ? hi.origPx : hi.modPx;
-  const loDst = fromSide === 'orig' ? lo.modPx : lo.origPx;
-  const hiDst = fromSide === 'orig' ? hi.modPx : hi.origPx;
-  if (hiSrc === loSrc) return loDst;
-  const t = (srcPx - loSrc) / (hiSrc - loSrc);
-  return loDst + t * (hiDst - loDst);
-}
+const NoDiffState: React.FC = () => (
+  <div className="flex flex-col items-center justify-center h-full min-h-[220px] text-center p-8">
+    <div className="w-10 h-10 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mb-3">
+      <Check className="w-5 h-5 text-emerald-400" />
+    </div>
+    <p className="text-sm font-medium text-neutral-300">Files are identical</p>
+    <p className="text-xs text-neutral-500 mt-1">No differences found between Original and Modified.</p>
+  </div>
+);
 
-// Ã¢â€â‚¬Ã¢â€â‚¬ Content cell Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
-function ContentCell({ text, type, spans, searchHighlights }: {
-  text:  string;
-  type:  'removed' | 'added' | 'unchanged' | 'empty';
-  spans: CharSpan[] | undefined;
-  searchHighlights?: { startChar: number; endChar: number; isCurrent: boolean }[];
-}) {
-  const bg      = ROW_BG[type] ?? 'transparent';
+const PanelHeader: React.FC<{
+  label:            string;
+  fileRef:          React.RefObject<HTMLInputElement | null>;
+  panel:            'orig' | 'mod';
+  fileError:        string | null;
+  handleFileUpload: (e: React.ChangeEvent<HTMLInputElement>, panel: 'orig' | 'mod') => void;
+  onClear?:         () => void;
+  onDownload?:      () => void;
+}> = ({ label, fileRef, panel, fileError, handleFileUpload, onClear, onDownload }) => (
+  <div className="flex items-center justify-between px-3 py-1.5 bg-neutral-900 border-b border-neutral-800 shrink-0 select-none">
+    <div className="flex items-center gap-2">
+      <span className="text-xs font-semibold text-neutral-300 font-mono">{label}</span>
+      {fileError && (
+        <span className="text-[11px] text-red-400 flex items-center gap-1">
+          <AlertCircle className="w-3 h-3" />
+          {fileError}
+        </span>
+      )}
+    </div>
+    <div className="flex items-center gap-1">
+      <input
+        ref={fileRef}
+        type="file"
+        accept=".txt,.js,.ts,.tsx,.jsx,.json,.css,.html,.md,.csv,.sql,.yaml,.yml,.py,.go,.rs,.c,.cpp,.h"
+        onChange={(e) => handleFileUpload(e, panel)}
+        className="hidden"
+      />
+      <button
+        type="button"
+        onClick={() => fileRef.current?.click()}
+        title="Upload file"
+        className="flex items-center gap-1 text-[11px] text-neutral-400 hover:text-neutral-200 px-2 py-0.5 rounded hover:bg-neutral-800 transition-colors cursor-pointer"
+      >
+        <Upload className="w-3 h-3" />
+        <span>Open</span>
+      </button>
+      {onDownload && (
+        <button
+          type="button"
+          onClick={onDownload}
+          title="Download content"
+          className="text-neutral-400 hover:text-neutral-200 p-1 rounded hover:bg-neutral-800 transition-colors cursor-pointer"
+        >
+          <Download className="w-3 h-3" />
+        </button>
+      )}
+      {onClear && (
+        <button
+          type="button"
+          onClick={onClear}
+          title="Clear panel"
+          className="text-neutral-400 hover:text-red-400 p-1 rounded hover:bg-neutral-800 transition-colors cursor-pointer"
+        >
+          <Trash2 className="w-3 h-3" />
+        </button>
+      )}
+    </div>
+  </div>
+);
+
+const ContentCell: React.FC<{
+  text:             string;
+  type:             'added' | 'removed' | 'unchanged' | 'empty';
+  spans?:           CharSpan[];
+  searchHighlights?: Array<{ startChar: number; endChar: number; isCurrent: boolean }>;
+  wrapLines?:       boolean;
+}> = ({ text, type, spans, searchHighlights, wrapLines = true }) => {
   const textCls = type === 'unchanged' ? TEXT_DIM : TEXT_FULL;
-
-  const inner = (() => {
-    if (type === 'empty') return <>&zwj;</>;
-
-    // If we have search highlights, render with them (overrides char spans for simplicity)
-    if (searchHighlights && searchHighlights.length > 0) {
-      const parts: React.ReactNode[] = [];
-      let cursor = 0;
-      // Sort highlights by startChar
-      const sorted = [...searchHighlights].sort((a, b) => a.startChar - b.startChar);
-      for (const hl of sorted) {
-        if (hl.startChar > cursor) parts.push(<React.Fragment key={cursor}>{text.slice(cursor, hl.startChar)}</React.Fragment>);
-        parts.push(
-          <span key={hl.startChar} style={{ backgroundColor: hl.isCurrent ? 'var(--diff-search-cur)' : 'var(--diff-search-bg)', borderRadius: 2, padding: '0 1px' }}>
-            {text.slice(hl.startChar, hl.endChar)}
-          </span>
-        );
-        cursor = hl.endChar;
-      }
-      if (cursor < text.length) parts.push(<React.Fragment key={cursor}>{text.slice(cursor)}</React.Fragment>);
-      return <>{parts}</>;
-    }
-
-    if (spans && spans.length > 0) return renderSpans(spans, type as 'added' | 'removed');
-    return <>{text || <>&zwj;</>}</>;
-  })();
+  const bg      = ROW_BG[type] ?? 'transparent';
 
   return (
-    <td style={{ backgroundColor: bg }} className={`align-top max-w-0 ${ROW_H_CLS}`}>
-      <div className="overflow-x-auto h-full">
-        <pre
-          className={`font-mono text-xs ${LEAD_CLS} ${textCls} whitespace-pre px-2`}
-          style={{ display: 'inline-block', minWidth: '100%', margin: 0 }}
-        >
-          {inner}
-        </pre>
+    <td
+      style={{ backgroundColor: bg }}
+      className="align-top px-2 py-0.5 max-w-0"
+    >
+      <div
+        className={`font-mono text-xs leading-[20px] ${textCls} ${
+          wrapLines
+            ? 'whitespace-pre-wrap break-words [overflow-wrap:anywhere]'
+            : 'whitespace-pre overflow-x-auto'
+        }`}
+      >
+        {type === 'empty' ? (
+          <>&zwj;</>
+        ) : searchHighlights && searchHighlights.length > 0 ? (
+          (() => {
+            const parts: React.ReactNode[] = [];
+            let cursor = 0;
+            const sorted = [...searchHighlights].sort((a, b) => a.startChar - b.startChar);
+            for (const hl of sorted) {
+              if (hl.startChar > cursor) parts.push(<React.Fragment key={cursor}>{text.slice(cursor, hl.startChar)}</React.Fragment>);
+              parts.push(
+                <span key={hl.startChar} style={{ backgroundColor: hl.isCurrent ? 'var(--diff-search-cur)' : 'var(--diff-search-bg)', borderRadius: 2, padding: '0 1px' }}>
+                  {text.slice(hl.startChar, hl.endChar)}
+                </span>
+              );
+              cursor = hl.endChar;
+            }
+            if (cursor < text.length) parts.push(<React.Fragment key={cursor}>{text.slice(cursor)}</React.Fragment>);
+            return <>{parts}</>;
+          })()
+        ) : spans && spans.length > 0 ? (
+          renderSpans(spans, type as 'added' | 'removed')
+        ) : (
+          text || <>&zwj;</>
+        )}
       </div>
     </td>
   );
-}
+};
 
-// Ã¢â€â‚¬Ã¢â€â‚¬ No-diff state Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
-const NoDiffState: React.FC = () => (
-  <div className="flex flex-col items-center gap-2 py-10 px-6 text-center">
-    <div className="w-8 h-8 rounded-full bg-neutral-800 flex items-center justify-center">
-      <Check className="w-4 h-4 text-emerald-400" />
-    </div>
-    <p className="font-mono text-sm font-semibold text-neutral-300">Files are identical</p>
-    <p className="font-mono text-xs text-neutral-600">No differences found.</p>
-  </div>
-);
-
-// Ã¢â€â‚¬Ã¢â€â‚¬ Hunk nav Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
 const HunkNav: React.FC<{
-  total: number; current: number; onPrev: () => void; onNext: () => void;
+  total:   number;
+  current: number;
+  onPrev:  () => void;
+  onNext:  () => void;
 }> = ({ total, current, onPrev, onNext }) => {
   if (total === 0) return null;
   return (
-    <div className="flex items-center gap-1 font-mono text-[11px] text-neutral-400 select-none">
-      <button onClick={onPrev} disabled={current <= 1}
-        className="p-1 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-300 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition-colors"
-        title="Previous change"><ChevronUp className="w-3.5 h-3.5" /></button>
-      <span className="px-1.5 tabular-nums">{current} / {total}</span>
-      <button onClick={onNext} disabled={current >= total}
-        className="p-1 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-300 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition-colors"
-        title="Next change"><ChevronDown className="w-3.5 h-3.5" /></button>
+    <div className="flex items-center gap-1 bg-neutral-900 border border-neutral-700 rounded px-1.5 py-1 shrink-0">
+      <span className="text-[11px] font-mono text-neutral-400 select-none">
+        {current} / {total} {total === 1 ? 'change' : 'changes'}
+      </span>
+      <button
+        onClick={onPrev}
+        disabled={current <= 1}
+        title="Previous change"
+        className="text-neutral-400 hover:text-neutral-100 disabled:opacity-30 p-0.5 rounded hover:bg-neutral-800 transition-colors cursor-pointer"
+      >
+        <ChevronUp className="w-3.5 h-3.5" />
+      </button>
+      <button
+        onClick={onNext}
+        disabled={current >= total}
+        title="Next change"
+        className="text-neutral-400 hover:text-neutral-100 disabled:opacity-30 p-0.5 rounded hover:bg-neutral-800 transition-colors cursor-pointer"
+      >
+        <ChevronDown className="w-3.5 h-3.5" />
+      </button>
     </div>
   );
 };
 
-// Ã¢â€â‚¬Ã¢â€â‚¬ Resize handle Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
 const ResizeHandle: React.FC<{ onPointerDown: (e: React.PointerEvent) => void }> = ({ onPointerDown }) => (
   <div
     onPointerDown={onPointerDown}
-    className="h-3 flex items-center justify-center bg-neutral-900 border-t border-neutral-800 cursor-row-resize select-none group shrink-0"
-    title="Drag to resize"
-    aria-label="Drag to resize diff area"
+    className="h-2 bg-neutral-900 border-t border-neutral-800 cursor-ns-resize flex items-center justify-center group hover:bg-neutral-800 transition-colors select-none shrink-0"
   >
-    <div className="flex items-center gap-0.5 opacity-40 group-hover:opacity-80 transition-opacity">
-      {[0,1,2,3,4].map(k => <div key={k} className="w-1 h-1 rounded-full bg-neutral-500" />)}
-    </div>
+    <div className="w-12 h-1 bg-neutral-700 rounded group-hover:bg-neutral-500 transition-colors" />
   </div>
 );
 
-// Ã¢â€â‚¬Ã¢â€â‚¬ Panel header (shared by InputPanels and SplitView) Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
-const PanelHeader: React.FC<{
-  label: string;
-  fileRef: React.RefObject<HTMLInputElement | null>;
-  panel: 'orig' | 'mod';
-  fileError: string | null;
-  handleFileUpload: (e: React.ChangeEvent<HTMLInputElement>, panel: 'orig' | 'mod') => void;
-  extraCls?: string;
-}> = ({ label, fileRef, panel, fileError, handleFileUpload, extraCls = '' }) => (
-  <div className={`flex items-center justify-between px-3 py-1.5 bg-neutral-900 border-b border-neutral-800 text-xs font-mono shrink-0 ${extraCls}`}>
-    <span className="font-semibold text-neutral-300">{label}</span>
-    <div className="flex items-center gap-2">
-      {fileError && <span className="text-red-400 text-[11px] truncate max-w-[150px]">{fileError}</span>}
-      <button onClick={() => fileRef.current?.click()}
-        className="flex items-center gap-1 px-2 py-0.5 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-300 transition-colors cursor-pointer">
-        <Upload className="w-3 h-3" /><span>Upload</span>
-      </button>
-      <input ref={fileRef} type="file" className="hidden" onChange={(e) => handleFileUpload(e, panel)} />
-    </div>
-  </div>
-);
-
-// Ã¢â€â‚¬Ã¢â€â‚¬ Input panels Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
+// ── Input Panels Mode ───────────────────────────────────────────────────────
 const InputPanels: React.FC<{
-  original: string; modified: string;
-  setOriginal: (v: string) => void; setModified: (v: string) => void;
-  origFileError: string | null; modFileError: string | null;
-  origFileRef: React.RefObject<HTMLInputElement | null>;
-  modFileRef:  React.RefObject<HTMLInputElement | null>;
+  original:         string;
+  modified:         string;
+  setOriginal:      (v: string) => void;
+  setModified:      (v: string) => void;
+  origFileError:    string | null;
+  modFileError:     string | null;
+  origFileRef:      React.RefObject<HTMLInputElement | null>;
+  modFileRef:       React.RefObject<HTMLInputElement | null>;
   handleFileUpload: (e: React.ChangeEvent<HTMLInputElement>, panel: 'orig' | 'mod') => void;
-  viewportH:    number;
-  isFullScreen: boolean;
-}> = ({ original, modified, setOriginal, setModified,
-        origFileError, modFileError, origFileRef, modFileRef,
-        handleFileUpload, viewportH, isFullScreen }) => {
-
+  handleFileDrop:   (file: File, panel: 'orig' | 'mod') => void;
+  viewportH:        number;
+  isFullScreen:     boolean;
+  wrapLines:        boolean;
+  onClearOrig:      () => void;
+  onClearMod:       () => void;
+  onDownloadOrig:   () => void;
+  onDownloadMod:    () => void;
+}> = ({
+  original, modified, setOriginal, setModified,
+  origFileError, modFileError, origFileRef, modFileRef,
+  handleFileUpload, handleFileDrop, viewportH, isFullScreen,
+  wrapLines, onClearOrig, onClearMod, onDownloadOrig, onDownloadMod,
+}) => {
   const h = isFullScreen ? 'calc(100vh - 7rem)' : `${viewportH}px`;
+  const [dragOverOrig, setDragOverOrig] = useState(false);
+  const [dragOverMod, setDragOverMod] = useState(false);
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-neutral-800">
-      <div className="flex flex-col">
-        <PanelHeader label="Original" fileRef={origFileRef} panel="orig" fileError={origFileError} handleFileUpload={handleFileUpload} />
-        <textarea value={original} onChange={(e) => setOriginal(e.target.value)}
-          placeholder="Paste original text or code hereÃ¢â‚¬Â¦"
+      {/* Original Panel */}
+      <div
+        className={`flex flex-col relative transition-colors ${dragOverOrig ? 'bg-neutral-900/60 ring-2 ring-inset ring-neutral-600' : ''}`}
+        onDragOver={(e) => { e.preventDefault(); setDragOverOrig(true); }}
+        onDragLeave={() => setDragOverOrig(false)}
+        onDrop={(e) => {
+          e.preventDefault();
+          setDragOverOrig(false);
+          const file = e.dataTransfer.files?.[0];
+          if (file) handleFileDrop(file, 'orig');
+        }}
+      >
+        <PanelHeader
+          label="Original"
+          fileRef={origFileRef}
+          panel="orig"
+          fileError={origFileError}
+          handleFileUpload={handleFileUpload}
+          onClear={onClearOrig}
+          onDownload={onDownloadOrig}
+        />
+        <textarea
+          value={original}
+          onChange={(e) => setOriginal(e.target.value)}
+          placeholder="Paste original text or code here, or drop a file…"
           spellCheck={false}
           style={{ height: h, resize: 'none' }}
-          className="p-3 font-mono text-xs bg-[#111] text-neutral-200 border-none focus:outline-none leading-[22px] placeholder-neutral-700"
+          className={`p-3 font-mono text-xs bg-[#111] text-neutral-200 border-none focus:outline-none leading-[20px] placeholder-neutral-700 ${
+            wrapLines ? 'whitespace-pre-wrap break-words' : 'whitespace-pre overflow-x-auto'
+          }`}
         />
       </div>
-      <div className="flex flex-col">
-        <PanelHeader label="Modified" fileRef={modFileRef} panel="mod" fileError={modFileError} handleFileUpload={handleFileUpload} />
-        <textarea value={modified} onChange={(e) => setModified(e.target.value)}
-          placeholder="Paste modified text or code hereÃ¢â‚¬Â¦"
+
+      {/* Modified Panel */}
+      <div
+        className={`flex flex-col relative transition-colors ${dragOverMod ? 'bg-neutral-900/60 ring-2 ring-inset ring-neutral-600' : ''}`}
+        onDragOver={(e) => { e.preventDefault(); setDragOverMod(true); }}
+        onDragLeave={() => setDragOverMod(false)}
+        onDrop={(e) => {
+          e.preventDefault();
+          setDragOverMod(false);
+          const file = e.dataTransfer.files?.[0];
+          if (file) handleFileDrop(file, 'mod');
+        }}
+      >
+        <PanelHeader
+          label="Modified"
+          fileRef={modFileRef}
+          panel="mod"
+          fileError={modFileError}
+          handleFileUpload={handleFileUpload}
+          onClear={onClearMod}
+          onDownload={onDownloadMod}
+        />
+        <textarea
+          value={modified}
+          onChange={(e) => setModified(e.target.value)}
+          placeholder="Paste modified text or code here, or drop a file…"
           spellCheck={false}
           style={{ height: h, resize: 'none' }}
-          className="p-3 font-mono text-xs bg-[#111] text-neutral-200 border-none focus:outline-none leading-[22px] placeholder-neutral-700"
+          className={`p-3 font-mono text-xs bg-[#111] text-neutral-200 border-none focus:outline-none leading-[20px] placeholder-neutral-700 ${
+            wrapLines ? 'whitespace-pre-wrap break-words' : 'whitespace-pre overflow-x-auto'
+          }`}
         />
       </div>
     </div>
   );
 };
 
-// Ã¢â€â‚¬Ã¢â€â‚¬ Inline View Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
+// ── Inline (Unified) View ───────────────────────────────────────────────────
 const InlineView: React.FC<{
-  diffResult:   DiffResult;
-  scrollRef:    React.RefObject<HTMLDivElement | null>;
-  rowRefs:      React.MutableRefObject<(HTMLTableRowElement | null)[]>;
-  viewportH:    number;
-  isFullScreen: boolean;
+  diffResult:    DiffResult;
+  scrollRef:     React.RefObject<HTMLDivElement | null>;
+  rowRefs:       React.MutableRefObject<(HTMLTableRowElement | null)[]>;
+  viewportH:     number;
+  isFullScreen:  boolean;
+  wrapLines:     boolean;
   searchMatches: SearchMatch[];
-  searchIdx: number;
-}> = ({ diffResult, scrollRef, rowRefs, viewportH, isFullScreen, searchMatches, searchIdx }) => {
+  searchIdx:     number;
+}> = ({ diffResult, scrollRef, rowRefs, viewportH, isFullScreen, wrapLines, searchMatches, searchIdx }) => {
   const lines   = diffResult.lines;
   const scrollH = isFullScreen ? 'calc(100vh - 7rem)' : `${viewportH}px`;
 
   if (lines.length === 0) return <NoDiffState />;
 
   return (
-    <div ref={scrollRef} className="overflow-auto overscroll-none" style={{ height: scrollH }}>
-      <table className="border-collapse" style={{ width: '100%', minWidth: '100%', tableLayout: 'fixed' }}>
+    <div ref={scrollRef} className="overflow-auto overscroll-none w-full" style={{ height: scrollH }}>
+      <table className="border-collapse w-full min-w-full" style={{ tableLayout: 'fixed' }}>
         <colgroup>
           <col style={{ width: 44 }} />
-          <col style={{ width: 20 }} />
+          <col style={{ width: 24 }} />
           <col />
         </colgroup>
         <tbody>
@@ -402,45 +521,31 @@ const InlineView: React.FC<{
             const gutCls   = GUTTER_CLS[gutSym];
             const lineNo   = line.type === 'removed' ? line.origLineNo : line.modLineNo;
             const spans    = line.type === 'removed' ? line.origCharSpans : line.modCharSpans;
-            const textCls  = line.type === 'unchanged' ? TEXT_DIM : TEXT_FULL;
-            // Search highlights for inline
             const side: 'orig' | 'mod' = line.type === 'removed' ? 'orig' : 'mod';
             const highlights = searchMatches
               .filter(m => m.rowIdx === idx && m.side === side)
               .map((m) => ({ startChar: m.startChar, endChar: m.endChar, isCurrent: searchMatches.indexOf(m) === searchIdx }));
             return (
-              <tr key={idx} ref={(el) => { rowRefs.current[idx] = el; }} style={{ height: ROW_H }}>
-                <td style={{ backgroundColor: bg, whiteSpace: 'nowrap' }}
-                  className={`text-right pr-1.5 pl-1 text-neutral-600 font-mono text-[11px] select-none align-top border-r border-neutral-800/50 ${ROW_H_CLS} ${LEAD_CLS}`}>
+              <tr key={idx} ref={(el) => { rowRefs.current[idx] = el; }}>
+                <td
+                  style={{ backgroundColor: bg, whiteSpace: 'nowrap' }}
+                  className="text-right pr-1.5 pl-1 text-neutral-600 font-mono text-[11px] select-none align-top border-r border-neutral-800/50 py-0.5 leading-[20px]"
+                >
                   {lineNo ?? ''}
                 </td>
-                <td style={{ backgroundColor: bg, whiteSpace: 'nowrap' }}
-                  className={`text-center font-mono text-xs font-bold select-none align-top ${ROW_H_CLS} ${LEAD_CLS} ${gutCls}`}>
+                <td
+                  style={{ backgroundColor: bg, whiteSpace: 'nowrap' }}
+                  className={`text-center font-mono text-xs font-bold select-none align-top py-0.5 leading-[20px] ${gutCls}`}
+                >
                   {gutSym}
                 </td>
-                <td style={{ backgroundColor: bg }} className={`align-top max-w-0 ${ROW_H_CLS}`}>
-                  <div className="overflow-x-auto h-full">
-                    <pre className={`font-mono text-xs ${LEAD_CLS} ${textCls} whitespace-pre px-2`}
-                      style={{ display: 'inline-block', minWidth: '100%', margin: 0 }}>
-                      {highlights.length > 0
-                        ? (() => {
-                            const parts: React.ReactNode[] = [];
-                            let cursor = 0;
-                            const sorted = [...highlights].sort((a, b) => a.startChar - b.startChar);
-                            for (const hl of sorted) {
-                              if (hl.startChar > cursor) parts.push(<React.Fragment key={cursor}>{line.text.slice(cursor, hl.startChar)}</React.Fragment>);
-                              parts.push(<span key={hl.startChar} style={{ backgroundColor: hl.isCurrent ? 'var(--diff-search-cur)' : 'var(--diff-search-bg)', borderRadius: 2, padding: '0 1px' }}>{line.text.slice(hl.startChar, hl.endChar)}</span>);
-                              cursor = hl.endChar;
-                            }
-                            if (cursor < line.text.length) parts.push(<React.Fragment key={cursor}>{line.text.slice(cursor)}</React.Fragment>);
-                            return <>{parts}</>;
-                          })()
-                        : spans && spans.length > 0
-                        ? renderSpans(spans, line.type as 'added' | 'removed')
-                        : (line.text || <>&zwj;</>)}
-                    </pre>
-                  </div>
-                </td>
+                <ContentCell
+                  text={line.text}
+                  type={line.type}
+                  spans={spans}
+                  searchHighlights={highlights.length > 0 ? highlights : undefined}
+                  wrapLines={wrapLines}
+                />
               </tr>
             );
           })}
@@ -450,147 +555,211 @@ const InlineView: React.FC<{
   );
 };
 
-// Ã¢â€â‚¬Ã¢â€â‚¬ Split View (two independent scroll panels with sync scroll) Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
+// ── Split (Side-by-Side) View ───────────────────────────────────────────────
 interface SplitViewProps {
-  splitRows:       SplitRow[];
-  origScrollRef:   React.RefObject<HTMLDivElement | null>;
-  modScrollRef:    React.RefObject<HTMLDivElement | null>;
-  origRowRefs:     React.MutableRefObject<(HTMLTableRowElement | null)[]>;
-  modRowRefs:      React.MutableRefObject<(HTMLTableRowElement | null)[]>;
-  handleOrigScroll: (e: React.UIEvent<HTMLDivElement>) => void;
-  handleModScroll:  (e: React.UIEvent<HTMLDivElement>) => void;
-  viewportH:       number;
-  isFullScreen:    boolean;
-  origFileError:   string | null;
-  modFileError:    string | null;
-  origFileRef:     React.RefObject<HTMLInputElement | null>;
-  modFileRef:      React.RefObject<HTMLInputElement | null>;
-  handleFileUpload:(e: React.ChangeEvent<HTMLInputElement>, panel: 'orig' | 'mod') => void;
-  onApplyChange:   (rowIdx: number, direction: 'toOrig' | 'toMod') => void;
-  searchMatches:   SearchMatch[];
-  searchIdx:       number;
+  splitRows:        SplitRow[];
+  splitScrollRef:   React.RefObject<HTMLDivElement | null>;
+  origRowRefs:      React.MutableRefObject<(HTMLTableRowElement | null)[]>;
+  modRowRefs:       React.MutableRefObject<(HTMLTableRowElement | null)[]>;
+  viewportH:        number;
+  isFullScreen:     boolean;
+  wrapLines:        boolean;
+  origFileError:    string | null;
+  modFileError:     string | null;
+  origFileRef:      React.RefObject<HTMLInputElement | null>;
+  modFileRef:       React.RefObject<HTMLInputElement | null>;
+  handleFileUpload: (e: React.ChangeEvent<HTMLInputElement>, panel: 'orig' | 'mod') => void;
+  onApplyChange:    (rowIdx: number, direction: 'toOrig' | 'toMod') => void;
+  searchMatches:    SearchMatch[];
+  searchIdx:        number;
+  onClearOrig?:     () => void;
+  onClearMod?:      () => void;
+  onDownloadOrig?:  () => void;
+  onDownloadMod?:   () => void;
+}
+
+function SplitSideCells({ row, idx, side, onApplyChange, searchMatches, searchIdx, wrapLines }: {
+  row: SplitRow; idx: number; side: 'orig' | 'mod';
+  onApplyChange: (rowIdx: number, direction: 'toOrig' | 'toMod') => void;
+  searchMatches: SearchMatch[]; searchIdx: number; wrapLines: boolean;
+}) {
+  const isOrig = side === 'orig';
+  const type   = isOrig ? row.origType : row.modType;
+  const lineNo = isOrig ? row.origLineNo : row.modLineNo;
+  const gutter = isOrig ? row.origGutter : row.modGutter;
+  const text   = isOrig ? row.origText : row.modText;
+  const spans  = isOrig ? row.origSpans : row.modSpans;
+  const bg     = ROW_BG[type] ?? 'transparent';
+  const gutCls = GUTTER_CLS[gutter] ?? 'text-neutral-700';
+
+  const hlSide: 'orig' | 'mod' = isOrig ? 'orig' : 'mod';
+  const highlights = searchMatches
+    .filter(m => m.rowIdx === idx && m.side === hlSide)
+    .map(m => ({ startChar: m.startChar, endChar: m.endChar, isCurrent: searchMatches.indexOf(m) === searchIdx }));
+
+  const showToMod  = isOrig && row.origType === 'removed' && row.modType === 'empty';
+  const showToOrig = !isOrig && row.modType === 'added' && row.origType === 'empty';
+  const showBoth   = isOrig ? (row.origType === 'removed' && row.modType === 'added') : (row.modType === 'added' && row.origType === 'removed');
+
+  return (
+    <>
+      <td
+        style={{ backgroundColor: bg, whiteSpace: 'nowrap' }}
+        className="text-right pr-1.5 pl-1 text-neutral-600 font-mono text-[11px] select-none align-top border-r border-neutral-800/50 py-0.5 leading-[20px]"
+      >
+        {lineNo ?? ''}
+      </td>
+      <td
+        style={{ backgroundColor: bg, whiteSpace: 'nowrap', position: 'relative' }}
+        className={`text-center font-mono text-xs font-bold select-none align-top py-0.5 leading-[20px] ${gutCls}`}
+      >
+        <span className="group-hover/row:opacity-0 transition-opacity">{gutter}</span>
+        <div className="absolute inset-0 flex items-center justify-center gap-px opacity-0 group-hover/row:opacity-100 transition-opacity">
+          {(showToMod || showBoth) && isOrig && (
+            <button
+              onClick={() => onApplyChange(idx, 'toMod')}
+              title="Apply change to Modified"
+              style={{ width: 14, height: 14, fontSize: 9 }}
+              className="rounded bg-neutral-700 hover:bg-emerald-800 text-neutral-200 flex items-center justify-center cursor-pointer shrink-0"
+            >→</button>
+          )}
+          {(showToOrig || showBoth) && !isOrig && (
+            <button
+              onClick={() => onApplyChange(idx, 'toOrig')}
+              title="Apply change to Original"
+              style={{ width: 14, height: 14, fontSize: 9 }}
+              className="rounded bg-neutral-700 hover:bg-red-900 text-neutral-200 flex items-center justify-center cursor-pointer shrink-0"
+            >←</button>
+          )}
+        </div>
+      </td>
+      <ContentCell
+        text={text}
+        type={type}
+        spans={spans}
+        searchHighlights={highlights.length > 0 ? highlights : undefined}
+        wrapLines={wrapLines}
+      />
+    </>
+  );
 }
 
 const SplitView: React.FC<SplitViewProps> = ({
-  splitRows, origScrollRef, modScrollRef, origRowRefs, modRowRefs,
-  handleOrigScroll, handleModScroll, viewportH, isFullScreen,
+  splitRows, splitScrollRef, origRowRefs, modRowRefs,
+  viewportH, isFullScreen, wrapLines,
   origFileError, modFileError, origFileRef, modFileRef, handleFileUpload,
   onApplyChange, searchMatches, searchIdx,
+  onClearOrig, onClearMod, onDownloadOrig, onDownloadMod,
 }) => {
   const scrollH = isFullScreen ? 'calc(100vh - 7rem)' : `${viewportH}px`;
 
   if (splitRows.length === 0) {
     return (
-      <div className="grid grid-cols-2 divide-x divide-neutral-800" style={{ height: isFullScreen ? 'calc(100vh - 7rem)' : `${viewportH}px` }}>
-        <div className="col-span-2"><NoDiffState /></div>
+      <div style={{ height: isFullScreen ? 'calc(100vh - 7rem)' : `${viewportH}px` }}>
+        <NoDiffState />
       </div>
     );
   }
 
-  const renderTable = (side: 'orig' | 'mod', scrollRef: React.RefObject<HTMLDivElement | null>, rowRefs: React.MutableRefObject<(HTMLTableRowElement | null)[]>, onScroll: (e: React.UIEvent<HTMLDivElement>) => void) => {
-    return (
-      <div ref={scrollRef} className="overflow-auto flex-1 overscroll-none" onScroll={onScroll} style={{ height: scrollH }}>
-        <table className="border-collapse" style={{ width: '100%', minWidth: '100%', tableLayout: 'fixed' }}>
+  return (
+    <div className="flex flex-col w-full" style={{ height: isFullScreen ? 'auto' : undefined }}>
+      <div className="grid grid-cols-2 divide-x divide-neutral-800 shrink-0">
+        <PanelHeader
+          label="Original"
+          fileRef={origFileRef}
+          panel="orig"
+          fileError={origFileError}
+          handleFileUpload={handleFileUpload}
+          onClear={onClearOrig}
+          onDownload={onDownloadOrig}
+        />
+        <PanelHeader
+          label="Modified"
+          fileRef={modFileRef}
+          panel="mod"
+          fileError={modFileError}
+          handleFileUpload={handleFileUpload}
+          onClear={onClearMod}
+          onDownload={onDownloadMod}
+        />
+      </div>
+      <div ref={splitScrollRef} className="overflow-y-auto overscroll-none w-full" style={{ height: scrollH }}>
+        <table className="border-collapse w-full min-w-full" style={{ tableLayout: 'fixed' }}>
           <colgroup>
+            {/* Original side */}
             <col style={{ width: 44 }} />
-            <col style={{ width: 28 }} />
-            <col />
+            <col style={{ width: 24 }} />
+            <col style={{ width: 'calc(50% - 35px)' }} />
+            {/* Divider */}
+            <col style={{ width: 1 }} />
+            {/* Modified side */}
+            <col style={{ width: 44 }} />
+            <col style={{ width: 24 }} />
+            <col style={{ width: 'calc(50% - 35px)' }} />
           </colgroup>
           <tbody>
-            {splitRows.map((row, idx) => {
-              const isOrig = side === 'orig';
-              const type   = isOrig ? row.origType : row.modType;
-              const lineNo = isOrig ? row.origLineNo : row.modLineNo;
-              const gutter = isOrig ? row.origGutter : row.modGutter;
-              const text   = isOrig ? row.origText : row.modText;
-              const spans  = isOrig ? row.origSpans : row.modSpans;
-              const bg     = ROW_BG[type] ?? 'transparent';
-              const gutCls = GUTTER_CLS[gutter] ?? 'text-neutral-700';
-              // Search highlights
-              const hlSide: 'orig' | 'mod' = isOrig ? 'orig' : 'mod';
-              const highlights = searchMatches
-                .filter(m => m.rowIdx === idx && m.side === hlSide)
-                .map(m => ({ startChar: m.startChar, endChar: m.endChar, isCurrent: searchMatches.indexOf(m) === searchIdx }));
-              // Change transfer button logic
-              const showToMod  = isOrig && row.origType === 'removed' && row.modType === 'empty';
-              const showToOrig = !isOrig && row.modType === 'added' && row.origType === 'empty';
-              const showBoth   = isOrig ? (row.origType === 'removed' && row.modType === 'added') : (row.modType === 'added' && row.origType === 'removed');
-
-              return (
-                <tr key={idx} ref={(el) => { rowRefs.current[idx] = el; }} style={{ height: ROW_H }} className="group/row">
-                  {/* Line number */}
-                  <td style={{ backgroundColor: bg, whiteSpace: 'nowrap' }}
-                    className={`text-right pr-1.5 pl-1 text-neutral-600 font-mono text-[11px] select-none align-top border-r border-neutral-800/50 ${ROW_H_CLS} ${LEAD_CLS}`}>
-                    {lineNo ?? ''}
-                  </td>
-                  {/* Gutter with action buttons */}
-                  <td style={{ backgroundColor: bg, whiteSpace: 'nowrap', position: 'relative' }}
-                    className={`text-center font-mono text-xs font-bold select-none align-top ${ROW_H_CLS} ${LEAD_CLS} ${gutCls}`}>
-                    <span className="group-hover/row:opacity-0 transition-opacity">{gutter}</span>
-                    {/* Action buttons -  visible on hover */}
-                    <div className="absolute inset-0 flex items-center justify-center gap-px opacity-0 group-hover/row:opacity-100 transition-opacity">
-                      {(showToMod || showBoth) && isOrig && (
-                        <button
-                          onClick={() => onApplyChange(idx, 'toMod')}
-                          title="Apply to Modified"
-                          style={{ width: 14, height: 14, fontSize: 9 }}
-                          className="rounded bg-neutral-700 hover:bg-emerald-800 text-neutral-200 flex items-center justify-center cursor-pointer shrink-0"
-                        >Ã¢â€ â€™</button>
-                      )}
-                      {(showToOrig || showBoth) && !isOrig && (
-                        <button
-                          onClick={() => onApplyChange(idx, 'toOrig')}
-                          title="Apply to Original"
-                          style={{ width: 14, height: 14, fontSize: 9 }}
-                          className="rounded bg-neutral-700 hover:bg-red-900 text-neutral-200 flex items-center justify-center cursor-pointer shrink-0"
-                        >Ã¢â€ Â</button>
-                      )}
-                    </div>
-                  </td>
-                  {/* Content */}
-                  <ContentCell text={text} type={type} spans={spans} searchHighlights={highlights.length > 0 ? highlights : undefined} />
-                </tr>
-              );
-            })}
+            {splitRows.map((row, idx) => (
+              <tr
+                key={idx}
+                ref={(el) => { origRowRefs.current[idx] = el; modRowRefs.current[idx] = el; }}
+                className="group/row"
+              >
+                <SplitSideCells
+                  row={row}
+                  idx={idx}
+                  side="orig"
+                  onApplyChange={onApplyChange}
+                  searchMatches={searchMatches}
+                  searchIdx={searchIdx}
+                  wrapLines={wrapLines}
+                />
+                <td className="bg-neutral-800 p-0" style={{ width: 1 }} />
+                <SplitSideCells
+                  row={row}
+                  idx={idx}
+                  side="mod"
+                  onApplyChange={onApplyChange}
+                  searchMatches={searchMatches}
+                  searchIdx={searchIdx}
+                  wrapLines={wrapLines}
+                />
+              </tr>
+            ))}
           </tbody>
         </table>
-      </div>
-    );
-  };
-
-  return (
-    <div className="grid grid-cols-2 divide-x divide-neutral-800" style={{ height: isFullScreen ? 'auto' : undefined }}>
-      <div className="flex flex-col">
-        <PanelHeader label="Original" fileRef={origFileRef} panel="orig" fileError={origFileError} handleFileUpload={handleFileUpload} />
-        {renderTable('orig', origScrollRef, origRowRefs, handleOrigScroll)}
-      </div>
-      <div className="flex flex-col">
-        <PanelHeader label="Modified" fileRef={modFileRef} panel="mod" fileError={modFileError} handleFileUpload={handleFileUpload} />
-        {renderTable('mod', modScrollRef, modRowRefs, handleModScroll)}
       </div>
     </div>
   );
 };
 
-// Ã¢â€â‚¬Ã¢â€â‚¬ Main component Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
+// ── Main Tool Component ─────────────────────────────────────────────────────
 export const DiffCheckerTool: React.FC = () => {
   const { isDark } = useTheme();
-  const [original, setOriginalState]      = useState('');
-  const [modified, setModifiedState]      = useState('');
-  const [diffResult, setDiffResult]       = useState<SmartDiffResult | null>(null);
-  const [viewMode, setViewMode]           = useState<ViewMode>('split');
-  const [mode, setMode]                   = useState<'input' | 'diff'>('input');
-  const [compareMode, setCompareMode]     = useState<CompareMode>('smart');
-  const [copied, setCopied]               = useState(false);
-  const [copyError, setCopyError]         = useState(false);
-  const [isFullScreen, setIsFullScreen]   = useState(false);
-  const [origFileError, setOrigFileError] = useState<string | null>(null);
-  const [modFileError,  setModFileError]  = useState<string | null>(null);
-  const [activeHunk, setActiveHunk]       = useState(0);
-  const [origExt, setOrigExt]             = useState<string | undefined>(undefined);
-  const [modExt,  setModExt]              = useState<string | undefined>(undefined);
 
-  // Ã¢â€â‚¬Ã¢â€â‚¬ Undo / Redo Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
+  // State
+  const [original, setOriginalState]            = useState(SAMPLES.code.original);
+  const [modified, setModifiedState]            = useState(SAMPLES.code.modified);
+  const [diffResult, setDiffResult]             = useState<SmartDiffResult | null>(null);
+  const [viewMode, setViewMode]                 = useState<ViewMode>('split');
+  const [mode, setMode]                         = useState<'input' | 'diff'>('diff');
+  const [compareMode, setCompareMode]           = useState<CompareMode>('smart');
+  const [ignoreWhitespace, setIgnoreWhitespace] = useState(false);
+  const [ignoreCase, setIgnoreCase]             = useState(false);
+  const [wrapLines, setWrapLines]               = useState(true);
+  const [granularity, setGranularity]           = useState<Granularity>('words');
+  const [showOptions, setShowOptions]           = useState(false);
+  const [showSampleMenu, setShowSampleMenu]     = useState(false);
+  const sampleMenuRef                            = useRef<HTMLDivElement | null>(null);
+  const [copied, setCopied]                     = useState(false);
+  const [copyError, setCopyError]               = useState(false);
+  const [isFullScreen, setIsFullScreen]         = useState(false);
+  const [origFileError, setOrigFileError]       = useState<string | null>(null);
+  const [modFileError,  setModFileError]        = useState<string | null>(null);
+  const [activeHunk, setActiveHunk]             = useState(0);
+  const [origExt, setOrigExt]                   = useState<string | undefined>(undefined);
+  const [modExt,  setModExt]                    = useState<string | undefined>(undefined);
+
+  // Undo / Redo
   const [undoStack, setUndoStack] = useState<Array<{ original: string; modified: string }>>([]);
   const [redoStack, setRedoStack] = useState<Array<{ original: string; modified: string }>>([]);
 
@@ -626,12 +795,12 @@ export const DiffCheckerTool: React.FC = () => {
     });
   }, [original, modified]);
 
-  // Ã¢â€â‚¬Ã¢â€â‚¬ Search (useSearch hook) Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
-  const search = useSearch({ debounceMs: 200, captureCtrlF: false }); // Ctrl+F handled in our own keydown
+  // Search
+  const search = useSearch({ debounceMs: 200, captureCtrlF: false });
   const [searchScope, setSearchScope] = useState<'both' | 'orig' | 'mod'>('both');
   const [searchMatches, setSearchMatches] = useState<SearchMatch[]>([]);
 
-  // Ã¢â€â‚¬Ã¢â€â‚¬ Viewport height Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
+  // Viewport height
   const [viewportH, setViewportH] = useState<number>(500);
   const didInitH = useRef(false);
   useEffect(() => {
@@ -641,66 +810,37 @@ export const DiffCheckerTool: React.FC = () => {
     }
   }, []);
 
-  // Ã¢â€â‚¬Ã¢â€â‚¬ Refs Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
-  const debounceRef   = useRef<ReturnType<typeof setTimeout> | null>(null);
-  // Inline / single scroll ref
-  const scrollRef     = useRef<HTMLDivElement | null>(null);
-  // Split view independent scroll refs
-  const origScrollRef = useRef<HTMLDivElement | null>(null);
-  const modScrollRef  = useRef<HTMLDivElement | null>(null);
-  // Sync mutex
-  const syncingRef    = useRef(false);
-  // Row refs for split view
-  const origRowRefs   = useRef<(HTMLTableRowElement | null)[]>([]);
-  const modRowRefs    = useRef<(HTMLTableRowElement | null)[]>([]);
-  // Row refs for inline view
-  const inlineRowRefs = useRef<(HTMLTableRowElement | null)[]>([]);
-  const origFileRef   = useRef<HTMLInputElement | null>(null);
-  const modFileRef    = useRef<HTMLInputElement | null>(null);
+  // Refs
+  const debounceRef    = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const scrollRef      = useRef<HTMLDivElement | null>(null);
+  const splitScrollRef = useRef<HTMLDivElement | null>(null);
+  const origRowRefs    = useRef<(HTMLTableRowElement | null)[]>([]);
+  const modRowRefs     = useRef<(HTMLTableRowElement | null)[]>([]);
+  const inlineRowRefs  = useRef<(HTMLTableRowElement | null)[]>([]);
+  const origFileRef    = useRef<HTMLInputElement | null>(null);
+  const modFileRef     = useRef<HTMLInputElement | null>(null);
 
-  // Ã¢â€â‚¬Ã¢â€â‚¬ Split rows and scroll anchors Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
-  const splitRows = useMemo(() => diffResult ? buildSplitRows(diffResult.lines) : [], [diffResult]);
-  const scrollAnchors = useMemo(() => buildScrollAnchors(splitRows), [splitRows]);
+  // Split rows memo
+  const splitRows = useMemo(() => (diffResult ? buildSplitRows(diffResult.lines) : []), [diffResult]);
 
-  // Ã¢â€â‚¬Ã¢â€â‚¬ Sync scroll handlers Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
-  const handleOrigScroll = useCallback((e: React.UIEvent<HTMLDivElement>) => {
-    if (syncingRef.current) return;
-    const src = e.currentTarget.scrollTop;
-    const target = modScrollRef.current;
-    if (!target) return;
-    syncingRef.current = true;
-    const dst = interpolateScroll(scrollAnchors, src, 'orig');
-    requestAnimationFrame(() => {
-      if (target) target.scrollTop = dst;
-      syncingRef.current = false;
-    });
-  }, [scrollAnchors]);
+  // Diff Options bundle
+  const diffOptions: DiffOptions = useMemo(() => ({
+    ignoreWhitespace,
+    ignoreCase,
+    granularity,
+  }), [ignoreWhitespace, ignoreCase, granularity]);
 
-  const handleModScroll = useCallback((e: React.UIEvent<HTMLDivElement>) => {
-    if (syncingRef.current) return;
-    const src = e.currentTarget.scrollTop;
-    const target = origScrollRef.current;
-    if (!target) return;
-    syncingRef.current = true;
-    const dst = interpolateScroll(scrollAnchors, src, 'mod');
-    requestAnimationFrame(() => {
-      if (target) target.scrollTop = dst;
-      syncingRef.current = false;
-    });
-  }, [scrollAnchors]);
-
-  // Ã¢â€â‚¬Ã¢â€â‚¬ Debounced diff Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
+  // Compute diff with options
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(() => {
-      setDiffResult(smartDiff(original, modified, compareMode === 'text', origExt, modExt));
+      setDiffResult(smartDiff(original, modified, compareMode === 'text', origExt, modExt, diffOptions));
       setActiveHunk(0);
-    }, 300);
+    }, 250);
     return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
-  }, [original, modified, compareMode, origExt, modExt]);
+  }, [original, modified, compareMode, origExt, modExt, diffOptions]);
 
-  // Ã¢â€â‚¬Ã¢â€â‚¬ Search logic -  recompute matches when debouncedQuery / scope / diff changes Ã¢â€â‚¬Ã¢â€â‚¬
-  // Use a ref to batch the state update outside the synchronous effect body.
+  // Search matches
   const searchMatchesRef = useRef<SearchMatch[]>([]);
   useEffect(() => {
     const matches: SearchMatch[] = [];
@@ -731,7 +871,7 @@ export const DiffCheckerTool: React.FC = () => {
     return () => clearTimeout(id);
   }, [search.debouncedQuery, searchScope, diffResult]);
 
-  // Scroll to current search match
+  // Scroll to search match
   useEffect(() => {
     if (searchMatches.length === 0) return;
     const match = searchMatches[search.matchIdx];
@@ -739,17 +879,16 @@ export const DiffCheckerTool: React.FC = () => {
     const rowIdx = match.rowIdx;
     const scrollTo = (ref: React.RefObject<HTMLDivElement | null>, rowRef: HTMLTableRowElement | null) => {
       if (!ref.current || !rowRef) return;
-      ref.current.scrollTo({ top: Math.max(0, rowRef.offsetTop - 60) });
+      ref.current.scrollTo({ top: Math.max(0, rowRef.offsetTop - 60), behavior: 'smooth' });
     };
     if (viewMode === 'split') {
-      if (match.side === 'orig') scrollTo(origScrollRef, origRowRefs.current[rowIdx] ?? null);
-      else scrollTo(modScrollRef, modRowRefs.current[rowIdx] ?? null);
+      scrollTo(splitScrollRef, origRowRefs.current[rowIdx] ?? null);
     } else {
       scrollTo(scrollRef, inlineRowRefs.current[rowIdx] ?? null);
     }
   }, [search.matchIdx, searchMatches, viewMode]);
 
-  // Ã¢â€â‚¬Ã¢â€â‚¬ Keyboard shortcuts Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
+  // Keyboard shortcuts
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
@@ -767,7 +906,7 @@ export const DiffCheckerTool: React.FC = () => {
     return () => window.removeEventListener('keydown', onKey);
   }, [isFullScreen, search, handleUndo, handleRedo]);
 
-  // Ã¢â€â‚¬Ã¢â€â‚¬ Fullscreen body scroll lock Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
+  // Fullscreen lock
   useEffect(() => {
     const nav = document.querySelector('header') as HTMLElement | null;
     if (isFullScreen) {
@@ -784,7 +923,22 @@ export const DiffCheckerTool: React.FC = () => {
     };
   }, [isFullScreen]);
 
-  // Ã¢â€â‚¬Ã¢â€â‚¬ Resize drag Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
+  // Click outside sample menu
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (sampleMenuRef.current && !sampleMenuRef.current.contains(e.target as Node)) {
+        setShowSampleMenu(false);
+      }
+    };
+    if (showSampleMenu) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showSampleMenu]);
+
+  // Resize drag
   const dragStartY  = useRef<number>(0);
   const dragStartH  = useRef<number>(0);
   const isDragging  = useRef(false);
@@ -809,86 +963,161 @@ export const DiffCheckerTool: React.FC = () => {
     document.addEventListener('pointerup',   onUp);
   }, [viewportH]);
 
-  // Ã¢â€â‚¬Ã¢â€â‚¬ Hunk navigation Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
-  const inlineLines = diffResult ? diffResult.lines : [];
-  const hunks = viewMode === 'split'
-    ? findHunkStarts(splitRows)
-    : findInlineHunkStarts(inlineLines);
+  // Hunks
+  const hunks = useMemo(() => {
+    if (!diffResult) return [];
+    return viewMode === 'split' ? findHunkStarts(splitRows) : findInlineHunkStarts(diffResult.lines);
+  }, [diffResult, viewMode, splitRows]);
 
-  const scrollToHunk = useCallback((idx: number) => {
-    if (idx < 0 || idx >= hunks.length) return;
-    const rowIdx = hunks[idx].rowIdx;
-    const targetPx = rowIdx * ROW_H;
-    const offset = 60;
+  const scrollToHunk = useCallback((hunkIdx: number) => {
+    const targetHunk = hunks[hunkIdx];
+    if (!targetHunk) return;
+    const rowIdx = targetHunk.rowIdx;
+
     if (viewMode === 'split') {
-      // Scroll both panels
-      if (origScrollRef.current) origScrollRef.current.scrollTo({ top: Math.max(0, targetPx - offset) });
-      if (modScrollRef.current)  modScrollRef.current.scrollTo({ top: Math.max(0, targetPx - offset) });
+      const container = splitScrollRef.current;
+      const targetRow = origRowRefs.current[rowIdx];
+      if (container && targetRow) {
+        container.scrollTo({ top: Math.max(0, targetRow.offsetTop - 40), behavior: 'smooth' });
+      }
     } else {
-      if (scrollRef.current) {
-        const rowEl = inlineRowRefs.current[rowIdx];
-        if (rowEl) scrollRef.current.scrollTo({ top: Math.max(0, rowEl.offsetTop - offset), behavior: 'smooth' });
+      const container = scrollRef.current;
+      const targetRow = inlineRowRefs.current[rowIdx];
+      if (container && targetRow) {
+        container.scrollTo({ top: Math.max(0, targetRow.offsetTop - 40), behavior: 'smooth' });
       }
     }
   }, [hunks, viewMode]);
 
-  const handlePrevHunk = () => { const n = Math.max(0, activeHunk - 1); setActiveHunk(n); scrollToHunk(n); };
-  const handleNextHunk = () => { const n = Math.min(hunks.length - 1, activeHunk + 1); setActiveHunk(n); scrollToHunk(n); };
+  const handleNextHunk = () => {
+    if (activeHunk < hunks.length - 1) {
+      const next = activeHunk + 1;
+      setActiveHunk(next);
+      scrollToHunk(next);
+    }
+  };
 
-  // Ã¢â€â‚¬Ã¢â€â‚¬ File upload Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
-  const handleFileUpload = useCallback((e: React.ChangeEvent<HTMLInputElement>, panel: 'orig' | 'mod') => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    const ext = file.name.includes('.') ? file.name.split('.').pop() : undefined;
+  const handlePrevHunk = () => {
+    if (activeHunk > 0) {
+      const prev = activeHunk - 1;
+      setActiveHunk(prev);
+      scrollToHunk(prev);
+    }
+  };
+
+  // File Upload & Drop
+  const readFile = (file: File, panel: 'orig' | 'mod') => {
     const reader = new FileReader();
-    reader.onload  = (ev) => {
-      const content = ev.target?.result as string;
-      if (panel === 'orig') { setOriginalState(content); setOrigFileError(null); setOrigExt(ext); }
-      else                  { setModifiedState(content); setModFileError(null); setModExt(ext); }
+    const ext = file.name.split('.').pop()?.toLowerCase();
+    reader.onload = (ev) => {
+      const content = ev.target?.result;
+      if (typeof content === 'string') {
+        pushUndo(original, modified);
+        if (panel === 'orig') {
+          setOriginalState(content);
+          setOrigFileError(null);
+          setOrigExt(ext);
+        } else {
+          setModifiedState(content);
+          setModFileError(null);
+          setModExt(ext);
+        }
+      }
     };
     reader.onerror = () => {
-      const msg = 'Cannot read file - binary files are not supported.';
-      if (panel === 'orig') setOrigFileError(msg); else setModFileError(msg);
+      if (panel === 'orig') setOrigFileError('Failed to read file');
+      else setModFileError('Failed to read file');
     };
     reader.readAsText(file);
-    e.target.value = '';
-  }, []);
+  };
 
-  // Ã¢â€â‚¬Ã¢â€â‚¬ Toolbar actions Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>, panel: 'orig' | 'mod') => {
+    const file = e.target.files?.[0];
+    if (file) readFile(file, panel);
+    e.target.value = '';
+  };
+
+  const handleFileDrop = (file: File, panel: 'orig' | 'mod') => {
+    readFile(file, panel);
+  };
+
+  // Actions
   const handleSwap = () => {
     pushUndo(original, modified);
-    setOriginalState(modified); setModifiedState(original);
-    setOrigFileError(null); setModFileError(null);
-    setOrigExt(modExt); setModExt(origExt);
+    setOriginalState(modified);
+    setModifiedState(original);
+    setOrigFileError(null);
+    setModFileError(null);
+    setOrigExt(modExt);
+    setModExt(origExt);
   };
-  const handleLoadSample = () => {
+
+  const handleLoadSample = (sampleKey: keyof typeof SAMPLES = 'code') => {
+    const sample = SAMPLES[sampleKey];
     pushUndo(original, modified);
-    setOriginalState(SAMPLE_ORIGINAL); setModifiedState(SAMPLE_MODIFIED);
-    setOrigFileError(null); setModFileError(null);
-    setOrigExt(undefined); setModExt(undefined);
+    setOriginalState(sample.original);
+    setModifiedState(sample.modified);
+    setOrigFileError(null);
+    setModFileError(null);
+    setOrigExt(undefined);
+    setModExt(undefined);
     setMode('diff');
   };
+
   const handleClear = () => {
     pushUndo(original, modified);
-    setOriginalState(''); setModifiedState('');
-    setDiffResult(null); setActiveHunk(0);
-    setOrigFileError(null); setModFileError(null);
-    setOrigExt(undefined); setModExt(undefined);
+    setOriginalState('');
+    setModifiedState('');
+    setDiffResult(null);
+    setActiveHunk(0);
+    setOrigFileError(null);
+    setModFileError(null);
+    setOrigExt(undefined);
+    setModExt(undefined);
     setMode('input');
   };
+
   const handleCompare = () => {
-    setDiffResult(smartDiff(original, modified, compareMode === 'text', origExt, modExt));
+    setDiffResult(smartDiff(original, modified, compareMode === 'text', origExt, modExt, diffOptions));
     setActiveHunk(0);
     setMode('diff');
   };
+
   const handleCopyDiff = async () => {
     if (!diffResult) return;
     const text = toUnifiedDiff(original, modified, diffResult);
-    try   { await navigator.clipboard.writeText(text || '(no differences)'); setCopied(true); setTimeout(() => setCopied(false), 2000); }
-    catch { setCopyError(true); setTimeout(() => setCopyError(false), 2000); }
+    try {
+      await navigator.clipboard.writeText(text || '(no differences)');
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      setCopyError(true);
+      setTimeout(() => setCopyError(false), 2000);
+    }
   };
 
-  // Ã¢â€â‚¬Ã¢â€â‚¬ Change transfer Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
+  const handleDownloadPatch = () => {
+    const text = toUnifiedDiff(original, modified, diffResult ?? undefined);
+    const blob = new Blob([text], { type: 'text/x-diff;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'changes.patch';
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const handleDownloadFile = (content: string, filename: string) => {
+    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  // Change transfer
   const handleApplyChange = useCallback((rowIdx: number, direction: 'toOrig' | 'toMod') => {
     if (!diffResult) return;
     const row = splitRows[rowIdx];
@@ -896,46 +1125,18 @@ export const DiffCheckerTool: React.FC = () => {
 
     pushUndo(original, modified);
 
-    const isJson = diffResult.detection.type === 'json';
-
     if (direction === 'toMod') {
-      // Apply orig line to modified
       const origLines = original.split('\n');
       const modLines  = modified.split('\n');
       const origLineNo = row.origLineNo;
       const modLineNo  = row.modLineNo;
 
-      if (isJson) {
-        // For JSON: re-parse and use structural merge (simplified: text approach on formatted)
-        try {
-          const origParsed = JSON.parse(original.trim());
-          const modParsed  = JSON.parse(modified.trim());
-          // Apply the change by setting the path value from orig into mod
-          // For simplicity, reconstruct modified text by replacing its line
-          if (modLineNo !== null && origLineNo !== null) {
-            modLines[modLineNo - 1] = origLines[origLineNo - 1];
-            setModifiedState(modLines.join('\n'));
-          } else if (origLineNo !== null) {
-            modLines.splice(modLineNo !== null ? modLineNo - 1 : modLines.length, 0, origLines[origLineNo - 1]);
-            setModifiedState(modLines.join('\n'));
-          }
-          void origParsed; void modParsed;
-        } catch {
-          if (origLineNo !== null) {
-            if (modLineNo !== null) modLines[modLineNo - 1] = origLines[origLineNo - 1];
-            else modLines.splice(rowIdx, 0, origLines[origLineNo - 1]);
-            setModifiedState(modLines.join('\n'));
-          }
-        }
-      } else {
-        if (origLineNo !== null) {
-          if (modLineNo !== null) modLines[modLineNo - 1] = origLines[origLineNo - 1];
-          else modLines.splice(rowIdx, 0, origLines[origLineNo - 1]);
-          setModifiedState(modLines.join('\n'));
-        }
+      if (origLineNo !== null) {
+        if (modLineNo !== null) modLines[modLineNo - 1] = origLines[origLineNo - 1];
+        else modLines.splice(rowIdx, 0, origLines[origLineNo - 1]);
+        setModifiedState(modLines.join('\n'));
       }
     } else {
-      // Apply mod line to original
       const origLines = original.split('\n');
       const modLines  = modified.split('\n');
       const origLineNo = row.origLineNo;
@@ -951,13 +1152,16 @@ export const DiffCheckerTool: React.FC = () => {
     setActiveHunk(0);
   }, [diffResult, splitRows, original, modified, pushUndo]);
 
-  useEffect(() => { origRowRefs.current = []; modRowRefs.current = []; inlineRowRefs.current = []; }, [diffResult, viewMode]);
+  useEffect(() => {
+    origRowRefs.current = [];
+    modRowRefs.current = [];
+    inlineRowRefs.current = [];
+  }, [diffResult, viewMode]);
 
   const isEmpty  = original === '' && modified === '';
   const hasDiff  = diffResult !== null;
   const noChange = hasDiff && diffResult.addedCount === 0 && diffResult.removedCount === 0 && !isEmpty;
 
-  // Ã¢â€â‚¬Ã¢â€â‚¬ Render Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
   const borderClass = isDark ? 'border-neutral-700' : 'border-[#E4E4E7]';
   const inactiveBtnClass = isDark
     ? 'bg-neutral-900 text-neutral-400 hover:text-neutral-200'
@@ -968,20 +1172,20 @@ export const DiffCheckerTool: React.FC = () => {
       isFullScreen ? 'fixed inset-0 z-[9999]' : 'w-full rounded-lg overflow-hidden shadow-xl'
     }`}>
 
-      {/* Toolbar */}
+      {/* Main Toolbar */}
       <Toolbar.Root isDark={isDark} isFullScreen={isFullScreen}>
         <Toolbar.Group>
-          {/* Edit / Compare Mode Switcher */}
+          {/* Edit / Compare Toggle */}
           <div className={`flex items-center rounded border ${borderClass} overflow-hidden shrink-0`}>
             <button
               onClick={() => setMode('input')}
-              className={`px-3 py-1.5 transition-colors cursor-pointer ${mode === 'input' ? 'bg-[#1D9BF0] text-white font-semibold' : inactiveBtnClass}`}
+              className={`px-3 py-1.5 transition-colors cursor-pointer text-xs ${mode === 'input' ? 'bg-[#1D9BF0] text-white font-semibold' : inactiveBtnClass}`}
             >
               Edit
             </button>
             <button
               onClick={handleCompare}
-              className={`px-3 py-1.5 transition-colors cursor-pointer ${mode === 'diff' ? 'bg-[#1D9BF0] text-white font-semibold' : inactiveBtnClass}`}
+              className={`px-3 py-1.5 transition-colors cursor-pointer text-xs ${mode === 'diff' ? 'bg-[#1D9BF0] text-white font-semibold' : inactiveBtnClass}`}
             >
               Compare
             </button>
@@ -992,14 +1196,14 @@ export const DiffCheckerTool: React.FC = () => {
             <div className={`flex items-center rounded border ${borderClass} overflow-hidden shrink-0`}>
               <button
                 onClick={() => { setViewMode('split'); setActiveHunk(0); }}
-                className={`px-2.5 py-1.5 flex items-center gap-1 transition-colors cursor-pointer ${viewMode === 'split' ? 'bg-[#1D9BF0]/20 text-[#1D9BF0]' : inactiveBtnClass}`}
+                className={`px-2.5 py-1.5 flex items-center gap-1 transition-colors cursor-pointer text-xs ${viewMode === 'split' ? 'bg-[#1D9BF0]/20 text-[#1D9BF0]' : inactiveBtnClass}`}
               >
                 <Columns2 className="w-3.5 h-3.5" />
                 <span className="hidden sm:inline">Split</span>
               </button>
               <button
                 onClick={() => { setViewMode('inline'); setActiveHunk(0); }}
-                className={`px-2.5 py-1.5 flex items-center gap-1 transition-colors cursor-pointer ${viewMode === 'inline' ? 'bg-[#1D9BF0]/20 text-[#1D9BF0]' : inactiveBtnClass}`}
+                className={`px-2.5 py-1.5 flex items-center gap-1 transition-colors cursor-pointer text-xs ${viewMode === 'inline' ? 'bg-[#1D9BF0]/20 text-[#1D9BF0]' : inactiveBtnClass}`}
               >
                 <AlignLeft className="w-3.5 h-3.5" />
                 <span className="hidden sm:inline">Inline</span>
@@ -1007,34 +1211,52 @@ export const DiffCheckerTool: React.FC = () => {
             </div>
           )}
 
-          {/* Smart / Text comparison toggle */}
-          <div className={`flex items-center rounded border ${borderClass} overflow-hidden shrink-0`} title="Smart: auto-detects content type. Text: forces plain line diff.">
+          {/* Smart / Text Mode Switcher */}
+          <div className={`flex items-center rounded border ${borderClass} overflow-hidden shrink-0`} title="Smart auto-detects format. Text forces plain line comparison.">
             <button
               onClick={() => setCompareMode('smart')}
-              className={`px-2.5 py-1.5 transition-colors cursor-pointer text-xs ${
-                compareMode === 'smart'
-                  ? isDark
-                    ? 'bg-neutral-700 text-neutral-100 font-semibold'
-                    : 'bg-[#1D9BF0] text-white font-semibold'
-                  : inactiveBtnClass
-              }`}
+              className={`px-2.5 py-1.5 transition-colors cursor-pointer text-xs ${compareMode === 'smart' ? 'bg-neutral-700 text-neutral-100 font-semibold' : inactiveBtnClass}`}
             >
               Smart
             </button>
             <button
               onClick={() => setCompareMode('text')}
-              className={`px-2.5 py-1.5 transition-colors cursor-pointer text-xs ${
-                compareMode === 'text'
-                  ? isDark
-                    ? 'bg-neutral-700 text-neutral-100 font-semibold'
-                    : 'bg-[#1D9BF0] text-white font-semibold'
-                  : inactiveBtnClass
-              }`}
+              className={`px-2.5 py-1.5 transition-colors cursor-pointer text-xs ${compareMode === 'text' ? 'bg-neutral-700 text-neutral-100 font-semibold' : inactiveBtnClass}`}
             >
               Text
             </button>
           </div>
 
+          {/* Line Wrap Toggle */}
+          <button
+            onClick={() => setWrapLines(!wrapLines)}
+            title={wrapLines ? 'Disable line wrap' : 'Enable line wrap'}
+            className={`flex items-center gap-1 text-xs px-2.5 py-1.5 rounded border ${borderClass} transition-colors cursor-pointer ${
+              wrapLines ? 'bg-neutral-800 text-neutral-100 border-neutral-600' : inactiveBtnClass
+            }`}
+          >
+            <WrapText className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">Wrap</span>
+          </button>
+
+          {/* Options Dropdown Trigger */}
+          <button
+            onClick={() => setShowOptions(!showOptions)}
+            title="Comparison options (whitespace, case, granularity)"
+            className={`flex items-center gap-1 text-xs px-2.5 py-1.5 rounded border ${borderClass} transition-colors cursor-pointer ${
+              showOptions || ignoreWhitespace || ignoreCase || granularity === 'chars'
+                ? 'bg-neutral-800 text-neutral-100 border-neutral-600'
+                : inactiveBtnClass
+            }`}
+          >
+            <SlidersHorizontal className="w-3.5 h-3.5" />
+            <span className="hidden md:inline">Options</span>
+            {(ignoreWhitespace || ignoreCase || granularity === 'chars') && (
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 ml-0.5" />
+            )}
+          </button>
+
+          {/* Swap */}
           <Toolbar.Button
             onClick={handleSwap}
             disabled={isEmpty}
@@ -1044,13 +1266,39 @@ export const DiffCheckerTool: React.FC = () => {
             className="hidden sm:flex"
           />
 
-          <Toolbar.Button
-            onClick={handleLoadSample}
-            isDark={isDark}
-            label="Sample"
-            className="hidden sm:flex"
-          />
+          {/* Preset Samples Selector */}
+          <div ref={sampleMenuRef} className="relative hidden sm:block">
+            <button
+              type="button"
+              onClick={() => setShowSampleMenu(!showSampleMenu)}
+              className={`flex items-center gap-1 text-xs px-2.5 py-1.5 rounded border ${borderClass} transition-colors cursor-pointer ${
+                showSampleMenu ? 'bg-neutral-800 text-neutral-100 border-neutral-600' : inactiveBtnClass
+              }`}
+            >
+              <FileCode className="w-3.5 h-3.5" />
+              <span>Sample</span>
+              <ChevronDown className={`w-3 h-3 text-neutral-500 transition-transform duration-150 ${showSampleMenu ? 'rotate-180' : ''}`} />
+            </button>
+            {showSampleMenu && (
+              <div className="absolute left-0 top-full mt-1 flex flex-col bg-neutral-900 border border-neutral-700 rounded shadow-xl py-1 z-30 min-w-[170px]">
+                {Object.entries(SAMPLES).map(([key, sample]) => (
+                  <button
+                    key={key}
+                    type="button"
+                    onClick={() => {
+                      handleLoadSample(key as keyof typeof SAMPLES);
+                      setShowSampleMenu(false);
+                    }}
+                    className="px-3 py-1.5 text-xs text-left text-neutral-300 hover:bg-neutral-800 hover:text-white transition-colors cursor-pointer"
+                  >
+                    {sample.label}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
 
+          {/* Clear */}
           <Toolbar.Button
             onClick={handleClear}
             disabled={isEmpty}
@@ -1061,23 +1309,22 @@ export const DiffCheckerTool: React.FC = () => {
           />
 
           {/* Undo / Redo */}
-          {undoStack.length > 0 && (
+          <div className="hidden lg:flex items-center gap-0.5">
             <Toolbar.Button
               onClick={handleUndo}
+              disabled={undoStack.length === 0}
               title="Undo (Ctrl+Z)"
               isDark={isDark}
               icon={RotateCcw}
             />
-          )}
-
-          {redoStack.length > 0 && (
             <Toolbar.Button
               onClick={handleRedo}
-              title="Redo (Ctrl+Shift+Z)"
+              disabled={redoStack.length === 0}
+              title="Redo (Ctrl+Y)"
               isDark={isDark}
               icon={RotateCw}
             />
-          )}
+          </div>
 
           {/* Search Toggle */}
           {mode === 'diff' && (
@@ -1092,10 +1339,12 @@ export const DiffCheckerTool: React.FC = () => {
         </Toolbar.Group>
 
         <Toolbar.Group align="right">
+          {/* Hunk Navigation */}
           {mode === 'diff' && !noChange && hunks.length > 0 && (
             <HunkNav total={hunks.length} current={activeHunk + 1} onPrev={handlePrevHunk} onNext={handleNextHunk} />
           )}
 
+          {/* Statistics summary */}
           {hasDiff && !isEmpty && (
             <div className={`flex items-center gap-1 font-mono text-[11px] px-2 py-1.5 rounded select-none border ${
               isDark
@@ -1115,6 +1364,19 @@ export const DiffCheckerTool: React.FC = () => {
             </div>
           )}
 
+          {/* Download Patch */}
+          {hasDiff && !isEmpty && (
+            <Toolbar.Button
+              onClick={handleDownloadPatch}
+              isDark={isDark}
+              icon={Download}
+              label=".patch"
+              title="Download standard unified diff patch"
+              className="hidden sm:flex"
+            />
+          )}
+
+          {/* Copy Diff */}
           <Toolbar.Button
             onClick={handleCopyDiff}
             disabled={!hasDiff || isEmpty}
@@ -1123,6 +1385,7 @@ export const DiffCheckerTool: React.FC = () => {
             label={copied ? 'Copied!' : 'Copy Diff'}
           />
 
+          {/* Fullscreen */}
           <Toolbar.Button
             onClick={() => setIsFullScreen(!isFullScreen)}
             title={isFullScreen ? 'Exit full screen' : 'Full screen'}
@@ -1132,7 +1395,62 @@ export const DiffCheckerTool: React.FC = () => {
         </Toolbar.Group>
       </Toolbar.Root>
 
-      {/* Search bar */}
+      {/* Options Panel Sub-bar */}
+      {showOptions && (
+        <div className="px-4 py-2 bg-neutral-900 border-b border-neutral-800 flex flex-wrap items-center gap-4 text-xs font-mono select-none">
+          <label className="flex items-center gap-1.5 cursor-pointer text-neutral-300 hover:text-white select-none">
+            <input
+              type="checkbox"
+              checked={ignoreWhitespace}
+              onChange={(e) => setIgnoreWhitespace(e.target.checked)}
+              className="rounded bg-neutral-800 border-neutral-700 text-neutral-200 accent-neutral-500 cursor-pointer"
+            />
+            <span>Ignore Whitespace</span>
+          </label>
+
+          <label className="flex items-center gap-1.5 cursor-pointer text-neutral-300 hover:text-white select-none">
+            <input
+              type="checkbox"
+              checked={ignoreCase}
+              onChange={(e) => setIgnoreCase(e.target.checked)}
+              className="rounded bg-neutral-800 border-neutral-700 text-neutral-200 accent-neutral-500 cursor-pointer"
+            />
+            <span>Ignore Case</span>
+          </label>
+
+          <label className="flex items-center gap-1.5 cursor-pointer text-neutral-300 hover:text-white select-none">
+            <input
+              type="checkbox"
+              checked={wrapLines}
+              onChange={(e) => setWrapLines(e.target.checked)}
+              className="rounded bg-neutral-800 border-neutral-700 text-neutral-200 accent-neutral-500 cursor-pointer"
+            />
+            <span>Word Wrap</span>
+          </label>
+
+          <div className="flex items-center gap-1 text-neutral-400">
+            <span>Inline Highlight:</span>
+            <div className="flex rounded border border-neutral-700 overflow-hidden">
+              <button
+                type="button"
+                onClick={() => setGranularity('words')}
+                className={`px-2 py-0.5 cursor-pointer ${granularity === 'words' ? 'bg-neutral-700 text-white' : 'bg-neutral-900 text-neutral-400 hover:text-white'}`}
+              >
+                Words
+              </button>
+              <button
+                type="button"
+                onClick={() => setGranularity('chars')}
+                className={`px-2 py-0.5 cursor-pointer ${granularity === 'chars' ? 'bg-neutral-700 text-white' : 'bg-neutral-900 text-neutral-400 hover:text-white'}`}
+              >
+                Chars
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Search Bar */}
       {search.isOpen && mode === 'diff' && (
         <SearchBar
           query={search.query}
@@ -1146,8 +1464,13 @@ export const DiffCheckerTool: React.FC = () => {
           scopeSelector={
             <div className="flex items-center rounded border border-neutral-700 overflow-hidden shrink-0">
               {(['both', 'orig', 'mod'] as const).map(scope => (
-                <button key={scope} onClick={() => setSearchScope(scope)}
-                  className={`px-2 py-1 transition-colors cursor-pointer capitalize text-xs ${searchScope === scope ? 'bg-neutral-700 text-neutral-100' : 'bg-neutral-900 text-neutral-500 hover:text-neutral-300'}`}>
+                <button
+                  key={scope}
+                  onClick={() => setSearchScope(scope)}
+                  className={`px-2 py-1 transition-colors cursor-pointer capitalize text-xs ${
+                    searchScope === scope ? 'bg-neutral-700 text-neutral-100' : 'bg-neutral-900 text-neutral-500 hover:text-neutral-300'
+                  }`}
+                >
                   {scope === 'both' ? 'Both' : scope === 'orig' ? 'Orig' : 'Mod'}
                 </button>
               ))}
@@ -1156,36 +1479,47 @@ export const DiffCheckerTool: React.FC = () => {
         />
       )}
 
-      {/* Content */}
+      {/* Main Workspace */}
       {mode === 'input' ? (
         <InputPanels
-          original={original} modified={modified}
-          setOriginal={setOriginal} setModified={setModified}
-          origFileError={origFileError} modFileError={modFileError}
-          origFileRef={origFileRef} modFileRef={modFileRef}
+          original={original}
+          modified={modified}
+          setOriginal={setOriginal}
+          setModified={setModified}
+          origFileError={origFileError}
+          modFileError={modFileError}
+          origFileRef={origFileRef}
+          modFileRef={modFileRef}
           handleFileUpload={handleFileUpload}
-          viewportH={viewportH} isFullScreen={isFullScreen}
+          handleFileDrop={handleFileDrop}
+          viewportH={viewportH}
+          isFullScreen={isFullScreen}
+          wrapLines={wrapLines}
+          onClearOrig={() => { pushUndo(original, modified); setOriginalState(''); }}
+          onClearMod={() => { pushUndo(original, modified); setModifiedState(''); }}
+          onDownloadOrig={() => handleDownloadFile(original, 'original.txt')}
+          onDownloadMod={() => handleDownloadFile(modified, 'modified.txt')}
         />
       ) : noChange ? (
         <div style={{ height: isFullScreen ? undefined : viewportH }}>
           <NoDiffState />
         </div>
       ) : isEmpty ? (
-        <div className="flex items-center justify-center text-neutral-500 font-mono text-xs"
-          style={{ height: isFullScreen ? undefined : viewportH }}>
+        <div
+          className="flex items-center justify-center text-neutral-500 font-mono text-xs"
+          style={{ height: isFullScreen ? undefined : viewportH }}
+        >
           Paste content in both panels and click Compare.
         </div>
       ) : viewMode === 'split' ? (
         <SplitView
           splitRows={splitRows}
-          origScrollRef={origScrollRef}
-          modScrollRef={modScrollRef}
+          splitScrollRef={splitScrollRef}
           origRowRefs={origRowRefs}
           modRowRefs={modRowRefs}
-          handleOrigScroll={handleOrigScroll}
-          handleModScroll={handleModScroll}
           viewportH={viewportH}
           isFullScreen={isFullScreen}
+          wrapLines={wrapLines}
           origFileError={origFileError}
           modFileError={modFileError}
           origFileRef={origFileRef}
@@ -1194,6 +1528,10 @@ export const DiffCheckerTool: React.FC = () => {
           onApplyChange={handleApplyChange}
           searchMatches={searchMatches}
           searchIdx={search.matchIdx}
+          onClearOrig={() => { pushUndo(original, modified); setOriginalState(''); }}
+          onClearMod={() => { pushUndo(original, modified); setModifiedState(''); }}
+          onDownloadOrig={() => handleDownloadFile(original, 'original.txt')}
+          onDownloadMod={() => handleDownloadFile(modified, 'modified.txt')}
         />
       ) : (
         <InlineView
@@ -1202,6 +1540,7 @@ export const DiffCheckerTool: React.FC = () => {
           rowRefs={inlineRowRefs}
           viewportH={viewportH}
           isFullScreen={isFullScreen}
+          wrapLines={wrapLines}
           searchMatches={searchMatches}
           searchIdx={search.matchIdx}
         />
@@ -1212,20 +1551,25 @@ export const DiffCheckerTool: React.FC = () => {
         <ResizeHandle onPointerDown={handleResizePointerDown} />
       )}
 
-      {/* Footer */}
+      {/* Footer Status Bar */}
       <div className="px-4 py-2 bg-neutral-900/80 border-t border-neutral-800 flex items-center justify-between shrink-0">
         {diffResult?.detection && !isEmpty ? (
-          <span className="text-neutral-600 text-[11px] font-mono flex items-center gap-1.5">
-            <span className="text-neutral-500">
+          <span className="text-neutral-500 text-[11px] font-mono flex items-center gap-1.5">
+            <span className="text-neutral-400 font-semibold">
               {diffResult.detection.isMixed ? 'Mixed Content' : diffResult.detection.label}
             </span>
-            <span className="text-neutral-700">Ã‚Â·</span>
+            <span className="text-neutral-700">·</span>
             <span>{diffResult.detection.modeLabel}</span>
+            {wrapLines && <span className="text-neutral-400">(wrapped)</span>}
+            {ignoreWhitespace && <span className="text-neutral-400">(no-whitespace)</span>}
+            {ignoreCase && <span className="text-neutral-400">(case-insensitive)</span>}
           </span>
-        ) : <span />}
+        ) : (
+          <span className="text-neutral-600 text-[11px] font-mono">Client-Side Diff Engine</span>
+        )}
         <span className="text-neutral-500 text-[11px] font-mono flex items-center gap-1.5">
           <Info className="w-3.5 h-3.5 text-neutral-600" />
-          Local browser processing Ã‚Â· No data sent to any server
+          Local browser processing · No data sent to any server
         </span>
       </div>
     </div>
