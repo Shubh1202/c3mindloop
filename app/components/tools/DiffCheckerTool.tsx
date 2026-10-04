@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import { toUnifiedDiff, type DiffResult, type DiffLine, type CharSpan, type DiffOptions } from './diffEngine';
 import { smartDiff, type SmartDiffResult } from './smartDiff';
+import { detectSingle, TYPE_LABELS } from './diffDetector';
 import { useSearch } from '../../hooks/useSearch';
 import { SearchBar } from '../ui/SearchBar';
 import { Toolbar } from '../ui/Toolbar';
@@ -243,13 +244,19 @@ const PanelHeader: React.FC<{
   fileRef:          React.RefObject<HTMLInputElement | null>;
   panel:            'orig' | 'mod';
   fileError:        string | null;
+  detectedType?:    string;
   handleFileUpload: (e: React.ChangeEvent<HTMLInputElement>, panel: 'orig' | 'mod') => void;
   onClear?:         () => void;
   onDownload?:      () => void;
-}> = ({ label, fileRef, panel, fileError, handleFileUpload, onClear, onDownload }) => (
+}> = ({ label, fileRef, panel, fileError, detectedType, handleFileUpload, onClear, onDownload }) => (
   <div className="flex items-center justify-between px-3 py-1.5 bg-neutral-900 border-b border-neutral-800 shrink-0 select-none">
     <div className="flex items-center gap-2">
       <span className="text-xs font-semibold text-neutral-300 font-mono">{label}</span>
+      {detectedType && (
+        <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-neutral-800 border border-neutral-700 text-neutral-300">
+          {detectedType}
+        </span>
+      )}
       {fileError && (
         <span className="text-[11px] text-red-400 flex items-center gap-1">
           <AlertCircle className="w-3 h-3" />
@@ -398,6 +405,8 @@ const InputPanels: React.FC<{
   setModified:      (v: string) => void;
   origFileError:    string | null;
   modFileError:     string | null;
+  origDetected?:    string;
+  modDetected?:     string;
   origFileRef:      React.RefObject<HTMLInputElement | null>;
   modFileRef:       React.RefObject<HTMLInputElement | null>;
   handleFileUpload: (e: React.ChangeEvent<HTMLInputElement>, panel: 'orig' | 'mod') => void;
@@ -411,9 +420,10 @@ const InputPanels: React.FC<{
   onDownloadMod:    () => void;
 }> = ({
   original, modified, setOriginal, setModified,
-  origFileError, modFileError, origFileRef, modFileRef,
-  handleFileUpload, handleFileDrop, viewportH, isFullScreen,
-  wrapLines, onClearOrig, onClearMod, onDownloadOrig, onDownloadMod,
+  origFileError, modFileError, origDetected, modDetected,
+  origFileRef, modFileRef, handleFileUpload, handleFileDrop,
+  viewportH, isFullScreen, wrapLines,
+  onClearOrig, onClearMod, onDownloadOrig, onDownloadMod,
 }) => {
   const h = isFullScreen ? 'calc(100vh - 7rem)' : `${viewportH}px`;
   const [dragOverOrig, setDragOverOrig] = useState(false);
@@ -438,6 +448,7 @@ const InputPanels: React.FC<{
           fileRef={origFileRef}
           panel="orig"
           fileError={origFileError}
+          detectedType={origDetected}
           handleFileUpload={handleFileUpload}
           onClear={onClearOrig}
           onDownload={onDownloadOrig}
@@ -471,6 +482,7 @@ const InputPanels: React.FC<{
           fileRef={modFileRef}
           panel="mod"
           fileError={modFileError}
+          detectedType={modDetected}
           handleFileUpload={handleFileUpload}
           onClear={onClearMod}
           onDownload={onDownloadMod}
@@ -566,6 +578,8 @@ interface SplitViewProps {
   wrapLines:        boolean;
   origFileError:    string | null;
   modFileError:     string | null;
+  origDetected?:    string;
+  modDetected?:     string;
   origFileRef:      React.RefObject<HTMLInputElement | null>;
   modFileRef:       React.RefObject<HTMLInputElement | null>;
   handleFileUpload: (e: React.ChangeEvent<HTMLInputElement>, panel: 'orig' | 'mod') => void;
@@ -647,7 +661,8 @@ function SplitSideCells({ row, idx, side, onApplyChange, searchMatches, searchId
 const SplitView: React.FC<SplitViewProps> = ({
   splitRows, splitScrollRef, origRowRefs, modRowRefs,
   viewportH, isFullScreen, wrapLines,
-  origFileError, modFileError, origFileRef, modFileRef, handleFileUpload,
+  origFileError, modFileError, origDetected, modDetected,
+  origFileRef, modFileRef, handleFileUpload,
   onApplyChange, searchMatches, searchIdx,
   onClearOrig, onClearMod, onDownloadOrig, onDownloadMod,
 }) => {
@@ -669,6 +684,7 @@ const SplitView: React.FC<SplitViewProps> = ({
           fileRef={origFileRef}
           panel="orig"
           fileError={origFileError}
+          detectedType={origDetected}
           handleFileUpload={handleFileUpload}
           onClear={onClearOrig}
           onDownload={onDownloadOrig}
@@ -678,6 +694,7 @@ const SplitView: React.FC<SplitViewProps> = ({
           fileRef={modFileRef}
           panel="mod"
           fileError={modFileError}
+          detectedType={modDetected}
           handleFileUpload={handleFileUpload}
           onClear={onClearMod}
           onDownload={onDownloadMod}
@@ -822,6 +839,10 @@ export const DiffCheckerTool: React.FC = () => {
 
   // Split rows memo
   const splitRows = useMemo(() => (diffResult ? buildSplitRows(diffResult.lines) : []), [diffResult]);
+
+  // Detected format per pane
+  const origDetected = useMemo(() => (original.trim() ? TYPE_LABELS[detectSingle(original, origExt)] : undefined), [original, origExt]);
+  const modDetected  = useMemo(() => (modified.trim() ? TYPE_LABELS[detectSingle(modified, modExt)] : undefined), [modified, modExt]);
 
   // Diff Options bundle
   const diffOptions: DiffOptions = useMemo(() => ({
@@ -1227,6 +1248,24 @@ export const DiffCheckerTool: React.FC = () => {
             </button>
           </div>
 
+          {/* Prominent Auto-Detected Format Badge */}
+          {diffResult?.detection && !isEmpty && (
+            <div
+              className={`flex items-center gap-1.5 px-2.5 py-1 rounded border text-xs font-mono select-none ${
+                isDark
+                  ? 'bg-neutral-900 border-neutral-700/80 text-neutral-200'
+                  : 'bg-[#E4E4E7]/60 border-neutral-300 text-neutral-800'
+              }`}
+              title={`Automatic language & format detection: ${diffResult.detection.label} (${diffResult.detection.modeLabel})`}
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />
+              <span className="text-neutral-400 text-[11px] hidden md:inline">Detected:</span>
+              <span className="font-semibold text-neutral-200">
+                {diffResult.detection.isMixed ? 'Mixed' : diffResult.detection.label}
+              </span>
+            </div>
+          )}
+
           {/* Line Wrap Toggle */}
           <button
             onClick={() => setWrapLines(!wrapLines)}
@@ -1488,6 +1527,8 @@ export const DiffCheckerTool: React.FC = () => {
           setModified={setModified}
           origFileError={origFileError}
           modFileError={modFileError}
+          origDetected={origDetected}
+          modDetected={modDetected}
           origFileRef={origFileRef}
           modFileRef={modFileRef}
           handleFileUpload={handleFileUpload}
@@ -1522,6 +1563,8 @@ export const DiffCheckerTool: React.FC = () => {
           wrapLines={wrapLines}
           origFileError={origFileError}
           modFileError={modFileError}
+          origDetected={origDetected}
+          modDetected={modDetected}
           origFileRef={origFileRef}
           modFileRef={modFileRef}
           handleFileUpload={handleFileUpload}

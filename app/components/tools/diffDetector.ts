@@ -305,4 +305,4 @@ export function detectContent(
   };
 }
 
-export { TYPE_LABELS, STRUCTURAL_TYPES };
+export { TYPE_LABELS, STRUCTURAL_TYPES, detectSingle };
