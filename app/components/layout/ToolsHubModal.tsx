@@ -26,6 +26,7 @@ import {
   SlidersHorizontal,
   Braces,
   KeyRound,
+  QrCode,
 } from 'lucide-react';
 import { Logo } from '../ui/Logo';
 
@@ -221,6 +222,16 @@ export const ALL_TOOLS: ToolItem[] = [
     isNew: true,
     featured: true,
     keywords: ['node', 'event loop', 'visualizer', 'microtask', 'nexttick', 'call stack', 'timer', 'setimmediate'],
+  },
+  {
+    id: 'qr-code-generator',
+    name: 'QR Code Generator',
+    sub: 'Generate QR codes for URLs, Wi-Fi, vCard, email & phone — PNG/SVG export',
+    path: '/tools/qr-code-generator',
+    icon: QrCode,
+    categories: ['Utilities', 'Security & Auth'],
+    isNew: true,
+    keywords: ['qr', 'qrcode', 'qr code', 'wifi', 'vcard', 'contact', 'url', 'generator', 'svg', 'png'],
   },
 ];
 

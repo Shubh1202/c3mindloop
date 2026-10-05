@@ -164,6 +164,15 @@ const formatted = JSON.stringify(JSON.parse(input), null, 2);`
     category: 'utilities',
     icon: 'Terminal',
     techStack: ['Acorn AST Engine', 'Event Loop Simulation', 'Local Processing']
+  },
+  {
+    id: 'qr-code-generator',
+    nameKey: 'QR Code Generator',
+    descKey: 'Generate QR codes for URLs, Wi-Fi networks, vCard contacts, email, and phone numbers. Export as PNG, WebP, or SVG with custom colors and error correction. 100% client-side via qrcode npm.',
+    status: 'live',
+    category: 'utilities',
+    icon: 'QrCode',
+    techStack: ['qrcode npm', 'Canvas API', 'SVG Renderer', 'Local Processing']
   }
 ];
 

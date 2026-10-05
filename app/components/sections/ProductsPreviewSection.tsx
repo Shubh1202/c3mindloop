@@ -91,6 +91,7 @@ export const ProductsPreviewSection: React.FC = () => {
                 'json-graph': '/tools/json-graph',
                 'code-complexity-analyzer': '/tools/code-complexity-analyzer',
                 'node-event-loop-visualizer': '/tools/node-event-loop-visualizer',
+                'qr-code-generator': '/tools/qr-code-generator',
               };
               const toolHref = toolRoutes[prod.id] || '/tools';
               const IconComponent = iconMap[prod.icon] || Cpu;

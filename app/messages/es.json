@@ -358,6 +358,41 @@
       "feat2Desc": "Visualiza como process.nextTick prioriza sobre las microtareas de Promise.",
       "feat3Title": "Sandbox 100% en Navegador",
       "feat3Desc": "Todo el analisis AST y la simulacion se ejecutan localmente sin enviar datos a servidores."
+    },
+    "qrCodeGenerator": {
+      "pageTitle": "Generador de Codigos QR",
+      "pageBadge": "100% Client-Side • qrcode npm • Sin Subida",
+      "breadcrumb": "Generador de Codigos QR",
+      "breadcrumbParent": "Herramientas de Desarrollo",
+      "privacyNote": "Procesamiento local en el navegador - Sin envio de datos a servidores",
+      "feat1Title": "6 Tipos de Codigo QR",
+      "feat1Desc": "Genera codigos QR para URLs, texto, correo electronico, telefonos, redes Wi-Fi (WPA/WEP) y tarjetas de contacto vCard con codificacion de protocolo correcta.",
+      "feat2Title": "Exportacion PNG, WebP y SVG",
+      "feat2Desc": "Descarga tu codigo QR en PNG (sin perdida), WebP (comprimido) o SVG escalable infinitamente. Copia la imagen o el marcado SVG con un clic.",
+      "feat3Title": "Colores Personalizados y Correccion de Errores",
+      "feat3Desc": "Elige colores de fondo y primer plano desde el selector o paletas predefinidas. Niveles L, M, Q o H — usa Alto (30%) al agregar un logotipo.",
+      "guide": {
+        "title": "Como usar el Generador de Codigos QR",
+        "intro": "Toda la generacion de codigos QR se ejecuta en el navegador usando la biblioteca qrcode npm. Ningun dato se transmite a ningun servidor.",
+        "step1": "Selecciona un tipo de QR: Haz clic en una de las seis pestanas — URL, Texto, Email, Telefono, Wi-Fi o vCard.",
+        "step2": "Introduce el contenido: Las URLs se prefijan automaticamente con https://. Wi-Fi genera una cadena WIFI:. vCard produce un bloque VCARD 3.0.",
+        "step3": "Ajusta las opciones: Configura tamano (100-600 px), margen, nivel de correccion de errores y colores en el panel de opciones.",
+        "step4": "Elige el formato de exportacion: Selecciona PNG, WebP o SVG en el desplegable. El codigo QR se actualiza instantaneamente.",
+        "step5": "Descarga o copia: Usa el boton Descargar o copia la imagen/SVG al portapapeles.",
+        "step6": "Vista previa en pantalla completa: Pasa el raton sobre el canvas y haz clic en el icono de expansion.",
+        "privacyTitle": "100% Client-Side — Cero Transmision de Datos",
+        "privacyIntro": "Muchos generadores QR en linea registran tus URLs, contactos y contrasenas Wi-Fi en sus servidores. Esta herramienta no lo hace.",
+        "privacyBullet1": "Ejecuta completamente en el navegador: La biblioteca qrcode se ejecuta dentro del motor JavaScript del navegador. Ningun dato sale del dispositivo.",
+        "privacyBullet2": "Sin persistencia: Nada se almacena en localStorage, sessionStorage ni cookies."
+      },
+      "faq": {
+        "q1": "Se envian mis datos a un servidor al generar un codigo QR?",
+        "a1": "No. Toda la generacion ocurre 100% en el navegador. Tus URLs, texto, contrasenas Wi-Fi e informacion de contacto nunca salen del dispositivo.",
+        "q2": "Que tipos de codigo QR son compatibles?",
+        "a2": "Seis tipos: URL, Texto, Email (mailto:), Telefono (tel:), Wi-Fi (WIFI: con WPA/WEP/abierto) y tarjetas de contacto vCard 3.0.",
+        "q3": "Que es el nivel de correccion de errores y cual debo elegir?",
+        "a3": "La correccion de errores permite leer el QR aunque este parcialmente danado. L=7% (QR mas pequeno), M=15% (equilibrado por defecto), Q=25% (materiales impresos), H=30% (con logotipo superpuesto)."
+      }
     }
   },
   "footer": {

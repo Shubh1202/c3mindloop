@@ -111,6 +111,7 @@ export const ProductsPage: React.FC = () => {
                   'code-complexity-analyzer': '/tools/code-complexity-analyzer',
                   'pipeline': '/tools/pipeline',
                   'node-event-loop-visualizer': '/tools/node-event-loop-visualizer',
+                  'qr-code-generator': '/tools/qr-code-generator',
                 };
                 const toolHref = toolRoutes[prod.id];
 

@@ -358,6 +358,41 @@
       "feat2Desc": "Visualisiert die Priorisierung von process.nextTick vor Promise-Microtasks.",
       "feat3Title": "100% Client-Side Sandbox",
       "feat3Desc": "Vollstaendige AST-Ausfuehrung lokal im Browser ohne Server-Upload."
+    },
+    "qrCodeGenerator": {
+      "pageTitle": "QR-Code-Generator",
+      "pageBadge": "100% Client-Side • qrcode npm • Kein Upload",
+      "breadcrumb": "QR-Code-Generator",
+      "breadcrumbParent": "Entwickler-Tools",
+      "privacyNote": "Lokale Browserverarbeitung - Keine Datenuebertragung an Server",
+      "feat1Title": "6 QR-Code-Typen",
+      "feat1Desc": "QR-Codes fuer URLs, Text, E-Mail, Telefonnummern, WLAN-Netzwerke (WPA/WEP) und vCard-Kontaktkarten mit korrekter Protokoll-Kodierung erstellen.",
+      "feat2Title": "PNG-, WebP- und SVG-Export",
+      "feat2Desc": "QR-Code als verlustfreies PNG, komprimiertes WebP oder beliebig skalierbares SVG herunterladen. Bild oder SVG-Code per Klick in die Zwischenablage kopieren.",
+      "feat3Title": "Farben & Fehlerkorrektur anpassen",
+      "feat3Desc": "Vorder- und Hintergrundfarbe per Farbwahl oder Voreinstellungen waehlen. Fehlerkorrekturstufen L, M, Q oder H (30% fuer Logo-Ueberlagerungen empfohlen).",
+      "guide": {
+        "title": "So funktioniert der QR-Code-Generator",
+        "intro": "Alle QR-Code-Erstellung laeuft vollstaendig im Browser via qrcode-npm-Bibliothek. Keine Daten werden an Server uebertragen.",
+        "step1": "QR-Typ auswaehlen: Auf einen der sechs Tabs klicken — URL, Text, E-Mail, Telefon, WLAN oder vCard.",
+        "step2": "Inhalt eingeben: URL-Eingaben werden automatisch mit https:// ergaenzt. WLAN erzeugt eine WIFI:-Zeichenkette. vCard produziert einen VCARD 3.0-Block.",
+        "step3": "Optionen anpassen: Groesse (100-600 px), Rand, Fehlerkorrekturstufe und Farben im Optionen-Panel einstellen.",
+        "step4": "Exportformat waehlen: PNG, WebP oder SVG aus dem Dropdown auswaehlen. Der QR-Code aktualisiert sich sofort.",
+        "step5": "Herunterladen oder Kopieren: Download-Schaltflaeche zum Speichern oder Zwischenablage-Funktion verwenden.",
+        "step6": "Vollbild-Vorschau: Ueber das Canvas hovern und das Vergroe&szlig;erungssymbol anklicken.",
+        "privacyTitle": "100% Client-Side — Keine Datenuebertragung",
+        "privacyIntro": "Viele Online-QR-Generatoren protokollieren URLs, Kontakte und WLAN-Passwoerter auf ihren Servern. Dieses Tool nicht.",
+        "privacyBullet1": "Vollstaendig im Browser: Die qrcode-Bibliothek laeuft in der JavaScript-Engine des Browsers. Keine Daten verlassen das Geraet.",
+        "privacyBullet2": "Keine Persistenz: Nichts wird in localStorage, sessionStorage oder Cookies gespeichert."
+      },
+      "faq": {
+        "q1": "Werden meine Daten bei der QR-Code-Erstellung an einen Server gesendet?",
+        "a1": "Nein. Alle QR-Code-Erstellung erfolgt 100% im Browser. URLs, Text, WLAN-Passwoerter und Kontaktdaten verlassen das Geraet nie.",
+        "q2": "Welche QR-Code-Typen werden unterstuetzt?",
+        "a2": "Sechs Typen: URL, Text, E-Mail (mailto:), Telefon (tel:), WLAN (WIFI: mit WPA/WEP/offen) und vCard 3.0 Kontaktkarten.",
+        "q3": "Was ist die Fehlerkorrekturstufe und welche sollte ich waehlen?",
+        "a3": "Fehlerkorrektur erlaubt das Lesen des QR-Codes auch bei teilweiser Beschaedigung. L=7% (kleinster QR), M=15% (Standard), Q=25% (Druckmaterialien), H=30% (mit Logo-Ueberlagerung)."
+      }
     }
   },
   "footer": {

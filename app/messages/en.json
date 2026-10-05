@@ -1155,6 +1155,47 @@
         "q2": "When does setImmediate run compared to setTimeout(fn, 0)?",
         "a2": "setImmediate is specifically designed to run in the Check phase (after Poll I/O phase), while setTimeout(fn, 0) runs in the Timers phase. Within an I/O callback cycle (like fs.readFile), setImmediate is guaranteed to execute before setTimeout."
       }
+    },
+    "qrCodeGenerator": {
+      "pageTitle": "QR Code Generator",
+      "pageBadge": "100% Client-Side • qrcode npm • No Upload",
+      "breadcrumb": "QR Code Generator",
+      "breadcrumbParent": "Developer Tools",
+      "privacyNote": "Local browser processing — No data sent to any server",
+      "feat1Title": "6 QR Code Types",
+      "feat1Desc": "Generate QR codes for URLs, plain text, email addresses, phone numbers, Wi-Fi networks (WPA/WEP), and vCard contact cards — each with correct protocol encoding.",
+      "feat2Title": "PNG, WebP & SVG Export",
+      "feat2Desc": "Download your QR code in PNG (lossless), WebP (compressed), or infinitely scalable SVG format. Copy image to clipboard or copy raw SVG markup with one click.",
+      "feat3Title": "Custom Colors & Error Correction",
+      "feat3Desc": "Pick foreground/background colors from a color picker or preset palettes. Choose error correction levels L, M, Q, or H — use High (30%) when adding a logo overlay.",
+      "guide": {
+        "title": "How to Use the QR Code Generator",
+        "intro": "All QR code generation runs entirely inside your browser using the open-source qrcode npm library. No data is transmitted to any server at any point.",
+        "step1": "Select a QR Type: Click one of the six type tabs — URL, Text, Email, Phone, Wi-Fi, or vCard — in the toolbar to switch the input form.",
+        "step2": "Enter Your Content: Fill in the input field(s). URL inputs are automatically prefixed with https:// if missing. Wi-Fi generates a WIFI: protocol string. vCard produces a standard VCARD 3.0 block.",
+        "step3": "Adjust Options: Click Options in the toolbar to open the settings panel. Set the output size (100–600 px), quiet-zone margin, error correction level, and custom foreground/background colors.",
+        "step4": "Choose Export Format: Select PNG, WebP, or SVG from the format dropdown. The QR code updates instantly with every change.",
+        "step5": "Download or Copy: Click Download to save the file locally. Use Copy Image to write the raster image to your clipboard, or Copy SVG to copy the raw vector markup.",
+        "step6": "Fullscreen Preview: Hover over the QR code canvas and click the expand icon to enter fullscreen preview mode for easy scanning.",
+        "privacyTitle": "100% Client-Side — Zero Data Transmission",
+        "privacyIntro": "Many online QR generators log your URLs, contact details, and Wi-Fi passwords on their servers. This tool does none of that.",
+        "privacyBullet1": "Runs Entirely In-Browser: The qrcode npm library executes inside your browser's JavaScript engine. Your URLs, Wi-Fi passwords, and contact information never leave your device.",
+        "privacyBullet2": "No Persistence: Nothing is stored in localStorage, sessionStorage, or cookies. Closing or refreshing the page clears all state immediately."
+      },
+      "faq": {
+        "q1": "Is my data sent to a server when generating a QR code?",
+        "a1": "No. All QR code generation happens 100% in your browser using the qrcode npm library compiled to client-side JavaScript. Your URLs, text, Wi-Fi passwords, and contact information never leave your device.",
+        "q2": "What QR code types are supported?",
+        "a2": "Six types are supported: URL (auto-prefixed with https://), plain Text, Email (mailto: protocol), Phone (tel: protocol), Wi-Fi (WIFI: protocol with WPA/WEP/no-password options), and vCard 3.0 contact cards with name, phone, email, organization, and website fields.",
+        "q3": "What is Error Correction Level and which should I choose?",
+        "a3": "Error correction allows the QR code to be read even if part of it is damaged or obscured. Level L recovers 7% of data (smallest QR), M recovers 15% (default, good balance), Q recovers 25% (better for printed materials), H recovers 30% (use this when you plan to overlay a logo on the QR code center).",
+        "q4": "Can I generate a Wi-Fi QR code that auto-connects on scan?",
+        "a4": "Yes. Select the Wi-Fi tab, enter your network SSID, password, and choose the encryption type (WPA, WEP, or open/no-password). The generated QR code uses the standard WIFI: URI scheme that Android and iOS camera apps recognize and use to auto-connect.",
+        "q5": "What export formats are available and when should I use each?",
+        "a5": "PNG is best for digital use (emails, websites, presentations) as it is lossless raster. WebP offers smaller file sizes with similar quality, ideal for web embedding. SVG is an infinitely scalable vector format — use it for print materials, signage, or anywhere the QR code needs to be printed at large sizes without pixelation.",
+        "q6": "How large should I make the QR code for printing?",
+        "a6": "For reliable scanning, the QR code should be at least 2 cm × 2 cm (around 57px at 72 DPI). For large-format printing like posters or banners, download the SVG export and scale it to any size without quality loss. Generally, scanning distance should not exceed 10× the QR code's minimum dimension."
+      }
     }
   }
 }

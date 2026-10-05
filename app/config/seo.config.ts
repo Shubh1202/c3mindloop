@@ -415,6 +415,37 @@ export const seoConfig = {
       images: [defaultOgImage],
     },
   },
+  qrCodeGenerator: {
+    title: 'QR Code Generator — URL, Wi-Fi, vCard, Email | Free Online Tool | C³ MindLoop',
+    description:
+      'Free online QR code generator. Create QR codes for URLs, text, email, phone numbers, Wi-Fi networks, and vCard contacts. Export as PNG, WebP, or SVG with custom colors and error correction. 100% client-side, zero upload.',
+    keywords: [
+      'qr code generator', 'qr code maker', 'free qr code generator', 'qr code online',
+      'qr code creator', 'qr code maker free', 'generate qr code', 'qr code scanner online',
+      'wifi qr code generator', 'wifi qr code', 'qr code for wifi', 'wifi password qr code',
+      'vcard qr code generator', 'contact qr code', 'qr code for contact',
+      'url qr code generator', 'link to qr code', 'website qr code',
+      'email qr code', 'phone number qr code', 'text qr code',
+      'qr code png download', 'qr code svg download', 'qr code webp',
+      'custom qr code colors', 'colored qr code generator', 'qr code with logo',
+      'qr code error correction', 'qr code size generator',
+      '100% Private', 'Client-Side Execution', 'No Server Upload', 'Free Online Utility',
+      'C³ MindLoop qr tool', 'ccube qr code generator',
+    ],
+    canonical: `${BASE_URL}/tools/qr-code-generator`,
+    openGraph: {
+      title: 'QR Code Generator — URL, Wi-Fi, vCard | Free Online Tool | C³ MindLoop',
+      description:
+        'Generate QR codes for URLs, Wi-Fi, vCard contacts, email, and phone. Export PNG, WebP, SVG. Custom colors. 100% Client-Side.',
+      url: `${BASE_URL}/tools/qr-code-generator`,
+      images: [{ url: defaultOgImage, width: 1200, height: 630, alt: 'QR Code Generator - C³ MindLoop' }],
+    },
+    twitter: {
+      title: 'QR Code Generator — URL, Wi-Fi, vCard | Free | C³ MindLoop',
+      description: 'QR codes for URLs, Wi-Fi, vCard, email, phone. PNG/SVG export. Custom colors. 100% client-side.',
+      images: [defaultOgImage],
+    },
+  },
   officeEditor: {
     title: 'Office Editor VS Code Extension - View & Edit Office Files | 100% Private & Offline',
     description:
@@ -1086,6 +1117,30 @@ export const nodeEventLoopVisualizerSchema = {
     '100% client-side AST execution - zero server upload',
   ],
   offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
-  publisher: { '@type': 'Organization', name: 'C³ MindLoop', url: BASE_URL },
+  publisher: { '@type': 'Organization', name: 'C\u00b3 MindLoop', url: BASE_URL },
 };
+
+export const qrCodeGeneratorSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: 'QR Code Generator',
+  url: `${BASE_URL}/tools/qr-code-generator`,
+  applicationCategory: 'DeveloperApplication',
+  operatingSystem: 'All Web Browsers',
+  description:
+    'Free online QR code generator. Create QR codes for URLs, text, email, phone numbers, Wi-Fi networks, and vCard contacts. Export as PNG, WebP, or SVG with custom colors and error correction levels. 100% client-side via the qrcode npm library.',
+  featureList: [
+    'URL, text, email, phone, Wi-Fi, and vCard QR code types',
+    'PNG, WebP, and SVG export formats',
+    'Custom foreground and background colors with preset palettes',
+    'Error correction level selection: L, M, Q, H',
+    'Adjustable QR code size (100\u2013600px) and quiet zone margin',
+    'Copy image to clipboard and copy SVG markup',
+    'Fullscreen QR preview mode',
+    '100% client-side \u2014 no data leaves the browser',
+  ],
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+  publisher: { '@type': 'Organization', name: 'C\u00b3 MindLoop', url: BASE_URL },
+};
+
 
