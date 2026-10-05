@@ -345,6 +345,19 @@
       "feat2Desc": "パイプラインの状態はURLハッシュにエンコードされます。リンクをコピーしてチームと共有できます。",
       "feat3Title": "サーバーへのデータ送信なし",
       "feat3Desc": "すべてのアダプターはブラウザ内で完全に動作します。データはあなたのマシンから出ません。"
+    },
+    "nodeEventLoopVisualizer": {
+      "pageTitle": "Node.js イベントループ可視化ツール",
+      "pageBadge": "100% クライアントサイド - ローカルブラウザ処理",
+      "breadcrumb": "イベントループ可視化",
+      "breadcrumbParent": "開発者ツール",
+      "privacyNote": "ローカルブラウザ処理 - サーバーへのデータ送信ゼロ",
+      "feat1Title": "ステップごとのフェーズ実行",
+      "feat1Desc": "コールスタック、タイマー、I/O Poll、setImmediate Checkフェーズを1ステップずつ追跡。",
+      "feat2Title": "MicrotaskとnextTickの優先順位",
+      "feat2Desc": "process.nextTickがPromiseマイクロタスクより優先して実行される仕組みを可視化。",
+      "feat3Title": "100% クライアントサイド Sandbox",
+      "feat3Desc": "すべてのコード解析とシミュレーションはブラウザ上で安全に完結します。"
     }
   },
   "footer": {

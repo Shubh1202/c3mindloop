@@ -19,6 +19,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: '/tools/ai-prompt-builder',       freq: 'weekly', priority: 0.9 },
     { path: '/tools/pdf-suite',               freq: 'weekly', priority: 0.9 },
     { path: '/tools/edit-pdf',                freq: 'weekly', priority: 0.9 },
+    { path: '/tools/node-event-loop-visualizer', freq: 'weekly', priority: 0.9 },
     { path: '/blog',                   freq: 'daily',  priority: 0.8 },
     { path: '/guides',                 freq: 'weekly', priority: 0.75 },
     { path: '/about',                  freq: 'weekly', priority: 0.7 },

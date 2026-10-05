@@ -616,6 +616,32 @@ export const seoConfig = {
       images: [defaultOgImage],
     },
   },
+
+  nodeEventLoopVisualizer: {
+    title: 'Node.js Event Loop Visualizer - Interactive Simulation | C³ MindLoop',
+    description:
+      'Free interactive Node.js Event Loop visualizer. Step through Call Stack, Macrotasks, Microtasks, process.nextTick, Timers, and I/O phases 100% client-side.',
+    keywords: [
+      'nodejs event loop visualizer', 'node event loop visualizer', 'javascript event loop visualization',
+      'event loop simulator', 'call stack visualizer', 'microtask queue visualizer', 'macrotask queue',
+      'process.nexttick visualizer', 'setimmediate vs settimeout visualizer', 'libuv event loop phases',
+      '100% Private', 'Client-Side Execution', 'No Server Upload', 'GDPR Compliant', 'Free Developer Tool',
+      'C³ MindLoop node visualizer', 'c3 mindloop event loop',
+    ],
+    canonical: `${BASE_URL}/tools/node-event-loop-visualizer`,
+    openGraph: {
+      title: 'Node.js Event Loop Visualizer - Interactive Simulation | C³ MindLoop',
+      description:
+        'Step through Call Stack, Timers, Check, I/O Poll, and nextTick microtask queues in real-time. 100% Client-Side.',
+      url: `${BASE_URL}/tools/node-event-loop-visualizer`,
+      images: [{ url: defaultOgImage, width: 1200, height: 630, alt: 'Node.js Event Loop Visualizer - C³ MindLoop' }],
+    },
+    twitter: {
+      title: 'Node.js Event Loop Visualizer - Free | C³ MindLoop',
+      description: 'Interactive Node.js Event Loop simulator with step-by-step queue execution.',
+      images: [defaultOgImage],
+    },
+  },
 };
 
 // ── JSON-LD Schemas ──────────────────────────────────────────────────────────
@@ -1040,3 +1066,26 @@ export const pipelineSchema = {
   offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
   publisher: { '@type': 'Organization', name: 'C³ MindLoop', url: BASE_URL },
 };
+
+export const nodeEventLoopVisualizerSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: 'Node.js Event Loop Visualizer',
+  url: `${BASE_URL}/tools/node-event-loop-visualizer`,
+  applicationCategory: 'DeveloperApplication',
+  operatingSystem: 'All Web Browsers',
+  description:
+    'Interactive Node.js Event Loop visualizer and simulator. Step through Call Stack, Macrotask Queue, Microtask Queue, process.nextTick, and Event Loop phases 100% client-side.',
+  featureList: [
+    'Interactive step-by-step Call Stack frame execution and inspection',
+    'Macrotask Queue monitoring (setTimeout, setInterval, setImmediate, I/O)',
+    'Microtask & process.nextTick queue execution prioritization',
+    'Visual stepper for Event Loop phases (Timers, Pending, Poll, Check, Close)',
+    'Live standard output terminal emulation with console.log streaming',
+    'CommonJS and ESModules module syntax toggle support',
+    '100% client-side AST execution - zero server upload',
+  ],
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+  publisher: { '@type': 'Organization', name: 'C³ MindLoop', url: BASE_URL },
+};
+

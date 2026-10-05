@@ -1124,6 +1124,38 @@
       "feat2Desc": "Pipeline state - steps, config, and input - is encoded into the URL hash. Copy the link and share it with a teammate.",
       "feat3Title": "Zero Server Contact",
       "feat3Desc": "All adapters (Base64, JSON, JWT, Regex, Hash, SQL) run entirely in the browser. Nothing leaves your machine."
+    },
+    "nodeEventLoopVisualizer": {
+      "pageTitle": "Node.js Event Loop Visualizer",
+      "pageBadge": "100% Client-Side - Local Browser Processing",
+      "breadcrumb": "Node.js Event Loop Visualizer",
+      "breadcrumbParent": "Developer Tools",
+      "privacyNote": "Local browser processing - No data sent to any server",
+      "feat1Title": "Interactive Phase Stepper",
+      "feat1Desc": "Inspect Call Stack, Timers, I/O Poll, and Check (setImmediate) phases with frame-by-frame execution control.",
+      "feat2Title": "Microtask & nextTick Priority",
+      "feat2Desc": "Visualize how process.nextTick prioritizes over Promise microtasks before advancing to the next Event Loop phase.",
+      "feat3Title": "100% Client-Side Sandbox",
+      "feat3Desc": "All AST parsing, queue orchestration, and simulation runs locally in your browser with zero server data transfer.",
+      "guide": {
+        "title": "Understanding the Node.js Event Loop & Task Queues",
+        "intro": "The Node.js Event Loop manages asynchronous non-blocking I/O operations through structured execution phases:",
+        "step1": "Call Stack Execution: Synchronous code runs first on the V8 engine call stack until the stack is completely empty.",
+        "step2": "Ticks & Microtasks: process.nextTick callbacks drain first with highest priority, followed immediately by Promise microtasks.",
+        "step3": "Timers Phase: Expired timer callbacks registered by setTimeout and setInterval are executed.",
+        "step4": "Poll & Check Phases: I/O callbacks are retrieved in the Poll phase, followed by setImmediate callbacks in the Check phase.",
+        "privacyTitle": "Client-Side Event Loop Simulation",
+        "privacyIntro": "All code inspection and event loop stepping run in-browser:",
+        "privacyBullet1": "Local AST Parsing: User scripts are parsed and evaluated inside browser JavaScript without sending code to remote servers.",
+        "privacyBullet2": "Safe Sandbox: Sandboxed execution prevents memory leaks and guarantees full privacy."
+      },
+      "faq": {
+        "q1": "What is the difference between process.nextTick and Promise microtasks?",
+        "a1": "process.nextTick has a higher priority than Promise microtasks (Promise.then, queueMicrotask). Whenever the call stack clears or a phase completes, Node.js first flushes the entire nextTick queue before processing standard microtasks.",
+        "q2": "When does setImmediate run compared to setTimeout(fn, 0)?",
+        "a2": "setImmediate is specifically designed to run in the Check phase (after Poll I/O phase), while setTimeout(fn, 0) runs in the Timers phase. Within an I/O callback cycle (like fs.readFile), setImmediate is guaranteed to execute before setTimeout."
+      }
     }
   }
 }
+

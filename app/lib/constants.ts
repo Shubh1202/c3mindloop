@@ -155,6 +155,15 @@ const formatted = JSON.stringify(JSON.parse(input), null, 2);`
     category: 'utilities',
     icon: 'Layers',
     techStack: ['Pipeline Engine', 'URL Hash State', 'Local Processing']
+  },
+  {
+    id: 'node-event-loop-visualizer',
+    nameKey: 'Node.js Event Loop Visualizer',
+    descKey: 'Interactive visualization and step-by-step simulator for Node.js Call Stack, Macrotask & Microtask queues, process.nextTick, and Event Loop phases.',
+    status: 'live',
+    category: 'utilities',
+    icon: 'Terminal',
+    techStack: ['Acorn AST Engine', 'Event Loop Simulation', 'Local Processing']
   }
 ];
 

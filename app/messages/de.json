@@ -345,6 +345,19 @@
       "feat2Desc": "Pipeline-Status wird in den URL-Hash kodiert. Link kopieren und mit dem Team teilen.",
       "feat3Title": "Kein Server-Kontakt",
       "feat3Desc": "Alle Adapter laufen vollstaendig im Browser. Keine Daten verlassen deinen Rechner."
+    },
+    "nodeEventLoopVisualizer": {
+      "pageTitle": "Node.js Event-Loop Visualisierer",
+      "pageBadge": "100% Client-Side - Lokale Browser-Verarbeitung",
+      "breadcrumb": "Node.js Event-Loop Visualisierer",
+      "breadcrumbParent": "Entwickler-Tools",
+      "privacyNote": "Lokale Browserverarbeitung - Keine Datenuebertragung an Server",
+      "feat1Title": "Interaktiver Phasen-Stepper",
+      "feat1Desc": "Call Stack, Timers, I/O Poll und Check (setImmediate) Schritt fuer Schritt inspizieren.",
+      "feat2Title": "Microtask & nextTick Prioritaet",
+      "feat2Desc": "Visualisiert die Priorisierung von process.nextTick vor Promise-Microtasks.",
+      "feat3Title": "100% Client-Side Sandbox",
+      "feat3Desc": "Vollstaendige AST-Ausfuehrung lokal im Browser ohne Server-Upload."
     }
   },
   "footer": {

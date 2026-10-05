@@ -110,6 +110,7 @@ export const ProductsPage: React.FC = () => {
                   'json-graph': '/tools/json-graph',
                   'code-complexity-analyzer': '/tools/code-complexity-analyzer',
                   'pipeline': '/tools/pipeline',
+                  'node-event-loop-visualizer': '/tools/node-event-loop-visualizer',
                 };
                 const toolHref = toolRoutes[prod.id];
 

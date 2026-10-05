@@ -211,6 +211,17 @@ export const ALL_TOOLS: ToolItem[] = [
     isNew: true,
     keywords: ['ai', 'prompt', 'llm', 'gpt', 'sanitize', 'context'],
   },
+  {
+    id: 'node-event-loop-visualizer',
+    name: 'Node.js Event Loop Visualizer',
+    sub: 'Step-by-step visualizer for Call Stack, Timers, Microtasks, and Event Loop',
+    path: '/tools/node-event-loop-visualizer',
+    icon: Terminal,
+    categories: ['Utilities'],
+    isNew: true,
+    featured: true,
+    keywords: ['node', 'event loop', 'visualizer', 'microtask', 'nexttick', 'call stack', 'timer', 'setimmediate'],
+  },
 ];
 
 interface CategoryDef {

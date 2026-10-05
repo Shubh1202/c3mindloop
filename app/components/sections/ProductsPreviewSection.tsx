@@ -90,6 +90,7 @@ export const ProductsPreviewSection: React.FC = () => {
                 'diff-checker': '/tools/diff-checker',
                 'json-graph': '/tools/json-graph',
                 'code-complexity-analyzer': '/tools/code-complexity-analyzer',
+                'node-event-loop-visualizer': '/tools/node-event-loop-visualizer',
               };
               const toolHref = toolRoutes[prod.id] || '/tools';
               const IconComponent = iconMap[prod.icon] || Cpu;

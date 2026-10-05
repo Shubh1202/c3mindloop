@@ -345,6 +345,19 @@
       "feat2Desc": "El estado del pipeline se codifica en el hash de la URL. Copia el enlace y compartelo con tu equipo.",
       "feat3Title": "Sin Contacto con Servidor",
       "feat3Desc": "Todos los adaptadores se ejecutan en el navegador. Ningun dato sale de tu maquina."
+    },
+    "nodeEventLoopVisualizer": {
+      "pageTitle": "Visualizador del Event Loop de Node.js",
+      "pageBadge": "100% Client-Side - Procesamiento Local en el Navegador",
+      "breadcrumb": "Visualizador de Event Loop",
+      "breadcrumbParent": "Herramientas para Desarrolladores",
+      "privacyNote": "Procesamiento local en el navegador - No se envian datos a ningun servidor",
+      "feat1Title": "Control Paso a Paso de Fases",
+      "feat1Desc": "Inspecciona el Call Stack, Timers, I/O Poll y Check (setImmediate) con control cuadro a cuadro.",
+      "feat2Title": "Prioridad de Microtask y nextTick",
+      "feat2Desc": "Visualiza como process.nextTick prioriza sobre las microtareas de Promise.",
+      "feat3Title": "Sandbox 100% en Navegador",
+      "feat3Desc": "Todo el analisis AST y la simulacion se ejecutan localmente sin enviar datos a servidores."
     }
   },
   "footer": {
