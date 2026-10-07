@@ -359,6 +359,19 @@
       "feat3Title": "100% クライアントサイド Sandbox",
       "feat3Desc": "すべてのコード解析とシミュレーションはブラウザ上で安全に完結します。"
     },
+    "jsEventLoopVisualizer": {
+      "pageTitle": "JavaScript イベントループ可視化ツール",
+      "pageBadge": "100% クライアントサイド - ローカルブラウザ処理",
+      "breadcrumb": "JavaScript イベントループ",
+      "breadcrumbParent": "開発者ツール",
+      "privacyNote": "ローカルブラウザ処理 - サーバーへのデータ送信ゼロ",
+      "feat1Title": "4段階のイベントループモデル",
+      "feat1Desc": "Evaluate Script -> Run a Task -> Run all Microtasks -> Rerender を可視化。",
+      "feat2Title": "Task vs Microtask Queues",
+      "feat2Desc": "PromiseやqueueMicrotaskがsetTimeoutより先に処理される仕組みを学習。",
+      "feat3Title": "100% クライアントサイド",
+      "feat3Desc": "外部サーバーへの通信なしでブラウザ上で即座に実行・可視化します。"
+    },
     "qrCodeGenerator": {
       "pageTitle": "QRコードジェネレーター",
       "pageBadge": "100% クライアントサイド • qrcode npm • アップロード不要",

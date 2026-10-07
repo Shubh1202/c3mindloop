@@ -32,6 +32,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE_URL}/tools/code-complexity-analyzer`,    lastModified: TOOL_DATE, changeFrequency: 'weekly', priority: 0.9 },
     { url: `${BASE_URL}/tools/pipeline`,                    lastModified: TOOL_DATE, changeFrequency: 'weekly', priority: 0.9 },
     { url: `${BASE_URL}/tools/node-event-loop-visualizer`,  lastModified: TOOL_DATE, changeFrequency: 'weekly', priority: 0.9 },
+    { url: `${BASE_URL}/tools/js-event-loop-visualizer`,    lastModified: TODAY,     changeFrequency: 'weekly', priority: 0.9 },
     { url: `${BASE_URL}/tools/qr-code-generator`,           lastModified: TODAY,     changeFrequency: 'weekly', priority: 0.9 },
 
     // ── Content pages ────────────────────────────────────────────────────────

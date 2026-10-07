@@ -166,6 +166,15 @@ const formatted = JSON.stringify(JSON.parse(input), null, 2);`
     techStack: ['Acorn AST Engine', 'Event Loop Simulation', 'Local Processing']
   },
   {
+    id: 'js-event-loop-visualizer',
+    nameKey: 'JavaScript Event Loop Visualizer',
+    descKey: 'Interactive visualizer for the browser JavaScript Event Loop. Step through Call Stack, Task Queue, Microtask Queue, and the 4-phase Event Loop cycle 100% client-side.',
+    status: 'live',
+    category: 'utilities',
+    icon: 'Terminal',
+    techStack: ['Acorn AST Engine', 'Browser Event Loop', 'Framer Motion']
+  },
+  {
     id: 'qr-code-generator',
     nameKey: 'QR Code Generator',
     descKey: 'Generate QR codes for URLs, Wi-Fi networks, vCard contacts, email, and phone numbers. Export as PNG, WebP, or SVG with custom colors and error correction. 100% client-side via qrcode npm.',

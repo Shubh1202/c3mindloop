@@ -359,6 +359,19 @@
       "feat3Title": "Sandbox 100% en Navegador",
       "feat3Desc": "Todo el analisis AST y la simulacion se ejecutan localmente sin enviar datos a servidores."
     },
+    "jsEventLoopVisualizer": {
+      "pageTitle": "Visualizador del Event Loop de JavaScript",
+      "pageBadge": "100% Client-Side - Procesamiento Local en el Navegador",
+      "breadcrumb": "Visualizador de Event Loop JS",
+      "breadcrumbParent": "Herramientas para Desarrolladores",
+      "privacyNote": "Procesamiento local en el navegador - No se envian datos a ningun servidor",
+      "feat1Title": "Modelo de 4 Fases",
+      "feat1Desc": "Visualiza el Event Loop: Evaluate Script -> Run a Task -> Run all Microtasks -> Rerender.",
+      "feat2Title": "Task vs Microtask Queues",
+      "feat2Desc": "Comprende por que los microtasks de Promise y queueMicrotask se ejecutan antes de cualquier setTimeout.",
+      "feat3Title": "100% en el Navegador",
+      "feat3Desc": "Todo el analisis AST y la orquestacion se ejecutan en tu navegador sin contacto con servidores."
+    },
     "qrCodeGenerator": {
       "pageTitle": "Generador de Codigos QR",
       "pageBadge": "100% Client-Side • qrcode npm • Sin Subida",

@@ -359,6 +359,19 @@
       "feat3Title": "100% Client-Side Sandbox",
       "feat3Desc": "Vollstaendige AST-Ausfuehrung lokal im Browser ohne Server-Upload."
     },
+    "jsEventLoopVisualizer": {
+      "pageTitle": "JavaScript Event-Loop Visualisierer",
+      "pageBadge": "100% Client-Side - Lokale Browser-Verarbeitung",
+      "breadcrumb": "JavaScript Event-Loop",
+      "breadcrumbParent": "Entwickler-Tools",
+      "privacyNote": "Lokale Browserverarbeitung - Keine Datenuebertragung an Server",
+      "feat1Title": "4-Phasen-Modell",
+      "feat1Desc": "Visualisiert den Event Loop: Evaluate Script -> Run a Task -> Run all Microtasks -> Rerender.",
+      "feat2Title": "Task vs Microtask Queues",
+      "feat2Desc": "Verstehe warum Promise- und queueMicrotask-Callbacks vor jedem setTimeout ausgefuehrt werden.",
+      "feat3Title": "100% Client-Side Sandbox",
+      "feat3Desc": "Vollstaendige AST-Ausfuehrung lokal im Browser ohne Server-Upload."
+    },
     "qrCodeGenerator": {
       "pageTitle": "QR-Code-Generator",
       "pageBadge": "100% Client-Side • qrcode npm • Kein Upload",

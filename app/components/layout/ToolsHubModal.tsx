@@ -224,6 +224,17 @@ export const ALL_TOOLS: ToolItem[] = [
     keywords: ['node', 'event loop', 'visualizer', 'microtask', 'nexttick', 'call stack', 'timer', 'setimmediate'],
   },
   {
+    id: 'js-event-loop-visualizer',
+    name: 'JavaScript Event Loop Visualizer',
+    sub: 'Interactive JSV9000 visualizer for Task Queue, Microtask Queue, Call Stack & 4-stage loop',
+    path: '/tools/js-event-loop-visualizer',
+    icon: Terminal,
+    categories: ['Utilities', 'Code & Converters'],
+    isNew: true,
+    featured: true,
+    keywords: ['javascript', 'js', 'event loop', 'jsv9000', 'loupe', 'microtask', 'task queue', 'call stack', 'promise', 'settimeout'],
+  },
+  {
     id: 'qr-code-generator',
     name: 'QR Code Generator',
     sub: 'Generate QR codes for URLs, Wi-Fi, vCard, email & phone — PNG/SVG export',

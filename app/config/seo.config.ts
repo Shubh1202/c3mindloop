@@ -673,6 +673,32 @@ export const seoConfig = {
       images: [defaultOgImage],
     },
   },
+
+  jsEventLoopVisualizer: {
+    title: 'JavaScript Event Loop Visualizer (JSV9000 & Loupe Online) | C³ MindLoop',
+    description:
+      'Free interactive JavaScript Event Loop visualizer inspired by JS Visualizer 9000 and Loupe. Step through Call Stack, Task Queue, Microtask Queue, and the 4-phase Event Loop cycle 100% client-side in your browser.',
+    keywords: [
+      'javascript event loop visualizer', 'js visualizer 9000', 'jsv9000 online', 'loupe visualizer',
+      'js event loop simulation', 'call stack visualizer', 'microtask queue vs task queue',
+      'promise vs settimeout event loop', 'event loop 4 steps', 'interactive event loop debugger',
+      '100% Private', 'Client-Side Execution', 'No Server Upload', 'Free Online Utility',
+      'C³ MindLoop JS visualizer', 'c3mindloop event loop',
+    ],
+    canonical: `${BASE_URL}/tools/js-event-loop-visualizer`,
+    openGraph: {
+      title: 'JavaScript Event Loop Visualizer (JSV9000) | C³ MindLoop',
+      description:
+        'Interactive JavaScript Event Loop visualizer. Step through Call Stack, Task Queue (Macrotasks), Microtask Queue, and the 4-phase Event Loop 100% client-side.',
+      url: `${BASE_URL}/tools/js-event-loop-visualizer`,
+      images: [{ url: defaultOgImage, width: 1200, height: 630, alt: 'JavaScript Event Loop Visualizer - C³ MindLoop' }],
+    },
+    twitter: {
+      title: 'JavaScript Event Loop Visualizer | C³ MindLoop',
+      description: 'Step-by-step interactive JavaScript Event Loop simulator (Call Stack, Task Queue, Microtask Queue).',
+      images: [defaultOgImage],
+    },
+  },
 };
 
 // ── JSON-LD Schemas ──────────────────────────────────────────────────────────
@@ -1115,6 +1141,28 @@ export const nodeEventLoopVisualizerSchema = {
     'Live standard output terminal emulation with console.log streaming',
     'CommonJS and ESModules module syntax toggle support',
     '100% client-side AST execution - zero server upload',
+  ],
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+  publisher: { '@type': 'Organization', name: 'C\u00b3 MindLoop', url: BASE_URL },
+};
+
+export const jsEventLoopVisualizerSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: 'JavaScript Event Loop Visualizer',
+  url: `${BASE_URL}/tools/js-event-loop-visualizer`,
+  applicationCategory: 'DeveloperApplication',
+  operatingSystem: 'All Web Browsers',
+  description:
+    'Free interactive JavaScript Event Loop visualizer inspired by JS Visualizer 9000 and Loupe. Step through Call Stack, Task Queue, Microtask Queue, and the 4-phase Event Loop cycle 100% client-side.',
+  featureList: [
+    'Interactive step-by-step Call Stack execution and active frame highlighting',
+    'Task Queue (Macrotasks: setTimeout, setInterval, event callbacks) visual container',
+    'Microtask Queue (Promise.then, queueMicrotask, async/await resumption) tracking',
+    '4-phase Event Loop cycle stepper (1. Evaluate Script -> 2. Run a Task -> 3. Run all Microtasks -> 4. Rerender)',
+    'Live browser console.log stream output with timestamp logs',
+    'Interactive step scrubbing timeline with variable playback speeds (0.5x, 1x, 2x)',
+    '100% client-side JavaScript execution — zero server communication',
   ],
   offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
   publisher: { '@type': 'Organization', name: 'C\u00b3 MindLoop', url: BASE_URL },

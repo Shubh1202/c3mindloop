@@ -1156,6 +1156,43 @@
         "a2": "setImmediate is specifically designed to run in the Check phase (after Poll I/O phase), while setTimeout(fn, 0) runs in the Timers phase. Within an I/O callback cycle (like fs.readFile), setImmediate is guaranteed to execute before setTimeout."
       }
     },
+    "jsEventLoopVisualizer": {
+      "pageTitle": "JavaScript Event Loop Visualizer",
+      "pageBadge": "100% Client-Side • Local Browser Processing",
+      "breadcrumb": "JavaScript Event Loop Visualizer",
+      "breadcrumbParent": "Developer Tools",
+      "privacyNote": "Local browser processing — No code or data sent to any server",
+      "feat1Title": "4-Stage Event Loop Model",
+      "feat1Desc": "Visualize the HTML5 / V8 Event Loop: Evaluate Script -> Run a Task -> Run all Microtasks -> Rerender.",
+      "feat2Title": "Task vs Microtask Queues",
+      "feat2Desc": "Understand why Promise.then and queueMicrotask callbacks drain completely before any setTimeout task executes.",
+      "feat3Title": "Zero Server Sandbox",
+      "feat3Desc": "All AST parsing, queue orchestration, and simulation runs locally in your browser with zero remote requests.",
+      "guide": {
+        "title": "How the Browser JavaScript Event Loop Works",
+        "intro": "JavaScript is single-threaded, using an event loop to orchestrate non-blocking concurrency across dedicated queues:",
+        "step1": "1. Evaluate Script: Synchronous code executes immediately on the Call Stack. Function frames are pushed and popped in LIFO order.",
+        "step2": "2. Run a Task: When the stack is empty, the Event Loop takes the oldest task from the Task Queue (setTimeout, setInterval).",
+        "step3": "3. Run all Microtasks: After the initial script and after every single task, the Event Loop flushes the Microtask Queue until empty.",
+        "step4": "4. Rerender: Before repainting the browser window, requestAnimationFrame callbacks run and layout calculations are performed.",
+        "privacyTitle": "Local In-Browser AST Simulation",
+        "privacyIntro": "100% client-side execution:",
+        "privacyBullet1": "Acorn AST Parsing: Code is parsed and simulated client-side using JavaScript AST analysis.",
+        "privacyBullet2": "Safe Execution: Sandboxed deterministic engine prevents infinite loops and guarantees privacy."
+      },
+      "faq": {
+        "q1": "Why do Promises resolve before setTimeout(fn, 0)?",
+        "a1": "Promises schedule callbacks in the Microtask Queue, while setTimeout schedules callbacks in the Task Queue (Macrotasks). The HTML5 Event Loop specification guarantees that the entire Microtask Queue is completely drained after synchronous execution and after every macrotask before moving to the next task.",
+        "q2": "What is microtask starvation?",
+        "a2": "Microtask starvation occurs when microtasks continuously schedule new microtasks (e.g., recursive Promise.then or queueMicrotask). Because the Event Loop will not proceed to the Task Queue or Rerender phase until the Microtask Queue is empty, the browser will freeze and macrotasks will never run.",
+        "q3": "What is the difference between the Task Queue (Macrotasks) and Microtask Queue?",
+        "a3": "The Task Queue holds callbacks from timers (setTimeout, setInterval), DOM events, and I/O operations. The Event Loop processes only one Task Queue item per loop iteration. In contrast, the Microtask Queue holds high-priority Promise and queueMicrotask callbacks, and the engine flushes every single item in the Microtask Queue before moving forward.",
+        "q4": "When does requestAnimationFrame execute relative to the Event Loop?",
+        "a4": "requestAnimationFrame callbacks run during the Rerender phase of the browser Event Loop, right before layout recalculations and pixel painting, ensuring smooth 60fps/120fps visual updates synchronized with the display monitor refresh rate.",
+        "q5": "Is this JavaScript visualizer running 100% locally in my browser?",
+        "a5": "Yes, 100%. All AST parsing and Event Loop simulation executes strictly client-side inside your browser via local JavaScript. No code, scripts, or debug data are ever transmitted to external servers."
+      }
+    },
     "qrCodeGenerator": {
       "pageTitle": "QR Code Generator",
       "pageBadge": "100% Client-Side • qrcode npm • No Upload",
