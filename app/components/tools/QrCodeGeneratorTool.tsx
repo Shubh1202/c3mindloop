@@ -117,6 +117,17 @@ export const QrCodeGeneratorTool: React.FC = () => {
 
   const content = buildQrContent(qrType, text, wifi, vcard);
 
+  useEffect(() => {
+    if (isFullscreen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isFullscreen]);
+
   const generateQr = useCallback(async () => {
     if (!content) { setDataUrl(''); setSvgString(''); return; }
     setError('');
@@ -432,7 +443,7 @@ export const QrCodeGeneratorTool: React.FC = () => {
         {/* ─ Preview ─ */}
         <div className="p-4 flex flex-col items-center justify-between gap-4">
 
-          <div className={`relative group ${isFullscreen ? 'fixed inset-0 z-50 bg-neutral-950 flex items-center justify-center' : ''}`}>
+          <div className={`relative group ${isFullscreen ? 'fixed inset-0 z-[100] bg-neutral-950 flex items-center justify-center' : ''}`}>
             {isFullscreen && (
               <button
                 id="qr-close-fullscreen"

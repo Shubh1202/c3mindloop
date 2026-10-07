@@ -372,6 +372,19 @@
       "feat3Title": "100% クライアントサイド",
       "feat3Desc": "外部サーバーへの通信なしでブラウザ上で即座に実行・可視化します。"
     },
+    "gitVisualizer": {
+      "pageTitle": "Git インタラクティブ DAG 可視化ツール",
+      "pageBadge": "100% クライアントサイド - ローカルGitシミュレーション",
+      "breadcrumb": "Git DAG 可視化",
+      "breadcrumbParent": "開発者ツール",
+      "privacyNote": "ローカルブラウザ処理 - サーバーへのデータ送信ゼロ",
+      "feat1Title": "インタラクティブなコミットDAG",
+      "feat1Desc": "ブランチ、コミット、マージ、リベースを有向非巡回グラフで直感的に可視化。",
+      "feat2Title": "リアルなGitターミナル",
+      "feat2Desc": "git commit、git merge、git checkoutなどのコマンドを即座にグラフに反映。",
+      "feat3Title": "100% ローカル完結",
+      "feat3Desc": "すべてのシミュレーションはブラウザのメモリ内で安全に実行されます。"
+    },
     "qrCodeGenerator": {
       "pageTitle": "QRコードジェネレーター",
       "pageBadge": "100% クライアントサイド • qrcode npm • アップロード不要",

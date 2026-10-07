@@ -175,6 +175,15 @@ const formatted = JSON.stringify(JSON.parse(input), null, 2);`
     techStack: ['Acorn AST Engine', 'Browser Event Loop', 'Framer Motion']
   },
   {
+    id: 'git-visualizer',
+    nameKey: 'Git Interactive DAG Visualizer',
+    descKey: 'Interactive visual playground for Git commits, branches, merges, rebases, and cherry-picks. Live DAG commit tree with terminal console.',
+    status: 'live',
+    category: 'utilities',
+    icon: 'GitBranch',
+    techStack: ['Git DAG Engine', 'SVG Renderer', 'Local Processing']
+  },
+  {
     id: 'qr-code-generator',
     nameKey: 'QR Code Generator',
     descKey: 'Generate QR codes for URLs, Wi-Fi networks, vCard contacts, email, and phone numbers. Export as PNG, WebP, or SVG with custom colors and error correction. 100% client-side via qrcode npm.',

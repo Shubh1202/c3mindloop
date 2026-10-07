@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { 
   Play, 
   Pause, 
@@ -29,9 +30,14 @@ import { SimulationStep, BrowserEventLoopPhase } from './jsVisualizer/types';
 export const JsEventLoopVisualizerTool: React.FC = () => {
   const { t } = useTranslation();
 
+  const [mounted, setMounted] = useState(false);
   // State
   const [selectedPreset, setSelectedPreset] = useState('default');
   const [code, setCode] = useState(JS_PRESETS[0].code);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
   const [steps, setSteps] = useState<SimulationStep[]>(() => {
     const engine = new JsEventLoopEngine(JS_PRESETS[0].code);
     const res = engine.simulate();
@@ -143,15 +149,24 @@ export const JsEventLoopVisualizerTool: React.FC = () => {
     };
   }, [isPlaying, speed, steps.length]);
 
-  // Escape key for fullscreen
+  // Lock body scroll and handle Escape key for fullscreen
   useEffect(() => {
+    if (isFullscreen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && isFullscreen) {
         setIsFullscreen(false);
       }
     };
     window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    return () => {
+      document.body.style.overflow = '';
+      window.removeEventListener('keydown', handleKeyDown);
+    };
   }, [isFullscreen]);
 
   // Auto-scroll terminal container
@@ -182,11 +197,11 @@ export const JsEventLoopVisualizerTool: React.FC = () => {
     { number: 4, title: 'Rerender', desc: 'Execute requestAnimationFrame & browser paint' },
   ];
 
-  return (
+  const content = (
     <div
       className={`transition-all ${
         isFullscreen
-          ? 'fixed inset-0 z-50 bg-neutral-950 flex flex-col h-screen w-screen overflow-hidden p-2 sm:p-4'
+          ? 'fixed inset-0 z-[99999] bg-neutral-950 flex flex-col h-screen w-screen overflow-hidden p-2 sm:p-4'
           : 'rounded-lg border border-theme-subtle bg-surface overflow-hidden shadow-2xl'
       }`}
     >
@@ -673,4 +688,10 @@ export const JsEventLoopVisualizerTool: React.FC = () => {
       )}
     </div>
   );
+
+  if (isFullscreen && mounted && typeof document !== 'undefined') {
+    return createPortal(content, document.body);
+  }
+
+  return content;
 };

@@ -372,6 +372,19 @@
       "feat3Title": "100% en el Navegador",
       "feat3Desc": "Todo el analisis AST y la orquestacion se ejecutan en tu navegador sin contacto con servidores."
     },
+    "gitVisualizer": {
+      "pageTitle": "Visualizador Interactivo de Git DAG",
+      "pageBadge": "100% Client-Side - Motor de Simulacion Local de Git",
+      "breadcrumb": "Visualizador Git DAG",
+      "breadcrumbParent": "Herramientas para Desarrolladores",
+      "privacyNote": "Procesamiento local en el navegador - 100% Client-Side",
+      "feat1Title": "Grafo DAG Interactivo",
+      "feat1Desc": "Visualiza ramas, commits, merge y rebase en un grafo aciclico dirigido.",
+      "feat2Title": "Consola Terminal Real",
+      "feat2Desc": "Ejecuta comandos como git commit, git merge y git checkout en tiempo real.",
+      "feat3Title": "100% en el Navegador",
+      "feat3Desc": "Toda la simulacion corre en memoria en tu navegador sin enviar datos al servidor."
+    },
     "qrCodeGenerator": {
       "pageTitle": "Generador de Codigos QR",
       "pageBadge": "100% Client-Side • qrcode npm • Sin Subida",

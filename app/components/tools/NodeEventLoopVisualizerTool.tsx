@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { 
   Play, 
   Pause, 
@@ -27,10 +28,15 @@ import { SimulationStep, EventLoopPhase, MicrotaskSubPhase } from './nodeVisuali
 export const NodeEventLoopVisualizerTool: React.FC = () => {
   const { t } = useTranslation();
 
+  const [mounted, setMounted] = useState(false);
   // State
   const [selectedPreset, setSelectedPreset] = useState('default');
   const [isESM, setIsESM] = useState(false);
   const [code, setCode] = useState(PRESETS[0].codeCJS);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
   const [steps, setSteps] = useState<SimulationStep[]>(() => {
     const initialEngine = new EventLoopEngine(PRESETS[0].codeCJS, false);
     const res = initialEngine.simulate();
@@ -133,15 +139,24 @@ export const NodeEventLoopVisualizerTool: React.FC = () => {
     };
   }, [isPlaying, speed, steps.length]);
 
-  // Handle escape key to exit fullscreen
+  // Lock body scroll and handle Escape key to exit fullscreen
   useEffect(() => {
+    if (isFullscreen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && isFullscreen) {
         setIsFullscreen(false);
       }
     };
     window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    return () => {
+      document.body.style.overflow = '';
+      window.removeEventListener('keydown', handleKeyDown);
+    };
   }, [isFullscreen]);
 
   // Auto-scroll terminal strictly within its own container without window scrolling
@@ -182,11 +197,11 @@ export const NodeEventLoopVisualizerTool: React.FC = () => {
     { id: 'finish', label: 'Finish', desc: 'Microtask checkpoint complete' },
   ];
 
-  return (
+  const content = (
     <div
       className={`transition-all ${
         isFullscreen
-          ? 'fixed inset-0 z-50 bg-neutral-950 flex flex-col h-screen w-screen overflow-hidden p-2 sm:p-4'
+          ? 'fixed inset-0 z-[99999] bg-neutral-950 flex flex-col h-screen w-screen overflow-hidden p-2 sm:p-4'
           : 'rounded-lg border border-theme-subtle bg-surface overflow-hidden shadow-2xl'
       }`}
     >
@@ -803,4 +818,10 @@ export const NodeEventLoopVisualizerTool: React.FC = () => {
       )}
     </div>
   );
+
+  if (isFullscreen && mounted && typeof document !== 'undefined') {
+    return createPortal(content, document.body);
+  }
+
+  return content;
 };

@@ -1193,6 +1193,43 @@
         "a5": "Yes, 100%. All AST parsing and Event Loop simulation executes strictly client-side inside your browser via local JavaScript. No code, scripts, or debug data are ever transmitted to external servers."
       }
     },
+    "gitVisualizer": {
+      "pageTitle": "Git Interactive DAG Visualizer",
+      "pageBadge": "100% Client-Side • Local Git Simulation Engine",
+      "breadcrumb": "Git Interactive DAG Visualizer",
+      "breadcrumbParent": "Developer Tools",
+      "privacyNote": "Local browser processing — 100% Client-Side Git Simulation Engine",
+      "feat1Title": "Interactive Commit DAG",
+      "feat1Desc": "Visualize branches, commits, merges, and rebases on an animated SVG Directed Acyclic Graph.",
+      "feat2Title": "Real Git Terminal Emulator",
+      "feat2Desc": "Type standard Git commands like git commit, git merge, git rebase, and git checkout with instant graphical updates.",
+      "feat3Title": "100% Private Sandbox",
+      "feat3Desc": "All Git state calculations run strictly in-memory inside your browser with zero remote network requests.",
+      "guide": {
+        "title": "Understanding Git Branching & DAG Graph Structures",
+        "intro": "Git models repository history as a Directed Acyclic Graph (DAG) where commits point to their parent ancestors:",
+        "step1": "1. Commits & History: Every commit creates an immutable snapshot with a unique hash and reference to its parent.",
+        "step2": "2. Branches: A branch is simply a lightweight, movable pointer to a specific commit in the DAG graph.",
+        "step3": "3. Merging (3-Way): Combines two diverged branches by creating a merge commit with two parent references.",
+        "step4": "4. Rebasing: Replays a sequence of commits from the current branch on top of a new upstream base commit.",
+        "privacyTitle": "In-Memory Client-Side Git Sandbox",
+        "privacyIntro": "100% client-side execution:",
+        "privacyBullet1": "Zero Server Upload: No repository data or commit history is ever sent to an external server.",
+        "privacyBullet2": "Safe Experimentation: Test complex Git operations like rebase, reset, and cherry-pick risk-free."
+      },
+      "faq": {
+        "q1": "What is a Git DAG (Directed Acyclic Graph)?",
+        "a1": "A Git DAG is the internal graph structure Git uses to track revision history. Commits represent nodes (vertices) with directed edges pointing backwards to their parent commits.",
+        "q2": "What is the difference between git merge and git rebase?",
+        "a2": "git merge preserves complete historical branch topology by generating a 3-way merge commit. git rebase rewrites commit history by transplanting commits one by one onto the target branch for a clean, linear history.",
+        "q3": "How does git cherry-pick work?",
+        "a3": "git cherry-pick copies the exact changes from a specific commit on another branch and creates a new commit on top of your current HEAD without merging the rest of the branch.",
+        "q4": "What causes a detached HEAD state?",
+        "a4": "A detached HEAD occurs when HEAD points directly to a commit hash instead of a named branch reference. New commits made while detached are not tracked by any branch.",
+        "q5": "Is this tool completely free and private?",
+        "a5": "Yes, 100%. The visualizer runs fully offline in your browser memory sandbox with zero telemetry or data collection."
+      }
+    },
     "qrCodeGenerator": {
       "pageTitle": "QR Code Generator",
       "pageBadge": "100% Client-Side • qrcode npm • No Upload",

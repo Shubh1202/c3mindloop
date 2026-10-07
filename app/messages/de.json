@@ -372,6 +372,19 @@
       "feat3Title": "100% Client-Side Sandbox",
       "feat3Desc": "Vollstaendige AST-Ausfuehrung lokal im Browser ohne Server-Upload."
     },
+    "gitVisualizer": {
+      "pageTitle": "Interaktiver Git DAG Visualisierer",
+      "pageBadge": "100% Client-Side - Lokale Git Simulation",
+      "breadcrumb": "Git DAG Visualisierer",
+      "breadcrumbParent": "Entwickler-Tools",
+      "privacyNote": "Lokale Browserverarbeitung - Keine Datenuebertragung an Server",
+      "feat1Title": "Interaktiver Commit-DAG",
+      "feat1Desc": "Visualisiert Branches, Commits, Merges und Rebases in einem animierten gerichteten azyklischen Graphen.",
+      "feat2Title": "Echte Terminal-Konsole",
+      "feat2Desc": "Fuehre Git-Befehle wie git commit, git merge und git checkout mit sofortigem visuellen Feedback aus.",
+      "feat3Title": "100% Client-Side Sandbox",
+      "feat3Desc": "Die gesamte Simulation laeuft vollstaendig im Speicher deines Browsers ohne Server-Uploads."
+    },
     "qrCodeGenerator": {
       "pageTitle": "QR-Code-Generator",
       "pageBadge": "100% Client-Side • qrcode npm • Kein Upload",

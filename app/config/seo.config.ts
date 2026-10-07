@@ -699,6 +699,32 @@ export const seoConfig = {
       images: [defaultOgImage],
     },
   },
+
+  gitVisualizer: {
+    title: 'Git Interactive DAG Visualizer & Branch Simulator | C³ MindLoop',
+    description:
+      'Free interactive Git DAG visualizer and branch simulator. Visualize git commit, branch, merge, rebase, cherry-pick, and reset in real-time with an interactive terminal. 100% client-side, zero upload.',
+    keywords: [
+      'git visualizer', 'git interactive graph', 'git branch visualizer', 'git dag simulator',
+      'visualize git merge and rebase', 'git cherry-pick visualizer', 'interactive git tutorial online',
+      'learn git branching visually', 'git commit tree graph', 'git terminal simulator',
+      '100% Private', 'Client-Side Execution', 'No Server Upload', 'Free Developer Utility',
+      'C³ MindLoop git visualizer', 'c3mindloop git graph',
+    ],
+    canonical: `${BASE_URL}/tools/git-visualizer`,
+    openGraph: {
+      title: 'Git Interactive DAG Visualizer & Branch Simulator | C³ MindLoop',
+      description:
+        'Visualize Git commits, branches, merges, and rebases in real-time. Interactive command terminal and animated DAG graph.',
+      url: `${BASE_URL}/tools/git-visualizer`,
+      images: [{ url: defaultOgImage, width: 1200, height: 630, alt: 'Git DAG Visualizer - C³ MindLoop' }],
+    },
+    twitter: {
+      title: 'Git Interactive DAG Visualizer | C³ MindLoop',
+      description: 'Interactive Git DAG graph simulator with live terminal for merge, rebase, cherry-pick & branch.',
+      images: [defaultOgImage],
+    },
+  },
 };
 
 // ── JSON-LD Schemas ──────────────────────────────────────────────────────────
@@ -1163,6 +1189,27 @@ export const jsEventLoopVisualizerSchema = {
     'Live browser console.log stream output with timestamp logs',
     'Interactive step scrubbing timeline with variable playback speeds (0.5x, 1x, 2x)',
     '100% client-side JavaScript execution — zero server communication',
+  ],
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+  publisher: { '@type': 'Organization', name: 'C\u00b3 MindLoop', url: BASE_URL },
+};
+
+export const gitVisualizerSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: 'Git Interactive DAG Visualizer',
+  url: `${BASE_URL}/tools/git-visualizer`,
+  applicationCategory: 'DeveloperApplication',
+  operatingSystem: 'All Web Browsers',
+  description:
+    'Free interactive Git Directed Acyclic Graph (DAG) visualizer and branch simulator. Test git commit, merge, rebase, cherry-pick, reset, and checkout with a live terminal. 100% client-side.',
+  featureList: [
+    'Interactive animated Git commit DAG (Directed Acyclic Graph) rendering',
+    'Support for git commit, branch, checkout, switch, merge, rebase, cherry-pick, reset, and tag',
+    'Real-time terminal emulator with command history and instant output feedback',
+    'Pre-loaded scenarios: Feature Branch Merge, Rebase vs Merge, Cherry-Pick, Hotfix release',
+    'Commit node inspector with full hash, parent list, message, and branch pointer tags',
+    '100% client-side in-memory execution — zero server uploads',
   ],
   offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
   publisher: { '@type': 'Organization', name: 'C\u00b3 MindLoop', url: BASE_URL },

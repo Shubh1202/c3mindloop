@@ -235,6 +235,17 @@ export const ALL_TOOLS: ToolItem[] = [
     keywords: ['javascript', 'js', 'event loop', 'jsv9000', 'loupe', 'microtask', 'task queue', 'call stack', 'promise', 'settimeout'],
   },
   {
+    id: 'git-visualizer',
+    name: 'Git Interactive DAG Visualizer',
+    sub: 'Visual commit DAG graph with terminal for commit, branch, merge, rebase & cherry-pick',
+    path: '/tools/git-visualizer',
+    icon: GitBranch,
+    categories: ['Utilities', 'Code & Converters'],
+    isNew: true,
+    featured: true,
+    keywords: ['git', 'github', 'dag', 'graph', 'branch', 'merge', 'rebase', 'cherry-pick', 'reset', 'commit', 'visualizer'],
+  },
+  {
     id: 'qr-code-generator',
     name: 'QR Code Generator',
     sub: 'Generate QR codes for URLs, Wi-Fi, vCard, email & phone — PNG/SVG export',
