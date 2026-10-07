@@ -45,6 +45,7 @@ export const GitVisualizerTool: React.FC = () => {
 
   const terminalEndRef = useRef<HTMLDivElement | null>(null);
   const graphContainerRef = useRef<HTMLDivElement | null>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
 
   // Load preset on mount or selection
   const loadPreset = (presetId: string) => {
@@ -65,16 +66,28 @@ export const GitVisualizerTool: React.FC = () => {
   }, []);
 
   // Handle command submission
-  const handleRunCommand = (e?: React.FormEvent) => {
+  const handleRunCommand = (e?: React.FormEvent, customCmd?: string) => {
     if (e) e.preventDefault();
-    const cmd = commandInput.trim();
-    if (!cmd) return;
+    let cmd = (customCmd !== undefined ? customCmd : commandInput).trim();
+    
+    // If empty when clicking Run, create a commit so user gets instant visual graph action
+    if (!cmd) {
+      cmd = 'git commit -m "New commit"';
+    }
+
+    // Auto-prefix with 'git ' if user only typed sub-command (e.g. 'commit', 'checkout -b feat')
+    if (!cmd.startsWith('git ') && !cmd.startsWith('git')) {
+      cmd = `git ${cmd}`;
+    }
 
     engine.execute(cmd);
     setGitState(engine.getState());
     setCommandHistory(prev => [...prev, cmd]);
     setHistoryIndex(-1);
     setCommandInput('');
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
   };
 
   // Keyboard navigation for terminal history (Up / Down arrows)
@@ -100,8 +113,15 @@ export const GitVisualizerTool: React.FC = () => {
   };
 
   // Quick Action Buttons
-  const runQuickAction = (template: string) => {
-    setCommandInput(template);
+  const runQuickAction = (template: string, autoExecute: boolean = true) => {
+    if (autoExecute) {
+      handleRunCommand(undefined, template);
+    } else {
+      setCommandInput(template);
+      if (inputRef.current) {
+        inputRef.current.focus();
+      }
+    }
   };
 
   // Auto-scroll terminal
@@ -166,28 +186,37 @@ export const GitVisualizerTool: React.FC = () => {
           {/* Quick Actions Shortcuts */}
           <div className="hidden md:flex items-center gap-1 text-[11px] font-mono">
             <button
-              onClick={() => runQuickAction('git commit -m "Update feature"')}
+              onClick={() => runQuickAction('git commit -m "Update code"', true)}
+              title="Execute a new commit on active branch"
               className="px-2 py-1 bg-neutral-900 hover:bg-neutral-800 text-neutral-300 rounded border border-theme-subtle flex items-center gap-1 transition-colors"
             >
               <Plus className="w-3 h-3 text-emerald-400" />
               commit
             </button>
             <button
-              onClick={() => runQuickAction('git checkout -b feature/new')}
+              onClick={() => runQuickAction(`git checkout -b feat/v${Math.floor(10 + Math.random() * 90)}`, true)}
+              title="Create and switch to a new branch"
               className="px-2 py-1 bg-neutral-900 hover:bg-neutral-800 text-neutral-300 rounded border border-theme-subtle flex items-center gap-1 transition-colors"
             >
               <GitBranchIcon className="w-3 h-3 text-[#1D9BF0]" />
               branch
             </button>
             <button
-              onClick={() => runQuickAction('git merge ')}
+              onClick={() => {
+                const branchNames = Object.keys(gitState.branches);
+                const current = gitState.head.type === 'branch' ? gitState.head.name : '';
+                const target = branchNames.find(b => b !== current) || 'main';
+                runQuickAction(`git merge ${target}`, true);
+              }}
+              title="Merge branches"
               className="px-2 py-1 bg-neutral-900 hover:bg-neutral-800 text-neutral-300 rounded border border-theme-subtle flex items-center gap-1 transition-colors"
             >
               <GitMerge className="w-3 h-3 text-purple-400" />
               merge
             </button>
             <button
-              onClick={() => runQuickAction('git rebase main')}
+              onClick={() => runQuickAction('git rebase main', true)}
+              title="Rebase active branch onto main"
               className="px-2 py-1 bg-neutral-900 hover:bg-neutral-800 text-neutral-300 rounded border border-theme-subtle flex items-center gap-1 transition-colors"
             >
               <Sparkles className="w-3 h-3 text-amber-400" />
@@ -487,6 +516,7 @@ export const GitVisualizerTool: React.FC = () => {
           >
             <span className="text-emerald-400 font-mono text-xs pl-1">&gt;</span>
             <input
+              ref={inputRef}
               type="text"
               value={commandInput}
               onChange={e => setCommandInput(e.target.value)}
