@@ -5,6 +5,8 @@ import { Link } from '../lib/router-compat';
 import { ArrowLeft } from 'lucide-react';
 import { PipelineTool } from '../components/tools/PipelineTool';
 import { CTASection } from '../components/sections/CTASection';
+import { ToolSeoWrapper } from '../components/seo/ToolSeoWrapper';
+import { PipelineDocs } from '../components/seo/docs/PipelineDocs';
 import { useTranslation } from '../lib/i18n';
 
 export const PipelinePage: React.FC = () => {
@@ -38,27 +40,13 @@ export const PipelinePage: React.FC = () => {
         {/* Tool */}
         <PipelineTool />
 
-        {/* Feature cards */}
-        <div className="pt-10 border-t border-theme-subtle grid grid-cols-1 md:grid-cols-3 gap-6 text-xs font-mono text-theme-muted">
-          <div className="space-y-1.5">
-            <p className="text-[10px] uppercase tracking-wider text-neutral-600">
-              {t('tools.pipeline.feat1Title')}
-            </p>
-            <p className="leading-relaxed">{t('tools.pipeline.feat1Desc')}</p>
-          </div>
-          <div className="space-y-1.5">
-            <p className="text-[10px] uppercase tracking-wider text-neutral-600">
-              {t('tools.pipeline.feat2Title')}
-            </p>
-            <p className="leading-relaxed">{t('tools.pipeline.feat2Desc')}</p>
-          </div>
-          <div className="space-y-1.5">
-            <p className="text-[10px] uppercase tracking-wider text-neutral-600">
-              {t('tools.pipeline.feat3Title')}
-            </p>
-            <p className="leading-relaxed">{t('tools.pipeline.feat3Desc')}</p>
-          </div>
-        </div>
+        {/* SEO Wrapper with rich technical docs and contextual internal links */}
+        <ToolSeoWrapper
+          toolKey="pipeline"
+          relatedToolIds={['curl-converter', 'json-formatter', 'base64-encoder', 'regex-tester']}
+        >
+          <PipelineDocs />
+        </ToolSeoWrapper>
 
         <CTASection />
       </div>

@@ -6,6 +6,7 @@ import { ArrowLeft } from 'lucide-react';
 import { CronVisualizerTool } from '../components/tools/CronVisualizerTool';
 import { CTASection } from '../components/sections/CTASection';
 import { ToolSeoWrapper } from '../components/seo/ToolSeoWrapper';
+import { CronVisualizerDocs } from '../components/seo/docs/CronVisualizerDocs';
 import { useTranslation } from '../lib/i18n';
 
 export const CronVisualizerPage: React.FC = () => {
@@ -38,8 +39,13 @@ export const CronVisualizerPage: React.FC = () => {
         {/* Tool */}
         <CronVisualizerTool />
 
-        {/* SEO Wrapper */}
-        <ToolSeoWrapper toolKey="cronVisualizer" />
+        {/* SEO Wrapper with rich technical docs and contextual internal links */}
+        <ToolSeoWrapper
+          toolKey="cronVisualizer"
+          relatedToolIds={['pipeline', 'json-formatter', 'curl-converter']}
+        >
+          <CronVisualizerDocs />
+        </ToolSeoWrapper>
 
         <CTASection />
       </div>

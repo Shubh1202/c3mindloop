@@ -6,6 +6,7 @@ import { ArrowLeft } from 'lucide-react';
 import { DiffCheckerTool } from '../components/tools/DiffCheckerTool';
 import { CTASection } from '../components/sections/CTASection';
 import { ToolSeoWrapper } from '../components/seo/ToolSeoWrapper';
+import { DiffCheckerDocs } from '../components/seo/docs/DiffCheckerDocs';
 import { useTranslation } from '../lib/i18n';
 
 export const DiffCheckerPage: React.FC = () => {
@@ -39,8 +40,13 @@ export const DiffCheckerPage: React.FC = () => {
         {/* Tool */}
         <DiffCheckerTool />
 
-        {/* SEO content - How This Works, Privacy section, FAQ */}
-        <ToolSeoWrapper toolKey="diffChecker" />
+        {/* SEO content with rich technical docs and contextual internal links */}
+        <ToolSeoWrapper
+          toolKey="diffChecker"
+          relatedToolIds={['json-formatter', 'regex-tester', 'code-complexity-analyzer', 'git-visualizer']}
+        >
+          <DiffCheckerDocs />
+        </ToolSeoWrapper>
 
         <CTASection />
       </div>

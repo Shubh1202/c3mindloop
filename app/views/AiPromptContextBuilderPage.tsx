@@ -7,6 +7,7 @@ import { SEOHead } from '../components/layout/SEOHead';
 import { AiPromptContextBuilderTool } from '../components/tools/AiPromptContextBuilderTool';
 import { CTASection } from '../components/sections/CTASection';
 import { ToolSeoWrapper } from '../components/seo/ToolSeoWrapper';
+import { AiPromptBuilderDocs } from '../components/seo/docs/AiPromptBuilderDocs';
 import { useTranslation } from '../lib/i18n';
 
 export const AiPromptContextBuilderPage: React.FC = () => {
@@ -45,12 +46,15 @@ export const AiPromptContextBuilderPage: React.FC = () => {
           </div>
 
           {/* Interactive Tool Component */}
-          <div>
-            <AiPromptContextBuilderTool />
-          </div>
+          <AiPromptContextBuilderTool />
 
-          {/* Reusable SEO Wrapper (Workflow, Guide Overview & Accordion FAQ) */}
-          <ToolSeoWrapper toolKey="aiPromptBuilder" />
+          {/* SEO Wrapper with rich technical docs and contextual internal links */}
+          <ToolSeoWrapper
+            toolKey="aiPromptBuilder"
+            relatedToolIds={['json-formatter', 'diff-checker', 'regex-tester', 'curl-converter']}
+          >
+            <AiPromptBuilderDocs />
+          </ToolSeoWrapper>
 
           <CTASection />
         </div>

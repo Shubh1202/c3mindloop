@@ -6,6 +6,7 @@ import { ArrowLeft } from 'lucide-react';
 import { PdfSuiteTool } from '../components/tools/PdfSuiteTool';
 import { CTASection } from '../components/sections/CTASection';
 import { ToolSeoWrapper } from '../components/seo/ToolSeoWrapper';
+import { PdfSuiteDocs } from '../components/seo/docs/PdfSuiteDocs';
 import { useTranslation } from '../lib/i18n';
 
 export const PdfSuitePage: React.FC = () => {
@@ -39,8 +40,13 @@ export const PdfSuitePage: React.FC = () => {
         {/* Tool */}
         <PdfSuiteTool />
 
-        {/* SEO content - How This Works, Privacy section, FAQ */}
-        <ToolSeoWrapper toolKey="pdfSuite" />
+        {/* SEO Wrapper with rich technical docs and contextual internal links */}
+        <ToolSeoWrapper
+          toolKey="pdfSuite"
+          relatedToolIds={['ats-resume-generator', 'diff-checker', 'json-formatter']}
+        >
+          <PdfSuiteDocs />
+        </ToolSeoWrapper>
 
         <CTASection />
       </div>

@@ -46,15 +46,15 @@ export function AppClientShell({ children }: { children: React.ReactNode }) {
             <GridBackground />
           </div>
 
-          {/* Navigation Bar - must be direct child with no overflow ancestor */}
-          <div className="no-print print:hidden">
+          {/* Navigation Bar - Sticky at top of the viewport on scroll */}
+          <div className="sticky top-0 z-50 no-print print:hidden">
             <Navbar
               onOpenCmdPalette={() => setCmdPaletteOpen(true)}
               onReplayIntro={handleReplayIntro}
             />
           </div>
 
-          {/* Page Content - overflow-x clipped here, below the sticky header */}
+          {/* Page Content */}
           <div className="overflow-x-hidden print:overflow-visible">
             <main id="main-content" className="relative z-10 print:static print:overflow-visible">
               {children}

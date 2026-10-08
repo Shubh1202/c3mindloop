@@ -6,6 +6,7 @@ import { ArrowLeft } from 'lucide-react';
 import { JwtInspectorTool } from '../components/tools/JwtInspectorTool';
 import { CTASection } from '../components/sections/CTASection';
 import { ToolSeoWrapper } from '../components/seo/ToolSeoWrapper';
+import { JwtInspectorDocs } from '../components/seo/docs/JwtInspectorDocs';
 import { useTranslation } from '../lib/i18n';
 
 export const JwtInspectorPage: React.FC = () => {
@@ -15,7 +16,7 @@ export const JwtInspectorPage: React.FC = () => {
     <div className="pt-6 sm:pt-8 pb-16 bg-app text-theme-main relative z-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
 
-        {/* Breadcrumb */}
+        {/* Breadcrumb + H1 - only heading on the page per Single Heading Policy */}
         <div className="space-y-1.5 border-b border-theme-subtle pb-3">
           <div className="flex items-center gap-2 text-xs font-mono text-theme-muted">
             <Link to="/tools" className="hover:text-theme-main transition-colors flex items-center gap-1">
@@ -36,11 +37,16 @@ export const JwtInspectorPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Tool */}
+        {/* Tool - starts directly with toolbar */}
         <JwtInspectorTool />
 
-        {/* SEO Wrapper */}
-        <ToolSeoWrapper toolKey="jwtInspector" />
+        {/* SEO Wrapper with rich technical docs and contextual internal links */}
+        <ToolSeoWrapper
+          toolKey="jwtInspector"
+          relatedToolIds={['base64-encoder', 'hash-generator', 'json-formatter', 'curl-converter']}
+        >
+          <JwtInspectorDocs />
+        </ToolSeoWrapper>
 
         <CTASection />
       </div>

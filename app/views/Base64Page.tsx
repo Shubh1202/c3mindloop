@@ -6,6 +6,7 @@ import { ArrowLeft } from 'lucide-react';
 import { Base64Tool } from '../components/tools/Base64Tool';
 import { CTASection } from '../components/sections/CTASection';
 import { ToolSeoWrapper } from '../components/seo/ToolSeoWrapper';
+import { Base64Docs } from '../components/seo/docs/Base64Docs';
 import { useTranslation } from '../lib/i18n';
 
 export const Base64Page: React.FC = () => {
@@ -15,7 +16,7 @@ export const Base64Page: React.FC = () => {
     <div className="pt-6 sm:pt-8 pb-16 bg-app text-theme-main relative z-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
 
-        {/* Breadcrumb */}
+        {/* Breadcrumb + H1 */}
         <div className="space-y-1.5 border-b border-theme-subtle pb-3">
           <div className="flex items-center gap-2 text-xs font-mono text-theme-muted">
             <Link to="/tools" className="hover:text-theme-main transition-colors flex items-center gap-1">
@@ -39,8 +40,13 @@ export const Base64Page: React.FC = () => {
         {/* Tool */}
         <Base64Tool />
 
-        {/* SEO Wrapper (Feature Cards, Detailed Guide, FAQs) */}
-        <ToolSeoWrapper toolKey="base64Encoder" />
+        {/* SEO Wrapper with rich technical docs and contextual internal links */}
+        <ToolSeoWrapper
+          toolKey="base64Encoder"
+          relatedToolIds={['jwt-inspector', 'hash-generator', 'json-formatter', 'curl-converter']}
+        >
+          <Base64Docs />
+        </ToolSeoWrapper>
 
         <CTASection />
       </div>

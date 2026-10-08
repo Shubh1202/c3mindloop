@@ -6,6 +6,7 @@ import { ArrowLeft } from 'lucide-react';
 import { NodeEventLoopVisualizerTool } from '../components/tools/NodeEventLoopVisualizerTool';
 import { CTASection } from '../components/sections/CTASection';
 import { ToolSeoWrapper } from '../components/seo/ToolSeoWrapper';
+import { EventLoopDocs } from '../components/seo/docs/EventLoopDocs';
 import { useTranslation } from '../lib/i18n';
 
 export const NodeEventLoopVisualizerPage: React.FC = () => {
@@ -40,8 +41,13 @@ export const NodeEventLoopVisualizerPage: React.FC = () => {
         {/* Tool Component - Starts directly with toolbar */}
         <NodeEventLoopVisualizerTool />
 
-        {/* SEO Technical Workflow & FAQ (renders feature cards + guide + FAQ) */}
-        <ToolSeoWrapper toolKey="nodeEventLoopVisualizer" />
+        {/* SEO Wrapper with rich technical docs and contextual internal links */}
+        <ToolSeoWrapper
+          toolKey="nodeEventLoopVisualizer"
+          relatedToolIds={['js-event-loop-visualizer', 'git-visualizer', 'code-complexity-analyzer']}
+        >
+          <EventLoopDocs />
+        </ToolSeoWrapper>
 
         {/* CTA Section */}
         <CTASection />

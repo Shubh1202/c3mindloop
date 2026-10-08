@@ -6,6 +6,7 @@ import { ArrowLeft } from 'lucide-react';
 import { PasswordShuffleGeneratorTool } from '../components/tools/PasswordShuffleGeneratorTool';
 import { CTASection } from '../components/sections/CTASection';
 import { ToolSeoWrapper } from '../components/seo/ToolSeoWrapper';
+import { PasswordShuffleDocs } from '../components/seo/docs/PasswordShuffleDocs';
 import { useTranslation } from '../lib/i18n';
 
 export const PasswordShuffleGeneratorPage: React.FC = () => {
@@ -15,7 +16,7 @@ export const PasswordShuffleGeneratorPage: React.FC = () => {
     <div className="pt-6 sm:pt-8 pb-16 bg-app text-theme-main relative z-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
 
-        {/* Breadcrumb Navigation & Title */}
+        {/* Breadcrumb + H1 */}
         <div className="space-y-1.5 border-b border-theme-subtle pb-3">
           <div className="flex items-center gap-2 text-xs font-mono text-theme-muted">
             <Link to="/tools" className="hover:text-theme-main transition-colors flex items-center gap-1">
@@ -23,12 +24,12 @@ export const PasswordShuffleGeneratorPage: React.FC = () => {
               <span>{t('tools.passwordShuffleGenerator.breadcrumbParent', 'Developer Tools')}</span>
             </Link>
             <span>/</span>
-            <span className="text-[#1D9BF0] font-semibold">{t('tools.passwordShuffleGenerator.breadcrumb', 'Password & Shuffle Generator')}</span>
+            <span className="text-[#1D9BF0] font-semibold">{t('tools.passwordShuffleGenerator.breadcrumb', 'Password Generator')}</span>
           </div>
 
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-0.5">
             <h1 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight text-theme-main">
-              {t('tools.passwordShuffleGenerator.pageTitle', 'Password & Shuffle Generator')}
+              {t('tools.passwordShuffleGenerator.pageTitle', 'Password Generator & List Randomizer')}
             </h1>
             <span className="text-[11px] font-mono text-neutral-400 bg-surface px-2.5 py-1 rounded border border-theme-subtle shrink-0">
               {t('tools.passwordShuffleGenerator.pageBadge', '100% Client-Side • crypto.getRandomValues')}
@@ -36,11 +37,16 @@ export const PasswordShuffleGeneratorPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Tool Component */}
+        {/* Tool */}
         <PasswordShuffleGeneratorTool />
 
-        {/* Reusable SEO Layout Wrapper */}
-        <ToolSeoWrapper toolKey="passwordShuffleGenerator" />
+        {/* SEO Wrapper with rich technical docs and contextual internal links */}
+        <ToolSeoWrapper
+          toolKey="passwordShuffleGenerator"
+          relatedToolIds={['hash-generator', 'jwt-inspector', 'base64-encoder']}
+        >
+          <PasswordShuffleDocs />
+        </ToolSeoWrapper>
 
         <CTASection />
       </div>

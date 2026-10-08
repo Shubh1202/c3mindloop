@@ -6,6 +6,7 @@ import { ArrowLeft } from 'lucide-react';
 import { QrCodeGeneratorTool } from '../components/tools/QrCodeGeneratorTool';
 import { CTASection } from '../components/sections/CTASection';
 import { ToolSeoWrapper } from '../components/seo/ToolSeoWrapper';
+import { QrCodeDocs } from '../components/seo/docs/QrCodeDocs';
 import { useTranslation } from '../lib/i18n';
 
 export const QrCodeGeneratorPage: React.FC = () => {
@@ -39,8 +40,13 @@ export const QrCodeGeneratorPage: React.FC = () => {
         {/* Tool Component */}
         <QrCodeGeneratorTool />
 
-        {/* Reusable SEO Layout Wrapper */}
-        <ToolSeoWrapper toolKey="qrCodeGenerator" />
+        {/* SEO Wrapper with rich technical docs and contextual internal links */}
+        <ToolSeoWrapper
+          toolKey="qrCodeGenerator"
+          relatedToolIds={['base64-encoder', 'hash-generator', 'password-shuffle-generator']}
+        >
+          <QrCodeDocs />
+        </ToolSeoWrapper>
 
         <CTASection />
       </div>

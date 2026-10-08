@@ -6,6 +6,7 @@ import { ArrowLeft } from 'lucide-react';
 import { GitVisualizerTool } from '../components/tools/GitVisualizerTool';
 import { CTASection } from '../components/sections/CTASection';
 import { ToolSeoWrapper } from '../components/seo/ToolSeoWrapper';
+import { GitVisualizerDocs } from '../components/seo/docs/GitVisualizerDocs';
 import { useTranslation } from '../lib/i18n';
 
 export const GitVisualizerPage: React.FC = () => {
@@ -40,8 +41,13 @@ export const GitVisualizerPage: React.FC = () => {
         {/* Tool Component - Starts directly with toolbar */}
         <GitVisualizerTool />
 
-        {/* SEO Technical Workflow & FAQ (renders feature cards + guide + FAQ) */}
-        <ToolSeoWrapper toolKey="gitVisualizer" />
+        {/* SEO Wrapper with rich technical docs and contextual internal links */}
+        <ToolSeoWrapper
+          toolKey="gitVisualizer"
+          relatedToolIds={['diff-checker', 'code-complexity-analyzer', 'js-event-loop-visualizer']}
+        >
+          <GitVisualizerDocs />
+        </ToolSeoWrapper>
 
         {/* CTA Section */}
         <CTASection />

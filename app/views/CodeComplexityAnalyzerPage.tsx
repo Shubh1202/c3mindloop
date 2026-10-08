@@ -6,6 +6,7 @@ import { ArrowLeft } from 'lucide-react';
 import { CodeComplexityAnalyzerTool } from '../components/tools/CodeComplexityAnalyzerTool';
 import { CTASection } from '../components/sections/CTASection';
 import { ToolSeoWrapper } from '../components/seo/ToolSeoWrapper';
+import { CodeComplexityDocs } from '../components/seo/docs/CodeComplexityDocs';
 import { useTranslation } from '../lib/i18n';
 
 export const CodeComplexityAnalyzerPage: React.FC = () => {
@@ -28,10 +29,10 @@ export const CodeComplexityAnalyzerPage: React.FC = () => {
 
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-0.5">
             <h1 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight text-theme-main">
-              {t('tools.codeComplexityAnalyzer.pageTitle', 'Code Complexity Analyzer -  Cyclomatic & Cognitive Complexity')}
+              {t('tools.codeComplexityAnalyzer.pageTitle', 'Code Complexity Analyzer')}
             </h1>
             <span className="text-[11px] font-mono text-neutral-400 bg-surface px-2.5 py-1 rounded border border-theme-subtle shrink-0">
-              {t('tools.codeComplexityAnalyzer.pageBadge', '100% Client-Side · No Upload')}
+              {t('tools.codeComplexityAnalyzer.pageBadge', '100% Client-Side • Local Browser Processing')}
             </span>
           </div>
         </div>
@@ -39,8 +40,13 @@ export const CodeComplexityAnalyzerPage: React.FC = () => {
         {/* Tool */}
         <CodeComplexityAnalyzerTool />
 
-        {/* SEO content -  How it works, Privacy section, FAQ */}
-        <ToolSeoWrapper toolKey="codeComplexityAnalyzer" />
+        {/* SEO Wrapper with rich technical docs and contextual internal links */}
+        <ToolSeoWrapper
+          toolKey="codeComplexityAnalyzer"
+          relatedToolIds={['diff-checker', 'regex-tester', 'git-visualizer', 'json-formatter']}
+        >
+          <CodeComplexityDocs />
+        </ToolSeoWrapper>
 
         <CTASection />
       </div>
