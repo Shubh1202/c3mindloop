@@ -67,6 +67,15 @@ const formatted = JSON.stringify(JSON.parse(input), null, 2);`
     techStack: ['RegExp Engine', 'Capture Groups', 'Syntax Highlighting']
   },
   {
+    id: 'regex-railroad',
+    nameKey: 'RegEx Railroad Diagram Generator',
+    descKey: 'Visualize Regular Expressions as clean SVG railroad/flowchart syntax diagrams. Highlights capture groups, lookaheads, quantifiers, and character classes. Export as SVG.',
+    status: 'live',
+    category: 'utilities',
+    icon: 'GitBranch',
+    techStack: ['Client-Side Regex Lexer', 'SVG Flow Generator', 'Local Processing']
+  },
+  {
     id: 'cron-visualizer',
     nameKey: 'Cron Expression Visualizer & Generator',
     descKey: 'Parse 5-part and 6-part Cron expressions, get human-readable descriptions, and calculate the next 5 scheduled execution times in local and UTC.',

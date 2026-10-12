@@ -100,6 +100,7 @@ export const ProductsPage: React.FC = () => {
                   'curl-converter': '/tools/curl-converter',
                   'cron-visualizer': '/tools/cron-visualizer',
                   'regex-tester': '/tools/regex-tester',
+                  'regex-railroad': '/tools/regex-railroad-generator',
                   'sql-to-json': '/tools/sql-to-json',
                   'hash-generator': '/tools/hash-generator',
                   'ats-resume-generator': '/tools/ats-resume-generator',
