@@ -660,28 +660,154 @@ export const AtsResumeTool: React.FC = () => {
       ),
     }));
 
-  // Print / PDF Export
+  // Print / PDF Export — opens an isolated popup so only the resume is printed
   const handlePrint = () => {
-    const htmlEl = document.documentElement;
-    const wasDark = htmlEl.classList.contains('dark');
+    const printRoot = document.getElementById('ats-resume-print-root');
+    if (!printRoot) return;
 
-    // Force light mode so browser print preview draws pure white margins
-    if (wasDark) {
-      htmlEl.classList.remove('dark');
-      htmlEl.classList.add('light');
+    const resumeHTML = printRoot.innerHTML;
+
+    const printWindow = window.open('', '_blank', 'width=900,height=1200,toolbar=0,menubar=0,scrollbars=1');
+    if (!printWindow) {
+      // Popup was blocked — fall back to window.print() with a warning
+      alert('Popup was blocked. Please allow popups for this site to export PDF, or use the browser print shortcut (Ctrl+P) after switching to the Preview tab.');
+      return;
     }
 
-    window.print();
+    const printCSS = `
+      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
-    if (wasDark) {
-      const restoreDark = () => {
-        htmlEl.classList.remove('light');
-        htmlEl.classList.add('dark');
-        window.removeEventListener('afterprint', restoreDark);
-      };
-      window.addEventListener('afterprint', restoreDark, { once: true });
-      setTimeout(restoreDark, 2000);
-    }
+      @page {
+        size: A4 portrait;
+        margin: 12mm 15mm;
+      }
+
+      *, *::before, *::after {
+        box-sizing: border-box;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+
+      html, body {
+        margin: 0;
+        padding: 0;
+        background: #ffffff;
+        color: #111111;
+        font-family: Arial, Helvetica, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        font-size: 12px;
+        line-height: 1.35;
+      }
+
+      /* Tailwind utility resets needed for the resume classes */
+      .text-center { text-align: center; }
+      .text-justify { text-align: justify; }
+      .font-bold { font-weight: 700; }
+      .font-semibold { font-weight: 600; }
+      .font-medium { font-weight: 500; }
+      .font-mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+      .italic { font-style: italic; }
+      .uppercase { text-transform: uppercase; }
+
+      .m-0 { margin: 0; }
+      .mt-0 { margin-top: 0; }
+      .mb-0 { margin-bottom: 0; }
+      .mb-1 { margin-bottom: 4px; }
+      .mb-1\\.5 { margin-bottom: 6px; }
+      .mb-2 { margin-bottom: 8px; }
+      .mb-3 { margin-bottom: 12px; }
+      .mt-0\\.5 { margin-top: 2px; }
+      .mt-1 { margin-top: 4px; }
+      .mt-1\\.5 { margin-top: 6px; }
+      .ml-2 { margin-left: 8px; }
+      .ml-4 { margin-left: 16px; }
+
+      .p-0 { padding: 0; }
+      .pb-0\\.5 { padding-bottom: 2px; }
+      .pb-2\\.5 { padding-bottom: 10px; }
+
+      .flex { display: flex; }
+      .flex-wrap { flex-wrap: wrap; }
+      .items-baseline { align-items: baseline; }
+      .justify-between { justify-content: space-between; }
+      .justify-center { justify-content: center; }
+      .gap-x-2 { column-gap: 8px; }
+      .gap-y-0\\.5 { row-gap: 2px; }
+      .gap-2 { gap: 8px; }
+      .gap-x-2 { column-gap: 8px; }
+      .shrink-0 { flex-shrink: 0; }
+      .space-y-0\\.5 > * + * { margin-top: 2px; }
+      .space-y-1\\.5 > * + * { margin-top: 6px; }
+      .space-y-2\\.5 > * + * { margin-top: 10px; }
+
+      .w-full { width: 100%; }
+      .min-h-0 { min-height: 0; }
+      .leading-tight { line-height: 1.25; }
+      .leading-normal { line-height: 1.5; }
+
+      .border-b { border-bottom-width: 1px; border-bottom-style: solid; }
+      .border-neutral-400 { border-color: #a3a3a3; }
+      .border-neutral-900 { border-color: #171717; }
+
+      .text-black { color: #000000; }
+      .text-neutral-600 { color: #525252; }
+      .text-neutral-700 { color: #404040; }
+      .text-neutral-800 { color: #262626; }
+      .text-neutral-900 { color: #171717; }
+      .text-neutral-400 { color: #a3a3a3; }
+
+      .tracking-wider { letter-spacing: 0.05em; }
+      .tracking-\\[0\\.08em\\] { letter-spacing: 0.08em; }
+
+      .list-disc { list-style-type: disc; }
+      .select-none { user-select: none; }
+      .no-underline { text-decoration: none; }
+
+      a { color: #262626; text-decoration: none; }
+
+      /* Page break rules */
+      .ats-resume-header { page-break-after: avoid; break-after: avoid; }
+      .ats-section { page-break-inside: auto; break-inside: auto; margin-bottom: 10px; }
+      .ats-section-title { page-break-after: avoid; break-after: avoid; page-break-inside: avoid; break-inside: avoid; }
+      .ats-entry { page-break-inside: avoid; break-inside: avoid; }
+      .ats-bullet { page-break-inside: avoid; break-inside: avoid; }
+      p, li { orphans: 3; widows: 3; }
+
+      /* Font size helpers used inline */
+      .text-\\[20px\\] { font-size: 20px; }
+      .text-\\[22px\\] { font-size: 22px; }
+      .text-\\[12px\\] { font-size: 12px; }
+      .text-\\[12\\.5px\\] { font-size: 12.5px; }
+      .text-\\[11\\.5px\\] { font-size: 11.5px; }
+      .text-\\[11px\\] { font-size: 11px; }
+      .text-\\[10px\\] { font-size: 10px; }
+      .leading-\\[1\\.4\\] { line-height: 1.4; }
+      .leading-\\[1\\.38\\] { line-height: 1.38; }
+      .text-sm { font-size: 14px; }
+      .text-xs { font-size: 12px; }
+    `;
+
+    printWindow.document.write(`<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Resume — ${data.contact.name || 'Export'}</title>
+  <style>${printCSS}</style>
+</head>
+<body>
+  ${resumeHTML}
+  <script>
+    window.onload = function () {
+      window.print();
+      window.addEventListener('afterprint', function () { window.close(); });
+      // Fallback close in case afterprint doesn't fire
+      setTimeout(function () { window.close(); }, 5000);
+    };
+  <\/script>
+</body>
+</html>`);
+
+    printWindow.document.close();
   };
 
   // â”€â”€ Save Progress as JSON â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
