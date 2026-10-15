@@ -725,6 +725,37 @@ export const seoConfig = {
       images: [defaultOgImage],
     },
   },
+
+  codeCompiler: {
+    title: 'Online Code Compiler - Run Python, JavaScript, Java, C, C++, PHP | C³ MindLoop',
+    description:
+      'Free online multi-language code compiler and runner. Execute Python 3, JavaScript (Node.js), Java, C, C++, and PHP code directly in your browser with real-time stdout/stderr, interactive stdin, and distraction-free fullscreen IDE mode. No signup required.',
+    keywords: [
+      'online compiler', 'online code runner', 'online ide',
+      'run python online', 'run javascript online', 'run java online',
+      'run c online', 'run cpp online', 'c++ online compiler', 'run php online',
+      'php online compiler', 'php runner online', 'php code editor',
+      'free code compiler', 'browser compiler', 'execute code online',
+      'python playground', 'javascript runner online', 'java compiler online',
+      'fullscreen code compiler', 'online terminal code runner',
+      'code editor with stdin', 'no signup compiler', 'sandboxed code execution',
+      'C³ MindLoop code compiler', 'ccube compiler',
+    ],
+    canonical: `${BASE_URL}/compiler`,
+    openGraph: {
+      title: 'Online Code Compiler - Run Python, JS, Java, C, C++, PHP | C³ MindLoop',
+      description:
+        'Run Python, JavaScript, Java, C, C++, and PHP code directly in your browser. Real-time stdout, stderr diagnostics, interactive stdin & full-screen mode.',
+      url: `${BASE_URL}/compiler`,
+      images: [{ url: defaultOgImage, width: 1200, height: 630, alt: 'Online Code Compiler - C³ MindLoop' }],
+    },
+    twitter: {
+      title: 'Online Code Compiler - Run Python, JS, Java, C, C++, PHP | C³ MindLoop',
+      description:
+        'Execute code online in 6 languages with instant stdout, stderr, stdin, and fullscreen IDE mode. 100% Free.',
+      images: [defaultOgImage],
+    },
+  },
 };
 
 // ── JSON-LD Schemas ──────────────────────────────────────────────────────────
@@ -1236,6 +1267,84 @@ export const qrCodeGeneratorSchema = {
   ],
   offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
   publisher: { '@type': 'Organization', name: 'C\u00b3 MindLoop', url: BASE_URL },
+};
+
+export const codeCompilerSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: 'Online Code Compiler & Playground',
+  url: `${BASE_URL}/compiler`,
+  applicationCategory: 'DeveloperApplication',
+  operatingSystem: 'All Web Browsers',
+  description:
+    'Free online multi-language code compiler and runner. Execute Python 3, JavaScript (Node.js), Java, C, C++, and PHP directly in your browser with sandboxed isolation, interactive stdin, and distraction-free fullscreen IDE mode.',
+  featureList: [
+    'Multi-language support: Python 3, JavaScript (Node.js), Java (OpenJDK 21), C (GCC 13/14), C++ (G++ 14), and PHP (PHP 8.3)',
+    'High-speed sandboxed code execution with real stdout and stderr isolation',
+    'Interactive standard input (stdin) support for terminal prompt simulation',
+    'Distraction-free Fullscreen IDE Mode with Esc keyboard shortcut',
+    'Keyboard hotkeys: Ctrl+Enter (Run code), Tab (smart 2-space indentation), Esc (Exit fullscreen)',
+    'Execution runtime tracking in milliseconds with exit code badges',
+    'One-click code reset, file upload (.py, .js, .java, .c, .cpp, .php), and terminal copy',
+    'Zero installation and no account registration required',
+  ],
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+  publisher: { '@type': 'Organization', name: 'C\u00b3 MindLoop', url: BASE_URL },
+};
+
+export const codeCompilerFaqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'Which programming languages can I compile and run online?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'C³ MindLoop Online Code Compiler supports Python 3, JavaScript (Node.js), Java (OpenJDK 21), C (GCC), C++ (G++), and PHP (PHP 8.3). Each language includes sample boilerplate code to help you get started immediately.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'How does the interactive Standard Input (stdin) feature work?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Click the "stdin" button in the compiler toolbar to expand the input panel. Any text provided in this box is automatically streamed to your program when reading from input (such as input() in Python, scanf() in C, Scanner in Java, or fgets(STDIN) in PHP).',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'How do I enter and exit Full Screen IDE mode?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Click the "Full Screen" button in the upper right toolbar to expand the editor and terminal across your entire display. You can quickly exit full screen at any time by pressing the Escape (Esc) key or clicking the Exit button.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Is there a keyboard shortcut to run code quickly?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Yes! Press Ctrl+Enter on Windows/Linux or Cmd+Enter on macOS inside the code editor to compile and execute your code immediately without clicking the Run button.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Is code execution safe and isolated?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Yes. All programs execute inside an isolated sandbox environment with execution timeouts and automatic temporary directory cleanup. System process spawning and unauthorized access are strictly restricted.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Do I need to install any compilers or pay for an API key?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'No. The C³ MindLoop compiler is 100% free with no login, no third-party API keys, and no local compilers required. Everything runs seamlessly in the browser.',
+      },
+    },
+  ],
 };
 
 

@@ -90,6 +90,13 @@ const ALL_TOOLS: Record<string, RelatedToolItem> = {
     href: '/tools/code-complexity-analyzer',
     category: 'Code Quality',
   },
+  'code-compiler': {
+    id: 'code-compiler',
+    name: 'Online Code Compiler',
+    description: 'Compile and run Python, JavaScript, Java, C, and C++ in a sandboxed IDE.',
+    href: '/compiler',
+    category: 'Execution',
+  },
 };
 
 interface RelatedToolsSectionProps {

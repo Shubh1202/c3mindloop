@@ -36,6 +36,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE_URL}/tools/git-visualizer`,              lastModified: TODAY,     changeFrequency: 'weekly', priority: 0.9 },
     { url: `${BASE_URL}/tools/qr-code-generator`,           lastModified: TODAY,     changeFrequency: 'weekly', priority: 0.9 },
     { url: `${BASE_URL}/tools/regex-railroad-generator`,    lastModified: TODAY,     changeFrequency: 'weekly', priority: 0.9 },
+    { url: `${BASE_URL}/compiler`,                         lastModified: TODAY,     changeFrequency: 'weekly', priority: 0.95 },
 
     // ── Content pages ────────────────────────────────────────────────────────
     { url: `${BASE_URL}/blog`,           lastModified: TODAY,     changeFrequency: 'daily',  priority: 0.8  },

@@ -33,6 +33,7 @@ export const Navbar: React.FC<{
   const navLinks = [
     { name: t('navbar.home', 'Home'), path: '/' },
     { name: t('navbar.tools', 'Tools'), path: '/tools' },
+    { name: 'Compiler', path: '/compiler' },
     { name: t('navbar.guides', 'Guides'), path: '/guides' },
     { name: t('navbar.projects', 'Projects'), path: '/projects' },
     { name: t('navbar.reviews', 'Reviews'), path: '/reviews' },
@@ -51,7 +52,7 @@ export const Navbar: React.FC<{
           {/* Desktop Navigation Links */}
           <nav className="hidden lg:flex items-center gap-1 bg-neutral-900/80 p-1 rounded-lg border border-white/10 backdrop-blur-md shadow-sm relative z-50 pointer-events-auto">
             {navLinks.map((link) => {
-              const isActive = location.pathname === link.path || (link.path === '/tools' && location.pathname.startsWith('/tools'));
+              const isActive = location.pathname === link.path || (link.path === '/tools' && location.pathname.startsWith('/tools')) || (link.path === '/compiler' && location.pathname.startsWith('/compiler'));
               const isTools = link.path === '/tools';
 
               if (isTools) {
