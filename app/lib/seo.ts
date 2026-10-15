@@ -1,3 +1,5 @@
+import { BASE_URL } from '../config/seo.config';
+
 export interface SEOProps {
   title?: string;
   description?: string;
@@ -11,8 +13,8 @@ export interface SEOProps {
 export const defaultSEO = {
   title: 'C³ MindLoop',
   description: 'Free browser-based developer tools that process data locally.',
-  url: 'https://www.c3mindloop.com',
-  ogImage: '/logo.svg',
+  url: BASE_URL,
+  ogImage: `${BASE_URL}/logo.svg`,
   siteName: 'C³ MindLoop'
 };
 
@@ -21,8 +23,8 @@ export function generateOrganizationSchema() {
     '@context': 'https://schema.org',
     '@type': 'Organization',
     name: 'C³ MindLoop',
-    url: 'https://www.c3mindloop.com',
-    logo: '/logo.svg',
+    url: BASE_URL,
+    logo: `${BASE_URL}/logo.svg`,
     slogan: 'Coding. Crashing. Crying.',
     description: 'Free browser-based developer tools that process data locally.',
     foundingDate: '2025',
@@ -37,10 +39,10 @@ export function generateWebsiteSchema() {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
     name: 'C³ MindLoop',
-    url: 'https://www.c3mindloop.com',
+    url: BASE_URL,
     potentialAction: {
       '@type': 'SearchAction',
-      target: 'https://www.c3mindloop.com/blog?q={search_term_string}',
+      target: `${BASE_URL}/blog?q={search_term_string}`,
       'query-input': 'required name=search_term_string'
     }
   };
@@ -54,7 +56,7 @@ export function generateBreadcrumbSchema(items: { name: string; url: string }[])
       '@type': 'ListItem',
       position: index + 1,
       name: item.name,
-      item: `https://www.c3mindloop.com${item.url}`
+      item: `${BASE_URL}${item.url}`
     }))
   };
 }
@@ -71,7 +73,7 @@ export function generateArticleSchema(article: {
     '@type': 'Article',
     headline: article.title,
     description: article.description,
-    url: `https://www.c3mindloop.com${article.url}`,
+    url: `${BASE_URL}${article.url}`,
     datePublished: article.datePublished,
     author: {
       '@type': 'Person',

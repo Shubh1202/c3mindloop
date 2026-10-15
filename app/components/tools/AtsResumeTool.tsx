@@ -324,9 +324,13 @@ const ResumePreview: React.FC<{ data: ResumeData; isPrint?: boolean }> = ({ data
     >
       {/* Header */}
       <header className="ats-resume-header text-center mb-3 pb-2.5 border-b border-neutral-400">
-        <h1 className="text-[20px] sm:text-[22px] font-bold uppercase tracking-wider text-black m-0 leading-tight">
+        <div
+          role="heading"
+          aria-level={2}
+          className="text-[20px] sm:text-[22px] font-bold uppercase tracking-wider text-black m-0 leading-tight"
+        >
           {contact.name || 'Your Name'}
-        </h1>
+        </div>
         {contactItems.length > 0 && (
           <div className="flex flex-wrap justify-center items-center gap-x-2 gap-y-0.5 mt-1.5 text-[11.5px] text-neutral-800">
             {renderSeparated(contactItems)}

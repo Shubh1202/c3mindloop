@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { ProductsPage } from '@/app/views/ProductsPage';
+import { toolsCollectionSchema, BASE_URL } from '@/app/config/seo.config';
 
 export const metadata: Metadata = {
   title: 'Free Developer Utilities - JSON Formatter, JWT Decoder, Base64 Encoder',
@@ -11,12 +12,12 @@ export const metadata: Metadata = {
     'client side developer tools', 'developer tools no login', 'private dev tools',
     'C³ MindLoop tools', 'ccube dev tools', 'c3mindloop utilities',
   ],
-  alternates: { canonical: 'https://www.c3mindloop.com/tools' },
+  alternates: { canonical: `${BASE_URL}/tools` },
   openGraph: {
     title: 'Free Developer Utilities - JSON, JWT, Base64 | C³ MindLoop',
     description:
       'Browse all C³ MindLoop free developer tools: JSON Formatter, Base64 Encoder, JWT Decoder and more. 100% client-side, no data collection.',
-    url: 'https://www.c3mindloop.com/tools',
+    url: `${BASE_URL}/tools`,
   },
   twitter: {
     card: 'summary_large_image',
@@ -26,5 +27,13 @@ export const metadata: Metadata = {
 };
 
 export default function Page() {
-  return <ProductsPage />;
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(toolsCollectionSchema) }}
+      />
+      <ProductsPage />
+    </>
+  );
 }

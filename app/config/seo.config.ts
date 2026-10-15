@@ -1347,4 +1347,42 @@ export const codeCompilerFaqSchema = {
   ],
 };
 
+export const toolsCollectionSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: 'Free Developer Utilities - C³ MindLoop',
+  description: 'Browse all C³ MindLoop free developer tools: JSON Formatter, Base64 Encoder, JWT Decoder and more. 100% client-side, no login, no data collection.',
+  url: `${BASE_URL}/tools`,
+  mainEntity: {
+    '@type': 'ItemList',
+    name: 'Developer Utilities & Tools',
+    numberOfItems: 22,
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'JSON Formatter & Validator', url: `${BASE_URL}/tools/json-formatter` },
+      { '@type': 'ListItem', position: 2, name: 'Base64 Encoder & Decoder', url: `${BASE_URL}/tools/base64-encoder` },
+      { '@type': 'ListItem', position: 3, name: 'JWT Inspector & Token Debugger', url: `${BASE_URL}/tools/jwt-inspector` },
+      { '@type': 'ListItem', position: 4, name: 'Cryptographic Hash Generator', url: `${BASE_URL}/tools/hash-generator` },
+      { '@type': 'ListItem', position: 5, name: 'Password & Shuffle Generator', url: `${BASE_URL}/tools/password-shuffle-generator` },
+      { '@type': 'ListItem', position: 6, name: 'cURL to Code Converter', url: `${BASE_URL}/tools/curl-converter` },
+      { '@type': 'ListItem', position: 7, name: 'Regex Matcher & Syntax Tester', url: `${BASE_URL}/tools/regex-tester` },
+      { '@type': 'ListItem', position: 8, name: 'RegEx Railroad Diagram Generator', url: `${BASE_URL}/tools/regex-railroad-generator` },
+      { '@type': 'ListItem', position: 9, name: 'Cron Expression Visualizer & Generator', url: `${BASE_URL}/tools/cron-visualizer` },
+      { '@type': 'ListItem', position: 10, name: 'SQL & cURL to JSON Converter', url: `${BASE_URL}/tools/sql-to-json` },
+      { '@type': 'ListItem', position: 11, name: 'ATS Resume Generator', url: `${BASE_URL}/tools/ats-resume-generator` },
+      { '@type': 'ListItem', position: 12, name: 'PDF Suite (Compress, Merge & Split)', url: `${BASE_URL}/tools/pdf-suite` },
+      { '@type': 'ListItem', position: 13, name: 'Edit PDF', url: `${BASE_URL}/tools/edit-pdf` },
+      { '@type': 'ListItem', position: 14, name: 'AI Prompt Context Builder', url: `${BASE_URL}/tools/ai-prompt-builder` },
+      { '@type': 'ListItem', position: 15, name: 'Diff Checker', url: `${BASE_URL}/tools/diff-checker` },
+      { '@type': 'ListItem', position: 16, name: 'JSON Graph Visualizer', url: `${BASE_URL}/tools/json-graph` },
+      { '@type': 'ListItem', position: 17, name: 'Code Complexity Analyzer', url: `${BASE_URL}/tools/code-complexity-analyzer` },
+      { '@type': 'ListItem', position: 18, name: 'Tool Pipeline Builder', url: `${BASE_URL}/tools/pipeline` },
+      { '@type': 'ListItem', position: 19, name: 'Node.js Event Loop Visualizer', url: `${BASE_URL}/tools/node-event-loop-visualizer` },
+      { '@type': 'ListItem', position: 20, name: 'JavaScript Event Loop Visualizer', url: `${BASE_URL}/tools/js-event-loop-visualizer` },
+      { '@type': 'ListItem', position: 21, name: 'Git Interactive DAG Visualizer', url: `${BASE_URL}/tools/git-visualizer` },
+      { '@type': 'ListItem', position: 22, name: 'QR Code Generator', url: `${BASE_URL}/tools/qr-code-generator` },
+    ],
+  },
+};
+
+
 
