@@ -5,7 +5,7 @@ import { BASE_URL } from '../../config/seo.config';
 const canonical = `${BASE_URL}/tools/regex-railroad-generator`;
 
 export const metadata: Metadata = {
-  title: 'RegEx Railroad Diagram Generator — Visualize Regex as SVG Flowcharts | C³ MindLoop',
+  title: 'RegEx Railroad Diagram Generator — Visualize Regex as SVG Flowcharts',
   description:
     'Visualize complex Regular Expressions as clean, intuitive SVG railroad/flowchart syntax diagrams. Live lexer with capture groups, lookaheads, quantifiers, and character class highlighting. 100% client-side, zero server upload.',
   keywords: [

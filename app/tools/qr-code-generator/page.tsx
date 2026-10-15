@@ -44,7 +44,7 @@ const qrCodeGeneratorFaqSchema = {
 };
 
 export const metadata: Metadata = {
-  title: 'QR Code Generator — Free Online Tool | URL, Wi-Fi, vCard | C³ MindLoop',
+  title: 'QR Code Generator — Free Online Tool | URL, Wi-Fi, vCard',
   description: 'Free, 100% private QR code generator. Create QR codes for URLs, text, email, phone, Wi-Fi, and vCard contacts. Export as PNG, WebP, or SVG. Custom colors & error correction. All client-side.',
   keywords: qrCodeGenerator.keywords,
   alternates: { canonical: qrCodeGenerator.canonical },

@@ -5,7 +5,9 @@ import { seoConfig } from './config/seo.config';
 const { home } = seoConfig;
 
 export const metadata: Metadata = {
-  title: home.title,
+  // Use title.absolute so the root layout's titleTemplate ('%s | C³ MindLoop')
+  // is not applied — the home title already starts with the brand name.
+  title: { absolute: home.title },
   description: home.description,
   keywords: [...home.keywords],
   alternates: { canonical: home.canonical },

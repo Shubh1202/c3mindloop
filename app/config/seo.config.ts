@@ -108,7 +108,7 @@ export const seoConfig = {
   },
 
   pipeline: {
-    title: 'Tool Pipeline Builder - Chain Developer Tools | C³ MindLoop',
+    title: 'Tool Pipeline Builder - Chain Developer Tools',
     description:
       'Chain multiple developer tools in sequence: Base64 decode, JSON format, JWT inspect, regex filter and more. Each step feeds the next. 100% client-side, zero server upload.',
     keywords: [
@@ -133,7 +133,7 @@ export const seoConfig = {
   },
 
   base64Encoder: {
-    title: 'Base64 Encoder & Decoder - Free Online Tool | 100% Private Client-Side | C³ MindLoop',
+    title: 'Base64 Encoder & Decoder - Free Online Tool | 100% Private Client-Side',
     description:
       'Free online Base64 encoder and decoder. 100% Private & Client-Side with zero server upload. Encode text, decode Base64 strings, and generate file Data URIs securely.',
     keywords: [
@@ -364,7 +364,7 @@ export const seoConfig = {
     },
   },
   passwordShuffleGenerator: {
-    title: 'Password Generator & List Randomizer - Free Online Tool | 100% Private | C³ MindLoop',
+    title: 'Password Generator & List Randomizer - Free Online Tool | 100% Private',
     description:
       'Free online password generator and shuffle/randomizer. Generate cryptographically secure passwords with configurable length, character sets, and entropy display. Shuffle any list or string. 100% client-side via crypto.getRandomValues, zero server upload, GDPR compliant.',
     keywords: [
@@ -416,7 +416,7 @@ export const seoConfig = {
     },
   },
   qrCodeGenerator: {
-    title: 'QR Code Generator — URL, Wi-Fi, vCard, Email | Free Online Tool | C³ MindLoop',
+    title: 'QR Code Generator — URL, Wi-Fi, vCard, Email | Free Online Tool',
     description:
       'Free online QR code generator. Create QR codes for URLs, text, email, phone numbers, Wi-Fi networks, and vCard contacts. Export as PNG, WebP, or SVG with custom colors and error correction. 100% client-side, zero upload.',
     keywords: [
@@ -539,7 +539,7 @@ export const seoConfig = {
   },
 
   diffChecker: {
-    title: 'Diff Checker - Compare Text & Code Online | Free, 100% Private | C³ MindLoop',
+    title: 'Diff Checker - Compare Text & Code Online | Free, 100% Private',
     description:
       'Free online diff checker. Compare two versions of code, JSON, YAML, or plain text side by side with line-level and character-level highlighting. 100% client-side, zero server upload.',
     keywords: [
@@ -567,7 +567,7 @@ export const seoConfig = {
   },
 
   jsonGraphVisualizer: {
-    title: 'JSON Graph Visualizer - Interactive Node Graph | Free, 100% Private | C³ MindLoop',
+    title: 'JSON Graph Visualizer - Interactive Node Graph | Free, 100% Private',
     description: 'Visualize JSON as an interactive node graph in your browser. Pan, zoom, expand/collapse nodes, export as PNG. 100% client-side, zero server upload.',
     keywords: [
       'json graph visualizer', 'json node graph', 'json tree visualizer', 'visualize json structure',
@@ -620,7 +620,7 @@ export const seoConfig = {
   },
 
   editPdf: {
-    title: 'Edit PDF Online Free- Annotate, Add Text, Sign & Fill Forms | C³ MindLoop',
+    title: 'Edit PDF Online Free- Annotate, Add Text, Sign & Fill Forms',
     description:
       'Free browser-based PDF editor. Add text, draw shapes, place images, sign documents, fill forms, manage pages, and download- all processed locally with no file upload required.',
     keywords: [
@@ -649,7 +649,7 @@ export const seoConfig = {
   },
 
   nodeEventLoopVisualizer: {
-    title: 'Node.js Event Loop Visualizer - Interactive Simulation | C³ MindLoop',
+    title: 'Node.js Event Loop Visualizer - Interactive Simulation',
     description:
       'Free interactive Node.js Event Loop visualizer. Step through Call Stack, Macrotasks, Microtasks, process.nextTick, Timers, and I/O phases 100% client-side.',
     keywords: [
@@ -675,7 +675,7 @@ export const seoConfig = {
   },
 
   jsEventLoopVisualizer: {
-    title: 'JavaScript Event Loop Visualizer (JSV9000 & Loupe Online) | C³ MindLoop',
+    title: 'JavaScript Event Loop Visualizer (JSV9000 & Loupe Online)',
     description:
       'Free interactive JavaScript Event Loop visualizer inspired by JS Visualizer 9000 and Loupe. Step through Call Stack, Task Queue, Microtask Queue, and the 4-phase Event Loop cycle 100% client-side in your browser.',
     keywords: [
@@ -701,7 +701,7 @@ export const seoConfig = {
   },
 
   gitVisualizer: {
-    title: 'Git Interactive DAG Visualizer & Branch Simulator | C³ MindLoop',
+    title: 'Git Interactive DAG Visualizer & Branch Simulator',
     description:
       'Free interactive Git DAG visualizer and branch simulator. Visualize git commit, branch, merge, rebase, cherry-pick, and reset in real-time with an interactive terminal. 100% client-side, zero upload.',
     keywords: [
@@ -727,7 +727,7 @@ export const seoConfig = {
   },
 
   codeCompiler: {
-    title: 'Online Code Compiler - Run Python, JavaScript, Java, C, C++, PHP | C³ MindLoop',
+    title: 'Online Code Compiler - Run Python, JavaScript, Java, C, C++, PHP',
     description:
       'Free online multi-language code compiler and runner. Execute Python 3, JavaScript (Node.js), Java, C, C++, and PHP code directly in your browser with real-time stdout/stderr, interactive stdin, and distraction-free fullscreen IDE mode. No signup required.',
     keywords: [

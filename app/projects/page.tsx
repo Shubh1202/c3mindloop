@@ -33,7 +33,7 @@ const projectsFaqPageSchema = {
 };
 
 export const metadata: Metadata = {
-  title: 'Developer Projects & Tools - C³ MindLoop',
+  title: 'Developer Projects & Tools',
   description: 'Explore practical developer tools, project updates, and resources from C³ MindLoop.',
   alternates: {
     canonical: 'https://www.c3mindloop.com/projects',

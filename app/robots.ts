@@ -7,7 +7,9 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: '*',
         allow: '/',
-        disallow: ['/api/', '/_next/'],
+        // /api/ routes are server-only endpoints; /_next/ must be allowed so
+        // Bingbot, Applebot and other crawlers can fetch CSS/JS for rendering.
+        disallow: ['/api/'],
       },
       {
         userAgent: 'Googlebot',

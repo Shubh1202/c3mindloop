@@ -1,5 +1,6 @@
 import { MetadataRoute } from 'next';
 import { BASE_URL } from './config/seo.config';
+import { getPublishedGuides } from './lib/constants';
 
 // Use static dates per page — dynamic new Date() tells Google every page
 // changed today, every single day, which erodes crawl budget trust over time.
@@ -7,6 +8,13 @@ const TODAY = '2026-10-06';
 const TOOL_DATE = '2026-10-05';
 
 export default function sitemap(): MetadataRoute.Sitemap {
+  const publishedGuides = getPublishedGuides('en').map((guide) => ({
+    url: `${BASE_URL}/guides/${guide.slug}`,
+    lastModified: guide.updatedAt || guide.publishedAt || TOOL_DATE,
+    changeFrequency: 'weekly' as const,
+    priority: 0.8,
+  }));
+
   return [
     // ── Core pages ──────────────────────────────────────────────────────────
     { url: `${BASE_URL}`,       lastModified: TODAY,     changeFrequency: 'daily',  priority: 1.0  },
@@ -39,10 +47,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE_URL}/compiler`,                         lastModified: TODAY,     changeFrequency: 'weekly', priority: 0.95 },
 
     // ── Content pages ────────────────────────────────────────────────────────
-    { url: `${BASE_URL}/blog`,           lastModified: TODAY,     changeFrequency: 'daily',  priority: 0.8  },
+    // Note: /blog is excluded because it serves 'noindex' while articles are authored.
     { url: `${BASE_URL}/guides`,         lastModified: TOOL_DATE, changeFrequency: 'weekly', priority: 0.75 },
+    ...publishedGuides,
     { url: `${BASE_URL}/about`,          lastModified: TOOL_DATE, changeFrequency: 'weekly', priority: 0.7  },
-    { url: `${BASE_URL}/products`,       lastModified: TODAY,     changeFrequency: 'weekly', priority: 0.7  },
     { url: `${BASE_URL}/projects`,       lastModified: TOOL_DATE, changeFrequency: 'weekly', priority: 0.7  },
     { url: `${BASE_URL}/services`,       lastModified: TOOL_DATE, changeFrequency: 'weekly', priority: 0.65 },
     { url: `${BASE_URL}/community`,      lastModified: TOOL_DATE, changeFrequency: 'weekly', priority: 0.65 },
