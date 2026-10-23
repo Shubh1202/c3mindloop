@@ -3,7 +3,6 @@
 import React from 'react';
 import { Link } from '../lib/router-compat';
 import { ArrowLeft } from 'lucide-react';
-import { SEOHead } from '../components/layout/SEOHead';
 import { AiPromptContextBuilderTool } from '../components/tools/AiPromptContextBuilderTool';
 import { CTASection } from '../components/sections/CTASection';
 import { ToolSeoWrapper } from '../components/seo/ToolSeoWrapper';
@@ -15,12 +14,6 @@ export const AiPromptContextBuilderPage: React.FC = () => {
 
   return (
     <>
-      <SEOHead
-        title="100% Private Client-Side AI Prompt Context Builder - C³ MindLoop"
-        description="Sanitize raw technical context locally in your browser and format them into optimized prompts for LLMs."
-        canonical="/tools/ai-prompt-builder"
-      />
-
       <div className="pt-6 sm:pt-8 pb-16 bg-app text-theme-main relative z-10 font-sans">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
 

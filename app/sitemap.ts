@@ -47,8 +47,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE_URL}/compiler`,                         lastModified: TODAY,     changeFrequency: 'weekly', priority: 0.95 },
 
     // ── Content pages ────────────────────────────────────────────────────────
-    // Note: /blog is excluded because it serves 'noindex' while articles are authored.
     { url: `${BASE_URL}/guides`,         lastModified: TOOL_DATE, changeFrequency: 'weekly', priority: 0.75 },
+    { url: `${BASE_URL}/es/guides`,      lastModified: TOOL_DATE, changeFrequency: 'weekly', priority: 0.7  },
+    { url: `${BASE_URL}/de/guides`,      lastModified: TOOL_DATE, changeFrequency: 'weekly', priority: 0.7  },
+    { url: `${BASE_URL}/ja/guides`,      lastModified: TOOL_DATE, changeFrequency: 'weekly', priority: 0.7  },
     ...publishedGuides,
     { url: `${BASE_URL}/about`,          lastModified: TOOL_DATE, changeFrequency: 'weekly', priority: 0.7  },
     { url: `${BASE_URL}/projects`,       lastModified: TOOL_DATE, changeFrequency: 'weekly', priority: 0.7  },

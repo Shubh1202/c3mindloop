@@ -1,10 +1,8 @@
 'use client';
 
 import React from 'react';
-import { motion } from 'motion/react';
-import { Terminal, ShieldCheck, Code2, Zap } from 'lucide-react';
+import { Terminal, ShieldCheck, Code2 } from 'lucide-react';
 import { useTranslation } from '../lib/i18n';
-import { SEOHead } from '../components/layout/SEOHead';
 import { CTASection } from '../components/sections/CTASection';
 
 export const AboutPage: React.FC = () => {
@@ -39,12 +37,6 @@ export const AboutPage: React.FC = () => {
 
   return (
     <>
-      <SEOHead
-        title="About C³ MindLoop - 100% Private Client-Side Developer Utilities"
-        description="Learn about C³ MindLoop, a modern privacy-first developer utility suite. Engineered for instant, 100% client-side data parsing, formatting, and cryptographic operations with zero server network latency."
-        canonical="/about"
-      />
-
       <div className="pt-16 pb-20 bg-app text-theme-main relative z-10 overflow-hidden">
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16 relative z-10">

@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { Search, Clock, ArrowRight, Share2, Check } from 'lucide-react';
 import { useTranslation } from '../lib/i18n';
 import { getPublishedGuides } from '../lib/constants';
-import { SEOHead } from '../components/layout/SEOHead';
 import { Button } from '../components/ui/Button';
 import { Modal } from '../components/ui/Modal';
 import { BlogPost } from '../types';
@@ -55,14 +54,6 @@ export const BlogPage: React.FC<{ variant?: 'blog' | 'guides' }> = ({ variant = 
 
   return (
     <>
-      {variant === 'blog' && (
-      <SEOHead
-        title="Engineering Publication - C³ MindLoop"
-        description="Deep-dive technical articles on distributed systems, AI agent design, React performance, and engineering craft by the C³ MindLoop team."
-        canonical="/blog"
-      />
-      )}
-
       <div className="pt-16 pb-20 relative z-10 bg-app">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
 

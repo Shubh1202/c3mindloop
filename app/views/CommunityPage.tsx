@@ -5,7 +5,6 @@ import { MessageSquare, Flame, AlertTriangle, Calendar, CheckCircle2, Github, Ex
 import confetti from 'canvas-confetti';
 import { useTranslation } from '../lib/i18n';
 import { CRASH_STORIES } from '../lib/constants';
-import { SEOHead } from '../components/layout/SEOHead';
 import { Button } from '../components/ui/Button';
 import { Modal } from '../components/ui/Modal';
 import { CTASection } from '../components/sections/CTASection';
@@ -67,12 +66,6 @@ export const CommunityPage: React.FC = () => {
 
   return (
     <>
-      <SEOHead
-        title="Developer Tools & Resources - C³ MindLoop"
-        description="Discover practical developer tools, resources, and ideas from C³ MindLoop."
-        canonical="/community"
-      />
-
       <div className="pt-16 pb-20 bg-app text-theme-main relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-20">
 

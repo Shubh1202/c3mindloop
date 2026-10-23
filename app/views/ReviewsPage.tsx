@@ -2,7 +2,6 @@
 
 import React from 'react';
 import Script from 'next/script';
-import { SEOHead } from '../components/layout/SEOHead';
 import { ReviewSection } from '../components/ui/ReviewSection';
 import { CTASection } from '../components/sections/CTASection';
 import { useTranslation } from '../lib/i18n';
@@ -19,25 +18,6 @@ export const ReviewsPage: React.FC = () => {
           strategy="afterInteractive"
         />
       )}
-      <SEOHead
-        title="Developer Reviews & Ratings - C³ MindLoop"
-        description="Read verified developer reviews, community ratings, and user feedback for C³ MindLoop utilities and developer tools."
-        canonical="/reviews"
-        extraSchema={{
-          '@context': 'https://schema.org',
-          '@type': 'AggregateRating',
-          itemReviewed: {
-            '@type': 'SoftwareApplication',
-            name: 'C³ MindLoop',
-            operatingSystem: 'All',
-            applicationCategory: 'DeveloperApplication',
-          },
-          ratingValue: '5.0',
-          reviewCount: '15',
-          bestRating: '5',
-          worstRating: '1',
-        }}
-      />
 
       <div className="pt-16 pb-20 bg-app text-theme-main relative z-10 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">

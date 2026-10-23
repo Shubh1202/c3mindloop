@@ -5,7 +5,6 @@ import { Code2, Server, Sparkles, Bot, Network, ShieldCheck, Calculator, ArrowRi
 import { Link } from '../lib/router-compat';
 import { useTranslation } from '../lib/i18n';
 import { SERVICES_LIST } from '../lib/constants';
-import { SEOHead } from '../components/layout/SEOHead';
 import { Button } from '../components/ui/Button';
 import { CTASection } from '../components/sections/CTASection';
 
@@ -53,12 +52,6 @@ export const ServicesPage: React.FC = () => {
 
   return (
     <>
-      <SEOHead
-        title="Engineering Services & Architecture Consulting"
-        description="Partner with C³ MindLoop for custom Web Development, Backend Microservices, SaaS Product Engineering, AI Automation, and API Architecture."
-        canonical="/services"
-      />
-
       <div className="pt-16 pb-20 bg-app text-theme-main relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-20">
           

@@ -4,8 +4,6 @@ import React, { useState } from 'react';
 import { Cpu, LayoutGrid, CloudLightning, FileCode, Layers, Zap, FlaskConical, ArrowUpRight, Terminal, Code2, ShieldCheck, Database, Sparkles, Columns2, GitBranch } from 'lucide-react';
 import { useTranslation } from '../lib/i18n';
 import { PRODUCTS_LIST } from '../lib/constants';
-import { SEOHead } from '../components/layout/SEOHead';
-import { Button } from '../components/ui/Button';
 import { Modal } from '../components/ui/Modal';
 import { Product } from '../types';
 import { CTASection } from '../components/sections/CTASection';
@@ -45,12 +43,6 @@ export const ProductsPage: React.FC = () => {
 
   return (
     <>
-      <SEOHead
-        title="Developer Utilities & VS Code Extension - C³ MindLoop"
-        description="Explore C³ MindLoop Developer Tools: Office Editor VS Code Extension, JSON Formatter, Base64 Encoder, JWT Inspector, Hash Generator, and Regex Tester."
-        canonical="/tools"
-      />
-
       <div className="pt-16 pb-20 bg-app text-theme-main relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
 

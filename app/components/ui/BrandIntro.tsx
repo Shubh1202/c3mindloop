@@ -27,18 +27,26 @@ export const BrandIntro: React.FC<BrandIntroProps> = ({ onComplete, forceShow = 
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
     setPrefersReducedMotion(mediaQuery.matches);
 
+    // Detect crawlers and automated tools
+    const isBot =
+      typeof navigator !== 'undefined' &&
+      /bot|crawler|spider|crawling|googlebot|bingbot|lighthouse/i.test(
+        navigator.userAgent
+      );
+
+    if (isBot) {
+      if (onComplete) onComplete();
+      return;
+    }
+
     if (forceShow) {
-      // Manual replay (e.g. from footer/navbar button) - always show
+      // Manual replay (e.g. from footer/navbar button) - show on-demand
       setIsVisible(true);
       return;
     }
 
-    // Daily-once: show only if last played date != today
-    const lastDate = localStorage.getItem(LS_KEY);
-    if (lastDate !== today()) {
-      localStorage.setItem(LS_KEY, today());
-      setIsVisible(true);
-    } else if (onComplete) {
+    // Default to non-blocking: never cover primary content on first visit
+    if (onComplete) {
       onComplete();
     }
   }, [forceShow, onComplete]);

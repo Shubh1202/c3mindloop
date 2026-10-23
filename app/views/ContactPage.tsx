@@ -4,9 +4,7 @@ import React, { useState } from 'react';
 import Script from 'next/script';
 import { Mail, Send, CheckCircle2, MessageSquare, Terminal } from 'lucide-react';
 import { useTranslation } from '../lib/i18n';
-import { SEOHead } from '../components/layout/SEOHead';
 import { Button } from '../components/ui/Button';
-import { Logo } from '../components/ui/Logo';
 
 export const ContactPage: React.FC = () => {
   const { t } = useTranslation();
@@ -92,12 +90,6 @@ export const ContactPage: React.FC = () => {
           strategy="afterInteractive"
         />
       )}
-      <SEOHead
-        title="Contact Engineering Team - C³ MindLoop"
-        description="Get in touch with C³ MindLoop. Project inquiries, SaaS architecture consulting, partnerships, and technical questions."
-        canonical="/contact"
-      />
-
       <div className="pt-16 pb-20 relative z-10 bg-app">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
 

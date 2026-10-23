@@ -1356,7 +1356,7 @@ export const toolsCollectionSchema = {
   mainEntity: {
     '@type': 'ItemList',
     name: 'Developer Utilities & Tools',
-    numberOfItems: 22,
+    numberOfItems: 24,
     itemListElement: [
       { '@type': 'ListItem', position: 1, name: 'JSON Formatter & Validator', url: `${BASE_URL}/tools/json-formatter` },
       { '@type': 'ListItem', position: 2, name: 'Base64 Encoder & Decoder', url: `${BASE_URL}/tools/base64-encoder` },
@@ -1380,6 +1380,8 @@ export const toolsCollectionSchema = {
       { '@type': 'ListItem', position: 20, name: 'JavaScript Event Loop Visualizer', url: `${BASE_URL}/tools/js-event-loop-visualizer` },
       { '@type': 'ListItem', position: 21, name: 'Git Interactive DAG Visualizer', url: `${BASE_URL}/tools/git-visualizer` },
       { '@type': 'ListItem', position: 22, name: 'QR Code Generator', url: `${BASE_URL}/tools/qr-code-generator` },
+      { '@type': 'ListItem', position: 23, name: 'Office Editor VS Code Extension', url: `${BASE_URL}/tools/office-editor` },
+      { '@type': 'ListItem', position: 24, name: 'Online Code Compiler & Runner', url: `${BASE_URL}/compiler` },
     ],
   },
 };

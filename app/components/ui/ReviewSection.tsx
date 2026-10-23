@@ -34,7 +34,7 @@ const COUNTRY_OPTIONS = [
 ];
 
 export const ReviewSection: React.FC<ReviewSectionProps> = ({ limit, showViewAllLink = false }) => {
-  const [reviews, setReviews] = useState<Review[]>([]);
+  const [reviews, setReviews] = useState<Review[]>(initialReviews);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Track client mount so portal target exists
@@ -45,7 +45,7 @@ export const ReviewSection: React.FC<ReviewSectionProps> = ({ limit, showViewAll
     try {
       const res = await fetch('/api/reviews');
       const data = await res.json();
-      if (res.ok && data.success && Array.isArray(data.reviews)) {
+      if (res.ok && data.success && Array.isArray(data.reviews) && data.reviews.length > 0) {
         setReviews(data.reviews);
       }
     } catch (err) {

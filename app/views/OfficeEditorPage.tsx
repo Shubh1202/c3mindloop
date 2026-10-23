@@ -3,18 +3,11 @@
 import React from 'react';
 import { Link } from '../lib/router-compat';
 import { ArrowLeft, Download, FileText, FileSpreadsheet, Code2, Check, ExternalLink, ShieldAlert, Cpu } from 'lucide-react';
-import { SEOHead } from '../components/layout/SEOHead';
 import { CTASection } from '../components/sections/CTASection';
 
 export const OfficeEditorPage: React.FC = () => {
   return (
     <>
-      <SEOHead
-        title="Office Editor VS Code Extension - View & Edit Office Files | C³ MindLoop"
-        description="View and edit Excel, Word, PowerPoint, and PDF files directly inside VS Code with Office Editor. Local, fast, secure, and offline-first."
-        canonical="/tools/office-editor"
-      />
-
       <div className="pt-6 sm:pt-8 pb-16 bg-app text-theme-main relative z-10 font-sans">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
 

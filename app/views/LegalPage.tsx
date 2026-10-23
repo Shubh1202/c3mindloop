@@ -3,7 +3,6 @@
 import React from 'react';
 import { useLocation } from '../lib/router-compat';
 import { useTranslation } from '../lib/i18n';
-import { SEOHead } from '../components/layout/SEOHead';
 
 const privacySections = [
   { title: 'section1Title', body: 'section1Body' },
@@ -36,13 +35,7 @@ export const LegalPage: React.FC = () => {
 
   if (isTerms) {
     return (
-      <>
-        <SEOHead
-          title="Terms of Service - C³ MindLoop"
-          description="Terms of service and usage guidelines for C³ MindLoop developer tools and services."
-          canonical={location.pathname}
-        />
-        <div className="pt-10 pb-16 bg-app text-theme-main relative z-10">
+      <div className="pt-10 pb-16 bg-app text-theme-main relative z-10">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center space-y-4 mb-10">
               <span className="text-xs font-mono uppercase tracking-widest text-[#1D9BF0] font-semibold block">
@@ -82,19 +75,11 @@ export const LegalPage: React.FC = () => {
             </p>
           </div>
         </div>
-      </>
     );
   }
 
   return (
-    <>
-      <SEOHead
-        title="Privacy Policy - C³ MindLoop | Zero Data Collection, Client-Side Processing"
-        description="C³ MindLoop's privacy policy. 100% client-side processing, zero data collection, offline developer utilities. Your code never leaves your browser."
-        canonical={location.pathname}
-      />
-
-      <div className="pt-10 pb-16 bg-app text-theme-main relative z-10">
+    <div className="pt-10 pb-16 bg-app text-theme-main relative z-10">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
 
           <div className="text-center space-y-4 mb-10">
@@ -150,6 +135,5 @@ export const LegalPage: React.FC = () => {
 
         </div>
       </div>
-    </>
   );
 };

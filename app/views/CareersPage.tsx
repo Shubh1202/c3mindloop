@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 import { MapPin, Clock, ArrowRight, CheckCircle2 } from 'lucide-react';
 import { useTranslation } from '../lib/i18n';
-import { SEOHead } from '../components/layout/SEOHead';
 import { Button } from '../components/ui/Button';
 import { Modal } from '../components/ui/Modal';
 import { CTASection } from '../components/sections/CTASection';
@@ -31,12 +30,6 @@ export const CareersPage: React.FC = () => {
 
   return (
     <>
-      <SEOHead
-        title="Careers - Join C³ MindLoop Engineering"
-        description="Build the future of developer tools, AI engines, and SaaS products. View open engineering positions at C³ MindLoop."
-        canonical="/careers"
-      />
-
       <div className="pt-16 pb-20 bg-app text-theme-main relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
           <div className="text-center max-w-4xl mx-auto space-y-6">
