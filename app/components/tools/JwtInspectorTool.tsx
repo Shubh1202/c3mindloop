@@ -5,6 +5,8 @@ import { trackEvent, GA_EVENTS } from '../../lib/analytics';
 import { Copy, Check, Trash2, ShieldCheck, ShieldAlert, ShieldOff, Clock, Info, AlertCircle, Maximize2, Minimize2, Columns2, Rows2, Key, HelpCircle, ChevronUp, ChevronDown } from 'lucide-react';
 import { useTranslation } from '../../lib/i18n';
 import { Toolbar } from '../ui/Toolbar';
+import { useCollaborationRoom, useCollaborativeText } from '../../lib/collaboration';
+import { CollabToolbarButton } from '../collaboration';
 
 const SAMPLE_JWT =
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c3JfMTIzNDU2IiwibmFtZSI6IkFsZXggUml2ZXJhIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzAwMDAwMDAwLCJleHAiOjk5OTk5OTk5OTl9.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c';
@@ -316,6 +318,21 @@ export const JwtInspectorTool: React.FC = () => {
     trackEvent(GA_EVENTS.TOOL_USED, { tool_name: 'jwt_inspector' });
   }, [t]);
 
+  // Real-Time WebRTC Peer-to-Peer Collaboration
+  const collab = useCollaborationRoom({
+    toolId: 'jwt-inspector',
+    autoConnectFromUrl: true,
+  });
+
+  useCollaborativeText({
+    ydoc: collab.ydoc,
+    field: 'token',
+    value: token,
+    onChange: handleDecode,
+    enabled: collab.isCollaborating,
+    isHost: collab.isHost,
+  });
+
   const handleCopy = (text: string, type: 'header' | 'payload') => {
     navigator.clipboard.writeText(text);
     trackEvent(GA_EVENTS.COPY_OUTPUT, { tool_name: 'jwt_inspector', section: type });
@@ -373,6 +390,16 @@ export const JwtInspectorTool: React.FC = () => {
             isDark={true}
             icon={Trash2}
             label={t('tools.jwtInspector.inputClear')}
+          />
+
+          {/* Real-Time Live P2P Collaboration Button */}
+          <CollabToolbarButton
+            sessionState={collab}
+            startSession={collab.startSession}
+            joinSession={collab.joinSession}
+            leaveSession={collab.leaveSession}
+            setDisplayName={collab.setDisplayName}
+            isDark={true}
           />
         </Toolbar.Group>
 
