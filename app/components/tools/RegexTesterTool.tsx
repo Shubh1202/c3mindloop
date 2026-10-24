@@ -4,6 +4,8 @@ import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { trackEvent, GA_EVENTS } from '../../lib/analytics';
 import { Copy, Check, Trash2, ShieldCheck, AlertCircle, Info, BookOpen, Maximize2, Minimize2, FileText, Code } from 'lucide-react';
 import { LocalAIPanel } from './LocalAIPanel';
+import { useCollaborationRoom, useCollaborativeText } from '../../lib/collaboration';
+import { CollabToolbarButton } from '../collaboration';
 
 interface MatchGroup {
   index: number;
@@ -98,6 +100,30 @@ export const RegexTesterTool: React.FC = () => {
   const [pattern, setPattern] = useState(SAMPLE_PATTERN);
   const [flags, setFlags] = useState(SAMPLE_FLAGS);
   const [testString, setTestString] = useState(SAMPLE_TEST_STRING);
+
+  // Real-Time WebRTC Peer-to-Peer Collaboration
+  const collab = useCollaborationRoom({
+    toolId: 'regex-tester',
+    autoConnectFromUrl: true,
+  });
+
+  useCollaborativeText({
+    ydoc: collab.ydoc,
+    field: 'pattern',
+    value: pattern,
+    onChange: setPattern,
+    enabled: collab.isCollaborating,
+    isHost: collab.isHost,
+  });
+
+  useCollaborativeText({
+    ydoc: collab.ydoc,
+    field: 'testString',
+    value: testString,
+    onChange: setTestString,
+    enabled: collab.isCollaborating,
+    isHost: collab.isHost,
+  });
   const [copied, setCopied] = useState(false);
   const [copiedCode, setCopiedCode] = useState(false);
   const [showCheatsheet, setShowCheatsheet] = useState(false);
@@ -319,6 +345,16 @@ export const RegexTesterTool: React.FC = () => {
             {copied ? <Check className="w-3.5 h-3.5 text-sky-400" /> : <Copy className="w-3.5 h-3.5" />}
             <span>{copied ? 'Copied!' : 'Copy Regex'}</span>
           </button>
+
+          {/* Real-Time Live P2P Collaboration Button */}
+          <CollabToolbarButton
+            sessionState={collab}
+            startSession={collab.startSession}
+            joinSession={collab.joinSession}
+            leaveSession={collab.leaveSession}
+            setDisplayName={collab.setDisplayName}
+            isDark={true}
+          />
 
           <button
             onClick={() => setIsFullScreen(!isFullScreen)}
