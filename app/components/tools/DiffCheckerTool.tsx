@@ -14,6 +14,8 @@ import { useSearch } from '../../hooks/useSearch';
 import { SearchBar } from '../ui/SearchBar';
 import { Toolbar } from '../ui/Toolbar';
 import { useTheme } from '../../lib/theme';
+import { useCollaborationRoom, useCollaborativeText } from '../../lib/collaboration';
+import { CollabToolbarButton } from '../collaboration';
 
 type ViewMode = 'split' | 'inline';
 type CompareMode = 'smart' | 'text';
@@ -753,9 +755,32 @@ const SplitView: React.FC<SplitViewProps> = ({
 export const DiffCheckerTool: React.FC = () => {
   const { isDark } = useTheme();
 
-  // State
   const [original, setOriginalState]            = useState(SAMPLES.code.original);
   const [modified, setModifiedState]            = useState(SAMPLES.code.modified);
+
+  // Real-Time WebRTC Peer-to-Peer Collaboration
+  const collab = useCollaborationRoom({
+    toolId: 'diff-checker',
+    autoConnectFromUrl: true,
+  });
+
+  useCollaborativeText({
+    ydoc: collab.ydoc,
+    field: 'original',
+    value: original,
+    onChange: setOriginalState,
+    enabled: collab.isCollaborating,
+    isHost: collab.isHost,
+  });
+
+  useCollaborativeText({
+    ydoc: collab.ydoc,
+    field: 'modified',
+    value: modified,
+    onChange: setModifiedState,
+    enabled: collab.isCollaborating,
+    isHost: collab.isHost,
+  });
   const [diffResult, setDiffResult]             = useState<SmartDiffResult | null>(null);
   const [viewMode, setViewMode]                 = useState<ViewMode>('split');
   const [mode, setMode]                         = useState<'input' | 'diff'>('diff');
@@ -1375,6 +1400,16 @@ export const DiffCheckerTool: React.FC = () => {
               icon={Search}
             />
           )}
+
+          {/* Real-Time Live P2P Collaboration Button */}
+          <CollabToolbarButton
+            sessionState={collab}
+            startSession={collab.startSession}
+            joinSession={collab.joinSession}
+            leaveSession={collab.leaveSession}
+            setDisplayName={collab.setDisplayName}
+            isDark={isDark}
+          />
         </Toolbar.Group>
 
         <Toolbar.Group align="right">

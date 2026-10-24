@@ -29,6 +29,8 @@ import { LocalAIPanel, smartRepairJson } from './LocalAIPanel';
 import { useSearch } from '../../hooks/useSearch';
 import { SearchBar } from '../ui/SearchBar';
 import { Toolbar } from '../ui/Toolbar';
+import { useCollaborationRoom, useCollaborativeText } from '../../lib/collaboration';
+import { CollabToolbarButton } from '../collaboration';
 
 type IndentOption = '2' | '4' | 'tab';
 type OutputMode = 'json' | 'typescript' | 'go' | 'csv';
@@ -507,6 +509,22 @@ export const JsonFormatterTool: React.FC = () => {
   // exactly one debounce cycle.
   const skipNextDebounceRef = useRef<boolean>(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Real-Time WebRTC Peer-to-Peer Collaboration
+  const collab = useCollaborationRoom({
+    toolId: 'json-formatter',
+    autoConnectFromUrl: true,
+  });
+
+  useCollaborativeText({
+    ydoc: collab.ydoc,
+    field: 'content',
+    value: rawInput,
+    onChange: setRawInput,
+    enabled: collab.isCollaborating,
+    isHost: collab.isHost,
+    textareaRef,
+  });
   const leftPanelRef = useRef<HTMLDivElement>(null);   // outer left-panel div (scroll container in fullscreen)
   const outputContainerRef = useRef<HTMLDivElement>(null);
   const scrollingRef = useRef<'input' | 'output' | null>(null);
@@ -1147,6 +1165,16 @@ export const JsonFormatterTool: React.FC = () => {
               isDark={isDark}
               icon={Search}
               label="Search"
+            />
+
+            {/* Real-Time Live P2P Collaboration Button */}
+            <CollabToolbarButton
+              sessionState={collab}
+              startSession={collab.startSession}
+              joinSession={collab.joinSession}
+              leaveSession={collab.leaveSession}
+              setDisplayName={collab.setDisplayName}
+              isDark={isDark}
             />
           </Toolbar.Group>
 
