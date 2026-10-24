@@ -1270,6 +1270,21 @@
         "q6": "How large should I make the QR code for printing?",
         "a6": "For reliable scanning, the QR code should be at least 2 cm × 2 cm (around 57px at 72 DPI). For large-format printing like posters or banners, download the SVG export and scale it to any size without quality loss. Generally, scanning distance should not exceed 10× the QR code's minimum dimension."
       }
+    },
+    "workflowBuilder": {
+      "pageTitle": "Visual Workflow Builder & Tool Chaining",
+      "pageBadge": "100% Client-Side - Local Browser Processing",
+      "breadcrumb": "Workflow Builder",
+      "breadcrumbParent": "Developer Tools",
+      "inputLabel": "Input",
+      "outputLabel": "Output",
+      "privacyNote": "Local browser processing - No data sent to any server",
+      "feat1Title": "Zero-Server DAG Execution",
+      "feat1Desc": "Topological cycle-safe execution runs directly inside your browser JS engine. Sensitive keys and tokens never leave your local memory sandbox.",
+      "feat2Title": "Crack & Crash Isolation",
+      "feat2Desc": "Pinpoint the exact step where JSON parsing or base64 decoding fails. Inspect live intermediate payloads and step durations.",
+      "feat3Title": "Declarative Versioned Schemas",
+      "feat3Desc": "Export and import clean JSON schemas. Share pipeline topologies or store them in local storage with strict schema validation."
     }
   }
 }

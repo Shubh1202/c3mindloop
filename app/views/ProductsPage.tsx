@@ -105,6 +105,7 @@ export const ProductsPage: React.FC = () => {
                   'pipeline': '/tools/pipeline',
                   'node-event-loop-visualizer': '/tools/node-event-loop-visualizer',
                   'qr-code-generator': '/tools/qr-code-generator',
+                  'workflow-builder': '/tools/workflow-builder',
                 };
                 const toolHref = toolRoutes[prod.id];
 

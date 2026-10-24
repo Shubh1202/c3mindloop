@@ -200,6 +200,15 @@ const formatted = JSON.stringify(JSON.parse(input), null, 2);`
     category: 'utilities',
     icon: 'QrCode',
     techStack: ['qrcode npm', 'Canvas API', 'SVG Renderer', 'Local Processing']
+  },
+  {
+    id: 'workflow-builder',
+    nameKey: 'Visual Workflow Builder',
+    descKey: 'Build, connect, and execute node-based data transformation pipelines visually. JSON validation, Base64 encode/decode, Regex matching, SHA-256 hashing, conditional branching. 100% client-side.',
+    status: 'live',
+    category: 'utilities',
+    icon: 'Layers',
+    techStack: ['DAG Execution Engine', 'Client-Side Canvas', 'Schema Validation', 'IndexedDB Persistence']
   }
 ];
 

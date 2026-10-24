@@ -756,6 +756,31 @@ export const seoConfig = {
       images: [defaultOgImage],
     },
   },
+
+  workflowBuilder: {
+    title: 'Visual Workflow Builder - Free Online Tool | C³ MindLoop',
+    description:
+      'Build, connect, and execute browser-based data transformation workflows visually. 100% client-side DAG execution, zero server upload.',
+    keywords: [
+      'visual workflow builder', 'data pipeline builder online', 'browser workflow engine',
+      'dag visualizer and runner', 'client-side data pipelines', 'json workflow builder',
+      'developer workflow automation', '100% Private', 'Client-Side Execution',
+      'C³ MindLoop workflow builder', 'c3mindloop visual workflow',
+    ],
+    canonical: `${BASE_URL}/tools/workflow-builder`,
+    openGraph: {
+      title: 'Visual Workflow Builder - Free Online Tool | C³ MindLoop',
+      description:
+        'Build, connect, and execute browser-based data transformation workflows visually. 100% client-side DAG execution.',
+      url: `${BASE_URL}/tools/workflow-builder`,
+      images: [{ url: defaultOgImage, width: 1200, height: 630, alt: 'Visual Workflow Builder - C³ MindLoop' }],
+    },
+    twitter: {
+      title: 'Visual Workflow Builder - Free | C³ MindLoop',
+      description: 'Build and run data transformation workflows in your browser with zero server latency.',
+      images: [defaultOgImage],
+    },
+  },
 };
 
 // ── JSON-LD Schemas ──────────────────────────────────────────────────────────
@@ -1176,6 +1201,28 @@ export const pipelineSchema = {
     'Per-step output preview and error display',
     'Download final output as plain text',
     '100% client-side - no data leaves the browser',
+  ],
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+  publisher: { '@type': 'Organization', name: 'C³ MindLoop', url: BASE_URL },
+};
+
+export const workflowBuilderSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: 'Visual Workflow Builder',
+  url: `${BASE_URL}/tools/workflow-builder`,
+  applicationCategory: 'DeveloperApplication',
+  operatingSystem: 'All Web Browsers',
+  description:
+    'Build, connect, and execute browser-based data transformation workflows visually. 100% client-side DAG execution, zero server upload.',
+  featureList: [
+    'Visual node-based canvas with drag-and-drop',
+    'Real client-side DAG execution engine with cycle detection',
+    'Nodes: JSON Input, JSON Formatter, Base64 Encode/Decode, Regex Match, SHA-256 Hash, Conditional Branch, Output Sink',
+    'Per-node execution status, duration, and intermediate output inspection',
+    'Import and export workflow JSON schemas with schema validation',
+    'LocalStorage auto-save and preset templates',
+    '100% client-side - zero data transmission',
   ],
   offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
   publisher: { '@type': 'Organization', name: 'C³ MindLoop', url: BASE_URL },
