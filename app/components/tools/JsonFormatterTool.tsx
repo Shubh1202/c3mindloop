@@ -857,26 +857,38 @@ export const JsonFormatterTool: React.FC = () => {
 
   // Rebuild the content-aware sync anchor table after every successful parse.
   // Skips expensive buildSyncAnchors for very large documents to prevent blocking.
+  // PERF: Depends only on parsedObject + formattedOutput (debounced via handleFormat),
+  //       NOT on rawInput directly. During collaboration, rawInput changes on every
+  //       remote keystroke; recomputing anchors each time would block the main thread.
   const SYNC_ANCHOR_SIZE_LIMIT = 200_000; // 200KB
 
   useEffect(() => {
-    if (!parsedObject || !formattedOutput || !rawInput) {
+    if (!parsedObject || !formattedOutput) {
+      syncAnchorsRef.current = [];
+      rawLineStartsRef.current = [];
+      fmtLineStartsRef.current = [];
+      return;
+    }
+    // Use the current rawInput at the time this effect runs (already debounced).
+    const currentRaw = rawInput;
+    if (!currentRaw) {
       syncAnchorsRef.current = [];
       rawLineStartsRef.current = [];
       fmtLineStartsRef.current = [];
       return;
     }
     // Skip anchor building for very large documents to prevent main thread blocking
-    if (rawInput.length > SYNC_ANCHOR_SIZE_LIMIT) {
+    if (currentRaw.length > SYNC_ANCHOR_SIZE_LIMIT) {
       syncAnchorsRef.current = [];
-      rawLineStartsRef.current = buildLineStarts(rawInput);
+      rawLineStartsRef.current = buildLineStarts(currentRaw);
       fmtLineStartsRef.current = buildLineStarts(formattedOutput);
       return;
     }
-    rawLineStartsRef.current = buildLineStarts(rawInput);
+    rawLineStartsRef.current = buildLineStarts(currentRaw);
     fmtLineStartsRef.current = buildLineStarts(formattedOutput);
-    syncAnchorsRef.current = buildSyncAnchors(rawInput, formattedOutput);
-  }, [parsedObject, rawInput, formattedOutput]);
+    syncAnchorsRef.current = buildSyncAnchors(currentRaw, formattedOutput);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [parsedObject, formattedOutput]);
 
   const handleClear = () => {
     setRawInput('');

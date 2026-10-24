@@ -119,6 +119,15 @@ export class CollaborationRoomManager {
       return;
     }
 
+    // Guard: if already connecting/connected to the same room, no-op.
+    // Prevents redundant teardown→reconnect cycles from hashchange storms.
+    if (
+      this.credentials?.roomId === credentials.roomId &&
+      (this.status === 'connecting' || this.status === 'connected')
+    ) {
+      return;
+    }
+
     if (this.provider) {
       this.disconnect();
     }

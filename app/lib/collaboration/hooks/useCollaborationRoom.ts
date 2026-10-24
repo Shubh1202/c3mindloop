@@ -89,8 +89,13 @@ export function useCollaborationRoom(config: CollabRoomConfig) {
       manager.setIsHost(true);
       await manager.connect(creds);
 
+      // Only update the hash if it actually differs, to avoid firing
+      // the hashchange listener and re-entering joinSession.
       if (typeof window !== 'undefined') {
-        window.location.hash = buildCollabHash(creds);
+        const newHash = buildCollabHash(creds);
+        if (window.location.hash !== newHash) {
+          window.location.hash = newHash;
+        }
       }
 
       return creds;
@@ -107,8 +112,12 @@ export function useCollaborationRoom(config: CollabRoomConfig) {
       manager.setIsHost(false);
       await manager.connect(creds);
 
+      // Only update the hash if it actually differs.
       if (typeof window !== 'undefined') {
-        window.location.hash = buildCollabHash(creds);
+        const newHash = buildCollabHash(creds);
+        if (window.location.hash !== newHash) {
+          window.location.hash = newHash;
+        }
       }
     },
     []
