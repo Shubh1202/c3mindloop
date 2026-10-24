@@ -66,7 +66,7 @@ export const ProductsPreviewSection: React.FC = () => {
               to="/tools"
               className="text-xs font-mono text-theme-muted hover:text-[#1D9BF0] transition-colors hidden sm:flex items-center gap-1"
             >
-              View all 15+ tools <ArrowRight className="w-3.5 h-3.5" />
+              View all 23 tools <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
 
@@ -81,8 +81,10 @@ export const ProductsPreviewSection: React.FC = () => {
                 'curl-converter': '/tools/curl-converter',
                 'cron-visualizer': '/tools/cron-visualizer',
                 'regex-tester': '/tools/regex-tester',
+                'regex-railroad': '/tools/regex-railroad-generator',
                 'sql-to-json': '/tools/sql-to-json',
                 'hash-generator': '/tools/hash-generator',
+                'password-shuffle-generator': '/tools/password-shuffle-generator',
                 'ats-resume-generator': '/tools/ats-resume-generator',
                 'pdf-suite': '/tools/pdf-suite',
                 'edit-pdf': '/tools/edit-pdf',
@@ -90,8 +92,12 @@ export const ProductsPreviewSection: React.FC = () => {
                 'diff-checker': '/tools/diff-checker',
                 'json-graph': '/tools/json-graph',
                 'code-complexity-analyzer': '/tools/code-complexity-analyzer',
+                'pipeline': '/tools/pipeline',
                 'node-event-loop-visualizer': '/tools/node-event-loop-visualizer',
+                'js-event-loop-visualizer': '/tools/js-event-loop-visualizer',
+                'git-visualizer': '/tools/git-visualizer',
                 'qr-code-generator': '/tools/qr-code-generator',
+                'workflow-builder': '/tools/workflow-builder',
               };
               const toolHref = toolRoutes[prod.id] || '/tools';
               const IconComponent = iconMap[prod.icon] || Cpu;

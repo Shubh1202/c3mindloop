@@ -1,10 +1,35 @@
 'use client';
 
 import React from 'react';
+import { Link } from '../../../lib/router-compat';
+import { ArrowRight, BookOpen } from 'lucide-react';
 
 export const RegexTesterDocs: React.FC = () => {
   return (
     <div className="space-y-10 text-theme-main">
+      {/* Contextual Companion Guide */}
+      <section className="p-4 sm:p-5 rounded-lg bg-surface border border-theme-subtle flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="space-y-1">
+          <div className="flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-wider text-[#1D9BF0] font-semibold">
+            <BookOpen className="w-3.5 h-3.5" />
+            <span>Companion Engineering Guide</span>
+          </div>
+          <h3 className="text-sm font-semibold text-theme-main">
+            How to Test Regular Expressions in the Browser
+          </h3>
+          <p className="text-xs text-theme-muted leading-relaxed">
+            Learn how to evaluate patterns, configure regex flags, inspect capture groups, and export clean snippets across runtimes.
+          </p>
+        </div>
+        <Link
+          href="/guides/test-regular-expressions-in-the-browser"
+          className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-md bg-[#1D9BF0]/10 hover:bg-[#1D9BF0]/20 text-[#1D9BF0] border border-[#1D9BF0]/30 text-xs font-mono font-medium transition-colors shrink-0 self-start sm:self-auto"
+        >
+          <span>Read Guide</span>
+          <ArrowRight className="w-3.5 h-3.5" />
+        </Link>
+      </section>
+
       {/* Quick Regex Cheatsheet Reference Table */}
       <section className="space-y-4">
         <h2 className="text-lg sm:text-xl font-bold tracking-tight">

@@ -57,22 +57,33 @@ export const Navbar: React.FC<{
 
               if (isTools) {
                 return (
-                  <button
+                  <div
                     key={link.path}
-                    type="button"
-                    onClick={() => setToolsHubOpen(true)}
-                    suppressHydrationWarning
-                    className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all flex items-center gap-1.5 cursor-pointer ${
+                    className={`inline-flex items-center rounded-md text-sm font-medium transition-all ${
                       isActive
                         ? 'bg-[#1D9BF0]/15 text-[#1D9BF0] font-semibold border border-[#1D9BF0]/30'
                         : 'text-neutral-300 hover:text-white hover:bg-white/5'
                     }`}
                   >
-                    {link.name}
-                    <span className="text-[9px] font-mono bg-neutral-800 text-neutral-400 px-1 py-0.25 rounded border border-neutral-700/50 ml-0.5">
-                      Hub
-                    </span>
-                  </button>
+                    <Link
+                      to="/tools"
+                      className="px-3 py-1.5 hover:text-white transition-colors flex items-center focus:outline-none focus-visible:ring-1 focus-visible:ring-[#1D9BF0] rounded-l-md"
+                    >
+                      {link.name}
+                    </Link>
+                    <button
+                      type="button"
+                      onClick={() => setToolsHubOpen(true)}
+                      suppressHydrationWarning
+                      aria-label="Open Quick Tools Hub Modal"
+                      title="Open Quick Tools Hub Modal"
+                      className="pr-2 pl-0.5 py-1.5 cursor-pointer text-[9px] font-mono text-neutral-400 hover:text-white focus:outline-none focus-visible:ring-1 focus-visible:ring-[#1D9BF0] rounded-r-md transition-colors"
+                    >
+                      <span className="bg-neutral-800 hover:bg-neutral-700 text-neutral-300 px-1.5 py-0.5 rounded border border-neutral-700/60 ml-0.5">
+                        Hub
+                      </span>
+                    </button>
+                  </div>
                 );
               }
 
@@ -151,23 +162,31 @@ export const Navbar: React.FC<{
                 {navLinks.map((link) => {
                   if (link.path === '/tools') {
                     return (
-                      <button
-                        key={link.path}
-                        type="button"
-                        onClick={() => {
-                          setMobileMenuOpen(false);
-                          setToolsHubOpen(true);
-                        }}
-                        suppressHydrationWarning
-                        className="w-full text-left flex items-center justify-between px-4 py-2.5 rounded-lg text-sm font-medium transition-colors bg-[#1D9BF0]/10 text-[#1D9BF0] border border-[#1D9BF0]/30 font-semibold"
-                      >
-                        <span className="flex items-center gap-2">
-                          {link.name} Hub
-                        </span>
-                        <span className="text-xs font-mono bg-[#1D9BF0]/20 px-2 py-0.5 rounded text-[#1D9BF0]">
-                          16 Tools
-                        </span>
-                      </button>
+                      <div key={link.path} className="flex items-center gap-2">
+                        <Link
+                          to="/tools"
+                          onClick={() => setMobileMenuOpen(false)}
+                          className={`flex-1 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                            location.pathname.startsWith('/tools')
+                              ? 'bg-[#1D9BF0]/15 text-[#1D9BF0] font-semibold border border-[#1D9BF0]/30'
+                              : 'text-neutral-300 hover:text-white hover:bg-white/5'
+                          }`}
+                        >
+                          {link.name}
+                        </Link>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setMobileMenuOpen(false);
+                            setToolsHubOpen(true);
+                          }}
+                          suppressHydrationWarning
+                          aria-label="Open Quick Tools Hub Modal"
+                          className="px-3 py-2 rounded-lg text-xs font-mono font-medium transition-colors bg-surface border border-theme-subtle text-theme-muted hover:text-[#1D9BF0] shrink-0"
+                        >
+                          Quick Hub
+                        </button>
+                      </div>
                     );
                   }
 

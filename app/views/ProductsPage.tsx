@@ -95,6 +95,7 @@ export const ProductsPage: React.FC = () => {
                   'regex-railroad': '/tools/regex-railroad-generator',
                   'sql-to-json': '/tools/sql-to-json',
                   'hash-generator': '/tools/hash-generator',
+                  'password-shuffle-generator': '/tools/password-shuffle-generator',
                   'ats-resume-generator': '/tools/ats-resume-generator',
                   'ai-prompt-builder': '/tools/ai-prompt-builder',
                   'diff-checker': '/tools/diff-checker',
@@ -104,6 +105,8 @@ export const ProductsPage: React.FC = () => {
                   'code-complexity-analyzer': '/tools/code-complexity-analyzer',
                   'pipeline': '/tools/pipeline',
                   'node-event-loop-visualizer': '/tools/node-event-loop-visualizer',
+                  'js-event-loop-visualizer': '/tools/js-event-loop-visualizer',
+                  'git-visualizer': '/tools/git-visualizer',
                   'qr-code-generator': '/tools/qr-code-generator',
                   'workflow-builder': '/tools/workflow-builder',
                 };

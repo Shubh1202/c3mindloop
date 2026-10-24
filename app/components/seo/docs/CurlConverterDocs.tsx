@@ -1,10 +1,35 @@
 'use client';
 
 import React from 'react';
+import { Link } from '../../../lib/router-compat';
+import { ArrowRight, BookOpen } from 'lucide-react';
 
 export const CurlConverterDocs: React.FC = () => {
   return (
     <div className="space-y-10 text-theme-main">
+      {/* Contextual Companion Guide */}
+      <section className="p-4 sm:p-5 rounded-lg bg-surface border border-theme-subtle flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="space-y-1">
+          <div className="flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-wider text-[#1D9BF0] font-semibold">
+            <BookOpen className="w-3.5 h-3.5" />
+            <span>Companion Engineering Guide</span>
+          </div>
+          <h3 className="text-sm font-semibold text-theme-main">
+            How to Convert cURL Commands to Fetch, Axios, and Python Requests
+          </h3>
+          <p className="text-xs text-theme-muted leading-relaxed">
+            Master converting GET and POST requests, headers, JSON bodies, authentication, and error handling across clients.
+          </p>
+        </div>
+        <Link
+          href="/guides/convert-curl-to-fetch-axios-python"
+          className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-md bg-[#1D9BF0]/10 hover:bg-[#1D9BF0]/20 text-[#1D9BF0] border border-[#1D9BF0]/30 text-xs font-mono font-medium transition-colors shrink-0 self-start sm:self-auto"
+        >
+          <span>Read Guide</span>
+          <ArrowRight className="w-3.5 h-3.5" />
+        </Link>
+      </section>
+
       {/* Target Language Mapping Table */}
       <section className="space-y-4">
         <h2 className="text-lg sm:text-xl font-bold tracking-tight">

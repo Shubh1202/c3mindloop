@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { Link } from '../../../lib/router-compat';
 
 export const Base64Docs: React.FC = () => {
   return (
@@ -52,6 +53,12 @@ export const Base64Docs: React.FC = () => {
           <code>data:[&lt;mediatype&gt;][;base64],&lt;encoded_data&gt;</code>
           <p className="text-neutral-500 mt-1">Example: <span className="text-green-300">data:image/png;base64,iVBORw0KGgoAAAANSUhEUg...</span></p>
         </div>
+        <p className="text-xs text-theme-muted leading-relaxed">
+          URL-safe Base64 is also the encoding format used by JSON Web Tokens (JWT) for both the header and payload segments.{' '}
+          <Link href="/guides/debug-invalid-jwt-claims" className="text-[#1D9BF0] hover:underline">
+            Learn how to debug invalid JWT claim errors
+          </Link>.
+        </p>
       </section>
     </div>
   );
