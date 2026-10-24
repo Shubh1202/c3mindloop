@@ -3,6 +3,8 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { Copy, Check, Trash2, AlertCircle, Info, Terminal, Maximize2, Minimize2, Columns2, Rows2, Eye, EyeOff, Lock, ListChecks, AlertTriangle, LayoutList, ChevronDown, ChevronUp, AlignLeft, Code } from 'lucide-react';
 import { useTranslation } from '../../lib/i18n';
+import { useCollaborationRoom, useCollaborativeText } from '../../lib/collaboration';
+import { CollabToolbarButton } from '../collaboration';
 
 // â”€â”€ Types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
@@ -296,6 +298,21 @@ function highlight(code: string, lang: Language): string {
 export const CurlConverterTool: React.FC = () => {
   const { t } = useTranslation();
   const [input, setInput] = useState('');
+
+  // Real-Time WebRTC Peer-to-Peer Collaboration
+  const collab = useCollaborationRoom({
+    toolId: 'curl-converter',
+    autoConnectFromUrl: true,
+  });
+
+  useCollaborativeText({
+    ydoc: collab.ydoc,
+    field: 'input',
+    value: input,
+    onChange: setInput,
+    enabled: collab.isCollaborating,
+    isHost: collab.isHost,
+  });
   const [lang, setLang] = useState<Language>('js-fetch');
   const [copied, setCopied] = useState(false);
   const [copiedMinified, setCopiedMinified] = useState(false);
@@ -385,6 +402,16 @@ export const CurlConverterTool: React.FC = () => {
             <Trash2 className="w-3.5 h-3.5" />
             {t('tools.curlConverter.clear')}
           </button>
+
+          {/* Real-Time Live P2P Collaboration Button */}
+          <CollabToolbarButton
+            sessionState={collab}
+            startSession={collab.startSession}
+            joinSession={collab.joinSession}
+            leaveSession={collab.leaveSession}
+            setDisplayName={collab.setDisplayName}
+            isDark={true}
+          />
 
           {/* Layout toggle - desktop only */}
           <div className="hidden lg:flex items-center bg-neutral-950 p-1 rounded border border-neutral-800">
