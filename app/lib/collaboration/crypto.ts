@@ -48,7 +48,8 @@ export function generateAnonymousDeveloperName(): { name: string; color: string 
  */
 export function parseCollabHash(hash: string): RoomCredentials | null {
   if (!hash) return null;
-  const cleanHash = hash.startsWith('#') ? hash.slice(1) : hash;
+  const hashIndex = hash.indexOf('#');
+  const cleanHash = hashIndex !== -1 ? hash.slice(hashIndex + 1) : hash;
   if (!cleanHash) return null;
 
   try {

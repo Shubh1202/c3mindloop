@@ -5,7 +5,7 @@
 
 import * as Y from 'yjs';
 import { WebrtcProvider } from 'y-webrtc';
-import { DEFAULT_SIGNALING_SERVERS, MAX_DOCUMENT_SIZE_BYTES } from './config';
+import { DEFAULT_SIGNALING_SERVERS, DEFAULT_STUN_SERVERS, MAX_DOCUMENT_SIZE_BYTES } from './config';
 import {
   CollabRoomConfig,
   ConnectionStatus,
@@ -163,6 +163,11 @@ export class CollaborationRoomManager {
         signaling: signalingServers,
         password: credentials.password || this.config.password || undefined,
         filterBcConns: this.config.filterBcConns ?? true,
+        peerOpts: {
+          config: {
+            iceServers: DEFAULT_STUN_SERVERS,
+          },
+        },
       });
       this.provider = provider;
 

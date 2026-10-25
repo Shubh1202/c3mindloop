@@ -4,8 +4,8 @@
  */
 
 export const DEFAULT_SIGNALING_SERVERS: string[] = [
-  'wss://y-webrtc-eu.fly.dev',
   'wss://y-webrtc.fly.dev',
+  'wss://y-webrtc-signaling.fly.dev',
 ];
 
 export const DEFAULT_STUN_SERVERS = [

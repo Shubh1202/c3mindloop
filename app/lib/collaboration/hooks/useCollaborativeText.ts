@@ -4,25 +4,28 @@
  * useCollaborativeText Hook for C³ MindLoop.
  * Binds a React state string and optional HTMLTextAreaElement to a Yjs Y.Text instance.
  *
- * Architecture decisions to prevent "Page Unresponsive":
- * ─────────────────────────────────────────────────────
- * 1. INGESTION MUTEX (`isIngestingRemoteRef`)
+ * Architecture decisions for high-performance zero-conflict collaboration:
+ * ──────────────────────────────────────────────────────────────────────────
+ * 1. UNIDIRECTIONAL MUTEX (`isApplyingRemoteRef`)
  *    When the observer receives a remote Y.Text change and calls `onChange(text)`,
- *    React queues a state update for `value`. On the next render, Effect 3 would see
- *    `value !== lastSyncedTextRef.current` (because React batching hasn't settled yet)
- *    and would push a DIFF back into Y.Doc → broadcast → other peer repeats → ∞ loop.
- *    The mutex blocks Effect 3 from running during this transient period.
+ *    React queues a state update for `value`. The mutex prevents the local push
+ *    effect from mistaking this incoming remote update for a local keystroke.
+ *    Reset happens cleanly via `requestAnimationFrame` to span the React commit phase.
  *
- * 2. requestAnimationFrame THROTTLING
- *    Local keystrokes fire `value` changes synchronously. Without throttling, every
- *    keystroke computes a string diff and creates a Yjs transaction immediately.
- *    Under fast typing or collaboration churn, this saturates the main thread.
- *    We coalesce diffs into one rAF callback (~16ms) so the browser can paint.
+ * 2. STRICT SEPARATION OF CONCERNS
+ *    - Observer handles Remote → React State (never pushes to Y.Doc).
+ *    - Push Effect handles Local Keystrokes → Y.Doc (never calls setState/onChange).
+ *    This separation structurally guarantees NO infinite loops and NO "Maximum update depth exceeded".
  *
- * 3. DUAL ECHO SUPPRESSION
- *    Both `lastSyncedTextRef` (string equality) and `isIngestingRemoteRef` (mutex)
- *    are checked before pushing. The ref covers the steady-state case; the mutex
- *    covers the transient React-batching window.
+ * 3. REQUEST ANIMATION FRAME COALESCING
+ *    Local typing events are coalesced within one animation frame (~16ms)
+ *    before calculating character diffs and creating Yjs transactions.
+ *    This prevents main thread saturation during rapid typing or large diffs,
+ *    eliminating Chrome's "Page Unresponsive" freeze.
+ *
+ * 4. JOINER SAFE-GUARD
+ *    Joiners do not push their un-synced initial template value until remote
+ *    sync is established, or unless the user explicitly starts typing.
  */
 
 import { useEffect, useRef } from 'react';
@@ -74,71 +77,67 @@ export function useCollaborativeText({
   isHost = false,
   textareaRef,
 }: UseCollaborativeTextProps) {
-  // ── Refs for echo suppression ──────────────────────────────────────────────
+  // ── Synchronization State Refs ─────────────────────────────────────────────
 
-  // The last text value we synchronised (received from remote OR pushed locally).
-  // If React's `value` matches this, there is nothing new to push.
+  // The last text string that was synchronized with Y.Doc (remote or local).
   const lastSyncedTextRef = useRef<string | null>(null);
 
-  // Ingestion mutex. TRUE while we are funnelling a remote update into React
-  // via `onChange()`. While true, Effect 3 (local push) MUST be a no-op.
-  const isIngestingRemoteRef = useRef(false);
+  // Mutex flag: true when React is rendering an update that originated from a remote peer.
+  const isApplyingRemoteRef = useRef(false);
 
-  // Whether the initial remote document has been received.
-  // Joiners wait for this before pushing any local state to avoid overwriting.
+  // Tracks if initial remote sync has completed.
   const hasSyncedRef = useRef(isHost);
-  const initializedRef = useRef(false);
 
-  // Handle for the rAF-throttled local push. Cancelled on cleanup or re-schedule.
+  // Tracks the initial local value on mount / session start.
+  const initialValueRef = useRef(value);
+
+  // Handle for rAF-throttled local push.
   const localPushRafRef = useRef<number | null>(null);
 
-  // Stable ref to the latest `value` for use inside the rAF callback,
-  // which may fire after React has already re-rendered with a newer value.
+  // Stable ref to the latest `value` for rAF callback.
   const valueRef = useRef(value);
   valueRef.current = value;
 
-  // When a new session begins, reset sync flags.
-  useEffect(() => {
-    hasSyncedRef.current = isHost;
-    initializedRef.current = false;
-  }, [isHost, ydoc]);
+  // Stable ref to `onChange` callback.
+  const onChangeRef = useRef(onChange);
+  onChangeRef.current = onChange;
 
-  // ── Effect 1 & 2: Initialisation + Remote Observer ─────────────────────────
+  // ── Effect 1: Session Lifecycle & Remote Y.Text Observer ───────────────────
   useEffect(() => {
     if (!enabled || !ydoc) {
-      initializedRef.current = false;
       hasSyncedRef.current = isHost;
+      lastSyncedTextRef.current = null;
+      isApplyingRemoteRef.current = false;
       return;
     }
 
     const ytext = ydoc.getText(field);
+    initialValueRef.current = valueRef.current;
+    hasSyncedRef.current = isHost;
 
-    // ── 1. Initial State Negotiation ──
-    if (!initializedRef.current) {
-      initializedRef.current = true;
-      const remoteText = ytext.toString();
-
-      if (remoteText.length > 0) {
-        // Document already present in Y.Doc (cached from peers)
-        hasSyncedRef.current = true;
-        lastSyncedTextRef.current = remoteText;
-        isIngestingRemoteRef.current = true;
-        onChange(remoteText);
-        // Release mutex after React processes the setState microtask.
-        queueMicrotask(() => { isIngestingRemoteRef.current = false; });
-      } else if (isHost && value.length > 0) {
-        // We are the host → seed the Y.Doc with our local text
-        hasSyncedRef.current = true;
-        lastSyncedTextRef.current = value;
-        ydoc.transact(() => {
-          ytext.insert(0, value);
-        }, 'local-init');
-      }
+    // ── Initial State Negotiation ──
+    const currentYText = ytext.toString();
+    if (currentYText.length > 0) {
+      // Document already exists in Y.Doc (cached or existing)
+      hasSyncedRef.current = true;
+      lastSyncedTextRef.current = currentYText;
+      isApplyingRemoteRef.current = true;
+      onChangeRef.current(currentYText);
+      requestAnimationFrame(() => {
+        isApplyingRemoteRef.current = false;
+      });
+    } else if (isHost && valueRef.current.length > 0) {
+      // Host seeding the Y.Doc with initial local text
+      hasSyncedRef.current = true;
+      lastSyncedTextRef.current = valueRef.current;
+      ydoc.transact(() => {
+        ytext.insert(0, valueRef.current);
+      }, 'local-init');
     }
 
-    // ── 2. Remote Y.Text Observer ──
+    // ── Remote Y.Text Observer ──
     const observer = (event: Y.YTextEvent, transaction: Y.Transaction) => {
-      // Skip our own local transactions (string-origin check).
+      // Ignore transactions originated by our own local hook
       if (
         transaction.origin === 'local-user' ||
         transaction.origin === 'local-init'
@@ -148,7 +147,11 @@ export function useCollaborativeText({
 
       const updatedText = ytext.toString();
 
-      // Mark initial sync complete (for joiners)
+      // Skip if already in sync
+      if (updatedText === lastSyncedTextRef.current) {
+        return;
+      }
+
       hasSyncedRef.current = true;
 
       // ── Cursor preservation ──
@@ -177,19 +180,16 @@ export function useCollaborativeText({
       }
 
       // ── Apply remote text to React state ──
-      // CRITICAL ORDER: set refs BEFORE calling onChange so that if React
-      // flushes synchronously (e.g. in a concurrent-mode lane), Effect 3
-      // already sees the mutex and the matching lastSyncedTextRef.
       lastSyncedTextRef.current = updatedText;
-      isIngestingRemoteRef.current = true;
-      onChange(updatedText);
+      isApplyingRemoteRef.current = true;
+      onChangeRef.current(updatedText);
 
-      // Release mutex after the microtask queue drains (covers React batching).
-      queueMicrotask(() => {
-        isIngestingRemoteRef.current = false;
+      // Release mutex after next frame has painted
+      requestAnimationFrame(() => {
+        isApplyingRemoteRef.current = false;
       });
 
-      // Restore cursor on next paint
+      // Restore cursor position on next animation frame
       if (textarea && prevSelStart !== null && prevSelEnd !== null) {
         requestAnimationFrame(() => {
           if (document.activeElement === textarea) {
@@ -203,75 +203,62 @@ export function useCollaborativeText({
 
     return () => {
       ytext.unobserve(observer);
-      // Cancel any pending throttled push
       if (localPushRafRef.current !== null) {
         cancelAnimationFrame(localPushRafRef.current);
         localPushRafRef.current = null;
       }
     };
-    // Note: `value` is intentionally excluded from deps here.
-    // Including it would tear down and re-attach the observer on every keystroke.
-    // Effect 3 handles pushing `value` changes into Y.Doc.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [enabled, ydoc, field, isHost, onChange, textareaRef]);
+  }, [enabled, ydoc, field, isHost, textareaRef]);
 
-  // ── Effect 3: Push local changes → Y.Doc (rAF-throttled) ──────────────────
+  // ── Effect 2: Push Local Changes → Y.Doc (rAF-throttled) ───────────────────
   useEffect(() => {
     if (!enabled || !ydoc) {
       return;
     }
 
-    // CRITICAL: If we are currently ingesting a remote update, skip.
-    // React hasn't settled yet; `value` still reflects the pre-remote state.
-    if (isIngestingRemoteRef.current) {
+    // Guard 1: Skip if this render was triggered by applying remote text
+    if (isApplyingRemoteRef.current) {
       return;
     }
 
-    // Joiner hasn't synced yet → check if Y.Doc arrived, adopt it, don't push.
-    if (!hasSyncedRef.current) {
-      const ytext = ydoc.getText(field);
-      if (ytext.length > 0) {
-        hasSyncedRef.current = true;
-        const remoteText = ytext.toString();
-        lastSyncedTextRef.current = remoteText;
-        isIngestingRemoteRef.current = true;
-        onChange(remoteText);
-        queueMicrotask(() => { isIngestingRemoteRef.current = false; });
-      }
-      return;
-    }
-
-    // Echo suppression: value matches what was last synced → nothing to push.
+    // Guard 2: Skip if value is already what we synced last
     if (value === lastSyncedTextRef.current) {
       return;
     }
 
-    // Cancel any previously scheduled push to coalesce rapid keystrokes.
+    // Guard 3: For joiners waiting for initial remote sync, do not push
+    // untouched initial template text. But if user modified it, allow push.
+    if (!hasSyncedRef.current) {
+      if (value === initialValueRef.current) {
+        return;
+      }
+      hasSyncedRef.current = true;
+    }
+
+    // Cancel previously scheduled push to coalesce rapid keystrokes (~16ms)
     if (localPushRafRef.current !== null) {
       cancelAnimationFrame(localPushRafRef.current);
     }
 
-    // Schedule the actual Y.Doc mutation on the next animation frame (~16ms).
-    // This prevents synchronous diff computation on every keystroke from
-    // blocking the main thread and triggering Chrome's "Page Unresponsive".
     localPushRafRef.current = requestAnimationFrame(() => {
       localPushRafRef.current = null;
 
-      // Re-check guards inside the rAF callback because state may have changed
-      // between scheduling and execution.
-      if (!ydoc || isIngestingRemoteRef.current) return;
+      if (!ydoc || isApplyingRemoteRef.current) return;
 
       const currentValue = valueRef.current;
       const ytext = ydoc.getText(field);
       const currentYText = ytext.toString();
 
-      // Already in sync → record and bail
+      // Already identical → record and exit
       if (currentYText === currentValue) {
         lastSyncedTextRef.current = currentValue;
         return;
       }
 
-      const { index, deleteCount, insertText } = computeStringDiff(currentYText, currentValue);
+      const { index, deleteCount, insertText } = computeStringDiff(
+        currentYText,
+        currentValue
+      );
 
       if (deleteCount > 0 || insertText.length > 0) {
         lastSyncedTextRef.current = currentValue;
@@ -285,5 +272,5 @@ export function useCollaborativeText({
         }, 'local-user');
       }
     });
-  }, [enabled, ydoc, field, value, onChange]);
+  }, [enabled, ydoc, field, value]);
 }
