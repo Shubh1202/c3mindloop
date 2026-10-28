@@ -10,12 +10,13 @@ import {
   Copy,
   Check,
   Share2,
-  Users,
   ShieldCheck,
   LogOut,
   Radio,
   Edit2,
   ArrowRight,
+  XCircle,
+  AlertTriangle,
 } from 'lucide-react';
 
 interface CollabSessionModalProps {
@@ -25,6 +26,8 @@ interface CollabSessionModalProps {
   startSession: () => Promise<RoomCredentials>;
   joinSession: (creds: RoomCredentials) => Promise<void>;
   leaveSession: () => void;
+  /** Host-only: terminate the session for all connected peers */
+  endSessionForAll?: () => void;
   setDisplayName: (name: string) => void;
   isDark?: boolean;
 }
@@ -36,6 +39,7 @@ export const CollabSessionModal: React.FC<CollabSessionModalProps> = ({
   startSession,
   joinSession,
   leaveSession,
+  endSessionForAll,
   setDisplayName,
   isDark = true,
 }) => {
@@ -44,6 +48,8 @@ export const CollabSessionModal: React.FC<CollabSessionModalProps> = ({
   const [nameInput, setNameInput] = useState(sessionState.selfProfile.name);
   const [joinInput, setJoinInput] = useState('');
   const [joinError, setJoinError] = useState<string | null>(null);
+  // Confirmation dialog before ending the session for all
+  const [showEndConfirm, setShowEndConfirm] = useState(false);
 
   const handleCopyLink = () => {
     if (!sessionState.shareableUrl) return;
@@ -70,10 +76,28 @@ export const CollabSessionModal: React.FC<CollabSessionModalProps> = ({
     }
   };
 
+  const handleConfirmEndSession = () => {
+    endSessionForAll?.();
+    setShowEndConfirm(false);
+    onClose();
+  };
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Peer-to-Peer Live Collaboration">
       <div className="space-y-6 text-xs font-mono">
-        {/* Header Status Bar */}
+
+        {/* ── Terminated Session Banner (non-host peers see this after host ends the session) ── */}
+        {sessionState.terminatedReason && (
+          <div className="flex items-start gap-3 p-3 rounded-lg bg-red-950/40 border border-red-700/50 text-red-300">
+            <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5 text-red-400" />
+            <div>
+              <p className="font-semibold text-red-300 text-[11px] mb-0.5">Session Terminated</p>
+              <p className="text-[10px] text-red-300/80 leading-relaxed">{sessionState.terminatedReason}</p>
+            </div>
+          </div>
+        )}
+
+        {/* ── Header Status Bar ── */}
         <div className="flex items-center justify-between pb-3 border-b border-theme-subtle">
           <div className="flex items-center gap-2">
             <Radio
@@ -96,7 +120,7 @@ export const CollabSessionModal: React.FC<CollabSessionModalProps> = ({
 
         {sessionState.isCollaborating ? (
           <>
-            {/* Shareable Link Section */}
+            {/* ── Shareable Link ── */}
             <div className="space-y-2">
               <label className="block text-theme-muted">Invite Link (100% Private Bearer Link)</label>
               <div className="flex items-center gap-2">
@@ -119,7 +143,7 @@ export const CollabSessionModal: React.FC<CollabSessionModalProps> = ({
               </p>
             </div>
 
-            {/* Display Name Customizer */}
+            {/* ── Display Name Customizer ── */}
             <div className="space-y-2 p-3 rounded-lg bg-surface/50 border border-theme-subtle">
               <div className="flex items-center justify-between">
                 <span className="text-theme-muted">Your Display Name:</span>
@@ -167,21 +191,26 @@ export const CollabSessionModal: React.FC<CollabSessionModalProps> = ({
                   <span className="font-semibold text-theme-main">
                     {sessionState.selfProfile.name}
                   </span>
+                  {sessionState.isHost && (
+                    <span className="ml-1 px-1.5 py-0.5 rounded text-[9px] font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30 uppercase tracking-wide">
+                      Host
+                    </span>
+                  )}
                 </div>
               )}
             </div>
 
-            {/* Peer List */}
+            {/* ── Peer List ── */}
             <CollabPeerList
               peers={sessionState.peers}
               selfProfile={sessionState.selfProfile}
             />
 
-            {/* Security Guarantee Banner */}
+            {/* ── Security Guarantee Banner ── */}
             <div className="p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 space-y-1">
               <div className="flex items-center gap-1.5 font-semibold text-[11px]">
                 <ShieldCheck className="w-4 h-4 shrink-0" />
-                <span>Zero-Knowledge & Privacy-First</span>
+                <span>Zero-Knowledge &amp; Privacy-First</span>
               </div>
               <p className="text-[10px] text-emerald-300/80 leading-relaxed">
                 Your keystrokes and document contents are exchanged directly between browsers via
@@ -190,22 +219,77 @@ export const CollabSessionModal: React.FC<CollabSessionModalProps> = ({
               </p>
             </div>
 
-            {/* Leave / Disconnect Action */}
-            <div className="pt-2 border-t border-theme-subtle flex justify-end">
+            {/* ── Leave / End Session Actions ── */}
+            <div className="pt-2 border-t border-theme-subtle flex items-center justify-end gap-2">
+
+              {/* Both host and guests can leave the session (personal disconnect only) */}
               <button
                 onClick={() => {
                   leaveSession();
                   onClose();
                 }}
-                className="px-3.5 py-2 rounded-lg bg-red-950/40 hover:bg-red-900/60 border border-red-800/60 text-red-300 font-semibold flex items-center gap-1.5 cursor-pointer transition-colors"
+                className={`px-3.5 py-2 rounded-lg font-semibold flex items-center gap-1.5 cursor-pointer transition-colors ${
+                  sessionState.isHost
+                    ? 'bg-surface hover:bg-theme-hover border border-theme-subtle text-theme-muted'
+                    : 'bg-red-950/40 hover:bg-red-900/60 border border-red-800/60 text-red-300'
+                }`}
               >
                 <LogOut className="w-3.5 h-3.5" />
                 <span>Leave Session</span>
               </button>
+
+              {/* Host-only: End the session for all connected peers */}
+              {sessionState.isHost && endSessionForAll && (
+                <button
+                  onClick={() => setShowEndConfirm(true)}
+                  className="px-3.5 py-2 rounded-lg bg-red-950/60 hover:bg-red-900/80 border border-red-700/60 text-red-300 font-semibold flex items-center gap-1.5 cursor-pointer transition-colors"
+                >
+                  <XCircle className="w-3.5 h-3.5" />
+                  <span>End Session for All</span>
+                </button>
+              )}
             </div>
+
+            {/* ── End-Session Confirmation Overlay ── */}
+            {showEndConfirm && (
+              <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-sm">
+                <div className="bg-[#1a1a1a] border border-red-800/60 rounded-xl shadow-2xl p-6 max-w-sm w-full mx-4 space-y-4">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 rounded-lg bg-red-950/60 border border-red-800/50">
+                      <XCircle className="w-5 h-5 text-red-400" />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-sm text-white">End Session for Everyone?</h3>
+                      <p className="text-[11px] text-gray-400 mt-0.5">This cannot be undone.</p>
+                    </div>
+                  </div>
+                  <p className="text-[12px] text-gray-300 leading-relaxed">
+                    As the{' '}
+                    <span className="text-amber-400 font-semibold">Host</span>, ending the session
+                    will immediately disconnect all connected peers. They will see a termination
+                    notice and be returned to standalone mode.
+                  </p>
+                  <div className="flex items-center gap-3 pt-1">
+                    <button
+                      onClick={() => setShowEndConfirm(false)}
+                      className="flex-1 py-2 rounded-lg bg-surface hover:bg-theme-hover border border-theme-subtle text-theme-main text-xs font-semibold cursor-pointer transition-colors"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={handleConfirmEndSession}
+                      className="flex-1 py-2 rounded-lg bg-red-800 hover:bg-red-700 border border-red-600 text-white text-xs font-bold cursor-pointer transition-colors flex items-center justify-center gap-1.5"
+                    >
+                      <XCircle className="w-3.5 h-3.5" />
+                      Yes, End for All
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
           </>
         ) : (
-          /* Disconnected State - Start or Join */
+          /* ── Disconnected State – Start or Join ── */
           <div className="space-y-6">
             <div className="space-y-3">
               <h4 className="text-sm font-semibold text-theme-main">
@@ -227,7 +311,7 @@ export const CollabSessionModal: React.FC<CollabSessionModalProps> = ({
               </button>
             </div>
 
-            {/* Join by URL input */}
+            {/* ── Join by URL input ── */}
             <div className="space-y-2 pt-3 border-t border-theme-subtle">
               <label className="block text-theme-muted">Or Join Existing Room:</label>
               <div className="flex items-center gap-2">

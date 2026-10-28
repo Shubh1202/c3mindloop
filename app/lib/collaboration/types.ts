@@ -48,6 +48,7 @@ export interface CollabSessionState {
   isCollaborating: boolean;
   shareableUrl: string | null;
   error: string | null;
+  terminatedReason: string | null;
 }
 
 export interface UseCollaborativeTextProps {

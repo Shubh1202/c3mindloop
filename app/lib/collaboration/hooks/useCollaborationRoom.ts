@@ -43,6 +43,7 @@ export function useCollaborationRoom(config: CollabRoomConfig) {
       isCollaborating: false,
       shareableUrl: null,
       error: null,
+      terminatedReason: null,
     };
   });
 
@@ -68,6 +69,7 @@ export function useCollaborationRoom(config: CollabRoomConfig) {
         isCollaborating: isCollab,
         shareableUrl: shareUrl,
         error: event.error,
+        terminatedReason: event.terminatedReason,
       });
     });
 
@@ -123,12 +125,21 @@ export function useCollaborationRoom(config: CollabRoomConfig) {
     []
   );
 
-  // Leave / end session
+  // Leave session (local only — does NOT terminate for others)
   const leaveSession = useCallback(() => {
     const manager = managerRef.current;
     if (manager) {
       manager.setIsHost(false);
       manager.disconnect();
+    }
+    clearCollabHash();
+  }, []);
+
+  // End session for ALL connected peers (Host only)
+  const endSessionForAll = useCallback(() => {
+    const manager = managerRef.current;
+    if (manager) {
+      manager.endSessionForAll();
     }
     clearCollabHash();
   }, []);
@@ -162,6 +173,23 @@ export function useCollaborationRoom(config: CollabRoomConfig) {
     };
   }, [config.autoConnectFromUrl, joinSession]);
 
+  // If host closes the tab / navigates away, end session for all peers
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const handleBeforeUnload = () => {
+      const manager = managerRef.current;
+      if (manager?.getIsHost() && manager.getCredentials()) {
+        manager.endSessionForAll();
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, []);
+
   return {
     ...state,
     ydoc: managerRef.current?.getDoc() ?? null,
@@ -169,6 +197,7 @@ export function useCollaborationRoom(config: CollabRoomConfig) {
     startSession,
     joinSession,
     leaveSession,
+    endSessionForAll,
     setDisplayName,
   };
 }

@@ -22,6 +22,7 @@ export type RoomEventCallback = (event: {
   bcPeerCount: number;
   isHost: boolean;
   error: string | null;
+  terminatedReason: string | null;
 }) => void;
 
 export class CollaborationRoomManager {
@@ -33,6 +34,7 @@ export class CollaborationRoomManager {
   private peers: PeerProfile[] = [];
   private status: ConnectionStatus = 'idle';
   private error: string | null = null;
+  private terminatedReason: string | null = null;
   private webrtcPeerCount = 0;
   private bcPeerCount = 0;
   private isHost = false;
@@ -75,6 +77,7 @@ export class CollaborationRoomManager {
       bcPeerCount: this.bcPeerCount,
       isHost: this.isHost,
       error: this.error,
+      terminatedReason: this.terminatedReason,
     };
     for (const listener of this.eventListeners) {
       listener(payload);
@@ -136,6 +139,7 @@ export class CollaborationRoomManager {
     this.credentials = credentials;
     this.status = 'connecting';
     this.error = null;
+    this.terminatedReason = null;
     this.notify();
 
     try {
@@ -154,11 +158,25 @@ export class CollaborationRoomManager {
         }
       });
 
-      // 3. Room name is scoped by toolId to avoid cross-tool collision
+      // 3. Listen for session-meta termination signal from Host
+      const sessionMeta = ydoc.getMap('session-meta');
+      sessionMeta.observe(() => {
+        if (this.isDestroyed) return;
+        const term = sessionMeta.get('terminated') as
+          | { endedBy?: string; timestamp?: number }
+          | undefined;
+        if (term) {
+          const endedBy = term.endedBy || 'Host';
+          this.terminatedReason = `Session ended for all participants by ${endedBy}.`;
+          this.disconnect();
+        }
+      });
+
+      // 4. Room name is scoped by toolId to avoid cross-tool collision
       const scopedRoomName = `c3m-${this.config.toolId}-${credentials.roomId}`;
       const signalingServers = this.config.signalingServers || DEFAULT_SIGNALING_SERVERS;
 
-      // 4. Initialize WebrtcProvider with optional password-derived encryption
+      // 5. Initialize WebrtcProvider with optional password-derived encryption
       const provider = new WebrtcProvider(scopedRoomName, ydoc, {
         signaling: signalingServers,
         password: credentials.password || this.config.password || undefined,
@@ -247,6 +265,31 @@ export class CollaborationRoomManager {
 
     this.peers = parsedPeers;
     this.notify();
+  }
+
+  /**
+   * Terminate the entire collaboration session for all connected peers (Host only).
+   */
+  public endSessionForAll(): void {
+    if (!this.ydoc) {
+      this.disconnect();
+      return;
+    }
+
+    try {
+      const sessionMeta = this.ydoc.getMap('session-meta');
+      sessionMeta.set('terminated', {
+        endedBy: this.selfProfile.name,
+        timestamp: Date.now(),
+      });
+    } catch (e) {
+      // Ignore
+    }
+
+    // Allow 150ms for WebRTC / BroadcastChannel to broadcast termination packet
+    setTimeout(() => {
+      this.disconnect();
+    }, 150);
   }
 
   /**

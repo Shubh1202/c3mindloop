@@ -11,6 +11,7 @@ interface CollabToolbarButtonProps {
   startSession: () => Promise<RoomCredentials>;
   joinSession: (creds: RoomCredentials) => Promise<void>;
   leaveSession: () => void;
+  endSessionForAll?: () => void;
   setDisplayName: (name: string) => void;
   isDark?: boolean;
 }
@@ -20,6 +21,7 @@ export const CollabToolbarButton: React.FC<CollabToolbarButtonProps> = ({
   startSession,
   joinSession,
   leaveSession,
+  endSessionForAll,
   setDisplayName,
   isDark = true,
 }) => {
@@ -66,6 +68,7 @@ export const CollabToolbarButton: React.FC<CollabToolbarButtonProps> = ({
         startSession={startSession}
         joinSession={joinSession}
         leaveSession={leaveSession}
+        endSessionForAll={endSessionForAll}
         setDisplayName={setDisplayName}
         isDark={isDark}
       />

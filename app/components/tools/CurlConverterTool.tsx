@@ -409,6 +409,7 @@ export const CurlConverterTool: React.FC = () => {
             startSession={collab.startSession}
             joinSession={collab.joinSession}
             leaveSession={collab.leaveSession}
+            endSessionForAll={collab.endSessionForAll}
             setDisplayName={collab.setDisplayName}
             isDark={true}
           />
