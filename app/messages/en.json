@@ -58,7 +58,8 @@
     "nav4Desc": "Why we build zero-fluff developer tools",
     "titlePrefix": "The Continuous Loop of",
     "ctaPrimaryOld": "Explore Ecosystem",
-    "ctaSecondaryOld": "Try AI Playground"
+    "ctaSecondaryOld": "Try AI Playground",
+    "ctaCollab": "Try Live Collaboration"
   },
   "philosophySection": {
     "kicker": "Brand Philosophy",
@@ -194,7 +195,14 @@
     "title": "Engineering Guides",
     "subtitle": "Practical notes and references for developer workflows.",
     "searchPlaceholder": "Search guides by title, tag, or keyword...",
-    "categories": { "all": "All Categories", "engineering": "Engineering", "developerTools": "Developer Tools", "aiAgents": "AI & Agents", "developerCulture": "Developer Culture", "typeScript": "TypeScript" },
+    "categories": {
+      "all": "All Categories",
+      "engineering": "Engineering",
+      "developerTools": "Developer Tools",
+      "aiAgents": "AI & Agents",
+      "developerCulture": "Developer Culture",
+      "typeScript": "TypeScript"
+    },
     "readTime": "min read",
     "readArticle": "Read Guide",
     "noResults": "No published guides are available yet."
@@ -777,7 +785,7 @@
         "step4": "Compare Checksum: Optionally paste an expected hash value to verify file integrity against downloaded checksums.",
         "privacyTitle": "Data Privacy & In-Browser Crypto Safety",
         "privacyIntro": "Hashing passwords, sensitive API keys, or proprietary software binaries on third-party web servers introduces data leak vulnerabilities.",
-        "privacyBullet1": "C\u00b3 MindLoop Guarantees Absolute Privacy: All hashing calculations execute via your browser's native crypto.subtle JavaScript engine. No bytes are ever transmitted across HTTP networks.",
+        "privacyBullet1": "C³ MindLoop Guarantees Absolute Privacy: All hashing calculations execute via your browser's native crypto.subtle JavaScript engine. No bytes are ever transmitted across HTTP networks.",
         "privacyBullet2": "Works Offline: Once the page loads, the hash generator operates completely offline. Ideal for air-gapped environments and secure workstations."
       },
       "faq": {
@@ -1288,4 +1296,3 @@
     }
   }
 }
-

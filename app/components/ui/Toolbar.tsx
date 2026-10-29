@@ -34,7 +34,9 @@ export const ToolbarRoot: React.FC<ToolbarRootProps> = ({
 }) => {
   return (
     <div
-      className={`px-2.5 py-2.5 border-b flex flex-nowrap items-center justify-between text-xs font-mono min-w-0 ${
+      role="toolbar"
+      aria-label="Developer tool actions"
+      className={`px-2.5 py-2 border-b flex flex-wrap items-center justify-between gap-y-2 gap-x-1.5 text-xs font-mono min-w-0 ${
         isDark
           ? 'bg-neutral-900 border-neutral-800 text-neutral-100'
           : 'bg-[#F8F9FA] border-[#E4E4E7] text-[#111111]'
@@ -52,7 +54,7 @@ export const ToolbarGroup: React.FC<ToolbarGroupProps> = ({
 }) => {
   return (
     <div
-      className={`flex flex-nowrap items-center gap-1.5 shrink-0 ${
+      className={`flex flex-wrap items-center gap-1.5 min-w-0 ${
         align === 'right' ? 'ml-auto' : ''
       } ${className}`}
     >
@@ -62,7 +64,7 @@ export const ToolbarGroup: React.FC<ToolbarGroupProps> = ({
 };
 
 export const ToolbarSeparator: React.FC<{ className?: string }> = ({ className = '' }) => {
-  return <div className={`w-px h-5 bg-neutral-800 mx-0.5 shrink-0 ${className}`} />;
+  return <div className={`w-px h-5 bg-neutral-800 mx-0.5 shrink-0 ${className}`} aria-hidden="true" />;
 };
 
 export const ToolbarButton: React.FC<ToolbarButtonProps> = ({
@@ -78,9 +80,13 @@ export const ToolbarButton: React.FC<ToolbarButtonProps> = ({
   disabled,
   ...props
 }) => {
-  // Common styles
+  // Accessible name fallback: props['aria-label'] -> label -> title
+  const accessibleName =
+    props['aria-label'] || label || (typeof props.title === 'string' ? props.title : undefined);
+
+  // Common styles including clear keyboard focus ring for WCAG 2.4.7 compliance
   const baseClass =
-    'px-2.5 py-1.5 rounded transition-colors flex items-center gap-1.5 cursor-pointer font-semibold shadow-sm text-xs font-mono disabled:opacity-40 disabled:cursor-not-allowed select-none border border-transparent';
+    'px-2.5 py-1.5 rounded transition-colors flex items-center gap-1.5 cursor-pointer font-semibold shadow-sm text-xs font-mono disabled:opacity-40 disabled:cursor-not-allowed select-none border border-transparent focus:outline-none focus:ring-2 focus:ring-[#1D9BF0]/50';
 
   let variantClass = '';
 
@@ -112,10 +118,11 @@ export const ToolbarButton: React.FC<ToolbarButtonProps> = ({
   return (
     <button
       disabled={disabled}
+      aria-label={accessibleName}
       className={`${baseClass} ${variantClass} ${className}`}
       {...props}
     >
-      {Icon && <Icon className={`w-3.5 h-3.5 ${iconClassName}`} />}
+      {Icon && <Icon className={`w-3.5 h-3.5 shrink-0 ${iconClassName}`} aria-hidden="true" />}
       {label && <span className={hideTextOnMobile ? 'hidden sm:inline' : ''}>{label}</span>}
       {children}
     </button>

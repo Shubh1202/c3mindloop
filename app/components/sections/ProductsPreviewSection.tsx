@@ -10,6 +10,7 @@ import { Modal } from '../ui/Modal';
 import { Product } from '../../types';
 import { WatermarkBrandLayer } from '../ui/WatermarkBrandLayer';
 import { VSCodeExtensionCard } from './VSCodeExtensionCard';
+import { isCollaborativeTool } from '../../lib/collaboration';
 
 export const ProductsPreviewSection: React.FC = () => {
   const { t } = useTranslation();
@@ -35,15 +36,15 @@ export const ProductsPreviewSection: React.FC = () => {
         {/* Editorial Section Header */}
         <div className="space-y-3 max-w-2xl">
           <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-theme-muted">
-            <span>Featured Project & Utilities</span>
+            <span>Featured Project &amp; Utilities</span>
             <span>•</span>
             <span>Developer Tools</span>
           </div>
           <h2 className="text-h1 text-theme-main font-bold">
-            Developer Utilities & Tools
+            Developer Utilities &amp; Tools
           </h2>
           <p className="text-body-large text-theme-muted font-normal">
-            Fast, browser-based utilities and developer tools for daily software engineering workflows.
+            Fast, browser-based utilities for daily workflows. Run standalone in your browser or start live peer sessions to debug together.
           </p>
         </div>
 
@@ -59,7 +60,7 @@ export const ProductsPreviewSection: React.FC = () => {
                 Browser Utilities Suite
               </h3>
               <p className="text-xs text-theme-muted mt-1">
-                Zero network requests • Processed 100% inside your local browser sandbox
+                Local in-browser processing • 5 core tools support real-time peer-to-peer collaboration
               </p>
             </div>
             <Link
@@ -114,9 +115,16 @@ export const ProductsPreviewSection: React.FC = () => {
                       <div className="p-2.5 rounded-lg bg-neutral-800/80 text-neutral-300 group-hover:bg-[#1D9BF0]/20 group-hover:text-[#1D9BF0] transition-colors shrink-0">
                         <IconComponent className="w-4 h-4" />
                       </div>
-                      <span className="text-[9px] font-mono font-semibold uppercase tracking-wider text-neutral-400 bg-white/5 px-2 py-0.5 rounded border border-white/10 shrink-0">
-                        Client-Side
-                      </span>
+                      {isCollaborativeTool(prod.id) ? (
+                        <span className="text-[9px] font-mono font-semibold uppercase tracking-wider text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/30 shrink-0 flex items-center gap-1">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" aria-hidden="true" />
+                          Live Collab
+                        </span>
+                      ) : (
+                        <span className="text-[9px] font-mono font-semibold uppercase tracking-wider text-neutral-400 bg-white/5 px-2 py-0.5 rounded border border-white/10 shrink-0">
+                          Client-Side
+                        </span>
+                      )}
                     </div>
 
                     <h4 className="text-base font-semibold text-white group-hover:text-[#1D9BF0] transition-colors flex items-center justify-between gap-1 leading-snug">

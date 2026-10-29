@@ -1,21 +1,16 @@
 'use client';
 
 import React, { useState } from 'react';
-import Link from 'next/link';
-import { Search, Clock, ArrowRight, Share2, Check } from 'lucide-react';
+import { Search } from 'lucide-react';
 import { useTranslation } from '../lib/i18n';
 import { getPublishedGuides } from '../lib/constants';
-import { Button } from '../components/ui/Button';
-import { Modal } from '../components/ui/Modal';
-import { BlogPost } from '../types';
 import { CTASection } from '../components/sections/CTASection';
+import { GuideCard } from '../components/guides/GuideCard';
 
 export const BlogPage: React.FC<{ variant?: 'blog' | 'guides' }> = ({ variant = 'blog' }) => {
   const { locale, t } = useTranslation();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
-  const [activeArticle, setActiveArticle] = useState<BlogPost | null>(null);
-  const [copied, setCopied] = useState(false);
 
   const categories = ['all', 'engineering', 'developerTools', 'aiAgents', 'developerCulture', 'typeScript'];
   const copy = (key: string, fallback: string) => t(`${variant}.${key}`, fallback);
@@ -45,12 +40,6 @@ export const BlogPage: React.FC<{ variant?: 'blog' | 'guides' }> = ({ variant = 
 
     return matchesSearch && matchesCategory;
   });
-
-  const handleShare = () => {
-    navigator.clipboard.writeText(window.location.href);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
 
   return (
     <>
@@ -106,57 +95,7 @@ export const BlogPage: React.FC<{ variant?: 'blog' | 'guides' }> = ({ variant = 
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {filteredPosts.map((post) => (
-                <div key={post.id} className="p-5 sm:p-8 rounded-xl bg-surface border border-theme-subtle flex flex-col justify-between space-y-6 group hover:border-[#1D9BF0]/40 transition-colors">
-                  <div>
-                    <div className="flex items-center justify-between mb-4 text-xs font-mono text-theme-muted">
-                      <span className="text-[#1D9BF0] font-semibold">{copy(`categories.${post.category}`, post.category)}</span>
-                      <span className="flex items-center gap-1">
-                        <Clock className="w-3.5 h-3.5" />
-                        {post.readTimeMinutes} {copy('readTime', 'min read')}
-                      </span>
-                    </div>
-
-                    <h2 className="text-h3 text-theme-main mb-3 group-hover:text-[#1D9BF0] transition-colors">
-                      {variant === 'guides' ? (
-                        <Link href={`/guides/${post.slug}`} className="hover:underline">
-                          {post.title}
-                        </Link>
-                      ) : post.title}
-                    </h2>
-
-                    <p className="text-body-small text-theme-muted mb-6">
-                      {post.excerpt}
-                    </p>
-
-                    <div className="flex flex-wrap gap-1.5 mb-6">
-                      {post.tags.map((tag) => (
-                        <span key={tag} className="px-2.5 py-1 rounded bg-app border border-theme-subtle text-code text-theme-muted">
-                          #{tag}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="pt-6 border-t border-theme-subtle flex items-center justify-between">
-                    <div className="flex items-center gap-2.5">
-                      <div>
-                        {post.author.name && (
-                          <div className="text-xs font-semibold text-theme-main">{post.author.name}</div>
-                        )}
-                        <div className="text-xs text-theme-muted font-mono">{post.publishedAt}</div>
-                      </div>
-                    </div>
-
-                    <Button
-                      size="sm"
-                      variant="secondary"
-                      onClick={() => setActiveArticle(post)}
-                      icon={<ArrowRight className="w-3.5 h-3.5" />}
-                    >
-                      {copy('readArticle', 'Read Article')}
-                    </Button>
-                  </div>
-                </div>
+                <GuideCard key={post.id} guide={post} />
               ))}
             </div>
           )}
@@ -164,34 +103,6 @@ export const BlogPage: React.FC<{ variant?: 'blog' | 'guides' }> = ({ variant = 
           <CTASection />
         </div>
       </div>
-
-      {/* Article Detail Modal */}
-      <Modal isOpen={!!activeArticle} onClose={() => setActiveArticle(null)} title={activeArticle?.title}>
-        {activeArticle && (
-          <div className="space-y-6">
-            <div className="flex items-center justify-between text-xs font-mono text-theme-muted pb-4 border-b border-theme-subtle">
-              <span>{activeArticle.author.name ? `${activeArticle.author.name} • ${activeArticle.publishedAt}` : activeArticle.publishedAt}</span>
-              <button
-                onClick={handleShare}
-                className="flex items-center gap-1 text-[#1D9BF0] hover:underline cursor-pointer"
-              >
-                {copied ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Share2 className="w-3.5 h-3.5" />}
-                <span>{copied ? 'Copied Link' : 'Share'}</span>
-              </button>
-            </div>
-
-            <p className="text-body text-theme-muted leading-relaxed">
-              {activeArticle.content}
-            </p>
-
-            {activeArticle.codeSnippet && (
-              <div className="p-4 rounded-lg bg-app border border-theme-subtle font-mono text-code text-[#1D9BF0] overflow-x-auto">
-                <pre>{activeArticle.codeSnippet}</pre>
-              </div>
-            )}
-          </div>
-        )}
-      </Modal>
     </>
   );
 };

@@ -147,7 +147,7 @@ export const GraphNodeComponent: React.FC<GraphNodeProps> = ({
         className="graph-node-header-label"
         x={NODE_PADDING} y={HEADER_HEIGHT / 2 + 5}
         fill={isSearchMatch ? '#f59e0b' : '#f5f5f5'}
-        fontSize={12} fontFamily='"JetBrains Mono", monospace'
+        fontSize={12} fontFamily='ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace'
         fontWeight="bold" dominantBaseline="middle" textAnchor="start"
         style={{ userSelect: 'none', pointerEvents: 'none' }}
       >
@@ -159,7 +159,7 @@ export const GraphNodeComponent: React.FC<GraphNodeProps> = ({
         className="graph-node-type-badge"
         x={node.width - NODE_PADDING} y={HEADER_HEIGHT / 2 + 5}
         fill="#404040" fontSize={10}
-        fontFamily='"JetBrains Mono", monospace'
+        fontFamily='ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace'
         dominantBaseline="middle" textAnchor="end"
         style={{ userSelect: 'none', pointerEvents: 'none' }}
       >
@@ -173,7 +173,7 @@ export const GraphNodeComponent: React.FC<GraphNodeProps> = ({
           x={node.width - NODE_PADDING - (node.type !== 'scalar_container' ? 22 : 0)}
           y={HEADER_HEIGHT / 2 + 5}
           fill="#404040" fontSize={10}
-          fontFamily='"JetBrains Mono", monospace'
+          fontFamily='ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace'
           dominantBaseline="middle" textAnchor="end"
           style={{ userSelect: 'none', pointerEvents: 'none' }}
         >
@@ -230,7 +230,7 @@ export const GraphNodeComponent: React.FC<GraphNodeProps> = ({
                 x={NODE_PADDING} y={rowCenterY}
                 fill={isCopied ? '#34d399' : '#38bdf8'}
                 fontSize={11}
-                fontFamily='"JetBrains Mono", monospace'
+                fontFamily='ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace'
                 dominantBaseline="middle" textAnchor="start"
                 style={{ userSelect: 'none', pointerEvents: 'none' }}
               >
@@ -245,7 +245,7 @@ export const GraphNodeComponent: React.FC<GraphNodeProps> = ({
               y={rowCenterY}
               fill={isCopied ? '#34d399' : (VALUE_COLORS[row.valueType] ?? '#f5f5f5')}
               fontSize={11}
-              fontFamily='"JetBrains Mono", monospace'
+              fontFamily='ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace'
               dominantBaseline="middle" textAnchor="start"
               fontStyle={row.valueType === 'null' ? 'italic' : 'normal'}
               style={{ userSelect: 'none', pointerEvents: 'none' }}
@@ -273,7 +273,7 @@ export const GraphNodeComponent: React.FC<GraphNodeProps> = ({
           <text
             x={node.width - 16} y={node.height / 2 + 1}
             fill="white" fontSize={9}
-            fontFamily='"JetBrains Mono", monospace'
+            fontFamily='ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace'
             fontWeight="bold" dominantBaseline="middle" textAnchor="middle"
             style={{ userSelect: 'none', pointerEvents: 'none' }}
           >

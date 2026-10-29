@@ -2,6 +2,7 @@ import React from 'react';
 import { ArrowUpRight } from 'lucide-react';
 import { Link } from '../../lib/router-compat';
 import { Product } from '../../types';
+import { isCollaborativeTool } from '../../lib/collaboration';
 
 interface ToolCardProps {
   prod: Product;
@@ -22,6 +23,8 @@ export const ToolCard: React.FC<ToolCardProps> = ({
   Icon,
   onClick,
 }) => {
+  const isCollab = isCollaborativeTool(prod.id);
+
   return (
     <Link
       href={toolHref ?? '/tools'}
@@ -31,12 +34,22 @@ export const ToolCard: React.FC<ToolCardProps> = ({
           onClick(prod);
         }
       }}
-      className="p-5 flex flex-col h-full bg-surface border border-theme-subtle rounded-xl hover:border-[#1D9BF0]/50 hover:shadow-lg transition-all duration-200 cursor-pointer group"
+      className={`p-5 flex flex-col h-full bg-surface border rounded-xl hover:shadow-lg transition-all duration-200 cursor-pointer group ${
+        isCollab
+          ? 'border-emerald-500/30 hover:border-emerald-500/60'
+          : 'border-theme-subtle hover:border-[#1D9BF0]/50'
+      }`}
     >
       {/* Top: Icon + Title + Index */}
       <div className="flex items-start justify-between gap-3 mb-3">
         <div className="flex items-center gap-3">
-          <div className="p-2 rounded-md bg-[#1D9BF0]/10 text-[#1D9BF0] shrink-0">
+          <div
+            className={`p-2 rounded-md shrink-0 ${
+              isCollab
+                ? 'bg-emerald-500/10 text-emerald-400'
+                : 'bg-[#1D9BF0]/10 text-[#1D9BF0]'
+            }`}
+          >
             <Icon className="w-4 h-4" />
           </div>
           <h3 className="text-body font-semibold text-theme-main group-hover:text-[#1D9BF0] transition-colors line-clamp-1">
@@ -44,6 +57,16 @@ export const ToolCard: React.FC<ToolCardProps> = ({
           </h3>
         </div>
         <div className="flex items-center gap-2 shrink-0">
+          {isCollab && (
+            <span
+              data-testid="collab-badge"
+              className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono font-semibold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30"
+              title="Supports real-time peer-to-peer collaboration"
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" aria-hidden="true" />
+              <span>Live Collab</span>
+            </span>
+          )}
           <span className="text-[10px] font-mono text-theme-muted opacity-50">0{idx + 1}</span>
           <ArrowUpRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity text-[#1D9BF0]" />
         </div>

@@ -4,7 +4,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { Copy, Check, Trash2, AlertCircle, Info, Terminal, Maximize2, Minimize2, Columns2, Rows2, Eye, EyeOff, Lock, ListChecks, AlertTriangle, LayoutList, ChevronDown, ChevronUp, AlignLeft, Code } from 'lucide-react';
 import { useTranslation } from '../../lib/i18n';
 import { useCollaborationRoom, useCollaborativeText } from '../../lib/collaboration';
-import { CollabToolbarButton } from '../collaboration';
+import { CollabToolbarButton, CollabActiveBanner } from '../collaboration';
 
 // â”€â”€ Types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
@@ -408,6 +408,7 @@ export const CurlConverterTool: React.FC = () => {
             sessionState={collab}
             startSession={collab.startSession}
             joinSession={collab.joinSession}
+            retryConnection={collab.retryConnection}
             leaveSession={collab.leaveSession}
             endSessionForAll={collab.endSessionForAll}
             setDisplayName={collab.setDisplayName}
@@ -441,6 +442,15 @@ export const CurlConverterTool: React.FC = () => {
           </button>
         </div>
       </div>
+
+      {/* Real-time Collaboration Active Status Banner */}
+      <CollabActiveBanner
+        sessionState={collab}
+        leaveSession={collab.leaveSession}
+        endSessionForAll={collab.endSessionForAll}
+        onDismissError={collab.dismissError}
+        isDark={true}
+      />
 
       {/* Main split pane */}
       <div className={`grid divide-neutral-800 ${

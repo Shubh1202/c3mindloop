@@ -5,7 +5,33 @@ import { trackEvent, GA_EVENTS } from '../../lib/analytics';
 import { Copy, Check, Trash2, ShieldCheck, AlertCircle, Info, BookOpen, Maximize2, Minimize2, FileText, Code } from 'lucide-react';
 import { LocalAIPanel } from './LocalAIPanel';
 import { useCollaborationRoom, useCollaborativeText } from '../../lib/collaboration';
-import { CollabToolbarButton } from '../collaboration';
+import { CollabToolbarButton, CollabActiveBanner } from '../collaboration';
+
+export interface RegexFlagsState {
+  g: boolean;
+  i: boolean;
+  m: boolean;
+  s: boolean;
+  u: boolean;
+  y: boolean;
+}
+
+export function parseFlagsString(str: string): RegexFlagsState {
+  const chars = new Set((str || '').split(''));
+  return {
+    g: chars.has('g'),
+    i: chars.has('i'),
+    m: chars.has('m'),
+    s: chars.has('s'),
+    u: chars.has('u'),
+    y: chars.has('y'),
+  };
+}
+
+export function serializeFlags(f: Partial<RegexFlagsState> | Record<string, boolean>): string {
+  const order: (keyof RegexFlagsState)[] = ['g', 'i', 'm', 's', 'u', 'y'];
+  return order.filter((k) => Boolean(f[k])).join('');
+}
 
 interface MatchGroup {
   index: number;
@@ -24,7 +50,7 @@ const PRESETS = [
 
 const SAMPLE_PATTERN = '[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}';
 const SAMPLE_TEST_STRING = 'Contact hello@c3mindloop.com or support@example.org for developer inquiries.\nInvalid: notanemail, also-bad@, @nodomain.com';
-const SAMPLE_FLAGS = { g: true, i: true, m: true, s: false, u: false, y: false };
+const SAMPLE_FLAGS: RegexFlagsState = { g: true, i: true, m: true, s: false, u: false, y: false };
 
 interface RegexStep {
   token: string;
@@ -124,6 +150,19 @@ export const RegexTesterTool: React.FC = () => {
     enabled: collab.isCollaborating,
     isHost: collab.isHost,
   });
+
+  const flagsStr = useMemo(() => serializeFlags(flags), [flags]);
+
+  useCollaborativeText({
+    ydoc: collab.ydoc,
+    field: 'flags',
+    value: flagsStr,
+    onChange: useCallback((newStr: string) => {
+      setFlags(parseFlagsString(newStr));
+    }, []),
+    enabled: collab.isCollaborating,
+    isHost: collab.isHost,
+  });
   const [copied, setCopied] = useState(false);
   const [copiedCode, setCopiedCode] = useState(false);
   const [showCheatsheet, setShowCheatsheet] = useState(false);
@@ -153,12 +192,7 @@ export const RegexTesterTool: React.FC = () => {
     };
   }, [isFullScreen]);
 
-  const activeFlagsStr = useMemo(() => {
-    return Object.entries(flags)
-      .filter(([_, active]) => active)
-      .map(([f]) => f)
-      .join('');
-  }, [flags]);
+  const activeFlagsStr = flagsStr;
 
   const regexResult = useMemo(() => {
     if (!pattern) {
@@ -247,6 +281,9 @@ export const RegexTesterTool: React.FC = () => {
   const applyPreset = (preset: typeof PRESETS[0]) => {
     setPattern(preset.pattern);
     setTestString(preset.sample);
+    if (preset.flags) {
+      setFlags(parseFlagsString(preset.flags));
+    }
   };
 
   const handleClear = () => {
@@ -257,15 +294,7 @@ export const RegexTesterTool: React.FC = () => {
   // Called by LocalAIPanel when the user hits "Apply Pattern to Tester"
   const handleApplyRegex = useCallback((newPattern: string, newFlags: string) => {
     setPattern(newPattern);
-    // Reconstruct flags object from the flags string so the toggle UI stays in sync
-    const validFlags = ['g', 'i', 'm', 's', 'u', 'y'] as const;
-    setFlags((prev) => {
-      const next = { ...prev };
-      for (const f of validFlags) {
-        next[f] = newFlags.includes(f);
-      }
-      return next;
-    });
+    setFlags(parseFlagsString(newFlags));
   }, []);
 
   // Code Snippet Builders
@@ -351,6 +380,7 @@ export const RegexTesterTool: React.FC = () => {
             sessionState={collab}
             startSession={collab.startSession}
             joinSession={collab.joinSession}
+            retryConnection={collab.retryConnection}
             leaveSession={collab.leaveSession}
             endSessionForAll={collab.endSessionForAll}
             setDisplayName={collab.setDisplayName}
@@ -366,6 +396,15 @@ export const RegexTesterTool: React.FC = () => {
           </button>
         </div>
       </div>
+
+      {/* Real-time Collaboration Active Status Banner */}
+      <CollabActiveBanner
+        sessionState={collab}
+        leaveSession={collab.leaveSession}
+        endSessionForAll={collab.endSessionForAll}
+        onDismissError={collab.dismissError}
+        isDark={true}
+      />
 
       {/* Local AI Assist Panel */}
       <div className="px-3 py-2 bg-neutral-950 border-b border-neutral-800">

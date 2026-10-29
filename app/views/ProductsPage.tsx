@@ -11,6 +11,7 @@ import { VSCodeExtensionCard } from '../components/sections/VSCodeExtensionCard'
 import { JsonFormatterTool } from '../components/tools/JsonFormatterTool';
 import { ToolCard } from '../components/ui/ToolCard';
 import { Link } from '../lib/router-compat';
+import { isCollaborativeTool } from '../lib/collaboration';
 
 export const ProductsPage: React.FC = () => {
   const { t } = useTranslation();
@@ -34,10 +35,11 @@ export const ProductsPage: React.FC = () => {
     GitBranch,
   };
 
-  const categories = ['all', 'extensions', 'json', 'encoders', 'auth', 'crypto', 'utilities', 'resume'];
+  const categories = ['all', 'collaborative', 'json', 'encoders', 'auth', 'crypto', 'utilities', 'resume'];
 
   const filteredProducts = PRODUCTS_LIST.filter((p) => {
     if (selectedCategory === 'all') return true;
+    if (selectedCategory === 'collaborative') return isCollaborativeTool(p.id);
     return p.category === selectedCategory;
   });
 
@@ -52,26 +54,36 @@ export const ProductsPage: React.FC = () => {
               Developer Platform
             </span>
             <h1 className="text-h1 text-theme-main">
-              Featured Tools & Extension
+              Featured Tools &amp; Extension
             </h1>
             <p className="text-body-large text-theme-muted max-w-2xl mx-auto">
-              Fast, privacy-focused browser utilities and developer tools built for daily engineering workflows.
+              Fast, privacy-focused browser utilities built for daily engineering workflows. Five core tools support real-time peer-to-peer collaboration for live payload and code debugging.
             </p>
 
             {/* Category Filter */}
             <div className="flex flex-wrap items-center justify-center gap-2 pt-4">
-              {categories.map((cat) => (
-                <button
-                  key={cat}
-                  onClick={() => setSelectedCategory(cat)}
-                  className={`px-3.5 py-1.5 rounded-md text-xs font-mono font-medium uppercase tracking-wider transition-all cursor-pointer ${selectedCategory === cat
-                      ? 'bg-[#1D9BF0] text-white'
-                      : 'bg-surface border border-theme-subtle text-theme-muted hover:text-theme-main'
+              {categories.map((cat) => {
+                const isSelected = selectedCategory === cat;
+                const isCollabCat = cat === 'collaborative';
+                return (
+                  <button
+                    key={cat}
+                    onClick={() => setSelectedCategory(cat)}
+                    className={`px-3.5 py-1.5 rounded-md text-xs font-mono font-medium uppercase tracking-wider transition-all cursor-pointer flex items-center gap-1.5 ${
+                      isSelected
+                        ? isCollabCat
+                          ? 'bg-emerald-600 text-white shadow-sm'
+                          : 'bg-[#1D9BF0] text-white'
+                        : isCollabCat
+                          ? 'bg-surface border border-emerald-500/40 text-emerald-400 hover:bg-emerald-500/10'
+                          : 'bg-surface border border-theme-subtle text-theme-muted hover:text-theme-main'
                     }`}
-                >
-                  {cat}
-                </button>
-              ))}
+                  >
+                    {isCollabCat && <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" aria-hidden="true" />}
+                    <span>{isCollabCat ? 'Live Collab (5)' : cat}</span>
+                  </button>
+                );
+              })}
             </div>
           </div>
 

@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
-import { ArrowRight, Check, Copy, Code2, ShieldCheck, Sparkles, RefreshCw, Trash2, Terminal } from 'lucide-react';
+import { ArrowRight, Check, Copy, Code2, ShieldCheck, Sparkles, RefreshCw, Trash2, Terminal, Users } from 'lucide-react';
 import { Link } from '../../lib/router-compat';
 import { WatermarkBrandLayer } from '../ui/WatermarkBrandLayer';
 import { useTranslation } from '../../lib/i18n';
@@ -209,7 +209,7 @@ export const Hero: React.FC = () => {
               transition={{ duration: 0.4, delay: 0.15 }}
               className="text-body-large text-theme-muted font-normal max-w-xl leading-relaxed"
             >
-              Free, client-side browser utilities built for daily developer workflows. No tracking, zero server retention - 100% local execution.
+              Fast browser utilities built for daily engineering workflows. Run standalone in your browser or start real-time peer-to-peer sessions to debug JSON, diffs, regex, and tokens with teammates — with no accounts and no document storage on our servers.
             </motion.p>
 
             <motion.div
@@ -236,27 +236,36 @@ export const Hero: React.FC = () => {
               </div> */}
             </motion.div>
 
-            {/* Editorial Text-Link CTAs */}
+            {/* Primary & Secondary CTAs */}
             <motion.div
               initial={false}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0.2 }}
-              className="flex flex-wrap items-center gap-4 sm:gap-8 pt-4 border-t border-theme-subtle"
+              className="flex flex-wrap items-center gap-3 sm:gap-4 pt-4 border-t border-theme-subtle"
             >
               <Link
+                to="/tools/json-formatter"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#1D9BF0] hover:bg-[#1A8CD8] text-white text-sm font-semibold transition-all shadow-md shadow-sky-500/20 group cursor-pointer focus:outline-none focus:ring-2 focus:ring-sky-400"
+                aria-label="Try Live Collaboration in JSON Formatter"
+              >
+                <Users className="w-4 h-4 text-white shrink-0" aria-hidden="true" />
+                <span>{t('hero.ctaCollab', 'Try Live Collaboration')}</span>
+                <ArrowRight className="w-4 h-4 text-white group-hover:translate-x-1 transition-transform shrink-0" aria-hidden="true" />
+              </Link>
+
+              <Link
                 to="/tools"
-                className="btn-shimmer inline-flex items-center gap-2 text-sm font-medium text-theme-main hover:text-sky-400 transition-colors group cursor-pointer"
+                className="btn-shimmer inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border border-neutral-700/80 bg-neutral-900/60 hover:bg-neutral-800/80 text-sm font-medium text-theme-main hover:text-sky-400 transition-colors group cursor-pointer"
               >
                 <span>{t('hero.ctaPrimary', 'Explore Developer Tools')}</span>
-                <ArrowRight className="w-4 h-4 text-sky-400 group-hover:translate-x-1.5 transition-transform" />
               </Link>
 
               <Link
                 to="/guides"
-                className="inline-flex items-center gap-2 text-sm font-medium text-theme-muted hover:text-theme-main transition-colors group cursor-pointer"
+                className="inline-flex items-center gap-1.5 text-xs font-medium text-theme-muted hover:text-theme-main transition-colors group cursor-pointer py-2"
               >
-                <span>{t('hero.ctaSecondary', 'Read Practical Guides')}</span>
-                <ArrowRight className="w-4 h-4 text-theme-muted group-hover:text-theme-main group-hover:translate-x-1.5 transition-transform" />
+                <span>{t('hero.ctaSecondary', 'Engineering Guides')}</span>
+                <ArrowRight className="w-3.5 h-3.5 text-theme-muted group-hover:text-theme-main group-hover:translate-x-1 transition-transform" />
               </Link>
             </motion.div>
           </div>
@@ -279,6 +288,10 @@ export const Hero: React.FC = () => {
                   </div>
                   <span className="text-xs font-sans font-semibold text-neutral-200">
                     {t('hero.cardTitle', 'Featured Utility: JSON Formatter')}
+                  </span>
+                  <span className="hidden sm:inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-mono font-semibold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" aria-hidden="true" />
+                    Live Collab
                   </span>
                 </div>
 
@@ -317,13 +330,24 @@ export const Hero: React.FC = () => {
                   </button>
                 </div>
 
-                <button
-                  onClick={copyOutput}
-                  className="px-2.5 py-1 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-300 text-[11px] font-sans font-medium flex items-center gap-1.5 transition-colors cursor-pointer"
-                >
-                  {copied ? <Check className="w-3 h-3 text-sky-400" /> : <Copy className="w-3 h-3" />}
-                  <span>{copied ? t('hero.cardCopied', 'Copied!') : t('hero.cardCopy', 'Copy')}</span>
-                </button>
+                <div className="flex items-center gap-2">
+                  <Link
+                    to="/tools/json-formatter"
+                    className="px-2 py-1 rounded bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 border border-emerald-500/30 text-[11px] font-sans font-medium flex items-center gap-1.5 transition-colors cursor-pointer"
+                    title="Launch Live Collaboration in JSON Formatter"
+                  >
+                    <Users className="w-3 h-3 text-emerald-400" />
+                    <span>Collaborate</span>
+                  </Link>
+
+                  <button
+                    onClick={copyOutput}
+                    className="px-2.5 py-1 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-300 text-[11px] font-sans font-medium flex items-center gap-1.5 transition-colors cursor-pointer"
+                  >
+                    {copied ? <Check className="w-3 h-3 text-sky-400" /> : <Copy className="w-3 h-3" />}
+                    <span>{copied ? t('hero.cardCopied', 'Copied!') : t('hero.cardCopy', 'Copy')}</span>
+                  </button>
+                </div>
               </div>
 
               {/* Syntax Highlighted Interactive Code Display & Editor Area */}
@@ -356,9 +380,18 @@ export const Hero: React.FC = () => {
                 </div>
               )}
 
-              {/* Privacy Badge footer */}
-              <div className="px-3.5 py-2 bg-neutral-950 border-t border-neutral-800 text-[11px] font-mono flex items-center gap-2 text-neutral-400">
-                <span>{t('hero.cardPrivacy', 'Client-Side Processing: All operations run locally in your browser.')}</span>
+              {/* Privacy & Collaboration capability footer */}
+              <div className="px-3.5 py-2.5 bg-neutral-950 border-t border-neutral-800 text-[11px] font-mono flex items-center justify-between text-neutral-400">
+                <Link
+                  to="/tools/json-formatter"
+                  className="flex items-center gap-1.5 text-emerald-400 hover:text-emerald-300 transition-colors group cursor-pointer"
+                  aria-label="Open JSON Formatter with live peer-to-peer collaboration"
+                >
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0 animate-pulse" aria-hidden="true" />
+                  <span className="font-semibold group-hover:underline">Start Live Session</span>
+                  <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+                </Link>
+                <span className="text-neutral-500 text-[10px]">Zero Cloud Storage</span>
               </div>
             </div>
 
@@ -368,21 +401,33 @@ export const Hero: React.FC = () => {
                 {t('hero.utilitiesLabel', 'Available Browser Utilities')}
               </span>
               <div className="grid grid-cols-2 gap-2">
-                <Link to="/tools/base64-encoder" className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-md bg-neutral-900 border border-neutral-800 text-xs font-semibold text-neutral-200 hover:text-white hover:border-emerald-500 hover:bg-neutral-850 transition-all shadow-sm">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                  <span>Base64 Encoder</span>
+                <Link to="/tools/base64-encoder" className="flex items-center justify-between px-3 py-2 rounded-md bg-neutral-900 border border-neutral-800 text-xs font-semibold text-neutral-200 hover:text-white hover:border-emerald-500 hover:bg-neutral-850 transition-all shadow-sm">
+                  <div className="flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
+                    <span>Base64</span>
+                  </div>
+                  <span className="text-[9px] font-mono text-neutral-500">Solo</span>
                 </Link>
-                <Link to="/tools/json-formatter" className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-md bg-neutral-900 border border-neutral-800 text-xs font-semibold text-neutral-200 hover:text-white hover:border-[#1D9BF0] hover:bg-neutral-850 transition-all shadow-sm">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#1D9BF0]"></span>
-                  <span>JSON Formatter</span>
+                <Link to="/tools/json-formatter" className="flex items-center justify-between px-3 py-2 rounded-md bg-neutral-900 border border-neutral-800 text-xs font-semibold text-neutral-200 hover:text-white hover:border-[#1D9BF0] hover:bg-neutral-850 transition-all shadow-sm">
+                  <div className="flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#1D9BF0] shrink-0" />
+                    <span>JSON</span>
+                  </div>
+                  <span className="text-[9px] font-mono text-emerald-400">Collab</span>
                 </Link>
-                <Link to="/tools/jwt-inspector" className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-md bg-neutral-900 border border-neutral-800 text-xs font-semibold text-neutral-200 hover:text-white hover:border-purple-500 hover:bg-neutral-850 transition-all shadow-sm">
-                  <span className="w-1.5 h-1.5 rounded-full bg-purple-500"></span>
-                  <span>JWT Inspector</span>
+                <Link to="/tools/jwt-inspector" className="flex items-center justify-between px-3 py-2 rounded-md bg-neutral-900 border border-neutral-800 text-xs font-semibold text-neutral-200 hover:text-white hover:border-purple-500 hover:bg-neutral-850 transition-all shadow-sm">
+                  <div className="flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-purple-500 shrink-0" />
+                    <span>JWT</span>
+                  </div>
+                  <span className="text-[9px] font-mono text-emerald-400">Collab</span>
                 </Link>
-                <Link to="/tools/regex-tester" className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-md bg-neutral-900 border border-neutral-800 text-xs font-semibold text-neutral-200 hover:text-white hover:border-rose-500 hover:bg-neutral-850 transition-all shadow-sm">
-                  <span className="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
-                  <span>Regex Tester</span>
+                <Link to="/tools/regex-tester" className="flex items-center justify-between px-3 py-2 rounded-md bg-neutral-900 border border-neutral-800 text-xs font-semibold text-neutral-200 hover:text-white hover:border-rose-500 hover:bg-neutral-850 transition-all shadow-sm">
+                  <div className="flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-rose-500 shrink-0" />
+                    <span>Regex</span>
+                  </div>
+                  <span className="text-[9px] font-mono text-emerald-400">Collab</span>
                 </Link>
               </div>
             </div>

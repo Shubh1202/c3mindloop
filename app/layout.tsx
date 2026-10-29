@@ -1,21 +1,8 @@
 import type { Metadata, Viewport } from 'next';
-import { Inter, JetBrains_Mono } from 'next/font/google';
 import './globals.css';
 import { AppClientShell } from './components/layout/AppClientShell';
 import { seoConfig, organizationSchema, websiteSchema, webApplicationSchema } from './config/seo.config';
 import { GoogleAnalytics } from '@next/third-parties/google';
-
-const inter = Inter({
-  subsets: ['latin'],
-  variable: '--font-inter',
-  display: 'swap',
-});
-
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ['latin'],
-  variable: '--font-jetbrains-mono',
-  display: 'swap',
-});
 
 export const viewport: Viewport = {
   themeColor: [
@@ -101,8 +88,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable} dark`} suppressHydrationWarning={true} data-scroll-behavior="smooth">
+    <html lang="en" className="dark" suppressHydrationWarning={true} data-scroll-behavior="smooth">
       <head>
+        {/* Resource hints: preconnect to analytics origin so the TCP+TLS
+            handshake is done before the GA script fires. */}
+        <link rel="preconnect" href="https://www.googletagmanager.com" />
+        <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
+        <link rel="preconnect" href="https://www.google-analytics.com" />
+        <link rel="dns-prefetch" href="https://www.google-analytics.com" />
+
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}

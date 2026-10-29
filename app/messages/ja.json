@@ -38,7 +38,8 @@
     "statUptime": "99.99%",
     "statUptimeLabel": "システム稼働率",
     "statRepos": "85+",
-    "statReposLabel": "オープンソースリポジトリ"
+    "statReposLabel": "オープンソースリポジトリ",
+    "ctaCollab": "ライブ共同作業を試す"
   },
   "philosophySection": {
     "kicker": "MindLoop パラダイム",
@@ -166,7 +167,14 @@
     "title": "エンジニアリングガイド",
     "subtitle": "開発ワークフローのための実用的なノートとリファレンス。",
     "searchPlaceholder": "タイトル、タグ、キーワードでガイドを検索...",
-    "categories": { "all": "すべてのカテゴリ", "engineering": "エンジニアリング", "developerTools": "開発者ツール", "aiAgents": "AI とエージェント", "developerCulture": "開発者文化", "typeScript": "TypeScript" },
+    "categories": {
+      "all": "すべてのカテゴリ",
+      "engineering": "エンジニアリング",
+      "developerTools": "開発者ツール",
+      "aiAgents": "AI とエージェント",
+      "developerCulture": "開発者文化",
+      "typeScript": "TypeScript"
+    },
     "readTime": "分で読める",
     "readArticle": "ガイドを読む",
     "noResults": "公開済みのガイドはまだありません。"

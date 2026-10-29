@@ -19,7 +19,8 @@ export const GridBackground: React.FC = () => {
         className="absolute inset-0 bg-[linear-gradient(to_right,rgba(15,23,42,0.05)_1px,transparent_1px),linear-gradient(to_bottom,rgba(15,23,42,0.05)_1px,transparent_1px)] dark:bg-[linear-gradient(to_right,rgba(255,255,255,0.025)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.025)_1px,transparent_1px)] bg-[size:3.5rem_3.5rem] [mask-image:radial-gradient(ellipse_75%_65%_at_50%_0%,#000_70%,transparent_100%)]"
       />
 
-      {/* Floating Watermark C³ MindLoop Cube 1 - Top Right */}
+      {/* Floating Watermark C³ MindLoop Cube 1 - Top Right
+          Decorative only: lazy-loaded, no fetchPriority boost. */}
       <motion.div
         animate={{
           y: [0, -12, 0],
@@ -36,8 +37,7 @@ export const GridBackground: React.FC = () => {
           src="/cube.svg"
           alt=""
           aria-hidden="true"
-          loading="eager"
-          fetchPriority="high"
+          loading="lazy"
           className="w-full h-full object-contain filter drop-shadow-[0_0_20px_rgba(29,155,240,0.4)]"
         />
       </motion.div>
@@ -67,5 +67,3 @@ export const GridBackground: React.FC = () => {
     </div>
   );
 };
-
-

@@ -6,7 +6,7 @@ import { Copy, Check, Trash2, ShieldCheck, ShieldAlert, ShieldOff, Clock, Info, 
 import { useTranslation } from '../../lib/i18n';
 import { Toolbar } from '../ui/Toolbar';
 import { useCollaborationRoom, useCollaborativeText } from '../../lib/collaboration';
-import { CollabToolbarButton } from '../collaboration';
+import { CollabToolbarButton, CollabActiveBanner } from '../collaboration';
 
 const SAMPLE_JWT =
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c3JfMTIzNDU2IiwibmFtZSI6IkFsZXggUml2ZXJhIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzAwMDAwMDAwLCJleHAiOjk5OTk5OTk5OTl9.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c';
@@ -397,6 +397,7 @@ export const JwtInspectorTool: React.FC = () => {
             sessionState={collab}
             startSession={collab.startSession}
             joinSession={collab.joinSession}
+            retryConnection={collab.retryConnection}
             leaveSession={collab.leaveSession}
             endSessionForAll={collab.endSessionForAll}
             setDisplayName={collab.setDisplayName}
@@ -431,6 +432,15 @@ export const JwtInspectorTool: React.FC = () => {
           />
         </Toolbar.Group>
       </Toolbar.Root>
+
+      {/* Real-time Collaboration Active Status Banner */}
+      <CollabActiveBanner
+        sessionState={collab}
+        leaveSession={collab.leaveSession}
+        endSessionForAll={collab.endSessionForAll}
+        onDismissError={collab.dismissError}
+        isDark={true}
+      />
 
       {/* Main layout: side-by-side or stacked */}
       <div className={`${isSideBySide

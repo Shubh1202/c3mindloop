@@ -15,11 +15,46 @@ import { SearchBar } from '../ui/SearchBar';
 import { Toolbar } from '../ui/Toolbar';
 import { useTheme } from '../../lib/theme';
 import { useCollaborationRoom, useCollaborativeText } from '../../lib/collaboration';
-import { CollabToolbarButton } from '../collaboration';
+import { CollabToolbarButton, CollabActiveBanner } from '../collaboration';
 
 type ViewMode = 'split' | 'inline';
 type CompareMode = 'smart' | 'text';
 type Granularity = 'words' | 'chars' | 'lines';
+
+// ── Comparison Settings Synchronization (Intentional Shared State) ────────
+// Text inputs ('original', 'modified') and comparison options ('diff-options')
+// are synchronized so all participants see the exact same diff calculation.
+// View options (split vs inline, line wrap, search, fullscreen) remain local
+// to accommodate different screen sizes and user device preferences.
+export interface DiffComparisonOptions {
+  compareMode: CompareMode;
+  ignoreWhitespace: boolean;
+  ignoreCase: boolean;
+  granularity: Granularity;
+}
+
+export function serializeDiffOptions(opts: DiffComparisonOptions): string {
+  return JSON.stringify({
+    c: opts.compareMode,
+    w: opts.ignoreWhitespace,
+    i: opts.ignoreCase,
+    g: opts.granularity,
+  });
+}
+
+export function parseDiffOptions(str: string): Partial<DiffComparisonOptions> | null {
+  try {
+    const data = JSON.parse(str);
+    return {
+      compareMode: data.c === 'text' ? 'text' : 'smart',
+      ignoreWhitespace: Boolean(data.w),
+      ignoreCase: Boolean(data.i),
+      granularity: data.g === 'chars' ? 'chars' : data.g === 'lines' ? 'lines' : 'words',
+    };
+  } catch {
+    return null;
+  }
+}
 
 // ── Resize constants ────────────────────────────────────────────────────────
 const MIN_H = 300;
@@ -110,14 +145,14 @@ Client-side computation ensures all private developer data stays 100% local on u
 
 // ── Visual constants ────────────────────────────────────────────────────────
 const ROW_BG = {
-  added:     'var(--diff-added-bg)',
-  removed:   'var(--diff-removed-bg)',
-  empty:     'var(--diff-empty-bg)',
+  added: 'var(--diff-added-bg)',
+  removed: 'var(--diff-removed-bg)',
+  empty: 'var(--diff-empty-bg)',
   unchanged: 'transparent',
 } as const;
 
 const CHAR_HL = {
-  added:   'var(--diff-added-hl)',
+  added: 'var(--diff-added-hl)',
   removed: 'var(--diff-removed-hl)',
 } as const;
 
@@ -125,24 +160,24 @@ const GUTTER_CLS = {
   '+': 'text-emerald-400',
   '-': 'text-red-400',
   ' ': 'text-neutral-700',
-  '':  'text-neutral-700',
+  '': 'text-neutral-700',
 } as const;
 
-const TEXT_DIM  = 'text-neutral-400';
+const TEXT_DIM = 'text-neutral-400';
 const TEXT_FULL = 'text-neutral-100';
 
 // ── Types ───────────────────────────────────────────────────────────────────
 interface SplitRow {
   origLineNo: number | null;
   origGutter: '+' | '-' | ' ' | '';
-  origText:   string;
-  origType:   'removed' | 'unchanged' | 'empty';
+  origText: string;
+  origType: 'removed' | 'unchanged' | 'empty';
   origSpans?: CharSpan[];
-  modLineNo:  number | null;
-  modGutter:  '+' | '-' | ' ' | '';
-  modText:    string;
-  modType:    'added' | 'unchanged' | 'empty';
-  modSpans?:  CharSpan[];
+  modLineNo: number | null;
+  modGutter: '+' | '-' | ' ' | '';
+  modText: string;
+  modType: 'added' | 'unchanged' | 'empty';
+  modSpans?: CharSpan[];
 }
 
 interface HunkIndex { rowIdx: number }
@@ -196,12 +231,12 @@ function buildSplitRows(diffLines: DiffLine[]): SplitRow[] {
     if (line.type === 'unchanged') {
       rows.push({
         origLineNo: line.origLineNo, origGutter: ' ', origText: line.text, origType: 'unchanged',
-        modLineNo:  line.modLineNo,  modGutter:  ' ', modText:  line.text, modType:  'unchanged',
+        modLineNo: line.modLineNo, modGutter: ' ', modText: line.text, modType: 'unchanged',
       });
       i++;
     } else {
       const removed: DiffLine[] = [];
-      const added:   DiffLine[] = [];
+      const added: DiffLine[] = [];
       while (i < diffLines.length && diffLines[i].type !== 'unchanged') {
         if (diffLines[i].type === 'removed') removed.push(diffLines[i]);
         else added.push(diffLines[i]);
@@ -214,14 +249,14 @@ function buildSplitRows(diffLines: DiffLine[]): SplitRow[] {
         rows.push({
           origLineNo: rem ? rem.origLineNo : null,
           origGutter: rem ? '-' : '',
-          origText:   rem ? rem.text : '',
-          origType:   rem ? 'removed' : 'empty',
-          origSpans:  rem ? rem.origCharSpans : undefined,
-          modLineNo:  add ? add.modLineNo : null,
-          modGutter:  add ? '+' : '',
-          modText:    add ? add.text : '',
-          modType:    add ? 'added' : 'empty',
-          modSpans:   add ? add.modCharSpans : undefined,
+          origText: rem ? rem.text : '',
+          origType: rem ? 'removed' : 'empty',
+          origSpans: rem ? rem.origCharSpans : undefined,
+          modLineNo: add ? add.modLineNo : null,
+          modGutter: add ? '+' : '',
+          modText: add ? add.text : '',
+          modType: add ? 'added' : 'empty',
+          modSpans: add ? add.modCharSpans : undefined,
         });
       }
     }
@@ -242,14 +277,14 @@ const NoDiffState: React.FC = () => (
 );
 
 const PanelHeader: React.FC<{
-  label:            string;
-  fileRef:          React.RefObject<HTMLInputElement | null>;
-  panel:            'orig' | 'mod';
-  fileError:        string | null;
-  detectedType?:    string;
+  label: string;
+  fileRef: React.RefObject<HTMLInputElement | null>;
+  panel: 'orig' | 'mod';
+  fileError: string | null;
+  detectedType?: string;
   handleFileUpload: (e: React.ChangeEvent<HTMLInputElement>, panel: 'orig' | 'mod') => void;
-  onClear?:         () => void;
-  onDownload?:      () => void;
+  onClear?: () => void;
+  onDownload?: () => void;
 }> = ({ label, fileRef, panel, fileError, detectedType, handleFileUpload, onClear, onDownload }) => (
   <div className="flex items-center justify-between px-3 py-1.5 bg-neutral-900 border-b border-neutral-800 shrink-0 select-none">
     <div className="flex items-center gap-2">
@@ -308,14 +343,14 @@ const PanelHeader: React.FC<{
 );
 
 const ContentCell: React.FC<{
-  text:             string;
-  type:             'added' | 'removed' | 'unchanged' | 'empty';
-  spans?:           CharSpan[];
+  text: string;
+  type: 'added' | 'removed' | 'unchanged' | 'empty';
+  spans?: CharSpan[];
   searchHighlights?: Array<{ startChar: number; endChar: number; isCurrent: boolean }>;
-  wrapLines?:       boolean;
+  wrapLines?: boolean;
 }> = ({ text, type, spans, searchHighlights, wrapLines = true }) => {
   const textCls = type === 'unchanged' ? TEXT_DIM : TEXT_FULL;
-  const bg      = ROW_BG[type] ?? 'transparent';
+  const bg = ROW_BG[type] ?? 'transparent';
 
   return (
     <td
@@ -323,11 +358,10 @@ const ContentCell: React.FC<{
       className="align-top px-2 py-0.5 max-w-0"
     >
       <div
-        className={`font-mono text-xs leading-[20px] ${textCls} ${
-          wrapLines
+        className={`font-mono text-xs leading-[20px] ${textCls} ${wrapLines
             ? 'whitespace-pre-wrap break-words [overflow-wrap:anywhere]'
             : 'whitespace-pre overflow-x-auto'
-        }`}
+          }`}
       >
         {type === 'empty' ? (
           <>&zwj;</>
@@ -359,10 +393,10 @@ const ContentCell: React.FC<{
 };
 
 const HunkNav: React.FC<{
-  total:   number;
+  total: number;
   current: number;
-  onPrev:  () => void;
-  onNext:  () => void;
+  onPrev: () => void;
+  onNext: () => void;
 }> = ({ total, current, onPrev, onNext }) => {
   if (total === 0) return null;
   return (
@@ -401,25 +435,25 @@ const ResizeHandle: React.FC<{ onPointerDown: (e: React.PointerEvent) => void }>
 
 // ── Input Panels Mode ───────────────────────────────────────────────────────
 const InputPanels: React.FC<{
-  original:         string;
-  modified:         string;
-  setOriginal:      (v: string) => void;
-  setModified:      (v: string) => void;
-  origFileError:    string | null;
-  modFileError:     string | null;
-  origDetected?:    string;
-  modDetected?:     string;
-  origFileRef:      React.RefObject<HTMLInputElement | null>;
-  modFileRef:       React.RefObject<HTMLInputElement | null>;
+  original: string;
+  modified: string;
+  setOriginal: (v: string) => void;
+  setModified: (v: string) => void;
+  origFileError: string | null;
+  modFileError: string | null;
+  origDetected?: string;
+  modDetected?: string;
+  origFileRef: React.RefObject<HTMLInputElement | null>;
+  modFileRef: React.RefObject<HTMLInputElement | null>;
   handleFileUpload: (e: React.ChangeEvent<HTMLInputElement>, panel: 'orig' | 'mod') => void;
-  handleFileDrop:   (file: File, panel: 'orig' | 'mod') => void;
-  viewportH:        number;
-  isFullScreen:     boolean;
-  wrapLines:        boolean;
-  onClearOrig:      () => void;
-  onClearMod:       () => void;
-  onDownloadOrig:   () => void;
-  onDownloadMod:    () => void;
+  handleFileDrop: (file: File, panel: 'orig' | 'mod') => void;
+  viewportH: number;
+  isFullScreen: boolean;
+  wrapLines: boolean;
+  onClearOrig: () => void;
+  onClearMod: () => void;
+  onDownloadOrig: () => void;
+  onDownloadMod: () => void;
 }> = ({
   original, modified, setOriginal, setModified,
   origFileError, modFileError, origDetected, modDetected,
@@ -427,95 +461,93 @@ const InputPanels: React.FC<{
   viewportH, isFullScreen, wrapLines,
   onClearOrig, onClearMod, onDownloadOrig, onDownloadMod,
 }) => {
-  const h = isFullScreen ? 'calc(100vh - 7rem)' : `${viewportH}px`;
-  const [dragOverOrig, setDragOverOrig] = useState(false);
-  const [dragOverMod, setDragOverMod] = useState(false);
+    const h = isFullScreen ? 'calc(100vh - 7rem)' : `${viewportH}px`;
+    const [dragOverOrig, setDragOverOrig] = useState(false);
+    const [dragOverMod, setDragOverMod] = useState(false);
 
-  return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-neutral-800">
-      {/* Original Panel */}
-      <div
-        className={`flex flex-col relative transition-colors ${dragOverOrig ? 'bg-neutral-900/60 ring-2 ring-inset ring-neutral-600' : ''}`}
-        onDragOver={(e) => { e.preventDefault(); setDragOverOrig(true); }}
-        onDragLeave={() => setDragOverOrig(false)}
-        onDrop={(e) => {
-          e.preventDefault();
-          setDragOverOrig(false);
-          const file = e.dataTransfer.files?.[0];
-          if (file) handleFileDrop(file, 'orig');
-        }}
-      >
-        <PanelHeader
-          label="Original"
-          fileRef={origFileRef}
-          panel="orig"
-          fileError={origFileError}
-          detectedType={origDetected}
-          handleFileUpload={handleFileUpload}
-          onClear={onClearOrig}
-          onDownload={onDownloadOrig}
-        />
-        <textarea
-          value={original}
-          onChange={(e) => setOriginal(e.target.value)}
-          placeholder="Paste original text or code here, or drop a file…"
-          spellCheck={false}
-          style={{ height: h, resize: 'none' }}
-          className={`p-3 font-mono text-xs bg-[#111] text-neutral-200 border-none focus:outline-none leading-[20px] placeholder-neutral-700 ${
-            wrapLines ? 'whitespace-pre-wrap break-words' : 'whitespace-pre overflow-x-auto'
-          }`}
-        />
-      </div>
+    return (
+      <div className="grid grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-neutral-800">
+        {/* Original Panel */}
+        <div
+          className={`flex flex-col relative transition-colors ${dragOverOrig ? 'bg-neutral-900/60 ring-2 ring-inset ring-neutral-600' : ''}`}
+          onDragOver={(e) => { e.preventDefault(); setDragOverOrig(true); }}
+          onDragLeave={() => setDragOverOrig(false)}
+          onDrop={(e) => {
+            e.preventDefault();
+            setDragOverOrig(false);
+            const file = e.dataTransfer.files?.[0];
+            if (file) handleFileDrop(file, 'orig');
+          }}
+        >
+          <PanelHeader
+            label="Original"
+            fileRef={origFileRef}
+            panel="orig"
+            fileError={origFileError}
+            detectedType={origDetected}
+            handleFileUpload={handleFileUpload}
+            onClear={onClearOrig}
+            onDownload={onDownloadOrig}
+          />
+          <textarea
+            value={original}
+            onChange={(e) => setOriginal(e.target.value)}
+            placeholder="Paste original text or code here, or drop a file…"
+            spellCheck={false}
+            style={{ height: h, resize: 'none' }}
+            className={`p-3 font-mono text-xs bg-[#111] text-neutral-200 border-none focus:outline-none leading-[20px] placeholder-neutral-700 ${wrapLines ? 'whitespace-pre-wrap break-words' : 'whitespace-pre overflow-x-auto'
+              }`}
+          />
+        </div>
 
-      {/* Modified Panel */}
-      <div
-        className={`flex flex-col relative transition-colors ${dragOverMod ? 'bg-neutral-900/60 ring-2 ring-inset ring-neutral-600' : ''}`}
-        onDragOver={(e) => { e.preventDefault(); setDragOverMod(true); }}
-        onDragLeave={() => setDragOverMod(false)}
-        onDrop={(e) => {
-          e.preventDefault();
-          setDragOverMod(false);
-          const file = e.dataTransfer.files?.[0];
-          if (file) handleFileDrop(file, 'mod');
-        }}
-      >
-        <PanelHeader
-          label="Modified"
-          fileRef={modFileRef}
-          panel="mod"
-          fileError={modFileError}
-          detectedType={modDetected}
-          handleFileUpload={handleFileUpload}
-          onClear={onClearMod}
-          onDownload={onDownloadMod}
-        />
-        <textarea
-          value={modified}
-          onChange={(e) => setModified(e.target.value)}
-          placeholder="Paste modified text or code here, or drop a file…"
-          spellCheck={false}
-          style={{ height: h, resize: 'none' }}
-          className={`p-3 font-mono text-xs bg-[#111] text-neutral-200 border-none focus:outline-none leading-[20px] placeholder-neutral-700 ${
-            wrapLines ? 'whitespace-pre-wrap break-words' : 'whitespace-pre overflow-x-auto'
-          }`}
-        />
+        {/* Modified Panel */}
+        <div
+          className={`flex flex-col relative transition-colors ${dragOverMod ? 'bg-neutral-900/60 ring-2 ring-inset ring-neutral-600' : ''}`}
+          onDragOver={(e) => { e.preventDefault(); setDragOverMod(true); }}
+          onDragLeave={() => setDragOverMod(false)}
+          onDrop={(e) => {
+            e.preventDefault();
+            setDragOverMod(false);
+            const file = e.dataTransfer.files?.[0];
+            if (file) handleFileDrop(file, 'mod');
+          }}
+        >
+          <PanelHeader
+            label="Modified"
+            fileRef={modFileRef}
+            panel="mod"
+            fileError={modFileError}
+            detectedType={modDetected}
+            handleFileUpload={handleFileUpload}
+            onClear={onClearMod}
+            onDownload={onDownloadMod}
+          />
+          <textarea
+            value={modified}
+            onChange={(e) => setModified(e.target.value)}
+            placeholder="Paste modified text or code here, or drop a file…"
+            spellCheck={false}
+            style={{ height: h, resize: 'none' }}
+            className={`p-3 font-mono text-xs bg-[#111] text-neutral-200 border-none focus:outline-none leading-[20px] placeholder-neutral-700 ${wrapLines ? 'whitespace-pre-wrap break-words' : 'whitespace-pre overflow-x-auto'
+              }`}
+          />
+        </div>
       </div>
-    </div>
-  );
-};
+    );
+  };
 
 // ── Inline (Unified) View ───────────────────────────────────────────────────
 const InlineView: React.FC<{
-  diffResult:    DiffResult;
-  scrollRef:     React.RefObject<HTMLDivElement | null>;
-  rowRefs:       React.MutableRefObject<(HTMLTableRowElement | null)[]>;
-  viewportH:     number;
-  isFullScreen:  boolean;
-  wrapLines:     boolean;
+  diffResult: DiffResult;
+  scrollRef: React.RefObject<HTMLDivElement | null>;
+  rowRefs: React.MutableRefObject<(HTMLTableRowElement | null)[]>;
+  viewportH: number;
+  isFullScreen: boolean;
+  wrapLines: boolean;
   searchMatches: SearchMatch[];
-  searchIdx:     number;
+  searchIdx: number;
 }> = ({ diffResult, scrollRef, rowRefs, viewportH, isFullScreen, wrapLines, searchMatches, searchIdx }) => {
-  const lines   = diffResult.lines;
+  const lines = diffResult.lines;
   const scrollH = isFullScreen ? 'calc(100vh - 7rem)' : `${viewportH}px`;
 
   if (lines.length === 0) return <NoDiffState />;
@@ -530,11 +562,11 @@ const InlineView: React.FC<{
         </colgroup>
         <tbody>
           {lines.map((line, idx) => {
-            const bg       = ROW_BG[line.type];
-            const gutSym   = line.type === 'added' ? '+' : line.type === 'removed' ? '-' : ' ';
-            const gutCls   = GUTTER_CLS[gutSym];
-            const lineNo   = line.type === 'removed' ? line.origLineNo : line.modLineNo;
-            const spans    = line.type === 'removed' ? line.origCharSpans : line.modCharSpans;
+            const bg = ROW_BG[line.type];
+            const gutSym = line.type === 'added' ? '+' : line.type === 'removed' ? '-' : ' ';
+            const gutCls = GUTTER_CLS[gutSym];
+            const lineNo = line.type === 'removed' ? line.origLineNo : line.modLineNo;
+            const spans = line.type === 'removed' ? line.origCharSpans : line.modCharSpans;
             const side: 'orig' | 'mod' = line.type === 'removed' ? 'orig' : 'mod';
             const highlights = searchMatches
               .filter(m => m.rowIdx === idx && m.side === side)
@@ -571,27 +603,27 @@ const InlineView: React.FC<{
 
 // ── Split (Side-by-Side) View ───────────────────────────────────────────────
 interface SplitViewProps {
-  splitRows:        SplitRow[];
-  splitScrollRef:   React.RefObject<HTMLDivElement | null>;
-  origRowRefs:      React.MutableRefObject<(HTMLTableRowElement | null)[]>;
-  modRowRefs:       React.MutableRefObject<(HTMLTableRowElement | null)[]>;
-  viewportH:        number;
-  isFullScreen:     boolean;
-  wrapLines:        boolean;
-  origFileError:    string | null;
-  modFileError:     string | null;
-  origDetected?:    string;
-  modDetected?:     string;
-  origFileRef:      React.RefObject<HTMLInputElement | null>;
-  modFileRef:       React.RefObject<HTMLInputElement | null>;
+  splitRows: SplitRow[];
+  splitScrollRef: React.RefObject<HTMLDivElement | null>;
+  origRowRefs: React.MutableRefObject<(HTMLTableRowElement | null)[]>;
+  modRowRefs: React.MutableRefObject<(HTMLTableRowElement | null)[]>;
+  viewportH: number;
+  isFullScreen: boolean;
+  wrapLines: boolean;
+  origFileError: string | null;
+  modFileError: string | null;
+  origDetected?: string;
+  modDetected?: string;
+  origFileRef: React.RefObject<HTMLInputElement | null>;
+  modFileRef: React.RefObject<HTMLInputElement | null>;
   handleFileUpload: (e: React.ChangeEvent<HTMLInputElement>, panel: 'orig' | 'mod') => void;
-  onApplyChange:    (rowIdx: number, direction: 'toOrig' | 'toMod') => void;
-  searchMatches:    SearchMatch[];
-  searchIdx:        number;
-  onClearOrig?:     () => void;
-  onClearMod?:      () => void;
-  onDownloadOrig?:  () => void;
-  onDownloadMod?:   () => void;
+  onApplyChange: (rowIdx: number, direction: 'toOrig' | 'toMod') => void;
+  searchMatches: SearchMatch[];
+  searchIdx: number;
+  onClearOrig?: () => void;
+  onClearMod?: () => void;
+  onDownloadOrig?: () => void;
+  onDownloadMod?: () => void;
 }
 
 function SplitSideCells({ row, idx, side, onApplyChange, searchMatches, searchIdx, wrapLines }: {
@@ -600,12 +632,12 @@ function SplitSideCells({ row, idx, side, onApplyChange, searchMatches, searchId
   searchMatches: SearchMatch[]; searchIdx: number; wrapLines: boolean;
 }) {
   const isOrig = side === 'orig';
-  const type   = isOrig ? row.origType : row.modType;
+  const type = isOrig ? row.origType : row.modType;
   const lineNo = isOrig ? row.origLineNo : row.modLineNo;
   const gutter = isOrig ? row.origGutter : row.modGutter;
-  const text   = isOrig ? row.origText : row.modText;
-  const spans  = isOrig ? row.origSpans : row.modSpans;
-  const bg     = ROW_BG[type] ?? 'transparent';
+  const text = isOrig ? row.origText : row.modText;
+  const spans = isOrig ? row.origSpans : row.modSpans;
+  const bg = ROW_BG[type] ?? 'transparent';
   const gutCls = GUTTER_CLS[gutter] ?? 'text-neutral-700';
 
   const hlSide: 'orig' | 'mod' = isOrig ? 'orig' : 'mod';
@@ -613,9 +645,9 @@ function SplitSideCells({ row, idx, side, onApplyChange, searchMatches, searchId
     .filter(m => m.rowIdx === idx && m.side === hlSide)
     .map(m => ({ startChar: m.startChar, endChar: m.endChar, isCurrent: searchMatches.indexOf(m) === searchIdx }));
 
-  const showToMod  = isOrig && row.origType === 'removed' && row.modType === 'empty';
+  const showToMod = isOrig && row.origType === 'removed' && row.modType === 'empty';
   const showToOrig = !isOrig && row.modType === 'added' && row.origType === 'empty';
-  const showBoth   = isOrig ? (row.origType === 'removed' && row.modType === 'added') : (row.modType === 'added' && row.origType === 'removed');
+  const showBoth = isOrig ? (row.origType === 'removed' && row.modType === 'added') : (row.modType === 'added' && row.origType === 'removed');
 
   return (
     <>
@@ -755,8 +787,8 @@ const SplitView: React.FC<SplitViewProps> = ({
 export const DiffCheckerTool: React.FC = () => {
   const { isDark } = useTheme();
 
-  const [original, setOriginalState]            = useState(SAMPLES.code.original);
-  const [modified, setModifiedState]            = useState(SAMPLES.code.modified);
+  const [original, setOriginalState] = useState(SAMPLES.code.original);
+  const [modified, setModifiedState] = useState(SAMPLES.code.modified);
 
   // Real-Time WebRTC Peer-to-Peer Collaboration
   const collab = useCollaborationRoom({
@@ -781,25 +813,49 @@ export const DiffCheckerTool: React.FC = () => {
     enabled: collab.isCollaborating,
     isHost: collab.isHost,
   });
-  const [diffResult, setDiffResult]             = useState<SmartDiffResult | null>(null);
-  const [viewMode, setViewMode]                 = useState<ViewMode>('split');
-  const [mode, setMode]                         = useState<'input' | 'diff'>('diff');
-  const [compareMode, setCompareMode]           = useState<CompareMode>('smart');
+
+  const [diffResult, setDiffResult] = useState<SmartDiffResult | null>(null);
+  const [viewMode, setViewMode] = useState<ViewMode>('split');
+  const [mode, setMode] = useState<'input' | 'diff'>('diff');
+  const [compareMode, setCompareMode] = useState<CompareMode>('smart');
   const [ignoreWhitespace, setIgnoreWhitespace] = useState(false);
-  const [ignoreCase, setIgnoreCase]             = useState(false);
-  const [wrapLines, setWrapLines]               = useState(true);
-  const [granularity, setGranularity]           = useState<Granularity>('words');
-  const [showOptions, setShowOptions]           = useState(false);
-  const [showSampleMenu, setShowSampleMenu]     = useState(false);
-  const sampleMenuRef                            = useRef<HTMLDivElement | null>(null);
-  const [copied, setCopied]                     = useState(false);
-  const [copyError, setCopyError]               = useState(false);
-  const [isFullScreen, setIsFullScreen]         = useState(false);
-  const [origFileError, setOrigFileError]       = useState<string | null>(null);
-  const [modFileError,  setModFileError]        = useState<string | null>(null);
-  const [activeHunk, setActiveHunk]             = useState(0);
-  const [origExt, setOrigExt]                   = useState<string | undefined>(undefined);
-  const [modExt,  setModExt]                    = useState<string | undefined>(undefined);
+  const [ignoreCase, setIgnoreCase] = useState(false);
+  const [wrapLines, setWrapLines] = useState(true);
+  const [granularity, setGranularity] = useState<Granularity>('words');
+
+  // Synchronize semantic comparison options across peers
+  const diffOptionsStr = useMemo(
+    () => serializeDiffOptions({ compareMode, ignoreWhitespace, ignoreCase, granularity }),
+    [compareMode, ignoreWhitespace, ignoreCase, granularity]
+  );
+
+  useCollaborativeText({
+    ydoc: collab.ydoc,
+    field: 'diff-options',
+    value: diffOptionsStr,
+    onChange: useCallback((newStr: string) => {
+      const parsed = parseDiffOptions(newStr);
+      if (parsed) {
+        if (parsed.compareMode !== undefined) setCompareMode(parsed.compareMode);
+        if (parsed.ignoreWhitespace !== undefined) setIgnoreWhitespace(parsed.ignoreWhitespace);
+        if (parsed.ignoreCase !== undefined) setIgnoreCase(parsed.ignoreCase);
+        if (parsed.granularity !== undefined) setGranularity(parsed.granularity);
+      }
+    }, []),
+    enabled: collab.isCollaborating,
+    isHost: collab.isHost,
+  });
+  const [showOptions, setShowOptions] = useState(false);
+  const [showSampleMenu, setShowSampleMenu] = useState(false);
+  const sampleMenuRef = useRef<HTMLDivElement | null>(null);
+  const [copied, setCopied] = useState(false);
+  const [copyError, setCopyError] = useState(false);
+  const [isFullScreen, setIsFullScreen] = useState(false);
+  const [origFileError, setOrigFileError] = useState<string | null>(null);
+  const [modFileError, setModFileError] = useState<string | null>(null);
+  const [activeHunk, setActiveHunk] = useState(0);
+  const [origExt, setOrigExt] = useState<string | undefined>(undefined);
+  const [modExt, setModExt] = useState<string | undefined>(undefined);
 
   // Undo / Redo
   const [undoStack, setUndoStack] = useState<Array<{ original: string; modified: string }>>([]);
@@ -853,21 +909,21 @@ export const DiffCheckerTool: React.FC = () => {
   }, []);
 
   // Refs
-  const debounceRef    = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const scrollRef      = useRef<HTMLDivElement | null>(null);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const scrollRef = useRef<HTMLDivElement | null>(null);
   const splitScrollRef = useRef<HTMLDivElement | null>(null);
-  const origRowRefs    = useRef<(HTMLTableRowElement | null)[]>([]);
-  const modRowRefs     = useRef<(HTMLTableRowElement | null)[]>([]);
-  const inlineRowRefs  = useRef<(HTMLTableRowElement | null)[]>([]);
-  const origFileRef    = useRef<HTMLInputElement | null>(null);
-  const modFileRef     = useRef<HTMLInputElement | null>(null);
+  const origRowRefs = useRef<(HTMLTableRowElement | null)[]>([]);
+  const modRowRefs = useRef<(HTMLTableRowElement | null)[]>([]);
+  const inlineRowRefs = useRef<(HTMLTableRowElement | null)[]>([]);
+  const origFileRef = useRef<HTMLInputElement | null>(null);
+  const modFileRef = useRef<HTMLInputElement | null>(null);
 
   // Split rows memo
   const splitRows = useMemo(() => (diffResult ? buildSplitRows(diffResult.lines) : []), [diffResult]);
 
   // Detected format per pane
   const origDetected = useMemo(() => (original.trim() ? TYPE_LABELS[detectSingle(original, origExt)] : undefined), [original, origExt]);
-  const modDetected  = useMemo(() => (modified.trim() ? TYPE_LABELS[detectSingle(modified, modExt)] : undefined), [modified, modExt]);
+  const modDetected = useMemo(() => (modified.trim() ? TYPE_LABELS[detectSingle(modified, modExt)] : undefined), [modified, modExt]);
 
   // Diff Options bundle
   const diffOptions: DiffOptions = useMemo(() => ({
@@ -985,9 +1041,9 @@ export const DiffCheckerTool: React.FC = () => {
   }, [showSampleMenu]);
 
   // Resize drag
-  const dragStartY  = useRef<number>(0);
-  const dragStartH  = useRef<number>(0);
-  const isDragging  = useRef(false);
+  const dragStartY = useRef<number>(0);
+  const dragStartH = useRef<number>(0);
+  const isDragging = useRef(false);
 
   const handleResizePointerDown = useCallback((e: React.PointerEvent) => {
     e.preventDefault();
@@ -997,16 +1053,16 @@ export const DiffCheckerTool: React.FC = () => {
     const onMove = (ev: PointerEvent) => {
       if (!isDragging.current) return;
       const delta = ev.clientY - dragStartY.current;
-      const maxH  = Math.round(window.innerHeight * MAX_H_VH);
+      const maxH = Math.round(window.innerHeight * MAX_H_VH);
       setViewportH(Math.min(maxH, Math.max(MIN_H, dragStartH.current + delta)));
     };
     const onUp = () => {
       isDragging.current = false;
       document.removeEventListener('pointermove', onMove);
-      document.removeEventListener('pointerup',   onUp);
+      document.removeEventListener('pointerup', onUp);
     };
     document.addEventListener('pointermove', onMove);
-    document.addEventListener('pointerup',   onUp);
+    document.addEventListener('pointerup', onUp);
   }, [viewportH]);
 
   // Hunks
@@ -1173,9 +1229,9 @@ export const DiffCheckerTool: React.FC = () => {
 
     if (direction === 'toMod') {
       const origLines = original.split('\n');
-      const modLines  = modified.split('\n');
+      const modLines = modified.split('\n');
       const origLineNo = row.origLineNo;
-      const modLineNo  = row.modLineNo;
+      const modLineNo = row.modLineNo;
 
       if (origLineNo !== null) {
         if (modLineNo !== null) modLines[modLineNo - 1] = origLines[origLineNo - 1];
@@ -1184,9 +1240,9 @@ export const DiffCheckerTool: React.FC = () => {
       }
     } else {
       const origLines = original.split('\n');
-      const modLines  = modified.split('\n');
+      const modLines = modified.split('\n');
       const origLineNo = row.origLineNo;
-      const modLineNo  = row.modLineNo;
+      const modLineNo = row.modLineNo;
 
       if (modLineNo !== null) {
         if (origLineNo !== null) origLines[origLineNo - 1] = modLines[modLineNo - 1];
@@ -1204,8 +1260,8 @@ export const DiffCheckerTool: React.FC = () => {
     inlineRowRefs.current = [];
   }, [diffResult, viewMode]);
 
-  const isEmpty  = original === '' && modified === '';
-  const hasDiff  = diffResult !== null;
+  const isEmpty = original === '' && modified === '';
+  const hasDiff = diffResult !== null;
   const noChange = hasDiff && diffResult.addedCount === 0 && diffResult.removedCount === 0 && !isEmpty;
 
   const borderClass = isDark ? 'border-neutral-700' : 'border-[#E4E4E7]';
@@ -1214,9 +1270,8 @@ export const DiffCheckerTool: React.FC = () => {
     : 'bg-[#E4E4E7]/40 text-[#3F3F46] hover:bg-[#D4D4D8] hover:text-[#18181B]';
 
   return (
-    <div className={`developer-tool-container bg-neutral-950 border border-neutral-800 text-neutral-100 flex flex-col ${
-      isFullScreen ? 'fixed inset-0 z-[9999]' : 'w-full rounded-lg overflow-hidden shadow-xl'
-    }`}>
+    <div className={`developer-tool-container bg-neutral-950 border border-neutral-800 text-neutral-100 flex flex-col ${isFullScreen ? 'fixed inset-0 z-[9999]' : 'w-full rounded-lg overflow-hidden shadow-xl'
+      }`}>
 
       {/* Main Toolbar */}
       <Toolbar.Root isDark={isDark} isFullScreen={isFullScreen}>
@@ -1276,11 +1331,10 @@ export const DiffCheckerTool: React.FC = () => {
           {/* Prominent Auto-Detected Format Badge */}
           {diffResult?.detection && !isEmpty && (
             <div
-              className={`flex items-center gap-1.5 px-2.5 py-1 rounded border text-xs font-mono select-none ${
-                isDark
+              className={`flex items-center gap-1.5 px-2.5 py-1 rounded border text-xs font-mono select-none ${isDark
                   ? 'bg-neutral-900 border-neutral-700/80 text-neutral-200'
                   : 'bg-[#E4E4E7]/60 border-neutral-300 text-neutral-800'
-              }`}
+                }`}
               title={`Automatic language & format detection: ${diffResult.detection.label} (${diffResult.detection.modeLabel})`}
             >
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />
@@ -1295,9 +1349,8 @@ export const DiffCheckerTool: React.FC = () => {
           <button
             onClick={() => setWrapLines(!wrapLines)}
             title={wrapLines ? 'Disable line wrap' : 'Enable line wrap'}
-            className={`flex items-center gap-1 text-xs px-2.5 py-1.5 rounded border ${borderClass} transition-colors cursor-pointer ${
-              wrapLines ? 'bg-neutral-800 text-neutral-100 border-neutral-600' : inactiveBtnClass
-            }`}
+            className={`flex items-center gap-1 text-xs px-2.5 py-1.5 rounded border ${borderClass} transition-colors cursor-pointer ${wrapLines ? 'bg-neutral-800 text-neutral-100 border-neutral-600' : inactiveBtnClass
+              }`}
           >
             <WrapText className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">Wrap</span>
@@ -1307,11 +1360,10 @@ export const DiffCheckerTool: React.FC = () => {
           <button
             onClick={() => setShowOptions(!showOptions)}
             title="Comparison options (whitespace, case, granularity)"
-            className={`flex items-center gap-1 text-xs px-2.5 py-1.5 rounded border ${borderClass} transition-colors cursor-pointer ${
-              showOptions || ignoreWhitespace || ignoreCase || granularity === 'chars'
+            className={`flex items-center gap-1 text-xs px-2.5 py-1.5 rounded border ${borderClass} transition-colors cursor-pointer ${showOptions || ignoreWhitespace || ignoreCase || granularity === 'chars'
                 ? 'bg-neutral-800 text-neutral-100 border-neutral-600'
                 : inactiveBtnClass
-            }`}
+              }`}
           >
             <SlidersHorizontal className="w-3.5 h-3.5" />
             <span className="hidden md:inline">Options</span>
@@ -1335,9 +1387,8 @@ export const DiffCheckerTool: React.FC = () => {
             <button
               type="button"
               onClick={() => setShowSampleMenu(!showSampleMenu)}
-              className={`flex items-center gap-1 text-xs px-2.5 py-1.5 rounded border ${borderClass} transition-colors cursor-pointer ${
-                showSampleMenu ? 'bg-neutral-800 text-neutral-100 border-neutral-600' : inactiveBtnClass
-              }`}
+              className={`flex items-center gap-1 text-xs px-2.5 py-1.5 rounded border ${borderClass} transition-colors cursor-pointer ${showSampleMenu ? 'bg-neutral-800 text-neutral-100 border-neutral-600' : inactiveBtnClass
+                }`}
             >
               <FileCode className="w-3.5 h-3.5" />
               <span>Sample</span>
@@ -1406,6 +1457,7 @@ export const DiffCheckerTool: React.FC = () => {
             sessionState={collab}
             startSession={collab.startSession}
             joinSession={collab.joinSession}
+            retryConnection={collab.retryConnection}
             leaveSession={collab.leaveSession}
             endSessionForAll={collab.endSessionForAll}
             setDisplayName={collab.setDisplayName}
@@ -1421,11 +1473,10 @@ export const DiffCheckerTool: React.FC = () => {
 
           {/* Statistics summary */}
           {hasDiff && !isEmpty && (
-            <div className={`flex items-center gap-1 font-mono text-[11px] px-2 py-1.5 rounded select-none border ${
-              isDark
+            <div className={`flex items-center gap-1 font-mono text-[11px] px-2 py-1.5 rounded select-none border ${isDark
                 ? 'bg-neutral-800/60 border-neutral-700/50 text-neutral-300'
                 : 'bg-neutral-200/50 border-neutral-300 text-neutral-700'
-            }`}>
+              }`}>
               {diffResult?.smartSummary ? (
                 <span>{diffResult.smartSummary.text}</span>
               ) : (
@@ -1469,6 +1520,15 @@ export const DiffCheckerTool: React.FC = () => {
           />
         </Toolbar.Group>
       </Toolbar.Root>
+
+      {/* Real-time Collaboration Active Status Banner */}
+      <CollabActiveBanner
+        sessionState={collab}
+        leaveSession={collab.leaveSession}
+        endSessionForAll={collab.endSessionForAll}
+        onDismissError={collab.dismissError}
+        isDark={isDark}
+      />
 
       {/* Options Panel Sub-bar */}
       {showOptions && (
@@ -1542,9 +1602,8 @@ export const DiffCheckerTool: React.FC = () => {
                 <button
                   key={scope}
                   onClick={() => setSearchScope(scope)}
-                  className={`px-2 py-1 transition-colors cursor-pointer capitalize text-xs ${
-                    searchScope === scope ? 'bg-neutral-700 text-neutral-100' : 'bg-neutral-900 text-neutral-500 hover:text-neutral-300'
-                  }`}
+                  className={`px-2 py-1 transition-colors cursor-pointer capitalize text-xs ${searchScope === scope ? 'bg-neutral-700 text-neutral-100' : 'bg-neutral-900 text-neutral-500 hover:text-neutral-300'
+                    }`}
                 >
                   {scope === 'both' ? 'Both' : scope === 'orig' ? 'Orig' : 'Mod'}
                 </button>

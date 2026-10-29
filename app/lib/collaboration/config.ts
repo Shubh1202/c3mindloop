@@ -3,15 +3,30 @@
  * Configurable signaling endpoints, STUN servers, quotas, and pseudonym dictionaries.
  */
 
+/**
+ * Signaling Server Endpoints:
+ * CAVEAT: These endpoints use public community-hosted demo instances of y-webrtc.
+ * While session document data is exchanged peer-to-peer over WebRTC DataChannels,
+ * initial peer discovery / SDP signaling relies on these public servers. They may be
+ * subject to external downtime or connection throttling.
+ */
 export const DEFAULT_SIGNALING_SERVERS: string[] = [
   'wss://y-webrtc.fly.dev',
   'wss://y-webrtc-signaling.fly.dev',
 ];
 
+/**
+ * STUN Servers:
+ * Used for NAT traversal to discover public IP/port mappings.
+ * CAVEAT: No TURN relay servers are currently configured. In corporate networks with
+ * symmetric NATs, strict enterprise firewalls, or certain VPNs, direct peer-to-peer
+ * WebRTC DataChannel connections will not be able to establish.
+ */
 export const DEFAULT_STUN_SERVERS = [
   { urls: 'stun:stun.l.google.com:19302' },
   { urls: 'stun:global.stun.twilio.com:3478' },
 ];
+
 
 /**
  * Maximum document payload limit (5 MB).

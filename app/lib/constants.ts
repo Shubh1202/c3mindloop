@@ -4,11 +4,11 @@ export const PRODUCTS_LIST: Product[] = [
   {
     id: 'json-formatter',
     nameKey: 'JSON Formatter & Validator',
-    descKey: 'Format, validate, repair, and minify JSON payloads instantly in your browser with zero server latency.',
+    descKey: 'Format, validate, repair, and minify JSON payloads in your browser. Live P2P sessions synchronize the shared JSON editor in real time.',
     status: 'live',
     category: 'json',
     icon: 'Code2',
-    techStack: ['Browser JS Engine', 'JSON.parse', 'Local Processing'],
+    techStack: ['Browser JS Engine', 'Live P2P Sync', 'Local Processing'],
     demoCode: `// Client-Side Execution (0 Network Requests)
 const formatted = JSON.stringify(JSON.parse(input), null, 2);`
   },
@@ -24,11 +24,11 @@ const formatted = JSON.stringify(JSON.parse(input), null, 2);`
   {
     id: 'jwt-inspector',
     nameKey: 'JWT Inspector & Token Debugger',
-    descKey: 'Decode JSON Web Token headers, payloads, and expiration timestamps without leaking sensitive auth claims.',
+    descKey: 'Decode JSON Web Token headers, payloads, and timestamps locally. Live collaboration synchronizes the shared token input with zero cloud storage.',
     status: 'live',
     category: 'auth',
     icon: 'ShieldCheck',
-    techStack: ['Base64Url', 'Epoch Time', 'Client Verification']
+    techStack: ['Base64Url', 'Live P2P Sync', 'Client Verification']
   },
   {
     id: 'hash-generator',
@@ -51,20 +51,20 @@ const formatted = JSON.stringify(JSON.parse(input), null, 2);`
   {
     id: 'curl-converter',
     nameKey: 'cURL to Code Converter',
-    descKey: 'Convert cURL commands to JavaScript Fetch, Axios, Node.js, Python requests, Go, and PHP snippets instantly in your browser.',
+    descKey: 'Convert cURL commands to Fetch, Axios, Python, Go, and PHP snippets. In live sessions, peers collaborate on the shared cURL command while keeping language targets local.',
     status: 'live',
     category: 'utilities',
     icon: 'Terminal',
-    techStack: ['cURL Parser', 'Multi-Language', 'Local Processing']
+    techStack: ['cURL Parser', 'Live P2P Sync', 'Local Processing']
   },
   {
     id: 'regex-tester',
     nameKey: 'Regex Matcher & Syntax Tester',
-    descKey: 'Test Regular Expression patterns against input text with live match highlighting and group extraction.',
+    descKey: 'Test Regular Expression patterns with live match highlighting. In live sessions, pattern, test string, and regex flags synchronize between peers.',
     status: 'live',
     category: 'utilities',
     icon: 'FileCode',
-    techStack: ['RegExp Engine', 'Capture Groups', 'Syntax Highlighting']
+    techStack: ['RegExp Engine', 'Live P2P Sync', 'Syntax Highlighting']
   },
   {
     id: 'regex-railroad',
@@ -132,11 +132,11 @@ const formatted = JSON.stringify(JSON.parse(input), null, 2);`
   {
     id: 'diff-checker',
     nameKey: 'Diff Checker',
-    descKey: 'Compare two text or code files side by side with line-level and character-level diff highlighting. 100% client-side, zero upload.',
+    descKey: 'Compare text and code with line and char-level diffs. Live collaboration synchronizes original text, modified text, and comparison options in real time.',
     status: 'live',
     category: 'utilities',
     icon: 'Columns2',
-    techStack: ['Myers Diff', 'LCS Algorithm', 'Local Processing']
+    techStack: ['Myers Diff', 'Live P2P Sync', 'Local Processing']
   },
   {
     id: 'json-graph',
@@ -859,6 +859,33 @@ export function getPublishedGuides(locale: SupportedLocale): PublishedGuide[] {
 
 export function getPublishedEnglishGuide(slug: string): PublishedGuide | undefined {
   return getPublishedGuides('en').find((guide) => guide.slug === slug);
+}
+
+export function getRelatedGuides(slug: string, locale: SupportedLocale = 'en', limit: number = 3): PublishedGuide[] {
+  const allGuides = getPublishedGuides(locale);
+  const currentGuide = allGuides.find((g) => g.slug === slug);
+  if (!currentGuide) {
+    return allGuides.filter((g) => g.slug !== slug).slice(0, limit);
+  }
+
+  const otherGuides = allGuides.filter((g) => g.slug !== slug);
+  const currentTagSet = new Set(currentGuide.tags.map((t) => t.toLowerCase()));
+
+  const scored = otherGuides.map((guide) => {
+    let score = 0;
+    if (guide.category === currentGuide.category) {
+      score += 2;
+    }
+    for (const tag of guide.tags) {
+      if (currentTagSet.has(tag.toLowerCase())) {
+        score += 1;
+      }
+    }
+    return { guide, score };
+  });
+
+  scored.sort((a, b) => b.score - a.score || b.guide.publishedAt.localeCompare(a.guide.publishedAt));
+  return scored.slice(0, limit).map((item) => item.guide);
 }
 
 export const CRASH_STORIES: CommunityCrashStory[] = [

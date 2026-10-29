@@ -16,6 +16,7 @@ import { generateAnonymousDeveloperName } from './crypto';
 
 export type RoomEventCallback = (event: {
   status: ConnectionStatus;
+  signalingConnected: boolean;
   peers: PeerProfile[];
   selfProfile: PeerProfile;
   webrtcPeerCount: number;
@@ -33,6 +34,7 @@ export class CollaborationRoomManager {
   private selfProfile: PeerProfile;
   private peers: PeerProfile[] = [];
   private status: ConnectionStatus = 'idle';
+  private signalingConnected = false;
   private error: string | null = null;
   private terminatedReason: string | null = null;
   private webrtcPeerCount = 0;
@@ -40,6 +42,7 @@ export class CollaborationRoomManager {
   private isHost = false;
   private eventListeners: Set<RoomEventCallback> = new Set();
   private isDestroyed = false;
+  private endSessionTimeout: NodeJS.Timeout | null = null;
 
   constructor(config: CollabRoomConfig) {
     this.config = config;
@@ -71,6 +74,7 @@ export class CollaborationRoomManager {
   private notify(): void {
     const payload = {
       status: this.status,
+      signalingConnected: this.signalingConnected,
       peers: this.peers,
       selfProfile: this.selfProfile,
       webrtcPeerCount: this.webrtcPeerCount,
@@ -138,6 +142,7 @@ export class CollaborationRoomManager {
     this.isDestroyed = false;
     this.credentials = credentials;
     this.status = 'connecting';
+    this.signalingConnected = false;
     this.error = null;
     this.terminatedReason = null;
     this.notify();
@@ -148,7 +153,7 @@ export class CollaborationRoomManager {
       this.ydoc = ydoc;
 
       // 2. Document Size Protection Guardrail
-      ydoc.on('update', (update: Uint8Array, origin: any) => {
+      ydoc.on('update', (_update: Uint8Array, _origin: any) => {
         // Enforce max text length quota
         const textLen = ydoc.getText('content').length;
         if (textLen > MAX_DOCUMENT_SIZE_BYTES) {
@@ -195,7 +200,7 @@ export class CollaborationRoomManager {
         clientId: ydoc.clientID,
       };
 
-      // 5. Initialize Awareness (Presence: Name & Color)
+      // 6. Initialize Awareness (Presence: Name & Color)
       if (provider.awareness) {
         provider.awareness.setLocalStateField('user', {
           name: this.selfProfile.name,
@@ -209,13 +214,16 @@ export class CollaborationRoomManager {
         });
       }
 
-      // 6. Handle provider events
+      // 7. Handle provider status (signaling connectivity)
       provider.on('status', ({ connected }: { connected: boolean }) => {
         if (this.isDestroyed) return;
+        this.signalingConnected = connected;
+        // Distinguish signaling connectivity: provider status indicates signaling server socket
         this.status = connected ? 'connected' : 'connecting';
         this.notify();
       });
 
+      // 8. Handle peer connection events (WebRTC and BroadcastChannel peers)
       provider.on(
         'peers',
         ({
@@ -234,14 +242,27 @@ export class CollaborationRoomManager {
         }
       );
 
-      this.status = 'connected';
+      // Provider was successfully constructed; notify
       this.notify();
     } catch (err: any) {
       console.error('[Collab] Failed to initialize WebRTC provider:', err);
       this.status = 'error';
+      this.signalingConnected = false;
       this.error = err?.message || 'Failed to connect to collaboration session.';
       this.notify();
     }
+  }
+
+  /**
+   * Reconnects to the current room session (e.g. after network drop or timeout retry).
+   */
+  public async reconnect(): Promise<void> {
+    if (!this.credentials) return;
+    const creds = { ...this.credentials };
+    const wasHost = this.isHost;
+    this.disconnect();
+    this.isHost = wasHost;
+    await this.connect(creds);
   }
 
   private updatePeerList(): void {
@@ -286,17 +307,27 @@ export class CollaborationRoomManager {
       // Ignore
     }
 
+    if (this.endSessionTimeout) {
+      clearTimeout(this.endSessionTimeout);
+    }
+
     // Allow 150ms for WebRTC / BroadcastChannel to broadcast termination packet
-    setTimeout(() => {
+    this.endSessionTimeout = setTimeout(() => {
       this.disconnect();
+      this.endSessionTimeout = null;
     }, 150);
   }
 
   /**
-   * Disconnects current session and cleanly destroys all WebRTC channels and listeners.
+   * Disconnects current session and cleanly destroys all WebRTC channels, timers, and listeners.
    */
   public disconnect(): void {
     this.isDestroyed = true;
+
+    if (this.endSessionTimeout) {
+      clearTimeout(this.endSessionTimeout);
+      this.endSessionTimeout = null;
+    }
 
     if (this.provider) {
       try {
@@ -322,6 +353,7 @@ export class CollaborationRoomManager {
     this.webrtcPeerCount = 0;
     this.bcPeerCount = 0;
     this.status = 'idle';
+    this.signalingConnected = false;
     this.error = null;
     this.notify();
   }

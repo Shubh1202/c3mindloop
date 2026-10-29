@@ -38,7 +38,8 @@
     "statUptime": "99,99%",
     "statUptimeLabel": "Systemzuverlässigkeit",
     "statRepos": "85+",
-    "statReposLabel": "Open-Source-Repos"
+    "statReposLabel": "Open-Source-Repos",
+    "ctaCollab": "Live-Zusammenarbeit ausprobieren"
   },
   "philosophySection": {
     "kicker": "Das MindLoop-Paradigma",
@@ -166,7 +167,14 @@
     "title": "Engineering-Leitfäden",
     "subtitle": "Praktische Notizen und Referenzen für Entwickler-Workflows.",
     "searchPlaceholder": "Leitfäden nach Titel, Tag oder Stichwort suchen...",
-    "categories": { "all": "Alle Kategorien", "engineering": "Engineering", "developerTools": "Entwicklerwerkzeuge", "aiAgents": "KI und Agenten", "developerCulture": "Entwicklerkultur", "typeScript": "TypeScript" },
+    "categories": {
+      "all": "Alle Kategorien",
+      "engineering": "Engineering",
+      "developerTools": "Entwicklerwerkzeuge",
+      "aiAgents": "KI und Agenten",
+      "developerCulture": "Entwicklerkultur",
+      "typeScript": "TypeScript"
+    },
     "readTime": "Min. Lesezeit",
     "readArticle": "Leitfaden lesen",
     "noResults": "Es sind noch keine Leitfäden veröffentlicht."

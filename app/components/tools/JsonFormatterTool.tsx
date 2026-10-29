@@ -30,7 +30,7 @@ import { useSearch } from '../../hooks/useSearch';
 import { SearchBar } from '../ui/SearchBar';
 import { Toolbar } from '../ui/Toolbar';
 import { useCollaborationRoom, useCollaborativeText } from '../../lib/collaboration';
-import { CollabToolbarButton } from '../collaboration';
+import { CollabToolbarButton, CollabActiveBanner } from '../collaboration';
 
 type IndentOption = '2' | '4' | 'tab';
 type OutputMode = 'json' | 'typescript' | 'go' | 'csv';
@@ -1184,6 +1184,7 @@ export const JsonFormatterTool: React.FC = () => {
               sessionState={collab}
               startSession={collab.startSession}
               joinSession={collab.joinSession}
+              retryConnection={collab.retryConnection}
               leaveSession={collab.leaveSession}
               endSessionForAll={collab.endSessionForAll}
               setDisplayName={collab.setDisplayName}
@@ -1309,6 +1310,15 @@ export const JsonFormatterTool: React.FC = () => {
             />
           </Toolbar.Group>
         </Toolbar.Root>
+
+        {/* Real-time Collaboration Active Status Banner */}
+        <CollabActiveBanner
+          sessionState={collab}
+          leaveSession={collab.leaveSession}
+          endSessionForAll={collab.endSessionForAll}
+          onDismissError={collab.dismissError}
+          isDark={isDark}
+        />
 
         {/* Collapsible Search Controls Bar */}
         {/* Search bar -  powered by useSearch hook + shared SearchBar component */}

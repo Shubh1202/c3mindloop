@@ -38,6 +38,7 @@ export interface CollabRoomConfig {
 
 export interface CollabSessionState {
   status: ConnectionStatus;
+  signalingConnected?: boolean;
   roomId: string | null;
   isHost: boolean;
   peers: PeerProfile[];
@@ -48,6 +49,7 @@ export interface CollabSessionState {
   isCollaborating: boolean;
   shareableUrl: string | null;
   error: string | null;
+  connectionWarning?: string | null;
   terminatedReason: string | null;
 }
 

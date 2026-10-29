@@ -25,6 +25,7 @@ interface CollabSessionModalProps {
   sessionState: CollabSessionState;
   startSession: () => Promise<RoomCredentials>;
   joinSession: (creds: RoomCredentials) => Promise<void>;
+  retryConnection?: () => Promise<void> | void;
   leaveSession: () => void;
   /** Host-only: terminate the session for all connected peers */
   endSessionForAll?: () => void;
@@ -38,6 +39,7 @@ export const CollabSessionModal: React.FC<CollabSessionModalProps> = ({
   sessionState,
   startSession,
   joinSession,
+  retryConnection,
   leaveSession,
   endSessionForAll,
   setDisplayName,
@@ -97,16 +99,94 @@ export const CollabSessionModal: React.FC<CollabSessionModalProps> = ({
           </div>
         )}
 
+        {/* ── Connection Error Banner ── */}
+        {sessionState.error && (
+          <div
+            role="alert"
+            className={`flex items-start gap-3 p-3 rounded-lg border ${isDark
+                ? 'bg-red-950/40 border-red-700/50 text-red-300'
+                : 'bg-red-50 border-red-300 text-red-900'
+              }`}
+          >
+            <XCircle className="w-4 h-4 shrink-0 mt-0.5 text-red-500" aria-hidden="true" />
+            <div className="space-y-1.5 flex-1 min-w-0">
+              <p className="font-semibold text-[11px]">Connection Error</p>
+              <p className="text-[10px] leading-relaxed opacity-90">{sessionState.error}</p>
+              {retryConnection && sessionState.isCollaborating && (
+                <button
+                  type="button"
+                  onClick={retryConnection}
+                  className={`px-2.5 py-1 rounded text-[10px] font-semibold border transition-colors cursor-pointer ${isDark
+                      ? 'bg-neutral-800 hover:bg-neutral-700 text-red-300 border-red-500/40'
+                      : 'bg-white hover:bg-neutral-100 text-red-900 border-red-300'
+                    }`}
+                >
+                  Retry Connection
+                </button>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* ── Connection Advisory Warning (15s Watchdog) ── */}
+        {sessionState.connectionWarning && (
+          <div
+            role="status"
+            className={`flex items-start gap-3 p-3 rounded-lg border ${isDark
+                ? 'bg-amber-950/40 border-amber-700/50 text-amber-200'
+                : 'bg-amber-50 border-amber-300 text-amber-900'
+              }`}
+          >
+            <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5 text-amber-500" aria-hidden="true" />
+            <div className="space-y-2 flex-1 min-w-0">
+              <div>
+                <p className="font-semibold text-[11px] mb-0.5">Connection Advisory</p>
+                <p className="text-[10px] leading-relaxed opacity-90">{sessionState.connectionWarning}</p>
+              </div>
+              <div className="flex items-center gap-2 pt-0.5 flex-wrap">
+                {retryConnection && (
+                  <button
+                    type="button"
+                    onClick={retryConnection}
+                    className={`px-2.5 py-1 rounded text-[10px] font-semibold border transition-colors cursor-pointer ${isDark
+                        ? 'bg-neutral-800 hover:bg-neutral-700 text-amber-200 border-amber-500/30'
+                        : 'bg-white hover:bg-neutral-100 text-amber-900 border-amber-300 shadow-xs'
+                      }`}
+                  >
+                    Retry Connection
+                  </button>
+                )}
+                {sessionState.shareableUrl && (
+                  <button
+                    type="button"
+                    onClick={handleCopyLink}
+                    className={`px-2.5 py-1 rounded text-[10px] font-medium flex items-center gap-1 border transition-colors cursor-pointer ${isDark
+                        ? 'bg-neutral-800 hover:bg-neutral-700 text-neutral-300 border-neutral-700'
+                        : 'bg-white hover:bg-neutral-100 text-neutral-700 border-neutral-300 shadow-xs'
+                      }`}
+                  >
+                    <Copy className="w-3 h-3" aria-hidden="true" />
+                    <span>Copy Invite Link</span>
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* ── Header Status Bar ── */}
         <div className="flex items-center justify-between pb-3 border-b border-theme-subtle">
           <div className="flex items-center gap-2">
             <Radio
-              className={`w-4 h-4 ${
-                sessionState.isCollaborating ? 'text-emerald-400 animate-pulse' : 'text-theme-muted'
-              }`}
+              className={`w-4 h-4 ${sessionState.isCollaborating ? 'text-emerald-400 animate-pulse' : 'text-theme-muted'
+                }`}
             />
             <span className="font-semibold text-theme-main">
-              {sessionState.isCollaborating ? 'Live Session Active' : 'Offline / Standalone'}
+              {sessionState.isCollaborating
+                ? sessionState.webrtcPeerCount > 0 || sessionState.bcPeerCount > 0
+                  ? `Live Session (${sessionState.peerCount} Connected)`
+                  : 'Session Active • Waiting for Peers'
+                : 'Offline / Standalone'}
             </span>
           </div>
           <CollabStatusBadge
@@ -122,7 +202,7 @@ export const CollabSessionModal: React.FC<CollabSessionModalProps> = ({
           <>
             {/* ── Shareable Link ── */}
             <div className="space-y-2">
-              <label className="block text-theme-muted">Invite Link (100% Private Bearer Link)</label>
+              <label className="block text-theme-muted">Direct Invitation Link</label>
               <div className="flex items-center gap-2">
                 <input
                   type="text"
@@ -206,17 +286,23 @@ export const CollabSessionModal: React.FC<CollabSessionModalProps> = ({
               selfProfile={sessionState.selfProfile}
             />
 
-            {/* ── Security Guarantee Banner ── */}
-            <div className="p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 space-y-1">
-              <div className="flex items-center gap-1.5 font-semibold text-[11px]">
-                <ShieldCheck className="w-4 h-4 shrink-0" />
-                <span>Zero-Knowledge &amp; Privacy-First</span>
+            {/* ── Privacy & Data Flow Information ── */}
+            <div className="p-3 rounded-lg bg-surface/70 border border-theme-subtle text-theme-muted space-y-1.5">
+              <div className="flex items-center gap-1.5 font-semibold text-[11px] text-theme-main">
+                <ShieldCheck className="w-4 h-4 shrink-0 text-emerald-400" />
+                <span>How This Session Works</span>
               </div>
-              <p className="text-[10px] text-emerald-300/80 leading-relaxed">
-                Your keystrokes and document contents are exchanged directly between browsers via
-                encrypted WebRTC DataChannels. C³ MindLoop servers never see, decrypt, or log your
-                code.
-              </p>
+              <ul className="text-[10px] space-y-1 text-theme-muted leading-relaxed list-disc list-inside">
+                <li>
+                  <span className="text-theme-main font-semibold">Editing Access:</span> All joined participants currently have full real-time editing access to synchronized tool inputs.
+                </li>
+                <li>
+                  <span className="text-theme-main font-semibold">Direct Peer Sync:</span> Document text is synchronized directly between browsers via WebRTC DataChannels. Document content is not stored on C³ MindLoop servers.
+                </li>
+                <li>
+                  <span className="text-theme-main font-semibold">Signaling &amp; Network:</span> Initial peer connection handshakes pass through public signaling servers. Networks requiring TURN relays may not connect.
+                </li>
+              </ul>
             </div>
 
             {/* ── Leave / End Session Actions ── */}
@@ -228,11 +314,11 @@ export const CollabSessionModal: React.FC<CollabSessionModalProps> = ({
                   leaveSession();
                   onClose();
                 }}
-                className={`px-3.5 py-2 rounded-lg font-semibold flex items-center gap-1.5 cursor-pointer transition-colors ${
-                  sessionState.isHost
+                className={`px-3.5 py-2 rounded-lg font-semibold flex items-center gap-1.5 cursor-pointer transition-colors ${sessionState.isHost
                     ? 'bg-surface hover:bg-theme-hover border border-theme-subtle text-theme-muted'
                     : 'bg-red-950/40 hover:bg-red-900/60 border border-red-800/60 text-red-300'
-                }`}
+                  }`}
+                title="Disconnect your browser tab from this room"
               >
                 <LogOut className="w-3.5 h-3.5" />
                 <span>Leave Session</span>
@@ -243,6 +329,7 @@ export const CollabSessionModal: React.FC<CollabSessionModalProps> = ({
                 <button
                   onClick={() => setShowEndConfirm(true)}
                   className="px-3.5 py-2 rounded-lg bg-red-950/60 hover:bg-red-900/80 border border-red-700/60 text-red-300 font-semibold flex items-center gap-1.5 cursor-pointer transition-colors"
+                  title="Disconnect all peers and terminate this session"
                 >
                   <XCircle className="w-3.5 h-3.5" />
                   <span>End Session for All</span>
@@ -293,12 +380,30 @@ export const CollabSessionModal: React.FC<CollabSessionModalProps> = ({
           <div className="space-y-6">
             <div className="space-y-3">
               <h4 className="text-sm font-semibold text-theme-main">
-                Start a Real-Time Multiplayer Session
+                Live Peer-to-Peer Debugging Session
               </h4>
               <p className="text-theme-muted leading-relaxed">
-                Work simultaneously on JSON, code, or configs with your team. Zero server setup, zero
-                accounts, and end-to-end encrypted direct browser-to-browser synchronization.
+                Debugging an API payload, malformed JSON, or token with a teammate? Start a live session to inspect and edit together in real time instead of copying snippets back and forth in chat.
               </p>
+
+              {/* What happens when starting a session */}
+              <div className="p-3 rounded-lg bg-surface/50 border border-theme-subtle space-y-2 text-[11px]">
+                <span className="font-semibold text-theme-main block">How live collaboration works:</span>
+                <ul className="space-y-1.5 text-theme-muted list-disc list-inside">
+                  <li>
+                    <span className="text-theme-main font-semibold">Invite Link:</span> Generates a link with credentials in the URL hash (<code className="text-[#1D9BF0]">#collab=...</code>). The hash is handled client-side and is never sent to C³ MindLoop servers.
+                  </li>
+                  <li>
+                    <span className="text-theme-main font-semibold">Symmetric Editing:</span> Anyone joining with your link has immediate editing access to the tool input.
+                  </li>
+                  <li>
+                    <span className="text-theme-main font-semibold">No Accounts:</span> Teammates join in their browser with no sign-up required.
+                  </li>
+                  <li>
+                    <span className="text-theme-main font-semibold">Direct Sync:</span> Text diffs sync directly between browsers via WebRTC. Document text is not stored on our servers.
+                  </li>
+                </ul>
+              </div>
 
               <button
                 onClick={async () => {
@@ -313,7 +418,7 @@ export const CollabSessionModal: React.FC<CollabSessionModalProps> = ({
 
             {/* ── Join by URL input ── */}
             <div className="space-y-2 pt-3 border-t border-theme-subtle">
-              <label className="block text-theme-muted">Or Join Existing Room:</label>
+              <label className="block text-theme-muted">Or Join an Existing Session:</label>
               <div className="flex items-center gap-2">
                 <input
                   type="text"
