@@ -157,9 +157,11 @@ Contributions make the open-source community an incredible place to learn, inspi
 
 If you find C³ MindLoop useful for your daily workflow, consider supporting development:
 
-* **[Sponsor on GitHub](https://github.com/sponsors/shubhamprajapati1202)**: Direct recurring or one-time sponsorship.
-* **[Buy Me a Coffee](https://buymeacoffee.com/shubhamprajapati1202)**: Quick one-time developer support.
-* **Star the Repo**: Give us a ⭐ on GitHub to help more engineers find these tools!
+| ☕ Buy Me a Coffee | 💖 GitHub Sponsors |
+| :---: | :---: |
+| <a href="https://buymeacoffee.com/shubhamprajapati1202"><img src="./public/bmc-qr.jpg" width="160" alt="Scan to Buy Me a Coffee" /></a><br /><br />[![Buy Me A Coffee](https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/shubhamprajapati1202)<br /><sub>Scan QR or click badge to support</sub> | [![Sponsor](https://img.shields.io/badge/Sponsor_on_GitHub-ea4aaa?style=for-the-badge&logo=github&logoColor=white)](https://github.com/sponsors/shubhamprajapati1202)<br /><br />Support via recurring or one-time sponsorship directly through GitHub Sponsors. |
+
+* ⭐ **Star the Repo**: Give us a ⭐ on GitHub to help more developers discover C³ MindLoop!
 
 ---
 

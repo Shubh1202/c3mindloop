@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import { MessageSquare, Flame, AlertTriangle, Calendar, CheckCircle2, Github, ExternalLink } from 'lucide-react';
+import { MessageSquare, Flame, AlertTriangle, Calendar, CheckCircle2, Github, ExternalLink, Coffee, Heart } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { useTranslation } from '../lib/i18n';
 import { CRASH_STORIES } from '../lib/constants';
@@ -134,6 +134,51 @@ export const CommunityPage: React.FC = () => {
               >
                 {t('community.submitStory', 'Share Your Crash Story')}
               </Button>
+            </div>
+          </div>
+
+          {/* Support & Sponsorship Banner with QR */}
+          <div className="border border-white/10 rounded-2xl p-6 sm:p-8 bg-neutral-900/60 flex flex-col md:flex-row items-center justify-between gap-8">
+            <div className="space-y-3 max-w-xl text-center md:text-left">
+              <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-300 text-xs font-mono">
+                <Coffee className="w-3.5 h-3.5" />
+                <span>Support Independent Open Source</span>
+              </div>
+              <h3 className="text-xl sm:text-2xl font-bold text-white">Buy Me a Coffee & Keep C³ MindLoop Free</h3>
+              <p className="text-xs sm:text-sm text-theme-muted leading-relaxed">
+                C³ MindLoop is 100% free, ad-free, and open source. Your support keeps all 20+ utilities running with zero data tracking and serverless infrastructure.
+              </p>
+              <div className="flex flex-wrap items-center gap-3 justify-center md:justify-start pt-2">
+                <a
+                  href="https://buymeacoffee.com/shubhamprajapati1202"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#FFDD00] hover:bg-[#F5D300] text-black font-semibold text-xs transition-colors"
+                >
+                  <Coffee className="w-4 h-4 text-black" />
+                  <span>Buy Me a Coffee</span>
+                </a>
+                <a
+                  href="https://github.com/sponsors/shubhamprajapati1202"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/30 font-medium text-xs transition-colors"
+                >
+                  <Heart className="w-4 h-4 text-rose-400" />
+                  <span>GitHub Sponsor</span>
+                </a>
+              </div>
+            </div>
+
+            <div className="flex flex-col items-center p-3 rounded-2xl bg-white shadow-2xl shrink-0">
+              <img
+                src="/bmc-qr.jpg"
+                alt="Buy Me a Coffee QR Code"
+                className="w-36 h-36 rounded-xl object-contain"
+              />
+              <span className="text-[10px] font-mono font-bold text-neutral-800 uppercase tracking-wider pt-2">
+                Scan with Phone ☕
+              </span>
             </div>
           </div>
 
