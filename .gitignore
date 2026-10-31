@@ -42,3 +42,10 @@ next-env.d.ts
 
 # internal reports & strategy audits
 /reports/
+
+# IDE and AI agent tooling
+.vscode/
+.idea/
+.agents/
+.amazonq/
+.kiro/
