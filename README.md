@@ -29,6 +29,8 @@
 * **🧠 Interactive Runtime Visualizers:** Step-by-step visualizers for JavaScript call stacks, Node.js libuv event loop phases, Git tree branch workflows, and Regex railroad state machines.
 * **⚡ Modern Next.js 16 & React 19 Stack:** Built on the bleeding edge using Next.js App Router, Tailwind CSS v4, Motion, and `@xyflow/react`.
 
+> 💖 **Support Open Source:** If C³ MindLoop saves you time or helps your workflow, consider [Sponsoring on GitHub](https://github.com/sponsors/shubhamprajapati1202) or [Buying me a coffee](https://buymeacoffee.com/shubhamprajapati1202). Every contribution keeps these tools 100% free & ad-free!
+
 ---
 
 ## 🛠️ Tool Suite
