@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from '../../lib/router-compat';
 import { motion, AnimatePresence } from 'motion/react';
-import { Menu, X, Command, RotateCcw } from 'lucide-react';
+import { Menu, X, Command, RotateCcw, Github } from 'lucide-react';
 import { useTranslation } from '../../lib/i18n';
 // Temporarily hidden while incomplete locale coverage is audited and repaired.
 // import { LanguageSelector } from '../ui/LanguageSelector';
@@ -36,6 +36,7 @@ export const Navbar: React.FC<{
     { name: 'Compiler', path: '/compiler' },
     { name: t('navbar.guides', 'Guides'), path: '/guides' },
     { name: t('navbar.projects', 'Projects'), path: '/projects' },
+    { name: t('navbar.community', 'Community'), path: '/community' },
     { name: t('navbar.reviews', 'Reviews'), path: '/reviews' },
     { name: t('navbar.about', 'About'), path: '/about' },
   ];
@@ -103,8 +104,19 @@ export const Navbar: React.FC<{
             })}
           </nav>
 
-          {/* Actions (Theme, Language) - Desktop */}
+          {/* Actions (Theme, Language, GitHub) - Desktop */}
           <div className="hidden lg:flex items-center gap-2 relative z-50 pointer-events-auto">
+            <a
+              href="https://github.com/Shubh1202/c3mindloop"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="h-9 px-3 rounded-lg bg-neutral-900 border border-white/10 text-neutral-300 hover:text-white hover:border-[#1D9BF0]/40 hover:bg-neutral-800 transition-all cursor-pointer pointer-events-auto flex items-center gap-1.5 shrink-0 text-xs font-mono"
+              title="GitHub Repository & Community"
+            >
+              <Github className="w-4 h-4 text-neutral-300" />
+              <span className="hidden xl:inline">GitHub</span>
+            </a>
+
             {onReplayIntro && (
               <button
                 type="button"
@@ -124,6 +136,16 @@ export const Navbar: React.FC<{
 
           {/* Mobile & Tablet Controls */}
           <div className="flex items-center gap-2 lg:hidden relative z-50 pointer-events-auto">
+            <a
+              href="https://github.com/Shubh1202/c3mindloop"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="h-9 w-9 rounded-lg bg-neutral-900 border border-white/10 text-neutral-300 hover:text-white hover:bg-neutral-800 transition-colors flex items-center justify-center shrink-0"
+              title="GitHub Repository"
+            >
+              <Github className="w-4 h-4" />
+            </a>
+
             {onReplayIntro && (
               <button
                 type="button"

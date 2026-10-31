@@ -92,16 +92,28 @@ export const CommunityPage: React.FC = () => {
                 <div className="p-2.5 rounded-md bg-[#1D9BF0]/10 text-[#1D9BF0]">
                   <Github className="w-5 h-5" />
                 </div>
-                <h2 className="text-h2 text-theme-main">Developer Tools</h2>
+                <h2 className="text-h2 text-theme-main">Open Source Community</h2>
               </div>
               <p className="text-body text-theme-muted leading-relaxed">
-                Browse practical browser-based utilities for common developer workflows.
+                Join our open-source movement on GitHub. Star the repository, contribute new privacy-first developer tools, and collaborate with engineers worldwide.
               </p>
-              <a href="/tools" className="inline-block">
-                <Button size="md" variant="primary" icon={<Github className="w-4 h-4" />}>
-                  Browse Tools
-                </Button>
-              </a>
+              <div className="flex flex-wrap items-center gap-3">
+                <a
+                  href="https://github.com/Shubh1202/c3mindloop"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block"
+                >
+                  <Button size="md" variant="primary" icon={<Github className="w-4 h-4" />}>
+                    Star on GitHub
+                  </Button>
+                </a>
+                <a href="/tools" className="inline-block">
+                  <Button size="md" variant="secondary">
+                    Browse Tools
+                  </Button>
+                </a>
+              </div>
             </div>
 
             <div className="space-y-6 md:border-l md:border-theme-subtle md:pl-8">

@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Github } from 'lucide-react';
 import { Link } from '../../lib/router-compat';
 import { useTranslation } from '../../lib/i18n';
 import { CRASH_STORIES } from '../../lib/constants';
@@ -42,12 +42,22 @@ export const CommunitySection: React.FC = () => {
             </div>
 
             <div className="flex flex-wrap items-center gap-6 shrink-0">
-              <Link
-                to="/community"
+              <a
+                href="https://github.com/Shubh1202/c3mindloop"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 text-sm font-medium text-theme-main hover:text-[#1D9BF0] transition-colors group cursor-pointer"
               >
-                <span>{t('community.joinBtn', 'Join Community')}</span>
+                <Github className="w-4 h-4 text-[#1D9BF0]" />
+                <span>GitHub Community</span>
                 <ArrowRight className="w-4 h-4 text-[#1D9BF0] group-hover:translate-x-1.5 transition-transform" />
+              </a>
+              <Link
+                to="/community"
+                className="inline-flex items-center gap-2 text-sm font-medium text-theme-muted hover:text-theme-main transition-colors group cursor-pointer"
+              >
+                <span>{t('community.joinBtn', 'Join Community')}</span>
+                <ArrowRight className="w-4 h-4 text-theme-muted group-hover:text-theme-main group-hover:translate-x-1.5 transition-transform" />
               </Link>
               <Link
                 to="/blog"

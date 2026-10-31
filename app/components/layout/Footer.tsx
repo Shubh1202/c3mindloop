@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { Link } from '../../lib/router-compat';
-import { Twitter, Send, CheckCircle2 } from 'lucide-react';
+import { Twitter, Send, CheckCircle2, Github } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { useTranslation } from '../../lib/i18n';
 import { Logo } from '../ui/Logo';
@@ -105,6 +105,7 @@ export const Footer: React.FC<{ onReplayIntro?: () => void }> = ({ onReplayIntro
             </h4>
             <ul className="space-y-2.5 text-sm text-theme-muted">
               <li><Link to="/about" className="hover:text-[#1D9BF0] transition-colors">{t('footer.platAbout', 'About C³ MindLoop')}</Link></li>
+              <li><Link to="/community" className="hover:text-[#1D9BF0] transition-colors">{t('footer.platCommunity', 'Developer Community')}</Link></li>
               <li><Link to="/projects" className="hover:text-[#1D9BF0] transition-colors">Projects</Link></li>
               <li><Link to="/reviews" className="hover:text-[#1D9BF0] transition-colors">Developer Reviews</Link></li>
               <li><Link to="/contact" className="hover:text-[#1D9BF0] transition-colors">{t('footer.platContact', 'Contact')}</Link></li>
@@ -139,6 +140,9 @@ export const Footer: React.FC<{ onReplayIntro?: () => void }> = ({ onReplayIntro
 
           {/* Social Links */}
           <div className="flex items-center gap-4 text-theme-muted">
+            <a href="https://github.com/Shubh1202/c3mindloop" target="_blank" rel="noreferrer" className="hover:text-[#1D9BF0] transition-colors" aria-label="C³ MindLoop on GitHub">
+              <Github className="w-4 h-4" />
+            </a>
             <a href="https://twitter.com/c3mindloop" target="_blank" rel="noreferrer" className="hover:text-[#1D9BF0] transition-colors" aria-label="C³ MindLoop on Twitter">
               <Twitter className="w-4 h-4" />
             </a>
