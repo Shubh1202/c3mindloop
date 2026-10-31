@@ -1,42 +1,160 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+<div align="center">
 
-## Getting Started
+# ⚡ C³ MindLoop
 
-First, run the development server:
+**Privacy-First Developer Utilities, Interactive Runtime Visualizers & Real-Time Collaboration**
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+[![Next.js](https://img.shields.io/badge/Next.js-16.3-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-19.2-blue?style=for-the-badge&logo=react)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178C6?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-38B2AC?style=for-the-badge&logo=tailwind-css)](https://tailwindcss.com/)
+[![WebRTC](https://img.shields.io/badge/WebRTC-P2P_Sync-orange?style=for-the-badge&logo=webrtc)](https://webrtc.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
+
+<p align="center">
+  A high-performance developer workspace engineered with zero server retention, native browser cryptography, and peer-to-peer real-time collaboration.
+</p>
+
+[Explore Tools](#-tool-suite) • [Key Highlights](#-key-highlights) • [Getting Started](#-getting-started) • [Architecture](#-architecture) • [Contributing](#-contributing)
+
+</div>
+
+---
+
+## 🌟 Key Highlights
+
+* **🔒 100% Client-Side Privacy:** Your tokens, API payloads, database connection strings, and code snippets never hit external servers. Verification, hashing, and parsing execute exclusively in-browser via the native **Web Crypto API** and Web Workers.
+* **🤝 Peer-to-Peer Real-Time Collaboration:** Debug cURL commands and inspect payloads with peers in real-time. Powered by **Yjs** and **WebRTC** with end-to-end URL-hash password protection—room secrets are never transmitted across HTTP headers.
+* **🧠 Interactive Runtime Visualizers:** Step-by-step visualizers for JavaScript call stacks, Node.js libuv event loop phases, Git tree branch workflows, and Regex railroad state machines.
+* **⚡ Modern Next.js 16 & React 19 Stack:** Built on the bleeding edge using Next.js App Router, Tailwind CSS v4, Motion, and `@xyflow/react`.
+
+---
+
+## 🛠️ Tool Suite
+
+C³ MindLoop bundles 20+ specialized utilities categorized into four pillars:
+
+### 1. 🛡️ Security & Identity
+| Tool | Description |
+| :--- | :--- |
+| **[JWT Inspector](https://github.com/Shubh1202/c3mindloop)** | Decode header & payload, audit common security flaws, and verify HMAC/RSA signatures locally in-browser. |
+| **[Hash & HMAC Studio](https://github.com/Shubh1202/c3mindloop)** | Compute SHA-256, SHA-512, MD5, and HMAC secrets with sub-millisecond local latency. |
+| **[Password Shuffle Generator](https://github.com/Shubh1202/c3mindloop)** | Cryptographically secure entropy generator with custom charset controls. |
+
+### 2. 🎬 Runtime & Visualizers
+| Tool | Description |
+| :--- | :--- |
+| **[JS Event Loop Visualizer](https://github.com/Shubh1202/c3mindloop)** | Interactive step-through of Call Stack, Microtask Queue (Promises), and Macrotask Queue (Timers). |
+| **[Node.js Event Loop Visualizer](https://github.com/Shubh1202/c3mindloop)** | Deep dive into libuv lifecycle: Timers, Pending I/O, Poll, Check (`setImmediate`), and Close phases. |
+| **[Regex Railroad Generator](https://github.com/Shubh1202/c3mindloop)** | Convert complex regular expressions into clean, interactive syntax railway diagrams. |
+| **[Git Visualizer](https://github.com/Shubh1202/c3mindloop)** | Interactive graph simulation of branching, merging, rebasing, and cherry-picking. |
+| **[Cron Schedule Visualizer](https://github.com/Shubh1202/c3mindloop)** | Human-readable cron parser with next execution projections and timezone triggers. |
+| **[JSON Graph Explorer](https://github.com/Shubh1202/c3mindloop)** | Interactive node-link visualizer for deeply nested JSON objects using React Flow. |
+
+### 3. ⚙️ Code, API & Conversion
+| Tool | Description |
+| :--- | :--- |
+| **[cURL to Code Converter (Collaborative)](https://github.com/Shubh1202/c3mindloop)** | Convert raw cURL commands into clean Fetch, Axios, Python, Go, and Node.js code with live WebRTC co-editing. |
+| **[Code Complexity Analyzer](https://github.com/Shubh1202/c3mindloop)** | AST-based cyclomatic complexity calculation and maintainability index without uploading source code. |
+| **[SQL to JSON Converter](https://github.com/Shubh1202/c3mindloop)** | Instant table schema and query dump parsing to structured JSON collections. |
+| **[Diff Checker](https://github.com/Shubh1202/c3mindloop)** | High-precision visual side-by-side and unified diffs with line-level change tracking. |
+| **[Base64 Encoder/Decoder](https://github.com/Shubh1202/c3mindloop)** | Safe binary, UTF-8, and URL-safe Base64 conversions. |
+| **[JSON Formatter & Validator](https://github.com/Shubh1202/c3mindloop)** | Syntax validation, minification, tree inspector, and repair suggestions. |
+
+### 4. 🚀 Workflow & AI Productivity
+| Tool | Description |
+| :--- | :--- |
+| **[AI Prompt Context Builder](https://github.com/Shubh1202/c3mindloop)** | Structured prompt packager with automatic regex redaction of API keys, DB URIs, and credentials. |
+| **[Workflow Canvas Builder](https://github.com/Shubh1202/c3mindloop)** | Drag-and-drop pipeline and automation design canvas powered by `@xyflow/react`. |
+| **[PDF Suite & Editor](https://github.com/Shubh1202/c3mindloop)** | Browser-based PDF manipulation, merging, rotation, and metadata management via `pdf-lib`. |
+| **[ATS Resume Generator](https://github.com/Shubh1202/c3mindloop)** | Machine-readable resume generator optimized for modern applicant tracking algorithms. |
+| **[QR Code Generator](https://github.com/Shubh1202/c3mindloop)** | Customizable QR codes with embedded logos, error correction levels, and vector SVG exports. |
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+* **Node.js**: `20.x` or higher
+* **Package Manager**: `pnpm` (recommended), `npm`, or `yarn`
+
+### Installation
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/Shubh1202/c3mindloop.git
+   cd c3mindloop
+   ```
+
+2. **Install dependencies:**
+   ```bash
+   pnpm install
+   ```
+
+3. **Configure Environment Variables (Optional):**
+   ```bash
+   cp .env.example .env.local
+   ```
+   *Most tools run entirely offline in the browser without any API keys.* AI-assisted features optionally read `GEMINI_API_KEY`.
+
+4. **Start the development server:**
+   ```bash
+   pnpm dev
+   ```
+
+5. **Open your browser:**
+   Navigate to [http://localhost:3000](http://localhost:3000) to view the workspace.
+
+---
+
+## 🏗️ Architecture
+
+```
+c3mindloop/
+├── app/
+│   ├── api/                    # Serverless endpoints (Contact, reCAPTCHA verification)
+│   ├── components/
+│   │   ├── collaboration/      # WebRTC P2P sync rooms, status bars, awareness indicators
+│   │   ├── sections/           # Landing page showcases & hero components
+│   │   ├── tools/              # Core tool client components (JWT, Visualizers, cURL, etc.)
+│   │   └── ui/                 # Shared accessible UI components
+│   ├── lib/
+│   │   ├── collaboration/      # Yjs WebRTC provider, crypto room hasher & reconnection logic
+│   │   ├── workflow/           # React Flow nodes, pipeline execution models
+│   │   └── constants.ts        # Global educational guides & technical documentation
+│   └── tools/                  # Next.js App Router dynamic tool pages
+├── public/                     # Static assets, icons, and illustrations
+├── .env.example                # Template for environment configuration
+└── package.json                # Project dependencies and workspace scripts
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 🔒 Security Principles
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+* **Native Web Crypto:** All hash routines and signature checks tap into `window.crypto.subtle`.
+* **Zero Storage of Inputs:** No database persists your inspected tokens, cURL commands, or diff files.
+* **Hash-Fragment Routing for WebRTC:** Shared collaborative room identifiers and passwords exist only behind `#` fragments (e.g. `#collab=room-id&pwd=...`), meaning browser user-agents never send encryption keys to the server.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## 🤝 Contributing
 
-To learn more about Next.js, take a look at the following resources:
+Contributions make the open-source community an incredible place to learn, inspire, and create! Any contributions you make are **greatly appreciated**.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feat/AmazingFeature`)
+3. Commit your Changes (`git commit -m 'feat: Add AmazingFeature'`)
+4. Push to the Branch (`git push origin feat/AmazingFeature`)
+5. Open a Pull Request
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## 📄 License
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Distributed under the **MIT License**. See [`LICENSE`](./LICENSE) for more information.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
 
-
-    // "equationA": "Client Demand",
-    // "equationB": "Boss Pressure",
-    // "equationC": "Code Crash",
-    // "equationResult": "Programmers Have No Life",
+<div align="center">
+  <sub>Built with ❤️ by <a href="https://github.com/Shubh1202">Shubham Prajapati</a> and open-source contributors.</sub>
+</div>

@@ -1,7 +1,25 @@
 {
-  "name": "my-app",
-  "version": "0.1.0",
-  "private": true,
+  "name": "c3mindloop",
+  "version": "1.0.0",
+  "description": "High-performance, privacy-first developer utility suite with real-time WebRTC collaboration.",
+  "license": "MIT",
+  "author": "Shubham Prajapati <shubhamprajapati1202@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Shubh1202/c3mindloop.git"
+  },
+  "keywords": [
+    "developer-tools",
+    "privacy-first",
+    "webrtc",
+    "nextjs",
+    "react-flow",
+    "jwt-inspector",
+    "event-loop",
+    "curl-converter",
+    "code-complexity",
+    "regex-railroad"
+  ],
   "scripts": {
     "dev": "next dev",
     "build": "next build",

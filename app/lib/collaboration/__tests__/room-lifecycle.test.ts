@@ -46,4 +46,23 @@ describe('CollaborationRoomManager Lifecycle & Guardrails', () => {
     expect(errorDetected).toBe(true);
     doc.destroy();
   });
+
+  it('tracks host status correctly', () => {
+    const manager = new CollaborationRoomManager({ toolId: 'test-tool' });
+    expect(manager.getIsHost()).toBe(false);
+
+    manager.setIsHost(true);
+    expect(manager.getIsHost()).toBe(true);
+
+    manager.setIsHost(false);
+    expect(manager.getIsHost()).toBe(false);
+  });
+
+  it('disconnects cleanly when endSessionForAll is called', () => {
+    const manager = new CollaborationRoomManager({ toolId: 'test-tool' });
+    manager.setIsHost(true);
+
+    // Calling endSessionForAll without an active doc cleanly disconnects
+    expect(() => manager.endSessionForAll()).not.toThrow();
+  });
 });
