@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { Link } from '../../lib/router-compat';
-import { Twitter, Send, CheckCircle2, Github } from 'lucide-react';
+import { Twitter, Send, CheckCircle2, Github, Heart, Coffee } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { useTranslation } from '../../lib/i18n';
 import { Logo } from '../ui/Logo';
@@ -106,6 +106,17 @@ export const Footer: React.FC<{ onReplayIntro?: () => void }> = ({ onReplayIntro
             <ul className="space-y-2.5 text-sm text-theme-muted">
               <li><Link to="/about" className="hover:text-[#1D9BF0] transition-colors">{t('footer.platAbout', 'About C³ MindLoop')}</Link></li>
               <li><Link to="/community" className="hover:text-[#1D9BF0] transition-colors">{t('footer.platCommunity', 'Developer Community')}</Link></li>
+              <li>
+                <a
+                  href="https://github.com/sponsors/Shubh1202"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-rose-400 text-rose-400/90 transition-colors flex items-center gap-1.5 font-medium"
+                >
+                  <Heart className="w-3.5 h-3.5 fill-rose-500/20 text-rose-400" />
+                  <span>Sponsor Project</span>
+                </a>
+              </li>
               <li><Link to="/projects" className="hover:text-[#1D9BF0] transition-colors">Projects</Link></li>
               <li><Link to="/reviews" className="hover:text-[#1D9BF0] transition-colors">Developer Reviews</Link></li>
               <li><Link to="/contact" className="hover:text-[#1D9BF0] transition-colors">{t('footer.platContact', 'Contact')}</Link></li>
@@ -138,12 +149,36 @@ export const Footer: React.FC<{ onReplayIntro?: () => void }> = ({ onReplayIntro
             <span>{t('footer.status', 'All Systems Operational')}</span>
           </div>
 
-          {/* Social Links */}
-          <div className="flex items-center gap-4 text-theme-muted">
-            <a href="https://github.com/Shubh1202/c3mindloop" target="_blank" rel="noreferrer" className="hover:text-[#1D9BF0] transition-colors" aria-label="C³ MindLoop on GitHub">
+          {/* Sponsor & Social Links */}
+          <div className="flex flex-wrap items-center gap-3">
+            <a
+              href="https://github.com/sponsors/Shubh1202"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/25 text-xs font-medium transition-all group"
+              title="Sponsor on GitHub"
+            >
+              <Heart className="w-3.5 h-3.5 fill-rose-500 text-rose-500 group-hover:scale-110 transition-transform" />
+              <span>Sponsor</span>
+            </a>
+
+            <a
+              href="https://buymeacoffee.com/shubh1202"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/25 text-xs font-medium transition-all group"
+              title="Buy Me a Coffee"
+            >
+              <Coffee className="w-3.5 h-3.5 text-amber-400 group-hover:scale-110 transition-transform" />
+              <span className="hidden sm:inline">Buy me a coffee</span>
+            </a>
+
+            <div className="h-4 w-px bg-theme-subtle mx-1 hidden sm:block" />
+
+            <a href="https://github.com/Shubh1202/c3mindloop" target="_blank" rel="noreferrer" className="hover:text-[#1D9BF0] transition-colors p-1" aria-label="C³ MindLoop on GitHub">
               <Github className="w-4 h-4" />
             </a>
-            <a href="https://twitter.com/c3mindloop" target="_blank" rel="noreferrer" className="hover:text-[#1D9BF0] transition-colors" aria-label="C³ MindLoop on Twitter">
+            <a href="https://twitter.com/c3mindloop" target="_blank" rel="noreferrer" className="hover:text-[#1D9BF0] transition-colors p-1" aria-label="C³ MindLoop on Twitter">
               <Twitter className="w-4 h-4" />
             </a>
           </div>

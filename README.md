@@ -9,6 +9,7 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178C6?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-38B2AC?style=for-the-badge&logo=tailwind-css)](https://tailwindcss.com/)
 [![WebRTC](https://img.shields.io/badge/WebRTC-P2P_Sync-orange?style=for-the-badge&logo=webrtc)](https://webrtc.org/)
+[![Sponsor](https://img.shields.io/badge/Sponsor-%E2%99%A5-ff69b4?style=for-the-badge&logo=github)](https://github.com/sponsors/Shubh1202)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
 
 <p align="center">
@@ -146,6 +147,16 @@ Contributions make the open-source community an incredible place to learn, inspi
 3. Commit your Changes (`git commit -m 'feat: Add AmazingFeature'`)
 4. Push to the Branch (`git push origin feat/AmazingFeature`)
 5. Open a Pull Request
+
+---
+
+## 💖 Support & Sponsorship
+
+If you find C³ MindLoop useful for your daily workflow, consider supporting development:
+
+* **[Sponsor on GitHub](https://github.com/sponsors/Shubh1202)**: Direct recurring or one-time sponsorship.
+* **[Buy Me a Coffee](https://buymeacoffee.com/shubh1202)**: Quick one-time developer support.
+* **Star the Repo**: Give us a ⭐ on GitHub to help more engineers find these tools!
 
 ---
 
