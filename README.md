@@ -9,7 +9,7 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178C6?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-38B2AC?style=for-the-badge&logo=tailwind-css)](https://tailwindcss.com/)
 [![WebRTC](https://img.shields.io/badge/WebRTC-P2P_Sync-orange?style=for-the-badge&logo=webrtc)](https://webrtc.org/)
-[![Sponsor](https://img.shields.io/badge/Sponsor-%E2%99%A5-ff69b4?style=for-the-badge&logo=github)](https://github.com/sponsors/Shubh1202)
+[![Sponsor](https://img.shields.io/badge/Sponsor-%E2%99%A5-ff69b4?style=for-the-badge&logo=github)](https://github.com/sponsors/shubhamprajapati1202)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
 
 <p align="center">
@@ -38,38 +38,38 @@ C³ MindLoop bundles 20+ specialized utilities categorized into four pillars:
 ### 1. 🛡️ Security & Identity
 | Tool | Description |
 | :--- | :--- |
-| **[JWT Inspector](https://github.com/Shubh1202/c3mindloop)** | Decode header & payload, audit common security flaws, and verify HMAC/RSA signatures locally in-browser. |
-| **[Hash & HMAC Studio](https://github.com/Shubh1202/c3mindloop)** | Compute SHA-256, SHA-512, MD5, and HMAC secrets with sub-millisecond local latency. |
-| **[Password Shuffle Generator](https://github.com/Shubh1202/c3mindloop)** | Cryptographically secure entropy generator with custom charset controls. |
+| **[JWT Inspector](https://github.com/shubhamprajapati1202/c3mindloop)** | Decode header & payload, audit common security flaws, and verify HMAC/RSA signatures locally in-browser. |
+| **[Hash & HMAC Studio](https://github.com/shubhamprajapati1202/c3mindloop)** | Compute SHA-256, SHA-512, MD5, and HMAC secrets with sub-millisecond local latency. |
+| **[Password Shuffle Generator](https://github.com/shubhamprajapati1202/c3mindloop)** | Cryptographically secure entropy generator with custom charset controls. |
 
 ### 2. 🎬 Runtime & Visualizers
 | Tool | Description |
 | :--- | :--- |
-| **[JS Event Loop Visualizer](https://github.com/Shubh1202/c3mindloop)** | Interactive step-through of Call Stack, Microtask Queue (Promises), and Macrotask Queue (Timers). |
-| **[Node.js Event Loop Visualizer](https://github.com/Shubh1202/c3mindloop)** | Deep dive into libuv lifecycle: Timers, Pending I/O, Poll, Check (`setImmediate`), and Close phases. |
-| **[Regex Railroad Generator](https://github.com/Shubh1202/c3mindloop)** | Convert complex regular expressions into clean, interactive syntax railway diagrams. |
-| **[Git Visualizer](https://github.com/Shubh1202/c3mindloop)** | Interactive graph simulation of branching, merging, rebasing, and cherry-picking. |
-| **[Cron Schedule Visualizer](https://github.com/Shubh1202/c3mindloop)** | Human-readable cron parser with next execution projections and timezone triggers. |
-| **[JSON Graph Explorer](https://github.com/Shubh1202/c3mindloop)** | Interactive node-link visualizer for deeply nested JSON objects using React Flow. |
+| **[JS Event Loop Visualizer](https://github.com/shubhamprajapati1202/c3mindloop)** | Interactive step-through of Call Stack, Microtask Queue (Promises), and Macrotask Queue (Timers). |
+| **[Node.js Event Loop Visualizer](https://github.com/shubhamprajapati1202/c3mindloop)** | Deep dive into libuv lifecycle: Timers, Pending I/O, Poll, Check (`setImmediate`), and Close phases. |
+| **[Regex Railroad Generator](https://github.com/shubhamprajapati1202/c3mindloop)** | Convert complex regular expressions into clean, interactive syntax railway diagrams. |
+| **[Git Visualizer](https://github.com/shubhamprajapati1202/c3mindloop)** | Interactive graph simulation of branching, merging, rebasing, and cherry-picking. |
+| **[Cron Schedule Visualizer](https://github.com/shubhamprajapati1202/c3mindloop)** | Human-readable cron parser with next execution projections and timezone triggers. |
+| **[JSON Graph Explorer](https://github.com/shubhamprajapati1202/c3mindloop)** | Interactive node-link visualizer for deeply nested JSON objects using React Flow. |
 
 ### 3. ⚙️ Code, API & Conversion
 | Tool | Description |
 | :--- | :--- |
-| **[cURL to Code Converter (Collaborative)](https://github.com/Shubh1202/c3mindloop)** | Convert raw cURL commands into clean Fetch, Axios, Python, Go, and Node.js code with live WebRTC co-editing. |
-| **[Code Complexity Analyzer](https://github.com/Shubh1202/c3mindloop)** | AST-based cyclomatic complexity calculation and maintainability index without uploading source code. |
-| **[SQL to JSON Converter](https://github.com/Shubh1202/c3mindloop)** | Instant table schema and query dump parsing to structured JSON collections. |
-| **[Diff Checker](https://github.com/Shubh1202/c3mindloop)** | High-precision visual side-by-side and unified diffs with line-level change tracking. |
-| **[Base64 Encoder/Decoder](https://github.com/Shubh1202/c3mindloop)** | Safe binary, UTF-8, and URL-safe Base64 conversions. |
-| **[JSON Formatter & Validator](https://github.com/Shubh1202/c3mindloop)** | Syntax validation, minification, tree inspector, and repair suggestions. |
+| **[cURL to Code Converter (Collaborative)](https://github.com/shubhamprajapati1202/c3mindloop)** | Convert raw cURL commands into clean Fetch, Axios, Python, Go, and Node.js code with live WebRTC co-editing. |
+| **[Code Complexity Analyzer](https://github.com/shubhamprajapati1202/c3mindloop)** | AST-based cyclomatic complexity calculation and maintainability index without uploading source code. |
+| **[SQL to JSON Converter](https://github.com/shubhamprajapati1202/c3mindloop)** | Instant table schema and query dump parsing to structured JSON collections. |
+| **[Diff Checker](https://github.com/shubhamprajapati1202/c3mindloop)** | High-precision visual side-by-side and unified diffs with line-level change tracking. |
+| **[Base64 Encoder/Decoder](https://github.com/shubhamprajapati1202/c3mindloop)** | Safe binary, UTF-8, and URL-safe Base64 conversions. |
+| **[JSON Formatter & Validator](https://github.com/shubhamprajapati1202/c3mindloop)** | Syntax validation, minification, tree inspector, and repair suggestions. |
 
 ### 4. 🚀 Workflow & AI Productivity
 | Tool | Description |
 | :--- | :--- |
-| **[AI Prompt Context Builder](https://github.com/Shubh1202/c3mindloop)** | Structured prompt packager with automatic regex redaction of API keys, DB URIs, and credentials. |
-| **[Workflow Canvas Builder](https://github.com/Shubh1202/c3mindloop)** | Drag-and-drop pipeline and automation design canvas powered by `@xyflow/react`. |
-| **[PDF Suite & Editor](https://github.com/Shubh1202/c3mindloop)** | Browser-based PDF manipulation, merging, rotation, and metadata management via `pdf-lib`. |
-| **[ATS Resume Generator](https://github.com/Shubh1202/c3mindloop)** | Machine-readable resume generator optimized for modern applicant tracking algorithms. |
-| **[QR Code Generator](https://github.com/Shubh1202/c3mindloop)** | Customizable QR codes with embedded logos, error correction levels, and vector SVG exports. |
+| **[AI Prompt Context Builder](https://github.com/shubhamprajapati1202/c3mindloop)** | Structured prompt packager with automatic regex redaction of API keys, DB URIs, and credentials. |
+| **[Workflow Canvas Builder](https://github.com/shubhamprajapati1202/c3mindloop)** | Drag-and-drop pipeline and automation design canvas powered by `@xyflow/react`. |
+| **[PDF Suite & Editor](https://github.com/shubhamprajapati1202/c3mindloop)** | Browser-based PDF manipulation, merging, rotation, and metadata management via `pdf-lib`. |
+| **[ATS Resume Generator](https://github.com/shubhamprajapati1202/c3mindloop)** | Machine-readable resume generator optimized for modern applicant tracking algorithms. |
+| **[QR Code Generator](https://github.com/shubhamprajapati1202/c3mindloop)** | Customizable QR codes with embedded logos, error correction levels, and vector SVG exports. |
 
 ---
 
@@ -84,7 +84,7 @@ C³ MindLoop bundles 20+ specialized utilities categorized into four pillars:
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/Shubh1202/c3mindloop.git
+   git clone https://github.com/shubhamprajapati1202/c3mindloop.git
    cd c3mindloop
    ```
 
@@ -154,8 +154,8 @@ Contributions make the open-source community an incredible place to learn, inspi
 
 If you find C³ MindLoop useful for your daily workflow, consider supporting development:
 
-* **[Sponsor on GitHub](https://github.com/sponsors/Shubh1202)**: Direct recurring or one-time sponsorship.
-* **[Buy Me a Coffee](https://buymeacoffee.com/shubh1202)**: Quick one-time developer support.
+* **[Sponsor on GitHub](https://github.com/sponsors/shubhamprajapati1202)**: Direct recurring or one-time sponsorship.
+* **[Buy Me a Coffee](https://buymeacoffee.com/shubhamprajapati1202)**: Quick one-time developer support.
 * **Star the Repo**: Give us a ⭐ on GitHub to help more engineers find these tools!
 
 ---
@@ -167,5 +167,5 @@ Distributed under the **MIT License**. See [`LICENSE`](./LICENSE) for more infor
 ---
 
 <div align="center">
-  <sub>Built with ❤️ by <a href="https://github.com/Shubh1202">Shubham Prajapati</a> and open-source contributors.</sub>
+  <sub>Built with ❤️ by <a href="https://github.com/shubhamprajapati1202">Shubham Prajapati</a> and open-source contributors.</sub>
 </div>

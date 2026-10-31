@@ -97,7 +97,7 @@ console.log('\nATS Resume URL Formatting');
 
 test('cleans URLs for clean print display', () => {
   expect(cleanUrl('https://www.linkedin.com/in/shubhamprajapati1202/')).toBe('linkedin.com/in/shubhamprajapati1202');
-  expect(cleanUrl('https://github.com/Shubh1202')).toBe('github.com/Shubh1202');
+  expect(cleanUrl('https://github.com/shubhamprajapati1202')).toBe('github.com/shubhamprajapati1202');
   expect(cleanUrl('yourportfolio.dev')).toBe('yourportfolio.dev');
 });
 
@@ -118,7 +118,7 @@ test('handles full candidate resume dataset with multiple entries without mutati
       phone: '+91-9807272530',
       location: 'New Delhi, India',
       linkedin: 'https://www.linkedin.com/in/shubhamprajapati1202/',
-      github: 'https://github.com/Shubh1202',
+      github: 'https://github.com/shubhamprajapati1202',
       portfolio: 'yourportfolio.dev',
     },
     summary: 'Backend Developer with 6+ years of experience...',

@@ -99,7 +99,7 @@ export const CommunityPage: React.FC = () => {
               </p>
               <div className="flex flex-wrap items-center gap-3">
                 <a
-                  href="https://github.com/Shubh1202/c3mindloop"
+                  href="https://github.com/shubhamprajapati1202/c3mindloop"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-block"
@@ -171,7 +171,7 @@ export const CommunityPage: React.FC = () => {
                     <span>Install</span>
                   </a>
                   <a
-                    href="https://github.com/Shubh1202/office-editor"
+                    href="https://github.com/shubhamprajapati1202/office-editor"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-300 border border-neutral-700 font-mono text-[10px] font-bold uppercase transition-all"

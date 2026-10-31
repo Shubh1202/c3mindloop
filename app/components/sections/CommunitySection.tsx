@@ -43,7 +43,7 @@ export const CommunitySection: React.FC = () => {
 
             <div className="flex flex-wrap items-center gap-6 shrink-0">
               <a
-                href="https://github.com/Shubh1202/c3mindloop"
+                href="https://github.com/shubhamprajapati1202/c3mindloop"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 text-sm font-medium text-theme-main hover:text-[#1D9BF0] transition-colors group cursor-pointer"

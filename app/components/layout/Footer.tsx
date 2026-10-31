@@ -108,7 +108,7 @@ export const Footer: React.FC<{ onReplayIntro?: () => void }> = ({ onReplayIntro
               <li><Link to="/community" className="hover:text-[#1D9BF0] transition-colors">{t('footer.platCommunity', 'Developer Community')}</Link></li>
               <li>
                 <a
-                  href="https://github.com/sponsors/Shubh1202"
+                  href="https://github.com/sponsors/shubhamprajapati1202"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="hover:text-rose-400 text-rose-400/90 transition-colors flex items-center gap-1.5 font-medium"
@@ -152,7 +152,7 @@ export const Footer: React.FC<{ onReplayIntro?: () => void }> = ({ onReplayIntro
           {/* Sponsor & Social Links */}
           <div className="flex flex-wrap items-center gap-3">
             <a
-              href="https://github.com/sponsors/Shubh1202"
+              href="https://github.com/sponsors/shubhamprajapati1202"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/25 text-xs font-medium transition-all group"
@@ -163,7 +163,7 @@ export const Footer: React.FC<{ onReplayIntro?: () => void }> = ({ onReplayIntro
             </a>
 
             <a
-              href="https://buymeacoffee.com/shubh1202"
+              href="https://buymeacoffee.com/shubhamprajapati1202"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/25 text-xs font-medium transition-all group"
@@ -175,7 +175,7 @@ export const Footer: React.FC<{ onReplayIntro?: () => void }> = ({ onReplayIntro
 
             <div className="h-4 w-px bg-theme-subtle mx-1 hidden sm:block" />
 
-            <a href="https://github.com/Shubh1202/c3mindloop" target="_blank" rel="noreferrer" className="hover:text-[#1D9BF0] transition-colors p-1" aria-label="C³ MindLoop on GitHub">
+            <a href="https://github.com/shubhamprajapati1202/c3mindloop" target="_blank" rel="noreferrer" className="hover:text-[#1D9BF0] transition-colors p-1" aria-label="C³ MindLoop on GitHub">
               <Github className="w-4 h-4" />
             </a>
             <a href="https://twitter.com/c3mindloop" target="_blank" rel="noreferrer" className="hover:text-[#1D9BF0] transition-colors p-1" aria-label="C³ MindLoop on Twitter">

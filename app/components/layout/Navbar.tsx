@@ -107,7 +107,7 @@ export const Navbar: React.FC<{
           {/* Actions (Theme, Language, GitHub) - Desktop */}
           <div className="hidden lg:flex items-center gap-2 relative z-50 pointer-events-auto">
             <a
-              href="https://github.com/Shubh1202/c3mindloop"
+              href="https://github.com/shubhamprajapati1202/c3mindloop"
               target="_blank"
               rel="noopener noreferrer"
               className="h-9 px-3 rounded-lg bg-neutral-900 border border-white/10 text-neutral-300 hover:text-white hover:border-[#1D9BF0]/40 hover:bg-neutral-800 transition-all cursor-pointer pointer-events-auto flex items-center gap-1.5 shrink-0 text-xs font-mono"
@@ -137,7 +137,7 @@ export const Navbar: React.FC<{
           {/* Mobile & Tablet Controls */}
           <div className="flex items-center gap-2 lg:hidden relative z-50 pointer-events-auto">
             <a
-              href="https://github.com/Shubh1202/c3mindloop"
+              href="https://github.com/shubhamprajapati1202/c3mindloop"
               target="_blank"
               rel="noopener noreferrer"
               className="h-9 w-9 rounded-lg bg-neutral-900 border border-white/10 text-neutral-300 hover:text-white hover:bg-neutral-800 transition-colors flex items-center justify-center shrink-0"
